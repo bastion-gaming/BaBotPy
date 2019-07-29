@@ -19,7 +19,7 @@ client = discord.Client()
 # Au démarrage du bot.
 @client.event
 async def on_ready():
-    print('BastionBot | Gems Module | Python version | >> Connecté !')
+    print('BastionBot | Gems Module | >> Connecté !')
 
 data = sqlite3.connect('players.db')
 c = data.cursor()
