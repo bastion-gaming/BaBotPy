@@ -29,10 +29,10 @@ def newPlayer(ID):
         db.insert({'ID': ID, 'time': str(dt.datetime.now()), 'gems':'0', 'inventory':inv})
         ########################################################################
         print("Le joueur a été ajouté !")
-        return "100"
+        return 100
     else:
         print("Le joueur existe déjà")
-        return "101"
+        return 101
 
 
 def updateField(ID, fieldName, fieldValue):
@@ -60,3 +60,10 @@ def valueAt(ID, fieldName):
     fieldName: string du nom du champ à chercher
     """
     return db.search(Query().ID == ID)[0][fieldName]
+
+async def count(message):
+    l=len(db)
+    if l == 0:
+        await message.channel.send('Aucun utilisaeur enregistrer dans la BDD')
+    else:
+        await message.channel.send(f'{l} utilisateur inscrit')
