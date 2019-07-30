@@ -21,7 +21,7 @@ c = data.cursor()
 # Au démarrage du bot.
 @client.event
 async def on_ready():
-    print('BastionBot | Gems Module | Python version | >> Connecté !')
+    print('BastionBot | Gems Module | >> Connecté !')
 
 async def begin(message):
     ID = message.author.id
