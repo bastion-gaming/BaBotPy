@@ -37,7 +37,7 @@ async def on_member_join(member):
     else :
         # si le nom est déjà dans la BDD on ne le recompte pas une deuxième fois
         msg = f"""Ravis de te revoir parmis nous {member.mention} !!"""
-    channel = client.get_channel(417445503110742048)
+    channel = client.get_channel(478003352551030798)
     await channel.send(msg)
 
 @client.event

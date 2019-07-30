@@ -15,14 +15,13 @@ anti_spam = 6
 anti_spam2 = 3
 # nb de sec nécessaire entre 2 commandes
 client = discord.Client()
+data = sqlite3.connect('players.db')
+c = data.cursor()
 
 # Au démarrage du bot.
 @client.event
 async def on_ready():
     print('BastionBot | Gems Module | Python version | >> Connecté !')
-
-data = sqlite3.connect('players.db')
-c = data.cursor()
 
 async def begin(message):
     ID = message.author.id
@@ -40,7 +39,7 @@ async def begin(message):
         c.execute("""INSERT INTO inventaire VALUES(?,?,?,?,?,?,?,?,?,?,?)""",(ID,0,0,0,0,0,0,0,0,0,0))
         data.commit()
         msg = "fiche personnage créé !"
-    await message.channel.send(message)
+    await message.channel.send(msg)
 
 async def crime(message):
 	ID = message.author.id
@@ -55,7 +54,7 @@ async def crime(message):
 		c.execute("""UPDATE donnees SET time = ? WHERE ID = ?""",(t.time(),ID))
 	else:
 		msg = "il faut attendre "+str(anti_spam)+" secondes entre chaque commande !"
-	await message.channel.send(message)
+	await message.channel.send(msg)
 	data.commit()
 
 async def bal(message):
@@ -69,7 +68,7 @@ async def bal(message):
 		msg = "tu as actuellement : "+str(gem[0])+" :gem: !"
 	else:
 		msg = "il faut attendre "+str(anti_spam2)+" secondes entre chaque commande !"
-	await message.channel.send(message)
+	await message.channel.send(msg)
 	data.commit()
 
 async def gamble(message):
@@ -89,7 +88,7 @@ async def gamble(message):
 		c.execute("""UPDATE donnees SET time = ? WHERE ID = ?""",(t.time(),ID))
 	else:
 		msg = "il faut attendre "+str(anti_spam)+" secondes entre chaque commande !"
-	await message.channel.send(message)
+	await message.channel.send(msg)
 	data.commit()
 
 async def sell(message):
@@ -128,7 +127,7 @@ async def sell(message):
 	except ValueError:
 		msg = "commande mal remplis (nombre)"
 		pass
-		await message.channel.send(message)
+		await message.channel.send(msg)
 
 async def pay(message):
 	ID = message.author.id
@@ -142,7 +141,7 @@ async def pay(message):
 		ID_recu = "une autre erreur ?"
 	msg = "tu veux donner : "+gain+":gem: à "+nom+" dont l'id est "+ID_recu
 	print(msg)
-	await message.channel.send(message)
+	await message.channel.send(msg)
 
 async def buy(message):
 	ID = message.author.id

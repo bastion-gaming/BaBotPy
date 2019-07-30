@@ -1,6 +1,7 @@
 import discord
 import welcome as wel
 import gems
+import DB
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
@@ -15,24 +16,14 @@ PREFIX = DEFAUT_PREFIX
 async def on_ready():
     print('Connecté avec le nom : {0.user}'.format(client))
     print('BastionBot | Core Module | Python version | >> Connecté !')
-    await wel.on_ready()
     await gems.on_ready()
+    DB.dbExist()
+
 
 #Quand il y'a un message
 @client.event
 async def on_message(message):
-    meco = message.content
-    if message.author == client.user:
-        return
 
-    if meco.startswith(PREFIX+"coreInfo"):
-        await message.channel.send('Actuellement version **'+VERSION+'**')
-
-    elif meco.startswith(PREFIX+"begin"):
-        await gems.begin(message)
-
-    elif meco.startswith(PREFIX+"bal"):
-        await gems.bal(message)
 
 
 
