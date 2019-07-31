@@ -63,6 +63,11 @@ async def on_member_remove(member):
 #Quand il y'a un message
 @client.event
 async def on_message(message):
+    meco = message.content
+
+    if meco.startswith(PREFIX+"create game"):
+        meco2 = meco.replace(PREFIX+"create game ", "")
+        await roles.create(message, meco2)
 
     await gems.client.process_commands(message)
  ###################### Commande gems.py #######################
@@ -70,11 +75,6 @@ async def on_message(message):
 gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 
     DB.newPlayer(message.author.id)
-    meco = message.content
-
-    if meco.startswith(PREFIX+"create game"):
-        meco2 = meco.replace(PREFIX+"create game ", "")
-        await roles.create(message, meco2)
 
  ###################### Commande gems.py #######################
 
