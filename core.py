@@ -3,6 +3,10 @@ import sqlite3
 import welcome as wel
 import datetime as t
 import DB
+from discord.ext import commands
+from discord.ext.commands import Bot
+from discord.utils import get
+import gems
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
@@ -59,4 +63,47 @@ async def on_member_remove(member):
 @client.event
 async def on_message(message):
     DB.newPlayer(message.author.id)
+    
+ ###################### Commande gems.py #######################
+
+gems_client = commands.Bot(command_prefix = "{0}".format(prefix))
+
+@gems_client.command(pass_context=True)
+async def crime(ctx):
+	await gems.crime(ctx)
+    
+@gems_client.command(pass_context=True)
+async def bal(ctx):
+    await gems.bal(ctx)
+    
+@gems_client.command(pass_context=True)
+async def inv(ctx):
+    await gems.inv(ctx)
+
+@gems_client.command(pass_context=True)
+async def mine(ctx):
+    await gems.mine(ctx)
+
+@gems_client.command(pass_context=True)
+async def begin(ctx):
+    await gems.begin(ctx)
+
+@gems_client.command(pass_context=True)
+async def gamble(ctx):
+    await gems.gamble(ctx,mise)
+
+@gems_client.command(pass_context=True)
+async def buy(ctx):
+    await gems.buy(ctx,item,nombre)
+ 
+@gems_client.command(pass_context=True)
+async def sell(ctx):
+    await gems.sell(ctx,item,nombre)
+
+@gems_client.command(pass_context=True)
+async def pay(ctx):
+    await gems.pay(ctx,nom,don)
+
+###################### Commande gems.py #######################
+
 client.run(TOKEN)
