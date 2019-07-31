@@ -1,6 +1,6 @@
 import discord
 import sqlite3
-import welcome as wel
+#import welcome as wel
 import roles
 import datetime as t
 import DB
@@ -23,8 +23,8 @@ PREFIX = open("prefix.txt","r").read().replace('\n','')
 async def on_ready():
     print('Connecté avec le nom : {0.user}'.format(client))
     print('PREFIX = '+str(PREFIX))
-    print('BastionBot '+VERSION+' | Core Module | >> Connecté !')
-    await wel.on_ready()
+    print('\nBastionBot '+VERSION)
+    print(' | Core Module | >> Connecté !')
     await roles.on_ready()
     await gems.on_ready()
     DB.dbExist()

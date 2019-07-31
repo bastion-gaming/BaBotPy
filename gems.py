@@ -29,7 +29,7 @@ client = commands.Bot(command_prefix = "{0}".format(prefix))
 
 @client.event  # event decorator/wrapper. More on decorators here: https://pythonprogramming.net/decorators-intermediate-python-tutorial/
 async def on_ready():  # method expected by client. This runs once when connected
-    print(f'BastionBot | Gems Module | >> Connecté !')  # notification of login.
+    print(f'| Gems Module | >> Connecté !')  # notification of login.
 
 def spam(ID,couldown):
 	time = DB.valueAt(ID, "com_time")

@@ -8,7 +8,7 @@ client = discord.Client()
 
 @client.event  # event decorator/wrapper. More on decorators here: https://pythonprogramming.net/decorators-intermediate-python-tutorial/
 async def on_ready():  # method expected by client. This runs once when connected
-    print(f'BastionBot | Welcome Module | >> Connecté !')  # notification of login.
+    print(f'| Welcome Module | >> Connecté !')  # notification of login.
     #-------------
     #data = sqlite3.connect('connect.db')
     #c = data.cursor()
