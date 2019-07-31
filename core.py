@@ -8,10 +8,6 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
 import gems
-<<<<<<< HEAD
-
-=======
->>>>>>> e991f4739317d2a2b62346f29df062046352b774
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
@@ -67,12 +63,12 @@ async def on_member_remove(member):
 #Quand il y'a un message
 @client.event
 async def on_message(message):
-<<<<<<< HEAD
+
     await gems.client.process_commands(message)
  ###################### Commande gems.py #######################
 
 gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
-=======
+
     DB.newPlayer(message.author.id)
     meco = message.content
 
@@ -83,7 +79,6 @@ gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
  ###################### Commande gems.py #######################
 
 gems_client = commands.Bot(command_prefix = "{0}".format(prefix))
->>>>>>> e991f4739317d2a2b62346f29df062046352b774
 
 @gems_client.command(pass_context=True)
 async def crime(ctx):
@@ -122,9 +117,6 @@ async def pay(ctx):
     await gems.pay(ctx,nom,don)
 
 ###################### Commande gems.py #######################
-<<<<<<< HEAD
 gems_client.run(TOKEN)
-=======
 
 client.run(TOKEN)
->>>>>>> e991f4739317d2a2b62346f29df062046352b774
