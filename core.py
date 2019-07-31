@@ -24,7 +24,7 @@ async def on_ready():
     print('Connecté avec le nom : {0.user}'.format(client))
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
-    print(' | Core Module | >> Connecté !')
+    print('| Core Module | >> Connecté !')
     await roles.on_ready()
     await gems.on_ready()
     DB.dbExist()
@@ -72,13 +72,13 @@ async def on_message(message):
     await gems.client.process_commands(message)
  ###################### Commande gems.py #######################
 
-gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
+#gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 
     DB.newPlayer(message.author.id)
 
  ###################### Commande gems.py #######################
 
-gems_client = commands.Bot(command_prefix = "{0}".format(prefix))
+gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 
 @gems_client.command(pass_context=True)
 async def crime(ctx):

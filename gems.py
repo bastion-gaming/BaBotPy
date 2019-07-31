@@ -18,7 +18,7 @@ couldown_l = 8 # l pour long
 couldown_c = 4 # c pour court
 # nb de sec nécessaire entre 2 commandes
 
-TOKEN = open("token","r").read().replace('\n','')
+#TOKEN = open("token","r").read().replace('\n','')
 # ************** Bastion's Gems
 # ************** Bot_RPG
 # le token permet de reconnaitre mon bot
