@@ -17,9 +17,15 @@ couldown_xl = 16
 couldown_l = 8 # l pour long
 couldown_c = 4 # c pour court
 # nb de sec nécessaire entre 2 commandes
-PREFIX = open("prefix.txt","r").read().replace('\n','')
 
-client = commands.Bot(command_prefix = "{0}".format(PREFIX))
+TOKEN = open("token","r").read().replace('\n','')
+# ************** Bastion's Gems
+# ************** Bot_RPG
+# le token permet de reconnaitre mon bot
+prefix = open("prefix.txt","r").read().replace('\n','')
+# on récupère le prefix dans un fichier
+client = commands.Bot(command_prefix = "{0}".format(prefix))
+# on ouvre la base de donnée une fois au lancement du Bot
 
 @client.event  # event decorator/wrapper. More on decorators here: https://pythonprogramming.net/decorators-intermediate-python-tutorial/
 async def on_ready():  # method expected by client. This runs once when connected
@@ -31,18 +37,51 @@ def spam(ID,couldown):
 	return(time < t.time()-couldown)
 
 def addGems(ID, nbGems):
-    """
-    Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
-    Si vous souhaitez en retirer mettez un nombre négatif.
-    """
-    old_value = DB.valueAt(ID, "gems")
-    new_value = old_value + nbGems
-    DB.updateField(ID, "gems", "new_value")
-    print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+	"""
+	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
+	Si vous souhaitez en retirer mettez un nombre négatif.
+	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
+	strictement inférieur à 0.
+	"""
+	old_value = DB.valueAt(ID, "gems")
+	new_value = int(old_value) + nbGems
+	if new_value >= 0:
+		DB.updateField(ID, "gems", "new_value")
+		print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+	else:
+		print("Il n'y a pas assez sur ce compte !")
+	return str(new_value)
 
-    return new_value
+def nbElements(ID, nameElem):
+	"""
+	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
+	"""
+	inventory = DB.valueAt(ID, "inventory")
+	if nameElem in inventory:
+		return inventory[nameElem]
+	else:
+		return 0
 
-@client.command(pass_context=True)
+def addInv(ID, nameElem, nbElem):
+	"""
+	Permet de modifier le nombre de nameElem pour ID
+	Pour en retirer mettez nbElemn en négatif
+	"""
+	inventory = DB.valueAt(ID, "inventory")
+	if nbElements(ID, nameElem) > 0 and nbElem < 0:
+		old = inventory[nameElem]
+		inventory[nameElem] = old + nbElem
+	elif nbElem >= 0:
+		if nbElements(ID, nameElem) == 0:
+			inventory[nameElem] = nbElem
+		else :
+			old = inventory[nameElem]
+			inventory[nameElem] = old + nbElem
+	else:
+		print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		return 404
+
+
 async def crime(ctx):
     """commets un crime et gagne des gems !"""
     ID = ctx.message.author.id
@@ -51,13 +90,13 @@ async def crime(ctx):
         gain = r.randint(5,10)
         msg = message_crime[r.randint(0,3)]+str(gain)+":gem:"
         addGems(ID, gain)
-        DB.updateField(ID, "com_time", t.time())
+        DB.updateComTime(ID)
     else:
         msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 
     await ctx.message.channel.send(msg)
 
-@client.command(pass_context=True)
+
 async def bal(ctx):
     """êtes vous riche ou pauvre ? bal vous le dit """
     ID = ctx.message.author.id
@@ -65,6 +104,136 @@ async def bal(ctx):
         DB.updateField(ID, "com_time", t.time())
         gem = DB.valueAt(ID, "gems")
         msg = "tu as actuellement : "+str(gem)+" :gem: !"
+        DB.updateComTime(ID)
     else:
         msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
     await ctx.message.channel.send(msg)
+
+
+
+async def gamble(ctx,valeur):
+	"""| gamble [valeur] |\n avez vous l'ame d'un parieur ?  """
+	valeur = int(valeur)
+	ID = ctx.message.author.id
+	if spam(ID,couldown_xl):
+		if r.randint(0,3) == 0:
+			gain = valeur*3
+			# l'espérence est de 0 sur la gamble
+			msg = message_gamble[r.randint(0,3)]+str(gain)+":gem:"
+			addGems(ID, gain)
+		else:
+			val = 0-valeur
+			addGems(ID,val)
+			msg = "dommage tu as perdu "+str(valeur)+":gem:"
+		DB.updateComTime(ID)
+	else:
+		msg = "il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
+	await ctx.message.channel.send(msg)
+
+
+
+async def buy (ctx,item,nb):
+	"""permet d'acheter une pioche"""
+	ID = ctx.message.author.id
+	if spam(ID,couldown_l):
+		nb = int(nb)
+		prix = 0 - (20*nb)
+		addGems(ID, prix)
+		addInv(ID, "pickaxe", nb)
+		msg = "tu as désormais {0} pioche.s en plus !".format(nb)
+	else :
+		msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+	await ctx.message.channel.send(msg)
+
+
+async def mine (ctx):
+	""" minez compagnons !! vous pouvez récuperer 1 à 2 cobblestone.s ou 1 d'iron"""
+	ID = ctx.message.author.id
+	if spam(ID,couldown_l):
+		if nbElements(ID, "pickaxe") >= 1:
+			if r.randint(0,19)==0:
+				addInv(ID,"pickaxe," -1)
+				msg = "pas de chance tu as cassé ta pioche !"
+			else :
+				if r.randint(0,7)==0:
+					addInv(ID, "iron", 1)
+					msg = "tu as obtenue un bloc de iron !"
+				else:
+					addInv(ID, "cobblestone", 1)
+					msg = "tu as obtenue un bloc.s de cobblestone.s !"
+		else:
+			msg = "il faut acheter une pioche !"
+		DB.updateComTime(ID)
+	else:
+		msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+	await ctx.message.channel.send(msg)
+
+
+async def inv (ctx):
+	"""permet de voir ce que vous avez dans le ventre !"""
+	ID = ctx.message.author.id
+	if spam(ID,couldown_c):
+		inv = DB.valueAt(ID, "inventory")
+		print (inv)
+		msg="**ton inventaire**\n```"
+		for x in inv:
+			msg = msg+"- "+str(x)+": "+str(inv[x])+"\n"
+		msg = msg +"```"
+		#msg = "**ton inventaire**\n```-pickaxe.s : "+str(inv[0])+"\n-cobblestone.s : "+str(inv[1])+"\n-iron.s : "+str(inv[2])+"\n-gold: "+str(inv[3])+"\n-diamond : "+str(inv[4])+"```"
+		DB.updateComTime(ID)
+	else:
+		msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
+	await ctx.message.channel.send(msg)
+
+
+
+async def sell (ctx,item,nb):
+	"""| sell [item] [nombre] |\nLes valeurs d'échange :\ncobblestone => 1\niron => 10"""
+	#cobble 1, iron 10, gold 50, diams 100
+	ID = ctx.message.author.id
+	if spam(ID,couldown_l):
+		if nbElements(ID, item) >= nb:
+			Tnb = 0 - nb
+			addInv(ID, item, Tnb)
+			if item == "cobblestone":
+				gain = 1
+			elif item == "iron":
+				gain = r.randint(9,11)
+			elif item == "gold":
+				gain = r.randint(45, 56)
+			elif item == "diamond":
+				gain = r.randint(98, 120)
+			addGems(ID, gain)
+		else:
+			print("Pas assez d'élement")
+			msg = "Vous n'avez pas assez de "+str(item)+" il vous en reste : "+ str(nbElem(ID, item))
+		DB.updateComTime(ID)
+	else:
+		msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+	await ctx.message.channel.send(msg)
+
+async def pay (ctx,nom,gain):
+	"""| pay [nom] [gain] |\n donner de l'argent à vos amis ! """
+	ID = ctx.message.author.id
+	if spam(ID,couldown_l):
+		try:
+			gain = int(gain)
+			if len(nom) == 21 :
+				ID_recu = nom[2:20]
+			elif len(nom) == 22 :
+				ID_recu = nom[3:21]
+			else :
+				ID_recu = "une autre erreur ?"
+			Tgain = 0 - gain
+			if addGems(ID, Tgain) >= 0:
+				addGems(ID_recu, gain)
+				msg = "<@{0}> donne {1}:gem: à <@{2}> !".format(ID,gain,ID_recu)
+			else:
+				msg = "<@{0}> n'a pas assez pour donner à <@{2}> !".format(ID,gain,ID_recu)
+			DB.updateComTime(ID)
+		except ValueError:
+			msg = "la commande est mal formulée"
+			pass
+	else:
+		msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+	await ctx.message.channel.send(msg)

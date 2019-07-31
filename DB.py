@@ -1,6 +1,7 @@
 import discord
 from tinydb import TinyDB, Query
 import datetime as dt
+import time as t
 
 DB_NOM = 'bastionDB.json'
 db = TinyDB(DB_NOM)
@@ -67,3 +68,10 @@ async def count(message):
         await message.channel.send('Aucun utilisaeur enregistrer dans la BDD')
     else:
         await message.channel.send(f'{l} utilisateur inscrit')
+    return l
+
+def updateComTime(ID):
+    """
+    Met à jour la date du dernier appel à une fonction
+    """
+    updateField(ID, "com_time", t.time())
