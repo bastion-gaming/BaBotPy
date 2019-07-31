@@ -19,10 +19,6 @@ async def on_ready():  # method expected by client. This runs once when connecte
     # Le code ici est une mauvaise idée car il crée une nouvelle table à chaque connexion. mieux vaut créé sa propre table
     # de son coté et uniquement l'update apres.
 
-async def autorole(member):
-    role = discord.utils.get(member.guild.roles, name="Joueurs")
-    await member.add_roles(role)
-
 @client.event
 async def on_member_remove(member):
     channel = client.get_channel(417445503110742048)
