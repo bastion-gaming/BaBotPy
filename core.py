@@ -1,6 +1,7 @@
 import discord
 import sqlite3
 import welcome as wel
+import roles
 import datetime as t
 import DB
 from discord.ext import commands
@@ -25,12 +26,13 @@ async def on_ready():
     print('PREFIX = '+str(PREFIX))
     print('BastionBot '+VERSION+' | Core Module | >> Connecté !')
     await wel.on_ready()
+    await roles.on_ready()
     await gems.on_ready()
     DB.dbExist()
 
 @client.event
 async def on_member_join(member):
-    await wel.autorole(member)
+    await roles.autorole(member)
     channel = client.get_channel(478003352551030798)
     time = t.time()
     #data = sqlite3.connect('connect.db')
@@ -63,7 +65,12 @@ async def on_member_remove(member):
 @client.event
 async def on_message(message):
     DB.newPlayer(message.author.id)
-    
+    meco = message.content
+
+    if meco.startswith(PREFIX+"create game"):
+        meco2 = meco.replace(PREFIX+"create game ", "")
+        await roles.create(message, meco2)
+
  ###################### Commande gems.py #######################
 
 gems_client = commands.Bot(command_prefix = "{0}".format(prefix))
@@ -71,11 +78,11 @@ gems_client = commands.Bot(command_prefix = "{0}".format(prefix))
 @gems_client.command(pass_context=True)
 async def crime(ctx):
 	await gems.crime(ctx)
-    
+
 @gems_client.command(pass_context=True)
 async def bal(ctx):
     await gems.bal(ctx)
-    
+
 @gems_client.command(pass_context=True)
 async def inv(ctx):
     await gems.inv(ctx)
@@ -95,7 +102,7 @@ async def gamble(ctx):
 @gems_client.command(pass_context=True)
 async def buy(ctx):
     await gems.buy(ctx,item,nombre)
- 
+
 @gems_client.command(pass_context=True)
 async def sell(ctx):
     await gems.sell(ctx,item,nombre)
