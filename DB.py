@@ -26,7 +26,7 @@ def newPlayer(ID):
     if db.search(Query().ID == ID) == []:
         #Init du joueur avec les champs de base
         #########################MODIFIER ICI SI NVX CHAMPS#####################
-        db.insert({'ID': ID, 'time': str(dt.datetime.now()), 'gems':'0', 'inventory':inv})
+        db.insert({'ID': ID, 'arrival': str(dt.datetime.now()),'com_time': 0,'gems':0, 'inventory':inv})
         ########################################################################
         print("Le joueur a été ajouté !")
         return 100

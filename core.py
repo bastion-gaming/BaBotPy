@@ -2,7 +2,6 @@ import discord
 import sqlite3
 import welcome as wel
 import datetime as t
-import gems
 import DB
 
 # initialisation des variables.
@@ -12,21 +11,18 @@ VERSION = open("version.txt").read().replace("\n","")
 TOKEN = open("token", "r").read().replace("\n","")
 
 client = discord.Client()
-PREFIX = DEFAUT_PREFIX
+PREFIX = open("prefix.txt","r").read().replace('\n','')
+bot = commands.Bot(command_prefix = "{0}".format(PREFIX))
+
 # Au démarrage du bot.
 @client.event
 async def on_ready():
     print('Connecté avec le nom : {0.user}'.format(client))
-#<<<<<<< HEAD
-    print('BastionBot | Core Module | Python version | >> Connecté !')
-#=======
+    print('PREFIX = '+str(PREFIX))
     print('BastionBot '+VERSION+' | Core Module | >> Connecté !')
     await wel.on_ready()
-#>>>>>>> 7b6ad3b766efcde72db729b9d00f4f9290970995
     await gems.on_ready()
     DB.dbExist()
-
-
 
 @client.event
 async def on_member_join(member):
@@ -39,7 +35,7 @@ async def on_member_join(member):
     if DB.newPlayer(id) == 100:
         await channel.send(f""":black_small_square:Bienvenue {member.mention} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================""")
     else:
-
+        await channel.send(f"""=====================\nBon retour parmis nous ! {member.mention}\n\n=====================""")
     #c.execute("""SELECT name FROM users WHERE id = ?""", (id,))
     #if c.fetchone() == None:
         # si le l'id est inconnue c'est une nouvelle personne qui se connecte !
@@ -60,10 +56,7 @@ async def on_member_remove(member):
 
 
 #Quand il y'a un message
-#@client.event
-#async def on_message(message):
-
-
-
-
+@client.event
+async def on_message(message):
+    DB.newPlayer(message.author.id)
 client.run(TOKEN)
