@@ -14,9 +14,8 @@ DEFAUT_PREFIX = "!"
 
 VERSION = open("version.txt").read().replace("\n","")
 TOKEN = open("token", "r").read().replace("\n","")
-
-client = discord.Client()
-PREFIX = open("prefix.txt","r").read().replace('\n','')
+PREFIX = open("prefix.txt","r").read().replace("\n","")
+client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 
 # Au démarrage du bot.
 @client.event
@@ -25,9 +24,6 @@ async def on_ready():
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
     print('| Core Module | >> Connecté !')
-    await roles.on_ready()
-    await gems.on_ready()
-    DB.dbExist()
 
 @client.event
 async def on_member_join(member):
@@ -38,9 +34,10 @@ async def on_member_join(member):
     #c = data.cursor()
     id = member.id
     if DB.newPlayer(id) == 100:
-        await channel.send(f""":black_small_square:Bienvenue {member.mention} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================""")
+        msg = ":black_small_square:Bienvenue {member.mention} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n====================="
     else:
-        await channel.send(f"""=====================\nBon retour parmis nous ! {member.mention}\n\n=====================""")
+        msg = "=====================\nBon retour parmis nous ! {member.mention}\n\n====================="
+    await channel.send(msg)
     #c.execute("""SELECT name FROM users WHERE id = ?""", (id,))
     #if c.fetchone() == None:
         # si le l'id est inconnue c'est une nouvelle personne qui se connecte !
@@ -57,66 +54,55 @@ async def on_member_join(member):
 @client.event
 async def on_member_remove(member):
     channel = client.get_channel(478003352551030798)
-    await channel.send(f"""{member.mention} nous a quitté, pourtant si jeune...""")
+    await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
 
 
-#Quand il y'a un message
-@client.event
-async def on_message(message):
-    meco = message.content
-
-    if meco.startswith(PREFIX+"create game"):
-        meco2 = meco.replace(PREFIX+"create game ", "")
-        await roles.create(message, meco2)
-
-    await gems.client.process_commands(message)
- ###################### Commande gems.py #######################
-
-#gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
-
-    DB.newPlayer(message.author.id)
+# #Quand il y'a un message
+# @client.event
+# async def on_message(message):
+#     meco = message.content
+#     if meco.startswith(PREFIX+"create game"):
+#         meco2 = meco.replace(PREFIX+"create game ", "")
+#         await roles.create(message, meco2)
 
  ###################### Commande gems.py #######################
 
-gems_client = commands.Bot(command_prefix = "{0}".format(PREFIX))
-
-@gems_client.command(pass_context=True)
+@client.command(pass_context=True)
 async def crime(ctx):
-	await gems.crime(ctx)
+    await gems.crime(ctx)
 
-@gems_client.command(pass_context=True)
+@client.command(pass_context=True)
 async def bal(ctx):
     await gems.bal(ctx)
 
-@gems_client.command(pass_context=True)
+@client.command(pass_context=True)
 async def inv(ctx):
     await gems.inv(ctx)
 
-@gems_client.command(pass_context=True)
+@client.command(pass_context=True)
 async def mine(ctx):
     await gems.mine(ctx)
 
-@gems_client.command(pass_context=True)
+@client.command(pass_context=True)
 async def begin(ctx):
     await gems.begin(ctx)
 
-@gems_client.command(pass_context=True)
-async def gamble(ctx):
+@client.command(pass_context=True)
+async def gamble(ctx,mise):
     await gems.gamble(ctx,mise)
 
-@gems_client.command(pass_context=True)
-async def buy(ctx):
+@client.command(pass_context=True)
+async def buy(ctx,item,nombre):
     await gems.buy(ctx,item,nombre)
 
-@gems_client.command(pass_context=True)
-async def sell(ctx):
+@client.command(pass_context=True)
+async def sell(ctx,item,nombre):
     await gems.sell(ctx,item,nombre)
 
-@gems_client.command(pass_context=True)
-async def pay(ctx):
+@client.command(pass_context=True)
+async def pay(ctx,nom,don):
     await gems.pay(ctx,nom,don)
 
 ###################### Commande gems.py #######################
-gems_client.run(TOKEN)
 
 client.run(TOKEN)
