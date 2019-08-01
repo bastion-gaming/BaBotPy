@@ -62,13 +62,17 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 ## En cours/test
 
 Core
+
 Rôles
+
 Play-bot (alias Gems)
+
 DB
 
 ## Non commencé
 
 Level
-Vote
-Game-Asker
 
+Vote
+
+Game-Asker
