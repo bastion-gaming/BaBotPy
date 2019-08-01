@@ -24,6 +24,8 @@ async def on_ready():
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
     print('| Core Module | >> Connecté !')
+    await roles.on_ready()
+    await gems.on_ready()
 
 @client.event
 async def on_member_join(member):
@@ -34,9 +36,9 @@ async def on_member_join(member):
     #c = data.cursor()
     id = member.id
     if DB.newPlayer(id) == 100:
-        msg = ":black_small_square:Bienvenue {member.mention} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n====================="
+        msg = ":black_small_square:Bienvenue {} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
     else:
-        msg = "=====================\nBon retour parmis nous ! {member.mention}\n\n====================="
+        msg = "=====================\nBon retour parmis nous ! {}\n\n=====================".format(member.mention)
     await channel.send(msg)
     #c.execute("""SELECT name FROM users WHERE id = ?""", (id,))
     #if c.fetchone() == None:
@@ -57,13 +59,12 @@ async def on_member_remove(member):
     await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
 
 
-# #Quand il y'a un message
-# @client.event
-# async def on_message(message):
-#     meco = message.content
-#     if meco.startswith(PREFIX+"create game"):
-#         meco2 = meco.replace(PREFIX+"create game ", "")
-#         await roles.create(message, meco2)
+ ###################### Commande roles.py #######################
+
+@client.command(pass_context=True)
+async def creategame(ctx, game, categorie):
+    await roles.creategame(ctx, game, categorie)
+
 
  ###################### Commande gems.py #######################
 
