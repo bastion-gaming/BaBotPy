@@ -1,4 +1,4 @@
-# bot-discord
+# Ba-Bot
 Bot discord de bastion
 
 Suite au décès de mewna notre bot, aimée de tous sauf lorsqu'elle buggait, nous sommes dans
@@ -7,7 +7,7 @@ aussi des nouveaux.
 
 ## Le nom
 
-Question triviale mais néanmoins importante, le nom du bot. On laisse libre cours aux propositions.
+Il se nomme Ba-Bot
 
 ## La participation
 
