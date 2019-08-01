@@ -1,6 +1,7 @@
 import random as r
 import time as t
 import DB
+import discord
 
 message_crime = ["You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal ",
 "tu as volé une pomme qui vaut ", "tu as gangé le loto ! prends tes ", "j'ai plus d'idée prends ça "]
@@ -13,6 +14,13 @@ couldown_xl = 16
 couldown_l = 8 # l pour long
 couldown_c = 4 # c pour court
 # nb de sec nécessaire entre 2 commandes
+
+client = discord.Client()
+
+@client.event  # event decorator/wrapper.
+async def on_ready():  # méthode attendue par le client. Cela fonctionne une fois connecté
+    print('| Gems Module | >> Connecté !')  # notification de login.
+
 
 def spam(ID,couldown):
 	time = DB.valueAt(ID, "com_time")
