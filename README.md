@@ -75,4 +75,6 @@ Level
 
 Vote
 
+Stat
+
 Game-Asker
