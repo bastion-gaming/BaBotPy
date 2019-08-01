@@ -29,11 +29,9 @@ def newPlayer(ID):
         #########################MODIFIER ICI SI NVX CHAMPS#####################
         db.insert({'ID': ID, 'arrival': str(dt.datetime.now()),'com_time': 0,'gems':0, 'inventory':inv})
         ########################################################################
-        print("Le joueur a été ajouté !")
-        return 100
+        return ("Le joueur a été ajouté !")
     else:
-        print("Le joueur existe déjà")
-        return 101
+        return ("Le joueur existe déjà")
 
 
 def updateField(ID, fieldName, fieldValue):
@@ -67,7 +65,7 @@ async def count(message):
     if l == 0:
         await message.channel.send('Aucun utilisaeur enregistrer dans la BDD')
     else:
-        await message.channel.send(f'{l} utilisateur inscrit')
+        await message.channel.send('{l} utilisateur inscrit')
     return l
 
 def updateComTime(ID):
