@@ -1,13 +1,14 @@
 import discord
-import sqlite3
-#import welcome as wel
-import roles
-import datetime as t
-import DB
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
+import sqlite3
+import datetime as t
+#import welcome as wel
+import roles
+import DB
 import gems
+import gestion as ges
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
@@ -46,14 +47,23 @@ async def on_member_remove(member):
     channel = client.get_channel(417445503110742048)
     await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
 
- ###################### Commande roles.py #######################
+####################### Commande roles.py #######################
 
 @client.command(pass_context=True)
 async def creategame(ctx, game, categorie):
     await roles.creategame(ctx, game, categorie)
 
+###################### Commande roles.py #######################
 
- ###################### Commande gems.py #######################
+###################### Commande gestion.py #####################
+
+@client.command(pass_context=True)
+async def supp(ctx,nb):
+    await ges.supp(ctx,nb)
+
+###################### Commande gestion.py #####################
+
+####################### Commande gems.py #######################
 
 @client.command(pass_context=True)
 async def crime(ctx):
@@ -90,7 +100,6 @@ async def sell(ctx,item,nombre):
 @client.command(pass_context=True)
 async def pay(ctx,nom,don):
     await gems.pay(ctx,nom,don)
-
-###################### Commande gems.py #######################
+####################### Commande gems.py #######################
 
 client.run(TOKEN)
