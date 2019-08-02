@@ -30,7 +30,7 @@ async def on_ready():
 @client.event
 async def on_member_join(member):
     await roles.autorole(member)
-    channel = client.get_channel(478003352551030798)
+    channel = client.get_channel(417445503110742048)
     time = t.time()
     #data = sqlite3.connect('connect.db')
     #c = data.cursor()
@@ -40,24 +40,11 @@ async def on_member_join(member):
     else:
         msg = "=====================\nBon retour parmis nous ! {}\n\n=====================".format(member.mention)
     await channel.send(msg)
-    #c.execute("""SELECT name FROM users WHERE id = ?""", (id,))
-    #if c.fetchone() == None:
-        # si le l'id est inconnue c'est une nouvelle personne qui se connecte !
-    #    c.execute(""" INSERT INTO users VALUES(?,?,?) """, (id,member.mention, time))
-    #    c.execute("""UPDATE compte SET nombre = nombre +1 WHERE ID = total""") #incrémente de 1 à chaque nouvelle personne
-    #    data.commit()
-    #    data.close()
-    #    print(f'======\nAjout de {member.mention} à la BDD')
-    #else :
-        # si le nom est déjà dans la BDD on ne le recompte pas une deuxième fois
-    #    await channel.send(f"""Ravis de te revoir parmis nous {member.mention} !!""")
-
 
 @client.event
 async def on_member_remove(member):
-    channel = client.get_channel(478003352551030798)
+    channel = client.get_channel(417445503110742048)
     await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
-
 
  ###################### Commande roles.py #######################
 
