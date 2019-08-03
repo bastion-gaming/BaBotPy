@@ -19,7 +19,7 @@ class Roles(commands.Cog):
     @commands.command(pass_context=True)
     async def creategame(self, ctx, game, categorie):
         """
-        Permet de créer un nouveau role pour un jeu de d'ajouter ce jeu dans un grand salon
+        Permet de créer un nouveau role pour un jeu et d'ajouter ce jeu dans un grand salon
         Paramètres:
         - game: Nom du jeu/role
         - categorie: Nom du grand salon (combat/societe/tirs/voiture/rpg/sandbox/strategie/divers)
@@ -49,6 +49,8 @@ class Roles(commands.Cog):
                     channeladd = guild.get_channel(589946380416581632)
                 elif categorie == "strategie":
                     channeladd = guild.get_channel(589953946639007764)
+                elif categorie == "divers":
+                    channeladd = guild.get_channel(590664052318142474)
                 else:
                     channeladd = guild.get_channel(589942497678196764)# 590664052318142474
                 await channeladd.set_permissions(rolesearch, overwrite=discord.PermissionOverwrite(read_messages=True))

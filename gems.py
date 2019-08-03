@@ -6,7 +6,7 @@ from discord.ext.commands import bot
 from discord.utils import get
 
 message_crime = ["You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal ",
-"tu as volé une pomme qui vaut ", "tu as gangé le loto ! prends tes ", "j'ai plus d'idée prends ça "]
+"tu as volé une pomme qui vaut ", "tu as gangé le loto ! prends tes ", "j'ai plus d'idée prends ça: "]
 # 4 phrases
 message_gamble = ["tu as remporté le pari ! tu obtiens ","Une grande victoire pour toi ! tu gagnes ",
 "bravo prends ", "heu.... "]
@@ -21,6 +21,8 @@ def spam(ID,couldown):
 	time = DB.valueAt(ID, "com_time")
 	# on récupère le la date de la dernière commande
 	return(time < t.time()-couldown)
+
+
 
 def addGems(ID, nbGems):
 	"""
@@ -38,6 +40,8 @@ def addGems(ID, nbGems):
 		print("Il n'y a pas assez sur ce compte !")
 	return str(new_value)
 
+
+
 def nbElements(ID, nameElem):
 	"""
 	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
@@ -47,6 +51,8 @@ def nbElements(ID, nameElem):
 		return inventory[nameElem]
 	else:
 		return 0
+
+
 
 def addInv(ID, nameElem, nbElem):
 	"""
@@ -66,15 +72,21 @@ def addInv(ID, nameElem, nbElem):
 		return 404
 	DB.updateField(ID, "inventory", inventory)
 
+#===============================================================
+
 class Gems(commands.Cog):
 
 	def __init__(self,ctx):
 		return(None)
 
+
+
 	@commands.command(pass_context=True)
 	async def begin(self, ctx):
 		ID = ctx.author.id
 		await ctx.channel.send(DB.newPlayer(ID))
+
+
 
 	@commands.command(pass_context=True)
 	async def crime(self, ctx):
@@ -91,6 +103,8 @@ class Gems(commands.Cog):
 
 		await ctx.channel.send(msg)
 
+
+
 	@commands.command(pass_context=True)
 	async def bal(self, ctx):
 		"""êtes vous riche ou pauvre ? bal vous le dit """
@@ -103,6 +117,7 @@ class Gems(commands.Cog):
 		else:
 			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
+
 
 
 	@commands.command(pass_context=True)
@@ -126,43 +141,93 @@ class Gems(commands.Cog):
 		await ctx.channel.send(msg)
 
 
+
 	@commands.command(pass_context=True)
 	async def buy (self, ctx,item,nb):
-		"""permet d'acheter une pioche"""
+		"""permet d'acheter une pioche ou une canne à pèche (fishingrod)"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			nb = int(nb)
-			prix = 0 - (20*nb)
-			addGems(ID, prix)
-			addInv(ID, "pickaxe", nb)
-			msg = "tu as désormais {0} pioche.s en plus !".format(nb)
+			if item == "pioche" OR item == "pickaxe":
+				prix = 0 - (20*nb)
+				addGems(ID, prix)
+				addInv(ID, "pickaxe", nb)
+				if nb == 1:
+					msg = "tu as désormais {0} pioche en plus !".format(nb)
+				else :
+					msg = "tu as désormais {0} pioches en plus !".format(nb)
+			elif item == "fishingrod":
+				prix = 0 - (15*nb)
+				addGems(ID, prix)
+				addInv(ID, "fishingrod", nb)
+				if nb == 1:
+					msg = "tu as désormais {0} canne à peche en plus !".format(nb)
+				else :
+					msg = "tu as désormais {0} cannes à peche en plus !".format(nb)
+			else :
+				msg = "Tu ne peux pas acheter cette item"
 		else :
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
+
+
 	@commands.command(pass_context=True)
 	async def mine (self, ctx):
-		""" minez compagnons !! vous pouvez récuperer 1 à 2 cobblestone.s ou 1 d'iron"""
+		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de cobblestones ou 1 lingot d'iron"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			print(nbElements(ID, "pickaxe"))
 			if nbElements(ID, "pickaxe") >= 1:
-				if r.randint(0,19)==0:
+				if r.randint(0,49)==0:
 					addInv(ID,"pickaxe," -1)
 					msg = "pas de chance tu as cassé ta pioche !"
 				else :
-					if r.randint(0,7)==0:
+					if r.randint(0,15)==0:
 						addInv(ID, "iron", 1)
-						msg = "tu as obtenue un bloc de iron !"
+						msg = "tu as obtenue un lingot d'iron !"
 					else:
-						addInv(ID, "cobblestone", 1)
-						msg = "tu as obtenue un bloc.s de cobblestone.s !"
+						nbcobble = r.randint(1,5)
+						addInv(ID, "cobblestone", nbcobble)
+						if nbcobble == 1 :
+							msg = "tu as obtenue un bloc de cobblestone !"
+						else :
+							msg = "tu as obtenue {} blocs de cobblestone !".format(nbcobble)
 			else:
 				msg = "il faut acheter une pioche !"
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def fish (self, ctx):
+		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish:"""
+		ID = ctx.author.id
+		if spam(ID,couldown_l):
+			print(nbElements(ID, "fishingrod"))
+			if nbElements(ID, "fishingrod") >= 1:
+				if r.randint(0,49)==0:
+					addInv(ID,"fishingrod," -1)
+					msg = "pas de chance tu as cassé ta canne à peche !"
+				else :
+					if r.randint(0,15)==0:
+						addInv(ID, "tropical_fish", 1)
+						msg = "tu as obtenue 1 :tropical_fish: !"
+					else:
+						nbfish = r.randint(1,5)
+						addInv(ID, "fish", nbfish)
+						msg = "tu as obtenue {} :fish: !".format(nbfish)
+			else:
+				msg = "il faut acheter une canne à peche !"
+			DB.updateComTime(ID)
+		else:
+			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+		await ctx.channel.send(msg)
+
+
 
 	@commands.command(pass_context=True)
 	async def inv (self, ctx):
@@ -180,6 +245,8 @@ class Gems(commands.Cog):
 		else:
 			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
+
+
 
 	@commands.command(pass_context=True)
 	async def sell (self, ctx,item,nb):
@@ -208,6 +275,8 @@ class Gems(commands.Cog):
 		else:
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
+
+
 
 	@commands.command(pass_context=True)
 	async def pay (self, ctx,nom,gain):
