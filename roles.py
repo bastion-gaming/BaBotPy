@@ -11,51 +11,57 @@ async def autorole(member):
     role = discord.utils.get(member.guild.roles, name="Joueurs")
     await member.add_roles(role)
 
+class Roles(commands.Cog):
 
-def creategame(message, game, categorie):
-	"""
-    Permet de créer un nouveau role pour un jeu de d'ajouter ce jeu dans un grand salon
-    Paramètres:
-    - game: Nom du jeu/role
-    - categorie: Nom du grand salon (combat/societe/tirs/voiture/rpg/sandbox/strategie/divers)
-    """
-    guild = message.guild
-    member = message.author
-    rolesearch = discord.utils.get(member.guild.roles, name=game)
-    if rolesearch == None:
-        await guild.create_role(name=game)
-        msg = "Le jeu '"+game+"' a été créé"
+    def __init__(self,ctx):
+        return(None)
 
-        if categorie != None:
-            rolesearch = discord.utils.get(member.guild.roles, name=game)
-            categorie = categorie.lower()
+    @commands.command(pass_context=True)
+    async def creategame(self, ctx, game, categorie):
+        """
+        Permet de créer un nouveau role pour un jeu de d'ajouter ce jeu dans un grand salon
+        Paramètres:
+        - game: Nom du jeu/role
+        - categorie: Nom du grand salon (combat/societe/tirs/voiture/rpg/sandbox/strategie/divers)
+        """
+        guild = ctx.guild
+        member = ctx.author
+        rolesearch = discord.utils.get(member.guild.roles, name=game)
+        if rolesearch == None:
+            await guild.create_role(name=game)
+            msg = "Le jeu '"+game+"' a été créé"
 
-            if categorie == "combat":
-                channeladd = guild.get_channel(589944955800256515)
-            elif categorie == "societe":
-                channeladd = guild.get_channel(589945591203889152)
-            elif categorie == "tirs":
-                channeladd = guild.get_channel(589946246437797888)
-            elif categorie == "voiture":
-                channeladd = guild.get_channel(589946276540448821)
-            elif categorie == "rpg":
-                channeladd = guild.get_channel(589946305917222916)
-            elif categorie == "sandbox":
-                channeladd = guild.get_channel(589946380416581632)
-            elif categorie == "strategie":
-                channeladd = guild.get_channel(589953946639007764)
+            if categorie != None:
+                rolesearch = discord.utils.get(member.guild.roles, name=game)
+                categorie = categorie.lower()
+
+                if categorie == "combat":
+                    channeladd = guild.get_channel(589944955800256515)
+                elif categorie == "societe":
+                    channeladd = guild.get_channel(589945591203889152)
+                elif categorie == "tirs":
+                    channeladd = guild.get_channel(589946246437797888)
+                elif categorie == "voiture":
+                    channeladd = guild.get_channel(589946276540448821)
+                elif categorie == "rpg":
+                    channeladd = guild.get_channel(589946305917222916)
+                elif categorie == "sandbox":
+                    channeladd = guild.get_channel(589946380416581632)
+                elif categorie == "strategie":
+                    channeladd = guild.get_channel(589953946639007764)
+                else:
+                    channeladd = guild.get_channel(589942497678196764)# 590664052318142474
+                await channeladd.set_permissions(rolesearch, overwrite=discord.PermissionOverwrite(read_messages=True))
+                msg = "Ajout d'un nouveau jeu dans la catégorie {}: {}".format(channeladd.mention, rolesearch.mention)
+                channel = guild.get_channel(417449076775321600)
+                return (channel.send(msg))
             else:
-                channeladd = guild.get_channel(590664052318142474)
-            await channeladd.set_permissions(rolesearch, overwrite=discord.PermissionOverwrite(read_messages=True))
-            msg = "Ajout d'un nouveau jeu dans la catégorie {}: {}".format(channeladd.mention, rolesearch.mention)
-            channel = guild.get_channel(417449076775321600)
-            return (channel.send(msg))
+                await ctx.channel.send(msg)
         else:
-            return(message.channel.send(msg))
-    else:
-        return(message.channel.send("Le jeu "+game+" existe déjà"))
+            await ctx.channel.send("Le jeu "+game+" existe déjà")
 
-
+def setup(bot):
+	bot.add_cog(Roles(bot))
 
 
 #async def create(message, meco):

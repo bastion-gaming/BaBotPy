@@ -5,10 +5,8 @@ from discord.utils import get
 import sqlite3
 import datetime as t
 #import welcome as wel
-import roles
 import DB
-import gems
-import gestion as ges
+import roles
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
@@ -25,8 +23,6 @@ async def on_ready():
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
     print('| Core Module | >> Connecté !')
-    await roles.on_ready()
-    await gems.on_ready()
 
 @client.event
 async def on_member_join(member):
@@ -49,57 +45,14 @@ async def on_member_remove(member):
 
 ####################### Commande roles.py #######################
 
-@client.command(pass_context=True)
-async def creategame(ctx, game, categorie):
-    await roles.creategame(ctx, game, categorie)
-
-###################### Commande roles.py #######################
+client.load_extension('roles')
 
 ###################### Commande gestion.py #####################
 
-@client.command(pass_context=True)
-async def supp(ctx,nb):
-    await ges.supp(ctx,nb)
-
-###################### Commande gestion.py #####################
+client.load_extension('gestion')
 
 ####################### Commande gems.py #######################
 
-@client.command(pass_context=True)
-async def crime(ctx):
-    await gems.crime(ctx)
-
-@client.command(pass_context=True)
-async def bal(ctx):
-    await gems.bal(ctx)
-
-@client.command(pass_context=True)
-async def inv(ctx):
-    await gems.inv(ctx)
-
-@client.command(pass_context=True)
-async def mine(ctx):
-    await gems.mine(ctx)
-
-@client.command(pass_context=True)
-async def begin(ctx):
-    await gems.begin(ctx)
-
-@client.command(pass_context=True)
-async def gamble(ctx,mise):
-    await gems.gamble(ctx,mise)
-
-@client.command(pass_context=True)
-async def buy(ctx,item,nombre):
-    await gems.buy(ctx,item,nombre)
-
-@client.command(pass_context=True)
-async def sell(ctx,item,nombre):
-    await gems.sell(ctx,item,nombre)
-
-@client.command(pass_context=True)
-async def pay(ctx,nom,don):
-    await gems.pay(ctx,nom,don)
-####################### Commande gems.py #######################
+client.load_extension('gems')
 
 client.run(TOKEN)
