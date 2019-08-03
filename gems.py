@@ -149,7 +149,7 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_l):
 			nb = int(nb)
 			if item == "pioche" OR item == "pickaxe":
-				prix = 0 - (20*nb)
+				prix = 0 - (15*nb)
 				addGems(ID, prix)
 				addInv(ID, "pickaxe", nb)
 				if nb == 1:
@@ -173,7 +173,7 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def mine (self, ctx):
+	async def mine(self, ctx):
 		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de cobblestones ou 1 lingot d'iron"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
@@ -224,7 +224,7 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def fish (self, ctx):
+	async def fish(self, ctx):
 		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish: ou 1 morceau de bois"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
@@ -254,13 +254,12 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def craft (self, ctx, item, nb):
+	async def craft(self, ctx, item, nb):
 		""" Craftons une pioche en fer: Pour cela tu aura besoin de 3 lingots d'iron et de 2 morceau de bois"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			if item == "iron_pickaxe":
-				print(nbElements(ID, "iron"))
-				print(nbElements(ID, "stick"))
+				print("iron: {}, stick: {}".format(nbElements(ID, "iron"), nbElements(ID, "stick")))
 				nb = int(nb)
 				nbIron = 3*nb
 				nbStick = 2*nb
@@ -315,12 +314,18 @@ class Gems(commands.Cog):
 				addInv(ID, item, -nb)
 				if item == "cobblestone":
 					coef = 1
+				elif item == "stick":
+					coef = 1
 				elif item == "iron":
 					coef = r.randint(9,11)
 				elif item == "gold":
 					coef = r.randint(45, 56)
 				elif item == "diamond":
 					coef = r.randint(98, 120)
+				elif item == "fish":
+					coef = r.randint(4, 6)
+				elif item == "tropical_fish":
+					coef = r.randint(25, 35)
 				gain = coef*nb
 				addGems(ID, gain)
 				msg ="tu as vendu {} {} pour {} :gem: !".format(nb,item,gain)
