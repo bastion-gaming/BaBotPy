@@ -178,8 +178,29 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			print(nbElements(ID, "pickaxe"))
-			if nbElements(ID, "pickaxe") >= 1:
-				if r.randint(0,49)==0:
+			#----------------- Pioche en fer -----------------
+			if nbElements(ID, "iron_pickaxe") >= 1:
+				if r.randint(0,59)==0:
+					addInv(ID,"pickaxe", -1)
+					msg = "pas de chance tu as cassé ta pioche en fer !"
+				else :
+					if r.randint(0,19)==0:
+						addInv(ID, "gold", 1)
+						msg = "tu as obtenue un lingot d'or !"
+					elif r.randint(0,39)==0:
+						addInv(ID, "diamond", 1)
+						msg = "tu as obtenue un diamant brut !"
+					else:
+						nbcobble = r.randint(1,5)
+						addInv(ID, "cobblestone", nbcobble)
+						if nbcobble == 1 :
+							msg = "tu as obtenue un bloc de cobblestone !"
+						else :
+							msg = "tu as obtenue {} blocs de cobblestone !".format(nbcobble)
+
+			#----------------- Pioche normal -----------------
+			elif nbElements(ID, "pickaxe") >= 1:
+				if r.randint(0,29)==0:
 					addInv(ID,"pickaxe," -1)
 					msg = "pas de chance tu as cassé ta pioche !"
 				else :
@@ -194,7 +215,7 @@ class Gems(commands.Cog):
 						else :
 							msg = "tu as obtenue {} blocs de cobblestone !".format(nbcobble)
 			else:
-				msg = "il faut acheter une pioche !"
+				msg = "il faut acheter ou crafter une pioche !"
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
@@ -204,7 +225,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def fish (self, ctx):
-		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish:"""
+		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish: ou 1 morceau de bois"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			print(nbElements(ID, "fishingrod"))
@@ -216,12 +237,47 @@ class Gems(commands.Cog):
 					if r.randint(0,15)==0:
 						addInv(ID, "tropical_fish", 1)
 						msg = "tu as obtenue 1 :tropical_fish: !"
+					elif r.randint(0,29)==0
+						addInv(ID, "stick", 1)
+						msg = "tu as obtenu 1 moceau de bois"
 					else:
 						nbfish = r.randint(1,5)
 						addInv(ID, "fish", nbfish)
 						msg = "tu as obtenue {} :fish: !".format(nbfish)
 			else:
 				msg = "il faut acheter une canne à peche !"
+			DB.updateComTime(ID)
+		else:
+			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def craft (self, ctx, item, nb):
+		""" Craftons une pioche en fer: Pour cela tu aura besoin de 3 lingots d'iron et de 2 morceau de bois"""
+		ID = ctx.author.id
+		if spam(ID,couldown_l):
+			if item == "iron_pickaxe":
+				print(nbElements(ID, "iron"))
+				print(nbElements(ID, "stick"))
+				nb = int(nb)
+				nbIron = 3*nb
+				nbStick = 2*nb
+				if nbElements(ID, "iron") >= nbIron AND nbElements(ID, "stick") >= nbStick:
+					addInv(ID, "iron_pickaxe", nb)
+					if nb == 1:
+						msg = "Bravo, tu as réussi à crafter {0} pioche en fer !".format(nb)
+					else :
+						msg = "Bravo, tu as réussi à crafter {0} pioches en fer !".format(nb)
+				elif nbElements(ID, "iron") < nbIron AND nbElements(ID, "stick") < nbStick:
+					msg = "tu n'as pas assez de lingot d'iron et de morceau de bois pour exécuter le craft !"
+				elif nbElements(ID, "iron") < nbIron:
+					msg = "tu n'as pas assez d'iron pour crafter!"
+				else:
+					msg = "tu n'as pas assez de morceau de bois pour exécuter le craft!"
+			else:
+				msg = "Impossible d'exécuter le craft de cette item !"
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
