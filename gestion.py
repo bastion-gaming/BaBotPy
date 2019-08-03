@@ -9,7 +9,7 @@ def permission(ctx):
 	perm = 0
 	roles = ctx.author.roles
 	for role in roles :
-		if (role.permissions.value & 0x8) == 0x8 :
+		if (role.permissions.value & 0x8) == 0x8 or role.name == "Inquisiteur du Bastion": # pas sur du nom du role
 			perm = 1
 			break
 	if perm == 1 :
