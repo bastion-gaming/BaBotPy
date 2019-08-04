@@ -23,6 +23,7 @@ async def on_ready():
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
     print('| Core Module | >> Connecté !')
+    await roles.on_ready()
 
 @client.event
 async def on_member_join(member):
