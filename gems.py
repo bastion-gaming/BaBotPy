@@ -23,6 +23,15 @@ def spam(ID,couldown):
 	return(time < t.time()-couldown)
 
 
+def nom_ID(nom):
+	if len(nom) == 21 :
+		ID = int(nom[2:20])
+	elif len(nom) == 22 :
+		ID = int(nom[3:21])
+	else :
+		print("mauvais nom")
+		ID = "prout"
+	return(ID)
 
 def addGems(ID, nbGems):
 	"""
@@ -106,13 +115,18 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def bal(self, ctx):
+	async def bal(self, ctx, nom = None):
 		"""êtes vous riche ou pauvre ? bal vous le dit """
 		ID = ctx.author.id
 		if spam(ID,couldown_c):
-			DB.updateField(ID, "com_time", t.time())
-			gem = DB.valueAt(ID, "gems")
-			msg = "tu as actuellement : "+str(gem)+" :gem: !"
+			print(nom)
+			if nom != None:
+				ID = nom_ID(nom)
+				gem = DB.valueAt(ID, "gems")
+				msg = nom+" a actuellement : "+str(gem)+" :gem: !"
+			else:
+				gem = DB.valueAt(ID, "gems")
+				msg = "tu as actuellement : "+str(gem)+" :gem: !"
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
@@ -148,7 +162,7 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			nb = int(nb)
-			if item == "pioche" OR item == "pickaxe":
+			if item == "pioche" or item == "pickaxe":
 				prix = 0 - (15*nb)
 				addGems(ID, prix)
 				addInv(ID, "pickaxe", nb)
@@ -237,7 +251,7 @@ class Gems(commands.Cog):
 					if r.randint(0,15)==0:
 						addInv(ID, "tropical_fish", 1)
 						msg = "tu as obtenue 1 :tropical_fish: !"
-					elif r.randint(0,29)==0
+					elif r.randint(0,29)==0:
 						addInv(ID, "stick", 1)
 						msg = "tu as obtenu 1 moceau de bois"
 					else:
@@ -263,13 +277,15 @@ class Gems(commands.Cog):
 				nb = int(nb)
 				nbIron = 3*nb
 				nbStick = 2*nb
-				if nbElements(ID, "iron") >= nbIron AND nbElements(ID, "stick") >= nbStick:
+				if nbElements(ID, "iron") >= nbIron and nbElements(ID, "stick") >= nbStick:
 					addInv(ID, "iron_pickaxe", nb)
+					addInv(ID, "stick", -nbStick)
+					addInv(ID, "iron", -nbIron)
 					if nb == 1:
 						msg = "Bravo, tu as réussi à crafter {0} pioche en fer !".format(nb)
 					else :
 						msg = "Bravo, tu as réussi à crafter {0} pioches en fer !".format(nb)
-				elif nbElements(ID, "iron") < nbIron AND nbElements(ID, "stick") < nbStick:
+				elif nbElements(ID, "iron") < nbIron and nbElements(ID, "stick") < nbStick:
 					msg = "tu n'as pas assez de lingot d'iron et de morceau de bois pour exécuter le craft !"
 				elif nbElements(ID, "iron") < nbIron:
 					msg = "tu n'as pas assez d'iron pour crafter!"
@@ -340,19 +356,14 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def pay (self, ctx,nom,gain):
+	async def pay (self, ctx, nom, gain):
 		"""| pay [nom] [gain] |\n donner de l'argent à vos amis ! """
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			try:
 				gain = int(gain)
 				don = -gain
-				if len(nom) == 21 :
-					ID_recu = int(nom[2:20])
-				elif len(nom) == 22 :
-					ID_recu = int(nom[3:21])
-				else :
-					ID_recu = "une autre erreur ?"
+				ID_recu = nom_ID(nom)
 				if int(DB.valueAt(ID, "gems")) >= 0:
 					print(ID_recu)
 					addGems(ID_recu, gain)
