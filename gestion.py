@@ -15,7 +15,7 @@ def permission(ctx):
 	for role in roles :
 		if role.name in perm[grade]:
 			return(True)
-	return(False))
+	return(False)
 
 class Gestion(commands.Cog):
 
