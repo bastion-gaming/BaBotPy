@@ -5,17 +5,17 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
 
+admin = 0
+Inquisiteur = 1
+Ambassadeur = 2
+perm = [["Baron du Bastion"],["Baron du Bastion","Inquisiteur du Bastion"],["Inquisiteur du Bastion","Baron du Bastion","Ambassadeur"]]
+
 def permission(ctx):
-	perm = 0
-	roles = ctx.author.roles
-	for role in roles :
-		if (role.permissions.value & 0x8) == 0x8 or role.name == "Inquisiteur du Bastion": # pas sur du nom du role
-			perm = 1
-			break
-	if perm == 1 :
-		return(True)
-	else :
-		return(False)
+    roles = ctx.author.roles
+    for role in roles :
+        if role.name in perm[grade]:
+            return(True)
+    return(False))
 
 class Gestion(commands.Cog):
 
@@ -35,7 +35,7 @@ class Gestion(commands.Cog):
 	@commands.command(pass_context=True)
 	async def supp(self, ctx, nb):
 		"""suprime [nombre] de message dans le channel """
-		if permission(ctx):
+		if permission(ctx,Inquisiteur):
 			try :
 				nb = int(nb)
 				if nb <= 20 :
