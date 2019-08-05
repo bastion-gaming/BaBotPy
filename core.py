@@ -7,7 +7,6 @@ import datetime as t
 #import welcome as wel
 import DB
 import roles
-
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
@@ -16,7 +15,9 @@ TOKEN = open("token", "r").read().replace("\n","")
 PREFIX = open("prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 
-# Au démarrage du bot.
+client.remove_command("help")
+
+# Au démarrage du Bot.
 @client.event
 async def on_ready():
     print('Connecté avec le nom : {0.user}'.format(client))
@@ -55,5 +56,9 @@ client.load_extension('gestion')
 ####################### Commande gems.py #######################
 
 client.load_extension('gems')
+
+####################### Commande help.py #######################
+
+client.load_extension('help')
 
 client.run(TOKEN)
