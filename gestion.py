@@ -11,11 +11,11 @@ Ambassadeur = 2
 perm = [["Baron du Bastion"],["Baron du Bastion","Inquisiteur du Bastion"],["Inquisiteur du Bastion","Baron du Bastion","Ambassadeur"]]
 
 def permission(ctx):
-    roles = ctx.author.roles
-    for role in roles :
-        if role.name in perm[grade]:
-            return(True)
-    return(False))
+	roles = ctx.author.roles
+	for role in roles :
+		if role.name in perm[grade]:
+			return(True)
+	return(False))
 
 class Gestion(commands.Cog):
 
