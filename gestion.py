@@ -10,7 +10,7 @@ Inquisiteur = 1
 Ambassadeur = 2
 perm = [["Baron du Bastion"],["Baron du Bastion","Inquisiteur du Bastion"],["Inquisiteur du Bastion","Baron du Bastion","Ambassadeur"]]
 
-def permission(ctx):
+def permission(ctx,grade):
 	roles = ctx.author.roles
 	for role in roles :
 		if role.name in perm[grade]:
