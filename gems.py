@@ -189,58 +189,76 @@ class Gems(commands.Cog):
 			nb = int(nb)
 			if item == "pioche" or item == "pickaxe":
 				prix = 0 - (buypickaxe*nb)
-				addGems(ID, prix)
-				addInv(ID, "pickaxe", nb)
-				if nb == 1:
-					msg = "tu as désormais {0} pioche en plus !".format(nb)
+				if addGems(ID, prix) >= "0":
+					addInv(ID, "pickaxe", nb)
+					if nb == 1:
+						msg = "tu as désormais {0} pioche en plus !".format(nb)
+					else :
+						msg = "tu as désormais {0} pioches en plus !".format(nb)
 				else :
-					msg = "tu as désormais {0} pioches en plus !".format(nb)
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "iron_pickaxe":
 				prix = 0 - (buyironpickaxe*nb)
-				addGems(ID, prix)
-				addInv(ID, "iron_pickaxe", nb)
-				if nb == 1:
-					msg = "tu as désormais {0} pioche en fer en plus !".format(nb)
+				if addGems(ID, prix) >= "0":
+					addInv(ID, "iron_pickaxe", nb)
+					if nb == 1:
+						msg = "tu as désormais {0} pioche en fer en plus !".format(nb)
+					else :
+						msg = "tu as désormais {0} pioches en fer en plus !".format(nb)
 				else :
-					msg = "tu as désormais {0} pioches en fer en plus !".format(nb)
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "fishingrod":
 				prix = 0 - (buyfishingrod*nb)
-				addGems(ID, prix)
-				addInv(ID, "fishingrod", nb)
-				if nb == 1:
-					msg = "tu as désormais {0} canne à peche en plus !".format(nb)
+				if addGems(ID, prix) >= "0":
+					addInv(ID, "fishingrod", nb)
+					if nb == 1:
+						msg = "tu as désormais {0} canne à peche en plus !".format(nb)
+					else :
+						msg = "tu as désormais {0} cannes à peche en plus !".format(nb)
 				else :
-					msg = "tu as désormais {0} cannes à peche en plus !".format(nb)
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "cobblestone":
 				prix = 0 - (buycobblestone*nb)
-				addGems(ID,prix)
-				addInv(ID, "cobblestone", nb)
-				msg = "Tu viens d'acheter {0}".format(nb)
+				if addGems(ID,prix) >= "0":
+					addInv(ID, "cobblestone", nb)
+					msg = "Tu viens d'acheter {0}".format(nb)
+				else :
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "iron":
 				prix = 0 - (buyiron*nb)
-				addGems(ID,prix)
-				addInv(ID, "iron", nb)
-				msg = "Tu viens d'acheter {0}".format(nb)
+				if addGems(ID,prix) >= "0":
+					addInv(ID, "iron", nb)
+					msg = "Tu viens d'acheter {0}".format(nb)
+				else :
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "gold":
 				prix = 0 - (buygold*nb)
-				addGems(ID,prix)
-				addInv(ID, "gold", nb)
-				msg = "Tu viens d'acheter {0}".format(nb)
+				if addGems(ID,prix) >= "0":
+					addInv(ID, "gold", nb)
+					msg = "Tu viens d'acheter {0}".format(nb)
+				else :
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "diamond":
 				prix = 0 - (buydiamond*nb)
-				addGems(ID,prix)
-				addInv(ID, "diamond", nb)
-				msg = "Tu viens d'acheter {0}".format(nb)
+				if addGems(ID,prix) >= "0":
+					addInv(ID, "diamond", nb)
+					msg = "Tu viens d'acheter {0}".format(nb)
+				else :
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "fish":
 				prix = 0 - (buyfish*nb)
-				addGems(ID,prix)
-				addInv(ID, "fish", nb)
-				msg = "Tu viens d'acheter {0}".format(nb)
+				if addGems(ID,prix) >= "0":
+					addInv(ID, "fish", nb)
+					msg = "Tu viens d'acheter {0}".format(nb)
+				else :
+					msg = "Tu n'as pas assez d'argent"
 			elif item == "tropical_fish":
 				prix = 0 - (buytropicalfish*nb)
-				addGems(ID,prix)
-				addInv(ID, "tropical_fish", nb)
-				msg = "Tu viens d'acheter {0}".format(nb)
+				if addGems(ID,prix) >= "0":
+					addInv(ID, "tropical_fish", nb)
+					msg = "Tu viens d'acheter {0}".format(nb)
+				else :
+					msg = "Tu n'as pas assez d'argent"
 			else :
 				msg = "Tu ne peux pas acheter cette item"
 		else :
@@ -282,7 +300,7 @@ class Gems(commands.Cog):
 			#----------------- Pioche normal -----------------
 			elif nbElements(ID, "pickaxe") >= 1:
 				if r.randint(0,29)==0:
-					addInv(ID,"pickaxe," -1)
+					addInv(ID,"pickaxe", -1)
 					msg = "pas de chance tu as cassé ta pioche !"
 				else :
 					if nbrand < 20:
@@ -434,9 +452,12 @@ class Gems(commands.Cog):
 			d_lot=d_lot+"*fish* \nBuy: `5` :gem: | Sell: `2` :gem: \n"
 			d_lot=d_lot+"*tropical_fish* \nBuy: `60` :gem: | Sell: `30` :gem: \n"
 
+			d_plus="*regine* \nBuy: `42` :gem: | Sell: `42` :gem: \n"
+
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
-			msg.add_field(name="Outils", value=d_outils, inline=False)
-			msg.add_field(name="Lots", value=d_lot, inline=False)
+			msg.add_field(name="\nOutils", value=d_outils, inline=False)
+			msg.add_field(name="\nLots", value=d_lot, inline=False)
+			msg.add_field(name="\nPlus", value=d_plus, inline=False)
 			DB.updateComTime(ID)
 			await ctx.channel.send(embed = msg)
 		else:
@@ -472,6 +493,8 @@ class Gems(commands.Cog):
 					coef = sellfish
 				elif item == "tropical_fish":
 					coef = selltropicalfish
+				elif item == "regine":
+					coef = sellregine
 				gain = coef*nb
 				addGems(ID, gain)
 				msg ="tu as vendu {} {} pour {} :gem: !".format(nb,item,gain)
