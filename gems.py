@@ -92,6 +92,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def begin(self, ctx):
+		"""pour initialiser la base de donnée !"""
 		ID = ctx.author.id
 		await ctx.channel.send(DB.newPlayer(ID))
 
@@ -136,7 +137,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def gamble(self, ctx,valeur):
-		"""| gamble [valeur] |\n avez vous l'ame d'un parieur ?  """
+		"""| gamble [valeur] | avez vous l'ame d'un parieur ?  """
 		valeur = int(valeur)
 		ID = ctx.author.id
 		if spam(ID,couldown_xl):
@@ -321,7 +322,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def sell (self, ctx,item,nb):
-		"""| sell [item] [nombre] |\nLes valeurs d'échange :\ncobblestone => 1\niron => 10"""
+		"""| sell [item] [nombre] |Les valeurs d'échange :cobblestone => 1 iron => 10"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
@@ -357,7 +358,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def pay (self, ctx, nom, gain):
-		"""| pay [nom] [gain] |\n donner de l'argent à vos amis ! """
+		"""| pay [nom] [gain] | donner de l'argent à vos amis ! """
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			try:
@@ -381,3 +382,4 @@ class Gems(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Gems(bot))
+	open("Cogs","a").write("Gems\n")

@@ -51,3 +51,4 @@ class Gestion(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Gestion(bot))
+	open("Cogs","a").write("Gestion\n")
