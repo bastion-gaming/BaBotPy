@@ -29,16 +29,16 @@ sellpickaxe = 5
 sellironpickaxe = 60
 sellfishingrod = 5
 sellcobblestone = 1
-selliron = 10
-sellgold = 50
-selldiamond = 100
+selliron = r.randint(9,11)
+sellgold = r.randint(45, 56)
+selldiamond = r.randint(98, 120)
 sellfish = 2
-selltropicalfish = 30
+selltropicalfish = r.randint(25, 36)
 
 #anti-spam
-couldown_xl = 1#16
-couldown_l = 1#8 # l pour long
-couldown_c = 1#4 # c pour court
+couldown_xl = 16
+couldown_l = 8 # l pour long
+couldown_c = 4 # c pour court
 # nb de sec nécessaire entre 2 commandes
 
 def spam(ID,couldown):
@@ -211,11 +211,36 @@ class Gems(commands.Cog):
 					msg = "tu as désormais {0} canne à peche en plus !".format(nb)
 				else :
 					msg = "tu as désormais {0} cannes à peche en plus !".format(nb)
-			# elif item == "":
-			# 	prix = 0 - (*nb)
-			# 	addGems(ID,prix)
-			# 	addInv(ID, "", nb)
-			# 	msg = "Tu viens d'acheter {0}".format(nb)
+			elif item == "cobblestone":
+				prix = 0 - (buycobblestone*nb)
+				addGems(ID,prix)
+				addInv(ID, "cobblestone", nb)
+				msg = "Tu viens d'acheter {0}".format(nb)
+			elif item == "iron":
+				prix = 0 - (buyiron*nb)
+				addGems(ID,prix)
+				addInv(ID, "iron", nb)
+				msg = "Tu viens d'acheter {0}".format(nb)
+			elif item == "gold":
+				prix = 0 - (buygold*nb)
+				addGems(ID,prix)
+				addInv(ID, "gold", nb)
+				msg = "Tu viens d'acheter {0}".format(nb)
+			elif item == "diamond":
+				prix = 0 - (buydiamond*nb)
+				addGems(ID,prix)
+				addInv(ID, "diamond", nb)
+				msg = "Tu viens d'acheter {0}".format(nb)
+			elif item == "fish":
+				prix = 0 - (buyfish*nb)
+				addGems(ID,prix)
+				addInv(ID, "fish", nb)
+				msg = "Tu viens d'acheter {0}".format(nb)
+			elif item == "tropical_fish":
+				prix = 0 - (buytropicalfish*nb)
+				addGems(ID,prix)
+				addInv(ID, "tropical_fish", nb)
+				msg = "Tu viens d'acheter {0}".format(nb)
 			else :
 				msg = "Tu ne peux pas acheter cette item"
 		else :
@@ -384,7 +409,7 @@ class Gems(commands.Cog):
 		#msg="**ton inventaire**\n"
 		for x in inv:
 			if inv[x] > 0:
-				msg_inv = msg_inv+":"+str(x)+": "+str(inv[x])+"\n"
+				msg_inv = msg_inv+":"+str(x)+":  `x"+str(inv[x])+"`\n"
 		msg = discord.Embed(title = "Ton inventaire",color= 6466585, description = msg_inv)
 		#msg = "**ton inventaire**\n```-pickaxe.s : "+str(inv[0])+"\n-cobblestone.s : "+str(inv[1])+"\n-iron.s : "+str(inv[2])+"\n-gold: "+str(inv[3])+"\n-diamond : "+str(inv[4])+"```"
 		await ctx.channel.send(embed = msg)
@@ -398,16 +423,16 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_c):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !"
 
-			d_outils="pickaxe >> Buy: 20 :gem: | Sell: 5 :gem: \n"
-			d_outils=d_outils+"iron_pickaxe >> Buy: 150 :gem: | Sell: 60 :gem: \n"
-			d_outils=d_outils+"fishingrod >> Buy: 15 :gem: | Sell: 5 :gem: \n"
+			d_outils="*pickaxe* \nBuy: `20` :gem: | Sell: `5` :gem: \n"
+			d_outils=d_outils+"*iron_pickaxe* \nBuy: `150` :gem: | Sell: `60` :gem: \n"
+			d_outils=d_outils+"*fishingrod* \nBuy: `15` :gem: | Sell: `5` :gem: \n"
 
-			d_lot="cobblestone >> Buy: 3 :gem: | Sell: 1 :gem: \n"
-			d_lot=d_lot+"iron >> Buy: 30 :gem: | Sell: 10 :gem: \n"
-			d_lot=d_lot+"gold >> Buy: 100 :gem: | Sell: 50 :gem: \n"
-			d_lot=d_lot+"diamond >> Buy: 200 :gem: | Sell: 100 :gem: \n"
-			d_lot=d_lot+"fish >> Buy: 5 :gem: | Sell: 2 :gem: \n"
-			d_lot=d_lot+"tropical_fish >> Buy: 60 :gem: | Sell: 30 :gem: \n"
+			d_lot="*cobblestone* \nBuy: `3` :gem: | Sell: `1` :gem: \n"
+			d_lot=d_lot+"*iron* \nBuy: `30` :gem: | Sell: `10` :gem: \n"
+			d_lot=d_lot+"*gold* \nBuy: `100` :gem: | Sell: `50` :gem: \n"
+			d_lot=d_lot+"*diamond* \nBuy: `200` :gem: | Sell: `100` :gem: \n"
+			d_lot=d_lot+"*fish* \nBuy: `5` :gem: | Sell: `2` :gem: \n"
+			d_lot=d_lot+"*tropical_fish* \nBuy: `60` :gem: | Sell: `30` :gem: \n"
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			msg.add_field(name="Outils", value=d_outils, inline=False)
@@ -429,20 +454,24 @@ class Gems(commands.Cog):
 			nb = int(nb)
 			if nbElements(ID, item) >= nb:
 				addInv(ID, item, -nb)
-				if item == "cobblestone":
-					coef = 1
-				elif item == "stick":
-					coef = 1
+				if item == "pickaxe":
+					coef = sellpickaxe
+				elif item == "iron_pickaxe":
+					coef = sellironpickaxe
+				elif item == "fishingrod":
+					coef = sellfishingrod
+				elif item == "cobblestone":
+					coef = sellcobblestone
 				elif item == "iron":
-					coef = r.randint(9,11)
+					coef = selliron
 				elif item == "gold":
-					coef = r.randint(45, 56)
+					coef = sellgold
 				elif item == "diamond":
-					coef = r.randint(98, 120)
+					coef = selldiamond
 				elif item == "fish":
-					coef = 2
+					coef = sellfish
 				elif item == "tropical_fish":
-					coef = r.randint(25, 35)
+					coef = selltropicalfish
 				gain = coef*nb
 				addGems(ID, gain)
 				msg ="tu as vendu {} {} pour {} :gem: !".format(nb,item,gain)
