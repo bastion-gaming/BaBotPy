@@ -184,7 +184,7 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def buy (self, ctx,item,nb):
+	async def buy (self, ctx,item,nb = 1):
 		"""permet d'acheter une pioche ou une canne à pèche (fishingrod)"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
@@ -355,7 +355,7 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def forge(self, ctx, item, nb):
+	async def forge(self, ctx, item, nb = 1):
 		""" Forgons une pioche en fer: Pour cela tu aura besoin de 4 lingots de fer et d'1 :pick:pickaxe"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
@@ -386,7 +386,7 @@ class Gems(commands.Cog):
 
 
 	# @commands.command(pass_context=True)
-	# async def craft(self, ctx, item, nb):
+	# async def craft(self, ctx, item, nb = 1):
 	# 	""" Craftons une pioche en fer: Pour cela tu aura besoin de 3 lingots d'iron et de 2 morceau de bois"""
 	# 	ID = ctx.author.id
 	# 	if spam(ID,couldown_l):
@@ -469,7 +469,7 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def sell (self, ctx,item,nb):
+	async def sell (self, ctx,item,nb = 1):
 		"""| sell [item] [nombre] |Les valeurs d'échange :cobblestone => 1 iron => 10"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
