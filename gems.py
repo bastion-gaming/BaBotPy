@@ -35,6 +35,8 @@ selldiamond = r.randint(98, 120)
 sellfish = 2
 selltropicalfish = r.randint(25, 36)
 
+nb = "1"
+
 #anti-spam
 couldown_xl = 16
 couldown_l = 8 # l pour long
