@@ -56,6 +56,8 @@ async def on_message(message):
 
 	await client.process_commands(message)
 
+client.load_extension('stats')
+
 ####################### Commande roles.py #######################
 
 client.load_extension('roles')
@@ -81,7 +83,7 @@ for COG in COGS:
 	cog = client.get_cog(COG)
 	coms = cog.get_commands()
 	for com in coms :
-		arg = "-"+com.name+" : "+com.help+"\n"
+		arg = "-"+str(com.name)+" : "+str(com.help)+"\n"
 		helptxt.write(arg)
 	helptxt.write(";")
 helptxt.close()
