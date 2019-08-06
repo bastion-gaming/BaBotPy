@@ -12,16 +12,21 @@ class Helpme(commands.Cog):
 
     @commands.command(pass_context=True)
     async def help(self, ctx):
+        """affiche ce message !"""
         d_help = "Liste de toutes les fonctions utilisable avec le prefix {}".format(self.PREFIX)
-        d_Gems = "~crime : blablablabla blablabla blabla blabla\n~bal : blablablabla blablabla blabla blabla\n~pay :blablablabla blablabla blabla blabla"
-        d_Gestion = "*commande reserver au inquisiteur*\n~supp <nb>: supprime x messages\n~show_perm: montre les roles de la personne"
-        d_Role = "*commande reserver au inquisiteur*\n~creategame <nom> <categori> : créé un jeux "
         msg = discord.Embed(title = "Fonction disponible",color= 12745742, description = d_help)
-        msg.add_field(name="Gems", value=d_Gems, inline=False)
-        msg.add_field(name="Gestion", value=d_Gestion, inline=False)
-        msg.add_field(name="Role", value=d_Role, inline=False)
+        helptxt = open("help.txt",'r').read()
+        helptxt = helptxt.split(';')
+        helptxt.pop()
+        for description in helptxt:
+            description = description.split("::")
+            msg.add_field(name=description[0], value=description[1], inline=False)
         await ctx.channel.send(embed = msg)
+        # description += "-{} : {}\n".format(com.name,com.help)
+        # msg.add_field(name=COG, value=description, inline=False)
+        # await ctx.channel.send(embed = msg)
 
 
 def setup(bot):
-	bot.add_cog(Helpme(bot))
+    bot.add_cog(Helpme(bot))
+    open("Cogs","a").write("Helpme\n")

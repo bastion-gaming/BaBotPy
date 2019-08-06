@@ -14,6 +14,8 @@ VERSION = open("version.txt").read().replace("\n","")
 TOKEN = open("token", "r").read().replace("\n","")
 PREFIX = open("prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
+NONE = open("Cogs","w")
+NONE = open("help.txt","w")
 
 client.remove_command("help")
 
@@ -60,5 +62,19 @@ client.load_extension('gems')
 ####################### Commande help.py #######################
 
 client.load_extension('help')
+
+COGS = open("Cogs","r").read()
+COGS = COGS.split('\n')
+COGS.pop()
+helptxt =open("help.txt","a")
+for COG in COGS:
+    helptxt.write(COG+"::")
+    cog = client.get_cog(COG)
+    coms = cog.get_commands()
+    for com in coms :
+        arg = "-"+com.name+" : "+com.help+"\n"
+        helptxt.write(arg)
+    helptxt.write(";")
+helptxt.close()
 
 client.run(TOKEN)

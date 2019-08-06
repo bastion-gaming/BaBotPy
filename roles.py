@@ -18,12 +18,10 @@ class Roles(commands.Cog):
 
     @commands.command(pass_context=True)
     async def creategame(self, ctx, game, categorie):
-        """
-        Permet de créer un nouveau role pour un jeu et d'ajouter ce jeu dans un grand salon
-        Paramètres:
-        - game: Nom du jeu/role
-        - categorie: Nom du grand salon (combat/societe/tirs/voiture/rpg/sandbox/strategie/divers)
-        """
+        """Permet de créer un nouveau role pour un jeu et d'ajouter ce jeu dans un grand salon"""
+        # Paramètres:
+        # - game: Nom du jeu/role
+        # - categorie: Nom du grand salon (combat/societe/tirs/voiture/rpg/sandbox/strategie/divers)
         guild = ctx.guild
         member = ctx.author
         rolesearch = discord.utils.get(member.guild.roles, name=game)
@@ -63,7 +61,8 @@ class Roles(commands.Cog):
             await ctx.channel.send("Le jeu "+game+" existe déjà")
 
 def setup(bot):
-	bot.add_cog(Roles(bot))
+    bot.add_cog(Roles(bot))
+    open("Cogs","a").write("Roles\n")
 
 
 #async def create(message, meco):
