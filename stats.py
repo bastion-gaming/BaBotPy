@@ -35,12 +35,19 @@ def hourCount():
 		t[str(d)]=int(countTotalMsg())
 		with open(file, 'w') as f:
 			f.write(json.dumps(t, indent=4))
+		return d
 	else:
 		with open(file, "r") as f:
 			t = json.load(f)
 			t[str(d)]=int(countTotalMsg())
 		with open(file, 'w') as f:
 			f.write(json.dumps(t, indent=4))
+
+		if d != 0:
+			res = t[str(d)]-t[str(d-1)]
+		else:
+			res = t["0"]-t["23"]
+		return res
 
 #===============================================================
 
@@ -63,7 +70,8 @@ class Stats(commands.Cog):
 		"""
 		Permet de savoir combien i y'a eu de message posté depuis une heure
 		"""
-		msg = "A cette heure il y'a eu: "+str(hourCount())
+		d=dt.datetime.now().hour
+		msg = "A "+str(d)+"h il y'a eu: "+str(hourCount())+" messages."
 		await ctx.channel.send(msg)
 
 def setup(bot):
