@@ -4,9 +4,10 @@ from discord.ext.commands import Bot
 from discord.utils import get
 import sqlite3
 import datetime as t
-#import welcome as wel
 import DB
 import roles
+import stats as stat
+
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
@@ -47,6 +48,15 @@ async def on_member_remove(member):
 	channel = client.get_channel(417445503110742048)
 	await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
 
+####################### Stat ####################################
+
+@client.event
+async def on_message(message):
+	await stat.countMsg(message)
+	await client.process_commands(message)
+
+client.load_extension('stats')
+
 ####################### Commande roles.py #######################
 
 client.load_extension('roles')
@@ -72,7 +82,7 @@ for COG in COGS:
 	cog = client.get_cog(COG)
 	coms = cog.get_commands()
 	for com in coms :
-		arg = "-"+com.name+" : "+com.help+"\n"
+		arg = "-"+str(com.name)+" : "+str(com.help)+"\n"
 		helptxt.write(arg)
 	helptxt.write(";")
 helptxt.close()
