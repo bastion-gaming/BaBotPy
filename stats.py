@@ -102,4 +102,4 @@ class Stats(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Stats(bot))
-	open("Cogs","a").write("Stats\n")
+	open("fichier_txt/cogs.txt","a").write("Stats\n")
