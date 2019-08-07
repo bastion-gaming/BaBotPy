@@ -50,7 +50,7 @@ class Roles(commands.Cog):
 					await channeladd.set_permissions(rolesearch, overwrite=discord.PermissionOverwrite(read_messages=True))
 					msg = "Ajout d'un nouveau jeu dans la catégorie {}: {}".format(channeladd.mention, rolesearch.mention)
 					channel = guild.get_channel(417449076775321600)
-					return (channel.send(msg))
+					return (ctx.channel.send(msg))
 				else:
 					await ctx.channel.send(msg)
 			else:
