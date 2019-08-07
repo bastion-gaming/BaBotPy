@@ -72,9 +72,9 @@ class Stats(commands.Cog):
 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
-	async def hourMsg(self, ctx):
+	async def hourMsg(self, ctx, ha=None, hb=None):
 		"""
-		Permet de savoir combien i y'a eu de message posté il y a une heure
+		Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.
 		"""
 		d=dt.datetime.now().hour
 		if fileExist()==False:
@@ -84,11 +84,20 @@ class Stats(commands.Cog):
 			hourCount()
 			with open(file, "r") as f:
 				t = json.load(f)
-			if d != 0:
-				nbMsg = t[str(d)]-t[str(d-1)]
-			else:
-				nbMsg = t["0"]-t["23"]
-		msg = "Depuis "+str(d)+"h il y'a eu: "+str(nbMsg)+" messages postés."
+			if ha != None and hb !=None:
+				ha=int(ha)
+				hb=int(hb)
+				if ha >= 0 and hb >= 0 and ha < 24 and hb < 24:
+					nbMsg = t[str(hb)]-t[str(ha)]
+					msg="Entre "+str(ha)+"h et "+str(hb)+"h il y a eu "+str(nbMsg)+" messages."
+				else :
+					msg="Vous avez entré une heure impossible."
+			else :
+				if d != 0:
+					nbMsg = t[str(d)]-t[str(d-1)]
+				else:
+					nbMsg = t["0"]-t["23"]
+				msg = "Depuis "+str(d)+"h il y'a eu: "+str(nbMsg)+" messages postés."
 		await ctx.channel.send(msg)
 
 def setup(bot):
