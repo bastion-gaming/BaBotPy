@@ -49,6 +49,13 @@ class Gestion(commands.Cog):
 			msg = "tu ne remplis pas les conditions"
 		await ctx.channel.send(msg)
 
+	@commands.command(pass_context=True)
+	async def get_emoji(self, ctx, emoji: discord.Emoji):
+		""" """
+		print(emoji.id)
+		await ctx.channel.send("ID de l'emoji: ".format(emoji.id))
+
+
 def setup(bot):
 	bot.add_cog(Gestion(bot))
 	open("Cogs","a").write("Gestion\n")

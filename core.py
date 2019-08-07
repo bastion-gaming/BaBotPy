@@ -4,7 +4,6 @@ from discord.ext.commands import Bot
 from discord.utils import get
 import sqlite3
 import datetime as t
-#import welcome as wel
 import DB
 import roles
 # initialisation des variables.
@@ -72,7 +71,7 @@ for COG in COGS:
 	cog = client.get_cog(COG)
 	coms = cog.get_commands()
 	for com in coms :
-		arg = "-"+com.name+" : "+com.help+"\n"
+		arg = "-"+str(com.name)+" : "+str(com.help)+"\n"
 		helptxt.write(arg)
 	helptxt.write(";")
 helptxt.close()
