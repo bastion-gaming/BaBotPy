@@ -11,7 +11,7 @@ import roles
 DEFAUT_PREFIX = "!"
 
 VERSION = open("version.txt").read().replace("\n","")
-TOKEN = open("token", "r").read().replace("\n","")
+TOKEN = open("token.txt", "r").read().replace("\n","")
 PREFIX = open("prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("Cogs","w")
