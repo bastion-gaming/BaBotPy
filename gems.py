@@ -26,8 +26,8 @@ objet = [Item("pickaxe",20,5,5),Item("iron_pickaxe",150,60,10),Item("fishingrod"
 ,Item("fish",5,2,0.5),Item("tropical_fish",60,r.randint(25, 36),1)]
 
 #anti-spam
-couldown_xl = 16
-couldown_l = 8 # l pour long
+couldown_xl = 10
+couldown_l = 6 # l pour long
 couldown_c = 4 # c pour court
 # nb de sec nécessaire entre 2 commandes
 
@@ -163,7 +163,7 @@ class Gems(commands.Cog):
 			else:
 				val = 0-valeur
 				addGems(ID,val)
-				msg = "dommage tu as perdu "+str(valeur)+":gem:"
+				msg = "Dommage tu as perdu "+str(valeur)+":gem:"
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
@@ -173,7 +173,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def buy (self, ctx,item,nb = 1):
-		"""permet d'acheter une pioche ou une canne à pèche (fishingrod)"""
+		"""permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			test = True
@@ -183,16 +183,13 @@ class Gems(commands.Cog):
 					test = False
 					prix = 0 - (c.achat*nb)
 					if addGems(ID, prix) >= "0":
-						addInv(ID, "pickaxe", nb)
-						if nb == 1:
-							msg = "tu as désormais {0} pioche en plus !".format(nb)
-						else :
-							msg = "tu as désormais {0} pioches en plus !".format(nb)
+						addInv(ID, c.nom, nb)
+						msg = "Vous venez d'acquérir {0} {1} !".format(nb, c.nom)
 					else :
-						msg = "Tu n'as pas assez d'argent"
+						msg = "Désolé, nous ne pouvons pas executer cet achat, vous n'avez pas assez d'argent en banque"
 					break
 			if test :
-				msg = "cet item n'existe pas !"
+				msg = "Cet item n'est pas vendu au marché !"
 		else :
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -201,7 +198,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def mine(self, ctx):
-		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de cobblestones ou 1 lingot d'iron"""
+		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de cobblestones, 1 lingot de fer, 1 lingot d'or ou 1 diamant brut"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			#print(nbElements(ID, "pickaxe"))
@@ -256,7 +253,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def fish(self, ctx):
-		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish: ou 1 morceau de bois"""
+		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish:"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			nbrand = r.randint(0,99)
@@ -374,7 +371,7 @@ class Gems(commands.Cog):
 					msg = "cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Vous n'avez pas assez de "+str(item)+" il vous en reste : "+ str(nbElements(ID, item))
+				msg = "Vous n'avez pas assez de "+str(item)+". Il vous en reste : "+ str(nbElements(ID, item))
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
