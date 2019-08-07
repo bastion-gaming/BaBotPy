@@ -59,22 +59,24 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 
 # État d'avancement du développement
 
+## Terminés
+
+Rôles
+
+DB
+
 ## En cours/test
 
 Core
 
-Rôles
-
 Play-bot (alias Gems)
 
-DB
+Stat
 
 ## Non commencé
 
 Level
 
 Vote
-
-Stat
 
 Game-Asker

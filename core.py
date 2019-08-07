@@ -10,12 +10,12 @@ import roles
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
-VERSION = open("version.txt").read().replace("\n","")
-TOKEN = open("token", "r").read().replace("\n","")
-PREFIX = open("prefix.txt","r").read().replace("\n","")
+VERSION = open("fichier_txt/version.txt").read().replace("\n","")
+TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
+PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
-NONE = open("Cogs","w")
-NONE = open("help.txt","w")
+NONE = open("fichier_txt/cogs.txt","w")
+NONE = open("fichier_txt/help.txt","w")
 
 client.remove_command("help")
 
@@ -63,10 +63,10 @@ client.load_extension('gems')
 
 client.load_extension('help')
 
-COGS = open("Cogs","r").read()
+COGS = open("fichier_txt/cogs.txt","r").read()
 COGS = COGS.split('\n')
 COGS.pop()
-helptxt =open("help.txt","a")
+helptxt =open("fichier_txt/help.txt","a")
 for COG in COGS:
 	helptxt.write(COG+"::")
 	cog = client.get_cog(COG)
