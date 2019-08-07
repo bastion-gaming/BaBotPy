@@ -6,6 +6,8 @@ import sqlite3
 import datetime as t
 import DB
 import roles
+import stats as stat
+
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
@@ -45,6 +47,15 @@ async def on_member_join(member):
 async def on_member_remove(member):
 	channel = client.get_channel(417445503110742048)
 	await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
+
+####################### Stat ####################################
+
+@client.event
+async def on_message(message):
+	await stat.countMsg(message)
+	await client.process_commands(message)
+
+client.load_extension('stats')
 
 ####################### Commande roles.py #######################
 
