@@ -15,15 +15,16 @@ message_gamble = ["tu as remporté le pari ! tu obtiens ","Une grande victoire p
 # se sont les phrases prononcé par le bot pour plus de diversité
 class Item:
 
-	def __init__(self,nom,achat,vente,poid):
+	def __init__(self,nom,achat,vente,poid,idmoji):
 		self.nom = nom
 		self.achat = achat
 		self.vente = vente
 		self.poid = poid
+		self.idmoji = idmoji
 
-objet = [Item("pickaxe",20,5,5),Item("iron_pickaxe",150,60,10),Item("fishingrod",15,5,3),Item("cobblestone",3,1,0.5)
-,Item("iron",30,r.randint(9,11),1),Item("gold",100,r.randint(45, 56),1),Item("diamond",200,r.randint(98, 120),1)
-,Item("fish",5,2,0.5),Item("tropical_fish",60,r.randint(25, 36),1)]
+objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10,608748194775433256),Item("fishingrod",15,5,3,608748194318385173),Item("cobblestone",3,1,0.5,608748492181078131)
+,Item("iron",30,r.randint(9,11),1,608748195685597235),Item("gold",100,r.randint(45, 56),1,608748194754723863),Item("diamond",200,r.randint(98, 120),1,608748194750529548)
+,Item("fish",5,2,0.5,608762539605753868),Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079)]
 
 #anti-spam
 couldown_xl = 10
@@ -324,7 +325,7 @@ class Gems(commands.Cog):
 		#msg="**ton inventaire**\n"
 		for x in inv:
 			if inv[x] > 0:
-				msg_inv = msg_inv+":"+str(x)+":  `x"+str(inv[x])+"`\n"
+				msg_inv = msg_inv+"<:"+str(x)+":>  `x"+str(inv[x])+"`\n"
 		msg = discord.Embed(title = "Ton inventaire",color= 6466585, description = msg_inv)
 		#msg = "**ton inventaire**\n```-pickaxe.s : "+str(inv[0])+"\n-cobblestone.s : "+str(inv[1])+"\n-iron.s : "+str(inv[2])+"\n-gold: "+str(inv[3])+"\n-diamond : "+str(inv[4])+"```"
 		await ctx.channel.send(embed = msg)
@@ -338,8 +339,7 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_c):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 			for c in objet :
-				d_market += "-**{}** : Vente **{}**, Achat **{}**, Poid **{}**\n".format(c.nom,c.vente,c.achat,c.poid)
-
+				d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 
 			DB.updateComTime(ID)
