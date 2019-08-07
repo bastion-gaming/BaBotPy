@@ -4,10 +4,10 @@ from discord.ext.commands import Bot
 from discord.utils import get
 import sqlite3
 import datetime as t
-#import welcome as wel
 import DB
 import roles
 import stats as stat
+
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
@@ -53,7 +53,6 @@ async def on_member_remove(member):
 @client.event
 async def on_message(message):
 	await stat.countMsg(message)
-
 	await client.process_commands(message)
 
 client.load_extension('stats')

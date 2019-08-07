@@ -1,7 +1,7 @@
 import random as r
 import datetime as dt
 import DB
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
 import discord
@@ -15,6 +15,7 @@ def fileExist():
 	except IOError:
 	    return False
 	return True
+
 async def countMsg(message):
 	id = message.author.id
 	DB.updateField(id, "nbMsg", int(DB.valueAt(id, "nbMsg")+1))
@@ -42,20 +43,25 @@ def hourCount():
 			t[str(d)]=int(countTotalMsg())
 		with open(file, 'w') as f:
 			f.write(json.dumps(t, indent=4))
-
-		if d != 0:
-			res = t[str(d)]-t[str(d-1)]
-		else:
-			res = t["0"]-t["23"]
-		return res
+	print("time.json modifié")
 
 #===============================================================
 
 class Stats(commands.Cog):
 
 	def __init__(self,ctx):
+		self.hourWrite.start()
 		return(None)
 
+	def cog_unload(self):
+		self.hourWrite.cancel()
+
+	@tasks.loop(hours=1.0)
+	async def hourWrite(self):
+		"""
+		Va, toute les heures, écrire dans time.json le nombre total de message écrit sur le serveur.
+		"""
+		hourCount()
 
 	@commands.command(pass_context=True)
 	async def totalMsg(self, ctx):
@@ -68,10 +74,21 @@ class Stats(commands.Cog):
 	@commands.command(pass_context=True)
 	async def hourMsg(self, ctx):
 		"""
-		Permet de savoir combien i y'a eu de message posté depuis une heure
+		Permet de savoir combien i y'a eu de message posté il y a une heure
 		"""
 		d=dt.datetime.now().hour
-		msg = "A "+str(d)+"h il y'a eu: "+str(hourCount())+" messages."
+		if fileExist()==False:
+			nbMsg = totalMsg()
+			await ctx.channel.send("le fichier time.json est introuvable le résultat sera donc peut être faux.")
+		else:
+			hourCount()
+			with open(file, "r") as f:
+				t = json.load(f)
+			if d != 0:
+				nbMsg = t[str(d)]-t[str(d-1)]
+			else:
+				nbMsg = t["0"]-t["23"]
+		msg = "Depuis "+str(d)+"h il y'a eu: "+str(nbMsg)+" messages postés."
 		await ctx.channel.send(msg)
 
 def setup(bot):
