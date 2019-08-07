@@ -13,29 +13,17 @@ message_gamble = ["tu as remporté le pari ! tu obtiens ","Une grande victoire p
 "bravo prends ", "heu.... "]
 # 4 phrases
 # se sont les phrases prononcé par le bot pour plus de diversité
+class Item:
 
-#prix d'achat et de vente des items
-buypickaxe = 20
-buyironpickaxe = 150
-buyfishingrod = 15
-buycobblestone = 3
-buyiron = 30
-buygold = 100
-buydiamond = 200
-buyfish = 5
-buytropicalfish = 60
+	def __init__(self,nom,achat,vente,poid):
+		self.nom = nom
+		self.achat = achat
+		self.vente = vente
+		self.poid = poid
 
-sellpickaxe = 5
-sellironpickaxe = 60
-sellfishingrod = 5
-sellcobblestone = 1
-selliron = r.randint(9,11)
-sellgold = r.randint(45, 56)
-selldiamond = r.randint(98, 120)
-sellfish = 2
-selltropicalfish = r.randint(25, 36)
-
-nb = "1"
+objet = [Item("pickaxe",20,5,5),Item("iron_pickaxe",150,60,10),Item("fishingrod",15,5,3),Item("cobblestone",3,1,0.5)
+,Item("iron",30,r.randint(9,11),1),Item("gold",100,r.randint(45, 56),1),Item("diamond",200,r.randint(98, 120),1)
+,Item("fish",5,2,0.5),Item("tropical_fish",60,r.randint(25, 36),1)]
 
 #anti-spam
 couldown_xl = 16
@@ -188,81 +176,23 @@ class Gems(commands.Cog):
 		"""permet d'acheter une pioche ou une canne à pèche (fishingrod)"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
+			test = True
 			nb = int(nb)
-			if item == "pioche" or item == "pickaxe":
-				prix = 0 - (buypickaxe*nb)
-				if addGems(ID, prix) >= "0":
-					addInv(ID, "pickaxe", nb)
-					if nb == 1:
-						msg = "tu as désormais {0} pioche en plus !".format(nb)
+			for c in objet :
+				if item == c.nom :
+					test = False
+					prix = 0 - (c.achat*nb)
+					if addGems(ID, prix) >= "0":
+						addInv(ID, "pickaxe", nb)
+						if nb == 1:
+							msg = "tu as désormais {0} pioche en plus !".format(nb)
+						else :
+							msg = "tu as désormais {0} pioches en plus !".format(nb)
 					else :
-						msg = "tu as désormais {0} pioches en plus !".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "iron_pickaxe":
-				prix = 0 - (buyironpickaxe*nb)
-				if addGems(ID, prix) >= "0":
-					addInv(ID, "iron_pickaxe", nb)
-					if nb == 1:
-						msg = "tu as désormais {0} pioche en fer en plus !".format(nb)
-					else :
-						msg = "tu as désormais {0} pioches en fer en plus !".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "fishingrod":
-				prix = 0 - (buyfishingrod*nb)
-				if addGems(ID, prix) >= "0":
-					addInv(ID, "fishingrod", nb)
-					if nb == 1:
-						msg = "tu as désormais {0} canne à peche en plus !".format(nb)
-					else :
-						msg = "tu as désormais {0} cannes à peche en plus !".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "cobblestone":
-				prix = 0 - (buycobblestone*nb)
-				if addGems(ID,prix) >= "0":
-					addInv(ID, "cobblestone", nb)
-					msg = "Tu viens d'acheter {0}".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "iron":
-				prix = 0 - (buyiron*nb)
-				if addGems(ID,prix) >= "0":
-					addInv(ID, "iron", nb)
-					msg = "Tu viens d'acheter {0}".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "gold":
-				prix = 0 - (buygold*nb)
-				if addGems(ID,prix) >= "0":
-					addInv(ID, "gold", nb)
-					msg = "Tu viens d'acheter {0}".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "diamond":
-				prix = 0 - (buydiamond*nb)
-				if addGems(ID,prix) >= "0":
-					addInv(ID, "diamond", nb)
-					msg = "Tu viens d'acheter {0}".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "fish":
-				prix = 0 - (buyfish*nb)
-				if addGems(ID,prix) >= "0":
-					addInv(ID, "fish", nb)
-					msg = "Tu viens d'acheter {0}".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			elif item == "tropical_fish":
-				prix = 0 - (buytropicalfish*nb)
-				if addGems(ID,prix) >= "0":
-					addInv(ID, "tropical_fish", nb)
-					msg = "Tu viens d'acheter {0}".format(nb)
-				else :
-					msg = "Tu n'as pas assez d'argent"
-			else :
-				msg = "Tu ne peux pas acheter cette item"
+						msg = "Tu n'as pas assez d'argent"
+					break
+			if test :
+				msg = "cet item n'existe pas !"
 		else :
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -385,38 +315,6 @@ class Gems(commands.Cog):
 		await ctx.channel.send(msg)
 
 
-	# @commands.command(pass_context=True)
-	# async def craft(self, ctx, item, nb = 1):
-	# 	""" Craftons une pioche en fer: Pour cela tu aura besoin de 3 lingots d'iron et de 2 morceau de bois"""
-	# 	ID = ctx.author.id
-	# 	if spam(ID,couldown_l):
-	# 		if item == "iron_pickaxe":
-	# 			#print("iron: {}, stick: {}".format(nbElements(ID, "iron"), nbElements(ID, "stick")))
-	# 			nb = int(nb)
-	# 			nbIron = 3*nb
-	# 			nbStick = 2*nb
-	# 			if nbElements(ID, "iron") >= nbIron and nbElements(ID, "stick") >= nbStick:
-	# 				addInv(ID, "iron_pickaxe", nb)
-	# 				addInv(ID, "stick", -nbStick)
-	# 				addInv(ID, "iron", -nbIron)
-	# 				if nb == 1:
-	# 					msg = "Bravo, tu as réussi à crafter {0} pioche en fer !".format(nb)
-	# 				else :
-	# 					msg = "Bravo, tu as réussi à crafter {0} pioches en fer !".format(nb)
-	# 			elif nbElements(ID, "iron") < nbIron and nbElements(ID, "stick") < nbStick:
-	# 				msg = "tu n'as pas assez de lingot d'iron et de morceau de bois pour exécuter le craft !"
-	# 			elif nbElements(ID, "iron") < nbIron:
-	# 				msg = "tu n'as pas assez d'iron pour crafter!"
-	# 			else:
-	# 				msg = "tu n'as pas assez de morceau de bois pour exécuter le craft!"
-	# 		else:
-	# 			msg = "Impossible d'exécuter le craft de cette item !"
-	# 		DB.updateComTime(ID)
-	# 	else:
-	# 		msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
-	# 	await ctx.channel.send(msg)
-
-
 
 	@commands.command(pass_context=True)
 	async def inv (self, ctx):
@@ -441,25 +339,12 @@ class Gems(commands.Cog):
 		"""permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c):
-			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !"
-
-			d_outils="*pickaxe* \nBuy: `20` :gem: | Sell: `5` :gem: \n"
-			d_outils=d_outils+"*iron_pickaxe* \nBuy: `150` :gem: | Sell: `60` :gem: \n"
-			d_outils=d_outils+"*fishingrod* \nBuy: `15` :gem: | Sell: `5` :gem: \n"
-
-			d_lot="*cobblestone* \nBuy: `3` :gem: | Sell: `1` :gem: \n"
-			d_lot=d_lot+"*iron* \nBuy: `30` :gem: | Sell: `10` :gem: \n"
-			d_lot=d_lot+"*gold* \nBuy: `100` :gem: | Sell: `50` :gem: \n"
-			d_lot=d_lot+"*diamond* \nBuy: `200` :gem: | Sell: `100` :gem: \n"
-			d_lot=d_lot+"*fish* \nBuy: `5` :gem: | Sell: `2` :gem: \n"
-			d_lot=d_lot+"*tropical_fish* \nBuy: `60` :gem: | Sell: `30` :gem: \n"
-
-			d_plus="*regine* \nBuy: `42` :gem: | Sell: `42` :gem: \n"
+			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
+			for c in objet :
+				d_market += "-**{}** : Vente **{}**, Achat **{}**, Poid **{}**\n".format(c.nom,c.vente,c.achat,c.poid)
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
-			msg.add_field(name="\nOutils", value=d_outils, inline=False)
-			msg.add_field(name="\nLots", value=d_lot, inline=False)
-			msg.add_field(name="\nPlus", value=d_plus, inline=False)
+
 			DB.updateComTime(ID)
 			await ctx.channel.send(embed = msg)
 		else:
@@ -477,29 +362,16 @@ class Gems(commands.Cog):
 			nb = int(nb)
 			if nbElements(ID, item) >= nb:
 				addInv(ID, item, -nb)
-				if item == "pickaxe":
-					coef = sellpickaxe
-				elif item == "iron_pickaxe":
-					coef = sellironpickaxe
-				elif item == "fishingrod":
-					coef = sellfishingrod
-				elif item == "cobblestone":
-					coef = sellcobblestone
-				elif item == "iron":
-					coef = selliron
-				elif item == "gold":
-					coef = sellgold
-				elif item == "diamond":
-					coef = selldiamond
-				elif item == "fish":
-					coef = sellfish
-				elif item == "tropical_fish":
-					coef = selltropicalfish
-				elif item == "regine":
-					coef = sellregine
-				gain = coef*nb
-				addGems(ID, gain)
-				msg ="tu as vendu {} {} pour {} :gem: !".format(nb,item,gain)
+				test = True
+				for c in objet:
+					if item == c.nom:
+						test = False
+						gain = c.vente*nb
+						addGems(ID, gain)
+						msg ="tu as vendu {} {} pour {} :gem: !".format(nb,item,gain)
+						break
+				if test:
+					msg = "cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
 				msg = "Vous n'avez pas assez de "+str(item)+" il vous en reste : "+ str(nbElements(ID, item))
