@@ -8,14 +8,14 @@ from discord.utils import get
 class Helpme(commands.Cog):
 
 	def __init__(self,ctx):
-		self.PREFIX = open("prefix.txt","r").read().replace("\n","")
+		self.PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
 
 	@commands.command(pass_context=True)
 	async def help(self, ctx):
 		"""affiche ce message !"""
 		d_help = "Liste de toutes les fonctions utilisable avec le prefix {}".format(self.PREFIX)
 		msg = discord.Embed(title = "Fonction disponible",color= 12745742, description = d_help)
-		helptxt = open("help.txt",'r').read()
+		helptxt = open("fichier_txt/help.txt",'r').read()
 		helptxt = helptxt.split(';')
 		helptxt.pop()
 		for description in helptxt:
@@ -29,5 +29,4 @@ class Helpme(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Helpme(bot))
-	open("Cogs","a").write("Helpme\n")
-	
+	open("fichier_txt/cogs.txt","a").write("Helpme\n")

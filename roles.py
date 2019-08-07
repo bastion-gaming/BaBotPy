@@ -62,7 +62,7 @@ class Roles(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Roles(bot))
-	open("Cogs","a").write("Roles\n")
+	open("fichier_txt/cogs.txt","a").write("Roles\n")
 
 
 #async def create(message, meco):
