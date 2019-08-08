@@ -135,9 +135,15 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
-			gain = r.randint(5,10)
-			msg = message_crime[r.randint(0,3)]+str(gain)+":gem:"
-			addGems(ID, gain)
+			if r.randint(1,25) == 23:
+				if addGems(ID, -10) >= 0:
+					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
+				else:
+					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem: pour payer une amende"
+			else :
+				gain = r.randint(2,6)
+				msg = message_crime[r.randint(0,3)]+str(gain)+":gem:"
+				addGems(ID, gain)
 			DB.updateComTime(ID)
 		else:
 			msg = "Il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
