@@ -23,7 +23,7 @@ class Item:
 		self.idmoji = idmoji
 
 objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10,608748194775433256),Item("fishingrod",15,5,3,608748194318385173),Item("cobblestone",3,1,0.5,608748492181078131)
-,Item("iron",30,r.randint(9,11),1,608748195685597235),Item("gold",100,r.randint(45, 56),1,608748194754723863),Item("diamond",200,r.randint(98, 120),1,608748194750529548)
+,Item("iron",30,r.randint(9,11),1,608748195685597235),Item("gold",100,r.randint(45, 56),1,608748194754723863),Item("ruby",150,r.randint(74, 82),1,608748194406465557),Item("diamond",200,r.randint(98, 120),1,608748194750529548)
 ,Item("fish",5,2,0.5,608762539605753868),Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079)]
 
 #anti-spam
@@ -185,7 +185,7 @@ class Gems(commands.Cog):
 					prix = 0 - (c.achat*nb)
 					if addGems(ID, prix) >= "0":
 						addInv(ID, c.nom, nb)
-						msg = "Vous venez d'acquérir {0} {1} !".format(nb, c.nom)
+						msg = "Vous venez d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 					else :
 						msg = "Désolé, nous ne pouvons pas executer cet achat, vous n'avez pas assez d'argent en banque"
 					break
@@ -323,9 +323,12 @@ class Gems(commands.Cog):
 		msg_inv = " "
 		#print (inv)
 		#msg="**ton inventaire**\n"
-		for x in inv:
-			if inv[x] > 0:
-				msg_inv = msg_inv+"<:"+str(x)+":>  `x"+str(inv[x])+"`\n"
+		for c in objet:
+			for x in inv:
+				if c.nom == str(x):
+					if inv[x] > 0:
+						msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+
 		msg = discord.Embed(title = "Ton inventaire",color= 6466585, description = msg_inv)
 		#msg = "**ton inventaire**\n```-pickaxe.s : "+str(inv[0])+"\n-cobblestone.s : "+str(inv[1])+"\n-iron.s : "+str(inv[2])+"\n-gold: "+str(inv[3])+"\n-diamond : "+str(inv[4])+"```"
 		await ctx.channel.send(embed = msg)
@@ -365,7 +368,7 @@ class Gems(commands.Cog):
 						test = False
 						gain = c.vente*nb
 						addGems(ID, gain)
-						msg ="tu as vendu {} {} pour {} :gem: !".format(nb,item,gain)
+						msg ="tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
 						break
 				if test:
 					msg = "cette objet n'existe pas"
