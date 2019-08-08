@@ -6,15 +6,17 @@ import sqlite3
 import datetime as t
 import DB
 import roles
+import stats as stat
+
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
-VERSION = open("version.txt").read().replace("\n","")
-TOKEN = open("token.txt", "r").read().replace("\n","")
-PREFIX = open("prefix.txt","r").read().replace("\n","")
+VERSION = open("fichier_txt/version.txt").read().replace("\n","")
+TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
+PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
-NONE = open("Cogs","w")
-NONE = open("help.txt","w")
+NONE = open("fichier_txt/cogs.txt","w")
+NONE = open("fichier_txt/help.txt","w")
 
 client.remove_command("help")
 
@@ -25,7 +27,6 @@ async def on_ready():
 	print('PREFIX = '+str(PREFIX))
 	print('\nBastionBot '+VERSION)
 	print('| Core Module | >> Connecté !')
-	await roles.on_ready()
 
 @client.event
 async def on_member_join(member):
@@ -46,6 +47,15 @@ async def on_member_remove(member):
 	channel = client.get_channel(417445503110742048)
 	await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
 
+####################### Stat ####################################
+
+@client.event
+async def on_message(message):
+	await stat.countMsg(message)
+	await client.process_commands(message)
+
+client.load_extension('stats')
+
 ####################### Commande roles.py #######################
 
 client.load_extension('roles')
@@ -62,10 +72,10 @@ client.load_extension('gems')
 
 client.load_extension('help')
 
-COGS = open("Cogs","r").read()
+COGS = open("fichier_txt/cogs.txt","r").read()
 COGS = COGS.split('\n')
 COGS.pop()
-helptxt =open("help.txt","a")
+helptxt =open("fichier_txt/help.txt","a")
 for COG in COGS:
 	helptxt.write(COG+"::")
 	cog = client.get_cog(COG)

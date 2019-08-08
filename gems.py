@@ -405,4 +405,4 @@ class Gems(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Gems(bot))
-	open("Cogs","a").write("Gems\n")
+	open("fichier_txt/cogs.txt","a").write("Gems\n")
