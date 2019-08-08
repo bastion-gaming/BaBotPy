@@ -8,7 +8,7 @@ from discord.utils import get
 from operator import itemgetter
 
 message_crime = ["You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal ",
-"Tu as volé une pomme qui vaut ", "Tu as gangé au loto ! Prends tes ", "J'ai plus d'idée prends ça: "]
+"Tu as volé une pomme qui vaut ","Tu as volé une carotte ! Prend tes :", "Tu voles un bonbon ! Prend tes :", "Tu as gangé au loto ! Prends tes ", "J'ai plus d'idée prends ça: "]
 # 4 phrases
 message_gamble = ["Tu as remporté le pari ! Tu obtiens ","Une grande victoire pour toi ! Tu gagnes ",
 "Bravo prends ", "Heu.... ", "Pourquoi jouer à Fortnite quand tu peux gamble! Prends tes "]
