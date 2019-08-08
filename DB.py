@@ -68,6 +68,15 @@ async def count(message):
 		await message.channel.send('{l} utilisateur inscrit')
 	return l
 
+def taille():
+	return len(db)
+
+def userID(i):
+	return db.search(Query().ID)[i]["ID"]
+
+def userGems(i):
+	return db.search(Query().gems)[i]["gems"]
+
 def updateComTime(ID):
 	"""
 	Met à jour la date du dernier appel à une fonction
