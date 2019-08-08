@@ -10,7 +10,7 @@ message_crime = ["You robbed the Society of Schmoogaloo and ended up in a lake,b
 "Tu as volé une pomme qui vaut ", "Tu as gangé au loto ! Prends tes ", "J'ai plus d'idée prends ça: "]
 # 4 phrases
 message_gamble = ["Tu as remporté le pari ! Tu obtiens ","Une grande victoire pour toi ! Tu gagnes ",
-"Bravo prends ", "Heu.... "]
+"Bravo prends ", "Heu.... ", "Pourquoi jouer à Fortnite quand tu peux gamble! Prends tes "]
 # 4 phrases
 # se sont les phrases prononcé par le bot pour plus de diversité
 class Item:
@@ -174,7 +174,7 @@ class Gems(commands.Cog):
 			if r.randint(0,3) == 0:
 				gain = valeur*3
 				# l'espérence est de 0 sur la gamble
-				msg = message_gamble[r.randint(0,3)]+str(gain)+":gem:"
+				msg = message_gamble[r.randint(0,4)]+str(gain)+":gem:"
 				addGems(ID, gain)
 			else:
 				val = 0-valeur
