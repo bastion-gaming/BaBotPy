@@ -410,7 +410,7 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_c):
 			try:
-				if gain > 0:
+				if int(gain) > 0:
 					gain = int(gain)
 					don = -gain
 					ID_recu = nom_ID(nom)
