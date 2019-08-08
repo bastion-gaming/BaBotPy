@@ -5,6 +5,7 @@ import DB
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
+from operator import itemgetter
 
 message_crime = ["You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal ",
 "Tu as volé une pomme qui vaut ", "Tu as gangé au loto ! Prends tes ", "J'ai plus d'idée prends ça: "]
@@ -420,6 +421,30 @@ class Gems(commands.Cog):
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def baltop(self, ctx, n = 10):
+		"""Affiche le classement des joueurs"""
+		UserList = []
+		baltop = ""
+		i = 0
+		while i < DB.taille():
+			user = DB.userID(i)
+			gems = DB.userGems(i)
+			UserList.append((user, gems))
+			i = i + 1
+		UserList = sorted(UserList, key=itemgetter(1),reverse=False)
+		i = DB.taille() - 1
+		j = 0
+		while i >= 0 and j != n : # affichage des données trié
+			baltop += "<@{0}> {1}:gem:\n".format(UserList[i][0], UserList[i][1])
+			i = i - 1
+			j = j + 1
+
+		msg = discord.Embed(title = "Classement des joueurs",color= 12745742, description = baltop)
+		await ctx.channel.send(embed = msg)
 
 def setup(bot):
 	bot.add_cog(Gems(bot))
