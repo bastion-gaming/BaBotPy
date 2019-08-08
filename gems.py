@@ -410,17 +410,20 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_c):
 			try:
-				gain = int(gain)
-				don = -gain
-				ID_recu = nom_ID(nom)
-				if int(DB.valueAt(ID, "gems")) >= 0:
-					print(ID_recu)
-					addGems(ID_recu, gain)
-					addGems(ID,don)
-					msg = "<@{0}> donne {1}:gem: à <@{2}> !".format(ID,gain,ID_recu)
-				else:
-					msg = "<@{0}> n'a pas assez pour donner à <@{2}> !".format(ID,gain,ID_recu)
-				DB.updateComTime(ID)
+				if gain > 0:
+					gain = int(gain)
+					don = -gain
+					ID_recu = nom_ID(nom)
+					if int(DB.valueAt(ID, "gems")) >= 0:
+						print(ID_recu)
+						addGems(ID_recu, gain)
+						addGems(ID,don)
+						msg = "<@{0}> donne {1}:gem: à <@{2}> !".format(ID,gain,ID_recu)
+					else:
+						msg = "<@{0}> n'a pas assez pour donner à <@{2}> !".format(ID,gain,ID_recu)
+					DB.updateComTime(ID)
+				else :
+					msg = "Tu ne peux pas donner une somme négative ! N'importe quoi enfin !"
 			except ValueError:
 				msg = "La commande est mal formulée"
 				pass
