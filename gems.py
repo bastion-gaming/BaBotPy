@@ -382,7 +382,7 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_c):
 			nb = int(nb)
-			if nbElements(ID, item) >= nb:
+			if nbElements(ID, item) >= nb and nb > 0:
 				addInv(ID, item, -nb)
 				test = True
 				for c in objet:
