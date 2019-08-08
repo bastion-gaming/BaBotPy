@@ -30,6 +30,7 @@ objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10
 couldown_xl = 10
 couldown_l = 6 # l pour long
 couldown_c = 4 # c pour court
+couldown_sc = 2 # sc pour super court
 # nb de sec nécessaire entre 2 commandes
 
 def spam(ID,couldown):
@@ -74,6 +75,20 @@ def nbElements(ID, nameElem):
 	if nameElem in inventory:
 		return inventory[nameElem]
 	else:
+		return 0
+
+
+
+def get_idmogi(nameElem):
+	"""
+	Permet de connaitre l'idmoji de l'item
+	"""
+	test = False
+	for c in objet:
+		if c.nom == nameElem:
+			test = True
+			return c.idmoji
+	if test == False:
 		return 0
 
 
@@ -134,7 +149,7 @@ class Gems(commands.Cog):
 	async def bal(self, ctx, nom = None):
 		"""êtes vous riche ou pauvre ? bal vous le dit """
 		ID = ctx.author.id
-		if spam(ID,couldown_c):
+		if spam(ID,couldown_sc):
 			#print(nom)
 			if nom != None:
 				ID = nom_ID(nom)
@@ -145,7 +160,7 @@ class Gems(commands.Cog):
 				msg = "tu as actuellement : "+str(gem)+" :gem: !"
 			DB.updateComTime(ID)
 		else:
-			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
+			msg = "il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -176,7 +191,7 @@ class Gems(commands.Cog):
 	async def buy (self, ctx,item,nb = 1):
 		"""permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
-		if spam(ID,couldown_l):
+		if spam(ID,couldown_c):
 			test = True
 			nb = int(nb)
 			for c in objet :
@@ -192,7 +207,7 @@ class Gems(commands.Cog):
 			if test :
 				msg = "Cet item n'est pas vendu au marché !"
 		else :
-			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -208,43 +223,43 @@ class Gems(commands.Cog):
 			if nbElements(ID, "iron_pickaxe") >= 1:
 				if r.randint(0,49)==0:
 					addInv(ID,"iron_pickaxe", -1)
-					msg = "pas de chance tu as cassé ta pioche en fer !"
+					msg = "pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(get_idmogi("iron_pickaxe"))
 				else :
 					if nbrand > 20 and nbrand < 50:
 						addInv(ID, "iron", 1)
-						msg = "tu as obtenue un lingot de fer !"
+						msg = "tu as obtenue 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
 					elif nbrand > 5 and nbrand < 20:
 						addInv(ID, "gold", 1)
-						msg = "tu as obtenue 1 lingot d'or !"
+						msg = "tu as obtenue 1 <:gem_gold:{}>`lingot d'or` !".format(get_idmogi("gold"))
 					elif nbrand < 5:
 						addInv(ID, "diamond", 1)
-						msg = "tu as obtenue 1 diamant brut !"
+						msg = "tu as obtenue 1 <:gem_diamond:{}>`diamant brut` !".format(get_idmogi("diamond"))
 					else:
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
-							msg = "tu as obtenue un bloc de cobblestone !"
+							msg = "tu as obtenue un bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
 						else :
-							msg = "tu as obtenue {} blocs de cobblestone !".format(nbcobble)
+							msg = "tu as obtenue {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
 
 			#----------------- Pioche normal -----------------
 			elif nbElements(ID, "pickaxe") >= 1:
 				if r.randint(0,29)==0:
 					addInv(ID,"pickaxe", -1)
-					msg = "pas de chance tu as cassé ta pioche !"
+					msg = "pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(get_idmogi("pickaxe"))
 				else :
 					if nbrand < 20:
 						addInv(ID, "iron", 1)
-						msg = "tu as obtenue un lingot de fer !"
+						msg = "tu as obtenue 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
 					else:
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
-							msg = "tu as obtenue un bloc de cobblestone !"
+							msg = "tu as obtenue 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
 						else :
-							msg = "tu as obtenue {} blocs de cobblestone !".format(nbcobble)
+							msg = "tu as obtenue {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
 			else:
-				msg = "il faut acheter ou crafter une pioche !"
+				msg = "il faut acheter ou forger une pioche !"
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
@@ -262,19 +277,19 @@ class Gems(commands.Cog):
 			if nbElements(ID, "fishingrod") >= 1:
 				if r.randint(0,39)==0:
 					addInv(ID,"fishingrod," -1)
-					msg = "pas de chance tu as cassé ta canne à peche !"
+					msg = "pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(get_idmogi("fishingrod"))
 				else :
 					if nbrand < 20:
 						addInv(ID, "tropical_fish", 1)
-						msg = "tu as obtenue 1 :tropical_fish: !"
+						msg = "tu as obtenue 1 <:gem_tropical_fish:{}>`tropical_fish` !".format(get_idmogi("tropical_fish"))
 					elif nbrand > 20 and nbrand < 80:
 						nbfish = r.randint(1,5)
 						addInv(ID, "fish", nbfish)
-						msg = "tu as obtenue {} :fish: !".format(nbfish)
+						msg = "tu as obtenue {} <:gem_fish:{}>`fish` !".format(nbfish, get_idmogi("fish"))
 					else:
 						msg = "Pas de poisson pour toi aujourd'hui :cry: "
 			else:
-				msg = "il te faut une canne à peche pour pecher, tu en trouvera une au marché !"
+				msg = "il te faut une <:gem_fishingrod:{}>`canne à peche` pour pecher, tu en trouvera une au marché !".format(get_idmogi("fishingrod"))
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
@@ -286,7 +301,7 @@ class Gems(commands.Cog):
 	async def forge(self, ctx, item, nb = 1):
 		""" Forgons une pioche en fer: Pour cela tu aura besoin de 4 lingots de fer et d'1 :pick:pickaxe"""
 		ID = ctx.author.id
-		if spam(ID,couldown_l):
+		if spam(ID,couldown_c):
 			if item == "iron_pickaxe":
 				#print("iron: {}, pickaxe: {}".format(nbElements(ID, "iron"), nbElements(ID, "pickaxe")))
 				nb = int(nb)
@@ -309,7 +324,7 @@ class Gems(commands.Cog):
 				msg = "Impossible d'exécuter le craft de cette item !"
 			DB.updateComTime(ID)
 		else:
-			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -339,7 +354,7 @@ class Gems(commands.Cog):
 	async def market (self, ctx):
 		"""permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c):
+		if spam(ID,couldown_sc):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 			for c in objet :
 				d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
@@ -348,7 +363,7 @@ class Gems(commands.Cog):
 			DB.updateComTime(ID)
 			await ctx.channel.send(embed = msg)
 		else:
-			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
+			msg = "il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 
@@ -358,7 +373,7 @@ class Gems(commands.Cog):
 		"""| sell [item] [nombre] |Les valeurs d'échange :cobblestone => 1 iron => 10"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
-		if spam(ID,couldown_l):
+		if spam(ID,couldown_c):
 			nb = int(nb)
 			if nbElements(ID, item) >= nb:
 				addInv(ID, item, -nb)
@@ -377,7 +392,7 @@ class Gems(commands.Cog):
 				msg = "Vous n'avez pas assez de "+str(item)+". Il vous en reste : "+ str(nbElements(ID, item))
 			DB.updateComTime(ID)
 		else:
-			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -386,7 +401,7 @@ class Gems(commands.Cog):
 	async def pay (self, ctx, nom, gain):
 		"""| pay [nom] [gain] | donner de l'argent à vos amis ! """
 		ID = ctx.author.id
-		if spam(ID,couldown_l):
+		if spam(ID,couldown_c):
 			try:
 				gain = int(gain)
 				don = -gain
@@ -403,7 +418,7 @@ class Gems(commands.Cog):
 				msg = "la commande est mal formulée"
 				pass
 		else:
-			msg = "il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
+			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 def setup(bot):
