@@ -214,7 +214,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def mine(self, ctx):
-		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de <:gem_cobblestone:{}>`cobblestone`, 1 <:gem_iron:{}>`lingot de fer`, 1 <:gem_gold:{}>`lingot d'orè  ou 1 <:gem_diamond:{}>`diamant brut`""".format(get_idmogi("cobblestone"),get_idmogi("iron"),get_idmogi("gold"),get_idmogi("diamond"))
+		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de cobblestones, 1 lingot de fer, 1 lingot d'or ou 1 diamant brut"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			#print(nbElements(ID, "pickaxe"))
@@ -269,7 +269,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def fish(self, ctx):
-		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 <:gem_fish:{}>`fish` ou 1 <:gem_tropical_fish:{}>`tropical_fish`""".format(get_idmogi("fish"), get_idmogi("tropical_fish"))
+		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish:"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			nbrand = r.randint(0,99)
@@ -299,7 +299,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def forge(self, ctx, item, nb = 1):
-		""" Forgons une <:gem_iron_pickaxe:{2}>`iron_pickaxe`: Pour cela tu aura besoin de 4 <:gem_iron:{0}>`lingots de fer` et d'1 <:gem_pickaxe:{1}>`pickaxe`""".format(get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe")))
+		""" Forgons une pioche en fer: Pour cela tu aura besoin de 4 lingots de fer et d'1 :pick:pickaxe"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c):
 			if item == "iron_pickaxe":
@@ -389,7 +389,7 @@ class Gems(commands.Cog):
 					msg = "cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Vous n'avez pas assez de <:gem_{0}:{2}>`{0}`. Il vous en reste : {1}").format(str(item),str(nbElements(ID, item),get_idmogi(item))
+				msg = "Vous n'avez pas assez de <:gem_{0}:{2}>`{0}`. Il vous en reste : {1}".format(str(item),str(nbElements(ID, item)),get_idmogi(item))
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
