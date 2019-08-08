@@ -130,7 +130,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def crime(self, ctx):
-		"""commets un crime et gagne des gems !"""
+		"""commets un crime et gagne des :gem: !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
@@ -202,7 +202,7 @@ class Gems(commands.Cog):
 						addInv(ID, c.nom, nb)
 						msg = "Vous venez d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 					else :
-						msg = "Désolé, nous ne pouvons pas executer cet achat, vous n'avez pas assez d'argent en banque"
+						msg = "Désolé, nous ne pouvons pas executer cet achat, vous n'avez pas assez de :gem: en banque"
 					break
 			if test :
 				msg = "Cet item n'est pas vendu au marché !"
@@ -214,7 +214,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def mine(self, ctx):
-		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de cobblestones, 1 lingot de fer, 1 lingot d'or ou 1 diamant brut"""
+		""" minez compagnons !! vous pouvez récuperer 1 à 5 bloc de <:gem_cobblestone:{}>`cobblestone`, 1 <:gem_iron:{}>`lingot de fer`, 1 <:gem_gold:{}>`lingot d'orè  ou 1 <:gem_diamond:{}>`diamant brut`""".format(get_idmogi("cobblestone"),get_idmogi("iron"),get_idmogi("gold"),get_idmogi("diamond"))
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			#print(nbElements(ID, "pickaxe"))
@@ -269,7 +269,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def fish(self, ctx):
-		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 :fish: ou 1 :tropical_fish:"""
+		""" Pechons compagnons !! vous pouvez récuperer 1 à 5 <:gem_fish:{}>`fish` ou 1 <:gem_tropical_fish:{}>`tropical_fish`""".format(get_idmogi("fish"), get_idmogi("tropical_fish"))
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			nbrand = r.randint(0,99)
@@ -299,7 +299,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def forge(self, ctx, item, nb = 1):
-		""" Forgons une pioche en fer: Pour cela tu aura besoin de 4 lingots de fer et d'1 :pick:pickaxe"""
+		""" Forgons une <:gem_iron_pickaxe:{2}>`iron_pickaxe`: Pour cela tu aura besoin de 4 <:gem_iron:{0}>`lingots de fer` et d'1 <:gem_pickaxe:{1}>`pickaxe`""".format(get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe")))
 		ID = ctx.author.id
 		if spam(ID,couldown_c):
 			if item == "iron_pickaxe":
@@ -311,15 +311,15 @@ class Gems(commands.Cog):
 					addInv(ID, "iron_pickaxe", nb)
 					addInv(ID, "pickaxe", -nbPickaxe)
 					addInv(ID, "iron", -nbIron)
-					msg = "Bravo, tu as réussi à forger {0} :iron_pickaxe: !".format(nb)
+					msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:{1}>`iron_pickaxe` !".format(nb, get_idmogi("iron_pickaxe"))
 				elif nbElements(ID, "iron") < nbIron and nbElements(ID, "pickaxe") < nbPickaxe:
-					msg = "tu n'as pas assez de lingot d'iron et de pioche pour forger {0} :iron_pickaxe: !".format(nb)
+					msg = "tu n'as pas assez de <:gem_iron:{1}>`lingots de fer` et de <:gem_pickaxe:{2}>`pickaxe` pour forger {0} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nb,get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
 				elif nbElements(ID, "iron") < nbIron:
 					nbmissing = (nbElements(ID, "iron") - nbIron)*-1
-					msg = "Il te manque {0} lingots de fer pour forger {1} :iron_pickaxe: !".format(nbmissing, nb)
+					msg = "Il te manque {0} <:gem_iron:{2}>`lingots de fer` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb,get_idmogi("iron"), get_idmogi("iron_pickaxe"))
 				else:
 					nbmissing = (nbElements(ID, "pickaxe") - nbPickaxe)*-1
-					msg = "Il te manque {0} :pick:pickaxe pour forger {1} :iron_pickaxe: !".format(nbmissing, nb)
+					msg = "Il te manque {0} <:gem_pickaxe:{2}>`pickaxe` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb, get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
 			else:
 				msg = "Impossible d'exécuter le craft de cette item !"
 			DB.updateComTime(ID)
@@ -389,7 +389,7 @@ class Gems(commands.Cog):
 					msg = "cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Vous n'avez pas assez de "+str(item)+". Il vous en reste : "+ str(nbElements(ID, item))
+				msg = "Vous n'avez pas assez de <:gem_{0}:{2}>`{0}`. Il vous en reste : {1}").format(str(item),str(nbElements(ID, item),get_idmogi(item))
 			DB.updateComTime(ID)
 		else:
 			msg = "il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
