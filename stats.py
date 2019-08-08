@@ -68,7 +68,7 @@ class Stats(commands.Cog):
 		"""
 		Permet de savoir combien i y'a eu de message posté depuis que le bot est sur le serveur
 		"""
-		msg = "Depuis que je suis sur ce serveur il y'a eu: "+str(countTotalMsg())
+		msg = "Depuis que je suis sur ce serveur il y'a eu: "+str(countTotalMsg())+" messages."
 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
