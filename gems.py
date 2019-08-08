@@ -135,7 +135,7 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_l):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
-			if r.randint(1,25) == 23:
+			if r.randint(0,9) == 0:
 				if addGems(ID, -10) >= 0:
 					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
 				else:
