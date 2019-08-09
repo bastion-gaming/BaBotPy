@@ -545,21 +545,20 @@ class Gems(commands.Cog):
 			trophy = DB.valueAt(ID, "trophy")
 			gems = DB.valueAt(ID, "gems")
 			for c in objetTrophy:
-				test = False
-				d_trophy += "**{}**".format(c.nom)
-				for x in trophy:
-					if c.nom == str(x):
-						d_trophy += ": x{}\n".format(str(trophy[x]))
-				if c.opt > 0:
-					test = True
+				if c.opt == 0:
+					for x in trophy:
+						if c.nom == str(x):
+							d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
+						if c.desc != "":
+							d_trophy += "`{}`\n".format(c.desc)
+				elif c.opt > 0:
+					d_trophy += "**{}**".format(c.nom)
 					if gems >= c.opt:
 						d_trophy += " :white_check_mark:\n"
 					else:
 						d_trophy += " :x:\n"
-				if c.desc != "" and test:
-					d_trophy += "`{}`:gem:\n".format(c.desc)
-				elif c.desc != "":
-					d_trophy += "`{}`\n".format(c.desc)
+					if c.desc != "":
+						d_trophy += "`{}`:gem:\n".format(c.desc)
 
 			msg = discord.Embed(title = "Trophées",color= 6466585, description = d_trophy)
 			await ctx.channel.send(embed = msg)
