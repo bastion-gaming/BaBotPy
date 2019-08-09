@@ -264,7 +264,7 @@ class Gems(commands.Cog):
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
-							msg = "Tu as obtenue un bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
+							msg = "Tu as obtenue 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
 						else :
 							msg = "Tu as obtenue {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
 
