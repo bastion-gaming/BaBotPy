@@ -30,11 +30,12 @@ objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10
 
 class Trophy:
 
-	def __init__(self,nom,desc):
+	def __init__(self,nom,desc,opt):
 		self.nom = nom
 		self.desc = desc
+		self.opt = opt #nombre de gems minimum necessaire
 
-objetTrophy = [Trophy("DiscordCop Arrestation","Non, c'est pas moi, j'ai un alibi, j'étais au cinéma.")]
+objetTrophy = [Trophy("DiscordCop Arrestation","Non, c'est pas moi, j'ai un alibi, j'étais au cinéma.", 0),Trophy("Petit investisseur","Avoir 1000",1000),Trophy("Farmer de l'extreme","Avoir 1 Million",1000000)]
 
 #anti-spam
 couldown_xl = 10
@@ -542,10 +543,23 @@ class Gems(commands.Cog):
 			d_trophy = ":trophy:Trophées de {}\n\n".format(ctx.author.mention)
 		if (spam(ID,couldown_c) and com_last(ID, "trophy") == 1) or (spam(ID,couldown_sc) and com_last(ID, "trophy") == 0):
 			trophy = DB.valueAt(ID, "trophy")
+			gems = DB.valueAt(ID, "gems")
 			for c in objetTrophy:
+				test = False
+				d_trophy += "**{}**".format(c.nom)
 				for x in trophy:
 					if c.nom == str(x):
-						d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
+						d_trophy += ": x{}\n".format(str(trophy[x]))
+				if c.opt > 0:
+					test = True
+					if gems >= c.opt:
+						d_trophy += " :white_check_mark:\n"
+					else:
+						d_trophy += " :x:\n"
+				if c.desc != "" and test:
+					d_trophy += "`{}`:gem:\n".format(c.desc)
+				elif c.desc != "":
+					d_trophy += "`{}`\n".format(c.desc)
 
 			msg = discord.Embed(title = "Trophées",color= 6466585, description = d_trophy)
 			await ctx.channel.send(embed = msg)
