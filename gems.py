@@ -148,7 +148,7 @@ class Gems(commands.Cog):
 				else:
 					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem: pour payer une amende"
 			else :
-				gain = r.randint(2,6)
+				gain = r.randint(2,8)
 				msg = message_crime[r.randint(0,3)]+str(gain)+" :gem:"
 				addGems(ID, gain)
 			DB.updateComTime(ID)
