@@ -27,7 +27,7 @@ def newPlayer(ID):
 	if db.search(Query().ID == ID) == []:
 		#Init du joueur avec les champs de base
 		#########################MODIFIER ICI SI NVX CHAMPS#####################
-		db.insert({'ID': ID, 'arrival': str(dt.datetime.now()),'com_time': 0,'gems':0, 'inventory':inv, 'nbMsg': 0, 'lvl': 0})
+		db.insert({'ID': ID, 'arrival': str(dt.datetime.now()),'com_time': 0,'gems':0, 'inventory':inv, 'nbMsg': 0, 'lvl': 0, 'com_last': ""})
 		########################################################################
 		return ("Le joueur a été ajouté !")
 	else:
@@ -76,6 +76,12 @@ def userID(i):
 
 def userGems(i):
 	return db.search(Query().gems)[i]["gems"]
+
+def updateComLast(ID, com):
+	"""
+	Met à jour la derniere commande executer
+	"""
+	updateField(ID, "com_last", com)
 
 def updateComTime(ID):
 	"""
