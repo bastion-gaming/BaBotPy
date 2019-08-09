@@ -6,6 +6,7 @@ import time as t
 DB_NOM = 'bastionDB.json'
 db = TinyDB(DB_NOM)
 inv = dict()
+trophy = dict()
 
 def dbExist():
 	"""
@@ -27,7 +28,7 @@ def newPlayer(ID):
 	if db.search(Query().ID == ID) == []:
 		#Init du joueur avec les champs de base
 		#########################MODIFIER ICI SI NVX CHAMPS#####################
-		db.insert({'ID': ID, 'arrival': str(dt.datetime.now()),'com_time': 0,'gems':0, 'inventory':inv, 'nbMsg': 0, 'lvl': 0, 'com_last': ""})
+		db.insert({'ID': ID, 'arrival': str(dt.datetime.now()),'com_time': 0,'gems':0, 'inventory':inv, 'nbMsg': 0, 'lvl': 0, 'com_last': "", 'trophy':trophy})
 		########################################################################
 		return ("Le joueur a été ajouté !")
 	else:

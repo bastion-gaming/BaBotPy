@@ -8,7 +8,7 @@ from discord.utils import get
 from operator import itemgetter
 
 message_crime = ["You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal",
-"Tu as volé une pomme qui vaut","Tu as volé une carotte ! Prend tes :", "Tu voles un bonbon ! Prend tes :", "Tu as gangé au loto ! Prends tes", "J'ai plus d'idée prends ça:"]
+"Tu as volé une pomme qui vaut","Tu as volé une carotte ! Prend tes", "Tu voles un bonbon ! Prend tes", "Tu as gangé au loto ! Prends tes", "J'ai plus d'idée prends ça:"]
 # 4 phrases
 message_gamble = ["Tu as remporté le pari ! Tu obtiens","Une grande victoire pour toi ! Tu gagnes",
 "Bravo prends", "Heu....", "Pourquoi jouer à Fortnite quand tu peux gamble! Prends tes"]
@@ -26,6 +26,15 @@ class Item:
 objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10,608748194775433256),Item("fishingrod",15,5,3,608748194318385173),Item("cobblestone",3,1,0.5,608748492181078131)
 ,Item("iron",30,r.randint(9,11),1,608748195685597235),Item("gold",100,r.randint(45, 56),1,608748194754723863),Item("ruby",150,r.randint(74, 82),1,608748194406465557),Item("diamond",200,r.randint(98, 120),1,608748194750529548)
 ,Item("fish",5,2,0.5,608762539605753868),Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079)]
+
+
+class Trophy:
+
+	def __init__(self,nom,desc):
+		self.nom = nom
+		self.desc = desc
+
+objetTrophy = [Trophy("DiscordCop Arrestation","Non, c'est pas moi, j'ai un alibi, j'étais au cinéma.")]
 
 #anti-spam
 couldown_xl = 10
@@ -103,7 +112,7 @@ def get_idmogi(nameElem):
 
 def addInv(ID, nameElem, nbElem):
 	"""
-	Permet de modifier le nombre de nameElem pour ID
+	Permet de modifier le nombre de nameElem pour ID dans l'inventaire
 	Pour en retirer mettez nbElemn en négatif
 	"""
 	inventory = DB.valueAt(ID, "inventory")
@@ -118,6 +127,26 @@ def addInv(ID, nameElem, nbElem):
 		print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
 	DB.updateField(ID, "inventory", inventory)
+
+
+
+def addTrophy(ID, nameElem, nbElem):
+	"""
+	Permet de modifier le nombre de nameElem pour ID dans les trophées
+	Pour en retirer mettez nbElemn en négatif
+	"""
+	trophy = DB.valueAt(ID, "trophy")
+	if nbElements(ID, nameElem) > 0 and nbElem < 0:
+		trophy[nameElem] += nbElem
+	elif nbElem >= 0:
+		if nbElements(ID, nameElem) == 0:
+			trophy[nameElem] = nbElem
+		else :
+			trophy[nameElem] += nbElem
+	else:
+		print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		return 404
+	DB.updateField(ID, "trophy", trophy)
 
 #===============================================================
 
@@ -143,13 +172,14 @@ class Gems(commands.Cog):
 		if (spam(ID,couldown_l) and com_last(ID, "crime") == 1) or (spam(ID,couldown_sc) and com_last(ID, "crime") == 0):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
+				addTrophy(ID, "DiscordCop Arrestation", 1)
 				if int(addGems(ID, -10)) >= 0:
 					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
 				else:
 					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem: pour payer une amende"
 			else :
 				gain = r.randint(2,8)
-				msg = message_crime[r.randint(0,3)]+str(gain)+" :gem:"
+				msg = message_crime[r.randint(0,3)]+" "+str(gain)+":gem:"
 				addGems(ID, gain)
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "crime")
@@ -193,7 +223,7 @@ class Gems(commands.Cog):
 			if r.randint(0,3) == 0:
 				gain = valeur*3
 				# l'espérence est de 0 sur la gamble
-				msg = message_gamble[r.randint(0,4)]+str(gain)+" :gem:"
+				msg = message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
 				addGems(ID, gain)
 			else:
 				val = 0-valeur
@@ -501,6 +531,31 @@ class Gems(commands.Cog):
 
 		msg = discord.Embed(title = "Classement des joueurs",color= 12745742, description = baltop)
 		await ctx.channel.send(embed = msg)
+
+	@commands.command(pass_context=True)
+	async def trophy(self, ctx, nom = None):
+		if nom != None:
+			ID = nom_ID(nom)
+			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
+		else:
+			ID = ctx.author.id
+			d_trophy = ":trophy:Trophées de {}\n\n".format(ctx.author.mention)
+		if (spam(ID,couldown_c) and com_last(ID, "trophy") == 1) or (spam(ID,couldown_sc) and com_last(ID, "trophy") == 0):
+			trophy = DB.valueAt(ID, "trophy")
+			for c in objetTrophy:
+				for x in trophy:
+					if c.nom == str(x):
+						d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
+
+			msg = discord.Embed(title = "Trophées",color= 6466585, description = d_trophy)
+			await ctx.channel.send(embed = msg)
+		elif spam(ID,couldown_sc) == True:
+			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
+			await ctx.channel.send(msg)
+		else:
+			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
+			await ctx.channel.send(msg)
+
 
 def setup(bot):
 	bot.add_cog(Gems(bot))
