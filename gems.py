@@ -31,7 +31,7 @@ objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10
 couldown_xl = 10
 couldown_l = 8 # l pour long
 couldown_c = 6 # c pour court
-couldown_sc = 4 # sc pour super court
+couldown_sc = 3 # sc pour super court
 # nb de sec nécessaire entre 2 commandes
 
 def spam(ID,couldown):
@@ -153,7 +153,7 @@ class Gems(commands.Cog):
 				addGems(ID, gain)
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "crime")
-		elif spam(ID,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		else:
 			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
@@ -176,7 +176,7 @@ class Gems(commands.Cog):
 				msg = "tu as actuellement : "+str(gem)+" :gem: !"
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "bal")
-		elif spam(ID,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		else:
 			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
@@ -201,7 +201,7 @@ class Gems(commands.Cog):
 				msg = "Dommage tu as perdu "+str(valeur)+":gem:"
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "gamble")
-		elif spam(ID,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
 		else:
 			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
@@ -230,7 +230,7 @@ class Gems(commands.Cog):
 				msg = "Cet item n'est pas vendu au marché !"
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "buy")
-		elif spam(Id,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		else:
 			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
@@ -288,7 +288,7 @@ class Gems(commands.Cog):
 				msg = "Il faut acheter ou forger une pioche pour miner!"
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "mine")
-		elif spam(ID,couldown_sc) == False:
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		else:
 			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
@@ -385,7 +385,7 @@ class Gems(commands.Cog):
 			DB.updateComLast(ID, "inv")
 			#msg = "**ton inventaire**\n```-pickaxe.s : "+str(inv[0])+"\n-cobblestone.s : "+str(inv[1])+"\n-iron.s : "+str(inv[2])+"\n-gold: "+str(inv[3])+"\n-diamond : "+str(inv[4])+"```"
 			await ctx.channel.send(embed = msg)
-		elif spam(ID,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 		else:
@@ -407,7 +407,7 @@ class Gems(commands.Cog):
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "market")
 			await ctx.channel.send(embed = msg)
-		elif spam(ID,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 		else:
@@ -440,7 +440,7 @@ class Gems(commands.Cog):
 				msg = "Tu n'as pas assez de <:gem_{0}:{2}>`{0}`. Il vous en reste : {1}".format(str(item),str(nbElements(ID, item)),get_idmogi(item))
 			DB.updateComTime(ID)
 			DB.updateComLast(ID, "sell")
-		elif spam(ID,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		else:
 			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
@@ -472,7 +472,7 @@ class Gems(commands.Cog):
 			except ValueError:
 				msg = "La commande est mal formulée"
 				pass
-		elif spam(ID,couldown_sc):
+		elif spam(ID,couldown_sc) == True:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		else:
 			msg = "Il faut attendre "+str(couldown_sc)+" secondes entre chaque commande !"
