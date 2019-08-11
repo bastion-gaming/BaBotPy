@@ -6,6 +6,17 @@ import json
 
 
 DB_NOM = 'bastionDB.json'
+
+def dbExist():
+	"""
+	Retourne True ou False en fonction de si la db existe.
+	"""
+	try:
+		with open(DB_NOM): pass
+	except IOError:
+		return False
+	return True
+
 db = TinyDB(DB_NOM)
 inv = dict()
 file = "fieldTemplate.json"
@@ -27,19 +38,9 @@ def checkField():
 			db.update({str(x):dico[x]})
 			flag = 1
 	if flag == 0:
-		return 1
+		return True
 	else :
-		return 0
-
-def dbExist():
-	"""
-	Retourne True ou False en fonction de si la db existe.
-	"""
-	try:
-		with open(DB_NOM): pass
-	except IOError:
 		return False
-	return True
 
 def newPlayer(ID):
 	"""
