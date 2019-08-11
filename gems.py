@@ -30,12 +30,19 @@ objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10
 
 class Trophy:
 
-	def __init__(self,nom,desc,opt):
+	def __init__(self,nom,desc,type,mingem):
 		self.nom = nom
 		self.desc = desc
-		self.opt = opt #nombre de gems minimum necessaire
+		self.type = type
+		self.mingem = mingem #nombre de gems minimum necessaire
 
-objetTrophy = [Trophy("DiscordCop Arrestation","Non, c'est pas moi, j'ai un alibi, j'étais au cinéma.", 0),Trophy("Petit investisseur","Avoir 1000",1000),Trophy("Farmer de l'extreme","Avoir 1 Million",1000000)]
+objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
+,Trophy("Gems 500","`Avoir 500`:gem:","unique",500)
+,Trophy("Gems 5k","`Avoir 5k`:gem:","unique",5000)
+,Trophy("Gems 15k","`Avoir 15k`:gem:","unique",15000)
+,Trophy("Gems 150k","`Avoir 150k`:gem:","unique",150000)
+,Trophy("Gems 1M","`Avoir 1 Million`:gem:","unique",1000000)
+,Trophy("Gems INTERGALACTIQUE","`Avoir 1 Milliard`:gem:","unique",1000000000)]
 
 #anti-spam
 couldown_xl = 10
@@ -144,6 +151,26 @@ def addTrophy(ID, nameElem, nbElem):
 		print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
 	DB.updateField(ID, "trophy", trophy)
+
+
+
+def testTrophy(ID, nameElem):
+	"""
+	Permet de modifier le nombre de nameElem pour ID dans les trophées
+	Pour en retirer mettez nbElemn en négatif
+	"""
+	trophy = DB.valueAt(ID, "trophy")
+	gems = DB.valueAt(ID, "gems")
+	i = 2
+	for c in objetTrophy:
+		nbGemsNecessaire = c.mingem
+		if c.type == "unique":
+			if nameElem in trophy:
+				i = 0
+			elif gems >= nbGemsNecessaire:
+				i = 1
+				addTrophy(ID, c.nom, 1)
+	return i
 
 #===============================================================
 
@@ -522,22 +549,41 @@ class Gems(commands.Cog):
 			d_trophy = ":trophy:Trophées de {}\n\n".format(ctx.author.mention)
 		if spam(ID,couldown_c, "trophy"):
 			trophy = DB.valueAt(ID, "trophy")
-			gems = DB.valueAt(ID, "gems")
 			for c in objetTrophy:
-				if c.opt == 0:
+				if c.type != "unique":
 					for x in trophy:
 						if c.nom == str(x):
 							d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
-						if c.desc != "":
-							d_trophy += "`{}`\n".format(c.desc)
-				elif c.opt > 0:
-					d_trophy += "**{}**".format(c.nom)
-					if gems >= c.opt:
-						d_trophy += " :white_check_mark:\n"
-					else:
-						d_trophy += " :x:\n"
-					if c.desc != "":
-						d_trophy += "`{}`:gem:\n".format(c.desc)
+			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+			for c in objetTrophy:
+				if c.type == "unique":
+					test = testTrophy(ID, c.nom)
+					if test == 0:
+						d_trophy += "**{}** :white_check_mark:\n".format(c.nom)
+
+
+			DB.updateComTime(ID, "trophy")
+			msg = discord.Embed(title = "Trophées",color= 6466585, description = d_trophy)
+			await ctx.channel.send(embed = msg)
+		else:
+			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
+			await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def trophylist(self, ctx):
+		ID = ctx.author.id
+		d_trophy = "Liste des :trophy:Trophées\n\n"
+		if spam(ID,couldown_c, "trophy"):
+			for c in objetTrophy:
+				if c.type != "unique":
+					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
+			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+			for c in objetTrophy:
+				if c.type == "unique":
+					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
+
 			DB.updateComTime(ID, "trophy")
 			msg = discord.Embed(title = "Trophées",color= 6466585, description = d_trophy)
 			await ctx.channel.send(embed = msg)
