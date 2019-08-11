@@ -38,11 +38,13 @@ class Trophy:
 
 objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
 ,Trophy("Gems 500","`Avoir 500`:gem:","unique",500)
+,Trophy("Gems 1k","`Avoir 1k`:gem:","unique",1000)
 ,Trophy("Gems 5k","`Avoir 5k`:gem:","unique",5000)
-,Trophy("Gems 15k","`Avoir 15k`:gem:","unique",15000)
-,Trophy("Gems 150k","`Avoir 150k`:gem:","unique",150000)
+,Trophy("Gems 50k","`Avoir 50k`:gem:","unique",50000)
+,Trophy("Gems 200k","`Avoir 200k`:gem:","unique",200000)
+,Trophy("Gems 500k","`Avoir 500k`:gem:","unique",500000)
 ,Trophy("Gems 1M","`Avoir 1 Million`:gem:","unique",1000000)
-,Trophy("Gems INTERGALACTIQUE","`Avoir 1 Milliard`:gem:","unique",1000000000)]
+,Trophy("Le Milliard !!!","`Avoir 1 Milliard`:gem:","unique",1000000000)]
 
 #anti-spam
 couldown_xl = 10
@@ -434,13 +436,16 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def inv (self, ctx):
+	async def inv (self, ctx, nom = None):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "inv"):
-			member = ctx.author
+			if nom != None:
+				ID = nom_ID(nom)
+			else:
+				nom = ctx.author.mention
+			msg_inv = "Inventaire de {}\n\n".format(nom)
 			inv = DB.valueAt(ID, "inventory")
-			msg_inv = " "
 			#print (inv)
 			#msg="**ton inventaire**\n"
 			for c in objet:
@@ -449,7 +454,7 @@ class Gems(commands.Cog):
 						if inv[x] > 0:
 							msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 
-			msg = discord.Embed(title = "Ton inventaire",color= 6466585, description = msg_inv)
+			msg = discord.Embed(title = "Inventaire",color= 6466585, description = msg_inv)
 
 			DB.updateComTime(ID, "inv")
 			#msg = "**ton inventaire**\n```-pickaxe.s : "+str(inv[0])+"\n-cobblestone.s : "+str(inv[1])+"\n-iron.s : "+str(inv[2])+"\n-gold: "+str(inv[3])+"\n-diamond : "+str(inv[4])+"```"
@@ -541,13 +546,14 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def trophy(self, ctx, nom = None):
-		if nom != None:
-			ID = nom_ID(nom)
-			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
-		else:
-			ID = ctx.author.id
-			d_trophy = ":trophy:Trophées de {}\n\n".format(ctx.author.mention)
+		"""Permet de voir les trophées possédés !"""
+		ID = ctx.author.id
 		if spam(ID,couldown_c, "trophy"):
+			if nom != None:
+				ID = nom_ID(nom)
+			else:
+				nom = ctx.author.mention
+			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
 			trophy = DB.valueAt(ID, "trophy")
 			for c in objetTrophy:
 				if c.type != "unique":
@@ -573,6 +579,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def trophylist(self, ctx):
+		"""Permet de voir la liste des trophées !"""
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
 		if spam(ID,couldown_c, "trophy"):
