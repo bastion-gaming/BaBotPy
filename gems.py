@@ -436,14 +436,11 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def inv (self, ctx, nom = None):
+	async def inv (self, ctx):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
+		nom = ctx.author.mention
 		if spam(ID,couldown_c, "inv"):
-			if nom != None:
-				ID = nom_ID(nom)
-			else:
-				nom = ctx.author.mention
 			msg_inv = "Inventaire de {}\n\n".format(nom)
 			inv = DB.valueAt(ID, "inventory")
 			#print (inv)
