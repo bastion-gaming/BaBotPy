@@ -18,7 +18,6 @@ def dbExist():
 	return True
 
 db = TinyDB(DB_NOM)
-inv = dict()
 file = "fieldTemplate.json"
 
 def fieldList():
