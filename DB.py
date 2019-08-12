@@ -2,12 +2,10 @@ import discord
 from tinydb import TinyDB, Query
 import datetime as dt
 import time as t
+import json
+
 
 DB_NOM = 'bastionDB.json'
-db = TinyDB(DB_NOM)
-inv = dict()
-trophy = dict()
-com_time = dict()
 
 def dbExist():
 	"""
@@ -19,6 +17,31 @@ def dbExist():
 		return False
 	return True
 
+db = TinyDB(DB_NOM)
+inv = dict()
+file = "fieldTemplate.json"
+
+def fieldList():
+	with open(file, "r") as f:
+		t = json.load(f)
+	return t
+
+def checkField():
+	"""
+	Va vérifier que la base de donnée est à jour par rapport au fichier fieldTemplate.
+	Si il découvre un champ qui n'exsite pas, alors il met à jour.
+	"""
+	flag = 0
+	dico = fieldList()
+	for x in dico:
+		if db.search(Query()[x]) == []:
+			db.update({str(x):dico[x]})
+			flag = 1
+	if flag == 0:
+		return True
+	else :
+		return False
+
 def newPlayer(ID):
 	"""
 	Permet d'ajouter un nouveau joueur à la base de donnée en fonction de son ID.
@@ -29,7 +52,7 @@ def newPlayer(ID):
 	if db.search(Query().ID == ID) == []:
 		#Init du joueur avec les champs de base
 		#########################MODIFIER ICI SI NVX CHAMPS#####################
-		db.insert({'ID': ID, 'arrival': str(dt.datetime.now()),'com_time':com_time,'gems':0, 'inventory':inv, 'nbMsg': 0, 'lvl': 0, 'trophy':trophy, 'daily_mult': 0})
+		db.insert(fieldList())
 		########################################################################
 		return ("Le joueur a été ajouté !")
 	else:

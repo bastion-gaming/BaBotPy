@@ -26,6 +26,14 @@ async def on_ready():
 	print('Connecté avec le nom : {0.user}'.format(client))
 	print('PREFIX = '+str(PREFIX))
 	print('\nBastionBot '+VERSION)
+	if DB.dbExist():
+		print("La DB "+ DB.DB_NOM +" existe, poursuite sans soucis.")
+	else :
+		print("La DB n'existait pas. Elle a été (re)créée.")
+	if DB.checkField():
+		print("Aucun champ n'a été ajouté.")
+	else :
+		print("Un ou plusieurs champs ont été ajoutés à la DB.")
 	print('| Core Module | >> Connecté !')
 
 @client.event
