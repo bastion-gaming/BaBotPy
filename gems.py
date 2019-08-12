@@ -16,16 +16,25 @@ message_gamble = ["Tu as remporté le pari ! Tu obtiens","Une grande victoire po
 # se sont les phrases prononcé par le bot pour plus de diversité
 class Item:
 
-	def __init__(self,nom,achat,vente,poid,idmoji):
+	def __init__(self,nom,achat,vente,poid,idmoji,type,recette):
 		self.nom = nom
 		self.achat = achat
 		self.vente = vente
 		self.poid = poid
 		self.idmoji = idmoji
+		self.type = type
+		self.recette = recette
 
-objet = [Item("pickaxe",20,5,5,608748195291594792),Item("iron_pickaxe",150,60,10,608748194775433256),Item("fishingrod",15,5,3,608748194318385173),Item("cobblestone",3,1,0.5,608748492181078131)
-,Item("iron",30,r.randint(9,11),1,608748195685597235),Item("gold",100,r.randint(45, 56),1,608748194754723863),Item("ruby",150,r.randint(74, 82),1,608748194406465557),Item("diamond",200,r.randint(98, 120),1,608748194750529548)
-,Item("fish",5,2,0.5,608762539605753868),Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079)]
+objet = [Item("pickaxe",20,5,5,608748195291594792,"outil","")
+,Item("iron_pickaxe",160,80,10,608748194775433256,"outil forger","4 <:gem_iron:608748195685597235>`lingots de fer` et 1 <:gem_pickaxe:608748195291594792>`pickaxe`")
+,Item("fishingrod",15,5,3,608748194318385173,"outil","")
+,Item("cobblestone",3,1,0.5,608748492181078131,"minerai","")
+,Item("iron",30,r.randint(9,11),1,608748195685597235,"minerai","")
+,Item("gold",100,r.randint(45, 56),1,608748194754723863,"minerai","")
+,Item("diamond",200,r.randint(98, 120),1,608748194750529548,"minerai","")
+,Item("ruby",2000,1000,1,608748194406465557,"special","")
+,Item("fish",5,2,0.5,608762539605753868,"poisson","")
+,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson","")]
 
 
 class Trophy:
@@ -47,6 +56,8 @@ objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la Dis
 ,Trophy("Le Milliard !!!","`Avoir 1 Milliard`:gem:","unique",1000000000)]
 
 #anti-spam
+couldown_D = 86400 # D pour days (journalier)
+couldown_2D = 2 * couldown_D
 couldown_xl = 10
 couldown_l = 8 # l pour long
 couldown_c = 6 # c pour court
@@ -192,6 +203,31 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
+	async def daily(self, ctx):
+		""""""
+		ID = ctx.author.id
+		if spam(ID,couldown_D, "daily"):
+			if spam(ID,couldown_2D, "daily"):
+				DB.updateField(ID, "daily_mult", 0)
+				mult = 0
+			else:
+				mult = DB.valueAt(ID, "daily_mult")
+				DB.updateField(ID, "daily_mult", mult + 1)
+			if mult < 16:
+				bonus = 100
+			else:
+				bonus = 500
+			gain = 100 + bonus*mult
+			addGems(ID, gain)
+			msg = "Récompense journalière! Tu as gagné {}:gem:".format(gain)
+			DB.updateComTime(ID, "daily")
+		else:
+			msg = "Tu as déja reçu ta récompense journalière ! Reviens demain pour en avoir plus"
+		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
 	async def crime(self, ctx):
 		"""Commets un crime et gagne des :gem: !"""
 		ID = ctx.author.id
@@ -217,7 +253,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def bal(self, ctx, nom = None):
-		"""Êtes vous riche ou pauvre ? bal vous le dit """
+		"""Êtes vous riche ou pauvre ? bal vous le dit"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "bal"):
 			#print(nom)
@@ -238,7 +274,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def baltop(self, ctx, n = 10):
-		"""Affiche le classement des joueurs"""
+		"""Classement des joueurs"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "baltop"):
 			UserList = []
@@ -257,17 +293,17 @@ class Gems(commands.Cog):
 				i = i - 1
 				j = j + 1
 			DB.updateComTime(ID, "baltop")
-			msg = discord.Embed(title = "Classement des joueurs",color= 12745742, description = baltop)
+			msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
 			await ctx.channel.send(embed = msg)
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
-		await ctx.channel.send(msg)
+			await ctx.channel.send(msg)
 
 
 
 	@commands.command(pass_context=True)
 	async def gamble(self, ctx,valeur):
-		"""**| gamble [valeur] |** Avez vous l'ame d'un parieur ?  """
+		"""**gamble [valeur]** Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
 		if spam(ID,couldown_xl, "gamble"):
@@ -290,7 +326,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def buy (self, ctx,item,nb = 1):
-		"""**| buy [item] [nombre] |** Permet d'acheter les items vendus au marché"""
+		"""**buy [item] [nombre]** Permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "buy"):
 			test = True
@@ -404,7 +440,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def forge(self, ctx, item, nb = 1):
-		"""**| forge [item] [nombre] |** Forgons une pioche en fer: Pour cela tu aura besoin de 4 lingots de fer et d'1 :pick:pickaxe"""
+		"""**forge [item] [nombre]**"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "forge"):
 			if item == "iron_pickaxe":
@@ -436,6 +472,26 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
+	async def recette(self, ctx):
+		"""Liste de toutes les recettes disponible !"""
+		ID = ctx.author.id
+		if spam(ID,couldown_c, "recette"):
+			d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
+			d_recette+="▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Forge**\n"
+			for c in objet :
+				if c.type == "outil forger":
+					d_recette += "<:gem_{0}:{1}>`{0}`: {2}\n".format(c.nom,c.idmoji,c.recette)
+
+			msg = discord.Embed(title = "Recettes",color= 15778560, description = d_recette)
+			DB.updateComTime(ID, "recette")
+			await ctx.channel.send(embed = msg)
+		else:
+			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
+			await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
 	async def inv (self, ctx):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
@@ -443,8 +499,6 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_c, "inv"):
 			msg_inv = "Inventaire de {}\n\n".format(nom)
 			inv = DB.valueAt(ID, "inventory")
-			#print (inv)
-			#msg="**ton inventaire**\n"
 			for c in objet:
 				for x in inv:
 					if c.nom == str(x):
@@ -452,9 +506,7 @@ class Gems(commands.Cog):
 							msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 
 			msg = discord.Embed(title = "Inventaire",color= 6466585, description = msg_inv)
-
 			DB.updateComTime(ID, "inv")
-			#msg = "**ton inventaire**\n```-pickaxe.s : "+str(inv[0])+"\n-cobblestone.s : "+str(inv[1])+"\n-iron.s : "+str(inv[2])+"\n-gold: "+str(inv[3])+"\n-diamond : "+str(inv[4])+"```"
 			await ctx.channel.send(embed = msg)
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
@@ -470,9 +522,8 @@ class Gems(commands.Cog):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 			for c in objet :
 				d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
+
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
-
-
 			DB.updateComTime(ID, "market")
 			await ctx.channel.send(embed = msg)
 		else:
@@ -483,7 +534,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def sell (self, ctx,item,nb = 1):
-		"""**| sell [item] [nombre] |** Les valeurs d'échange :cobblestone => 1 iron => 10"""
+		"""**sell [item] [nombre]**"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "sell"):
@@ -513,7 +564,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def pay (self, ctx, nom, gain):
-		"""**| pay [nom] [gain] |** Donner de l'argent à vos amis ! """
+		"""**pay [nom] [gain]** Donner de l'argent à vos amis !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "pay"):
 			try:
@@ -543,7 +594,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def trophy(self, ctx, nom = None):
-		"""Permet de voir les trophées possédés !"""
+		"""Les trophées possédés !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "trophy"):
 			if nom != None:
@@ -566,7 +617,7 @@ class Gems(commands.Cog):
 
 
 			DB.updateComTime(ID, "trophy")
-			msg = discord.Embed(title = "Trophées",color= 6466585, description = d_trophy)
+			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
 			await ctx.channel.send(embed = msg)
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
@@ -576,10 +627,10 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def trophylist(self, ctx):
-		"""Permet de voir la liste des trophées !"""
+		"""Liste des trophées !"""
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
-		if spam(ID,couldown_c, "trophy"):
+		if spam(ID,couldown_c, "trophylist"):
 			for c in objetTrophy:
 				if c.type != "unique":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
@@ -588,8 +639,8 @@ class Gems(commands.Cog):
 				if c.type == "unique":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
 
-			DB.updateComTime(ID, "trophy")
-			msg = discord.Embed(title = "Trophées",color= 6466585, description = d_trophy)
+			DB.updateComTime(ID, "trophylist")
+			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
 			await ctx.channel.send(embed = msg)
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
