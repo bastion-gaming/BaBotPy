@@ -72,83 +72,86 @@ class Gestion(commands.Cog):
 		"""
 		<thème du vote>//<choix 1> <choix 2> <etc> créé un vote pendant 1h !
 		"""
-		choix = choix_G[:]
-		args = args.split("//")
-		question = args[0]
-		props = args[1].split(" ")
-		desc = ""
-		n = len(props)
-		if n>5:
-			await ctx.channel.send("5 choix sont possible au maximum!")
-			return(None)
-		msg = discord.Embed(title = "Un nouveau vote est lancé !",color= 12745742, description = question)
-		for i in range(n):
-			desc += "{} {} : {} vote(s)\n".format(choix[i][0],props[i],choix[i][2])
-		desc += ":x: annuler son vote\n"
-		msg.add_field(name="les différents choix", value=desc, inline=False)
-		mess = await ctx.channel.send(embed=msg)
-		for i in range(len(props)):
-			await mess.add_reaction(choix[i][1])
-		await mess.add_reaction('❌')
-		t_init = time.time()
-		votant ={}
-		global exit
-		exit = True
-		def check (reaction,user):
-			if user == client.user :
-				return(False)
-			if reaction.emoji == '🛑':
-				print(ctx.author.name)
-				if permission(ctx,Ambassadeur):
-					global exit
-					exit = False
+		if permission(ctx,Ambassadeur):
+			choix = choix_G[:]
+			args = args.split("//")
+			question = args[0]
+			props = args[1].split(" ")
+			desc = ""
+			n = len(props)
+			if n>5:
+				await ctx.channel.send("5 choix sont possible au maximum!")
+				return(None)
+			msg = discord.Embed(title = "Un nouveau vote est lancé !",color= 12745742, description = question)
+			for i in range(n):
+				desc += "{} {} : {} vote(s)\n".format(choix[i][0],props[i],choix[i][2])
+			desc += ":x: annuler son vote\n"
+			msg.add_field(name="les différents choix", value=desc, inline=False)
+			mess = await ctx.channel.send(embed=msg)
+			for i in range(len(props)):
+				await mess.add_reaction(choix[i][1])
+			await mess.add_reaction('❌')
+			t_init = time.time()
+			votant ={}
+			global exit
+			exit = True
+			def check (reaction,user):
+				if user == client.user :
 					return(False)
-				else:
-					print('pas les droits')
-					return(False)
+				if reaction.emoji == '🛑':
+					print(ctx.author.name)
+					if permission(ctx,Ambassadeur):
+						global exit
+						exit = False
+						return(False)
+					else:
+						print('pas les droits')
+						return(False)
 
-			elif user in votant :
-				if reaction.emoji == '❌':
-					emoji = votant[user]
+				elif user in votant :
+					if reaction.emoji == '❌':
+						emoji = votant[user]
+						for i in range(n):
+							if emoji == choix[i][1]:
+								choix[i][2] -= 1
+						del votant[user]
+						return(True)
+					else:
+						return(False)
+				else :
+					votant[user] = reaction.emoji
 					for i in range(n):
-						if emoji == choix[i][1]:
-							choix[i][2] -= 1
-					del votant[user]
+						if reaction.emoji == choix[i][1]:
+							choix[i][2] += 1
 					return(True)
-				else:
-					return(False)
-			else :
-				votant[user] = reaction.emoji
-				for i in range(n):
-					if reaction.emoji == choix[i][1]:
-						choix[i][2] += 1
-				return(True)
-		while t_init + 3600 > time.time() and exit:
-			print(exit)
-			try :
-				reaction, user = await self.bot.wait_for('reaction_add', timeout=10, check = check)
-				msg = discord.Embed(title = "Un nouveau vote est lancé !",color= 12745742, description = question)
-				desc = ""
-				for i in range(n):
-					desc += "{} {} : {} vote(s)\n".format(choix[i][0],props[i],choix[i][2])
-				desc += ":x: annuler son vote\n"
-				msg.add_field(name="les différents choix", value=desc, inline=False)
-				await mess.edit(embed = msg)
-			except asyncio.TimeoutError:
-				print('60 sec on passé')
-				pass
-		max = 0
-		for i in range (n):
-			if choix[i][2] > max :
-				max = choix[i][2]
-				gagnant_nom = props[i]
-				gagnant_votes = max
-			elif choix[i][2] == max :
-				gagnant_nom = "égalité"
-				gagnant_votes = max
+			while t_init + 3600 > time.time() and exit:
+				print(exit)
+				try :
+					reaction, user = await self.bot.wait_for('reaction_add', timeout=10, check = check)
+					msg = discord.Embed(title = "Un nouveau vote est lancé !",color= 12745742, description = question)
+					desc = ""
+					for i in range(n):
+						desc += "{} {} : {} vote(s)\n".format(choix[i][0],props[i],choix[i][2])
+					desc += ":x: annuler son vote\n"
+					msg.add_field(name="les différents choix", value=desc, inline=False)
+					await mess.edit(embed = msg)
+				except asyncio.TimeoutError:
+					print('60 sec on passé')
+					pass
+			max = 0
+			for i in range (n):
+				if choix[i][2] > max :
+					max = choix[i][2]
+					gagnant_nom = props[i]
+					gagnant_votes = max
+				elif choix[i][2] == max :
+					gagnant_nom = "égalité"
+					gagnant_votes = max
 
-		msg2 = "Fin des votes !\nLe gagnant des votes : **{}** avec **{}** votes !".format(gagnant_nom,gagnant_votes)
-		await ctx.channel.send(msg2)
+			msg2 = "Fin des votes !\nLe gagnant des votes : **{}** avec **{}** votes !".format(gagnant_nom,gagnant_votes)
+			await ctx.channel.send(msg2)
+		else:
+			await ctx.send("tu n'as pas la permission de faire ça !")
 
 def setup(bot):
 	bot.add_cog(Gestion(bot))
