@@ -45,7 +45,7 @@ async def on_member_join(member):
 @client.event
 async def on_member_remove(member):
 	channel = client.get_channel(417445503110742048)
-	await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
+	await channel.send("{} nous a quitté, pourtant si jeune...".format(member.mention))
 
 ####################### Stat ####################################
 
