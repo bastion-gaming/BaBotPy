@@ -54,6 +54,8 @@ async def on_message(message):
 	await stat.countMsg(message)
 	await client.process_commands(message)
 
+####################### Commande stats.py #######################
+
 client.load_extension('stats')
 
 ####################### Commande roles.py #######################
@@ -71,5 +73,11 @@ client.load_extension('gems')
 ####################### Commande help.py #######################
 
 client.load_extension('help')
+
+####################### Commande vocal.py #######################
+
+client.load_extension('vocal')
+
+####################### Lancemement du bot ######################
 
 client.run(TOKEN)
