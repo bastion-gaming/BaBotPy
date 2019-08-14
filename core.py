@@ -72,18 +72,4 @@ client.load_extension('gems')
 
 client.load_extension('help')
 
-COGS = open("fichier_txt/cogs.txt","r").read()
-COGS = COGS.split('\n')
-COGS.pop()
-helptxt =open("fichier_txt/help.txt","a")
-for COG in COGS:
-	helptxt.write(COG+"::")
-	cog = client.get_cog(COG)
-	coms = cog.get_commands()
-	for com in coms :
-		arg = "-"+str(com.name)+" : "+str(com.help)+"\n"
-		helptxt.write(arg)
-	helptxt.write(";")
-helptxt.close()
-
 client.run(TOKEN)

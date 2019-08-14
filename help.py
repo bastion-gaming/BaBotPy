@@ -7,25 +7,28 @@ from discord.utils import get
 
 class Helpme(commands.Cog):
 
-	def __init__(self,ctx):
+	def __init__(self,bot):
 		self.PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
+		self.bot = bot
 
 	@commands.command(pass_context=True)
 	async def help(self, ctx):
 		"""affiche ce message !"""
 		d_help = "Liste de toutes les fonctions utilisable avec le prefix {}".format(self.PREFIX)
 		msg = discord.Embed(title = "Fonction disponible",color= 12745742, description = d_help)
-		helptxt = open("fichier_txt/help.txt",'r').read()
-		helptxt = helptxt.split(';')
-		helptxt.pop()
-		for description in helptxt:
-			description = description.split("::")
-			msg.add_field(name=description[0], value=description[1], inline=False)
-		await ctx.channel.send(embed = msg)
-		# description += "-{} : {}\n".format(com.name,com.help)
-		# msg.add_field(name=COG, value=description, inline=False)
-		# await ctx.channel.send(embed = msg)
 
+		COGS = open("fichier_txt/cogs.txt","r").read()
+		COGS = COGS.split('\n')
+		COGS.pop()
+		for COG in COGS:
+			cog = self.bot.get_cog(COG)
+			coms = cog.get_commands()
+			arg = ""
+			for com in coms :
+				arg += "-"+str(com.name)+" : "+str(com.help)+"\n"
+			msg.add_field(name=COG, value=arg, inline=False)
+
+		await ctx.channel.send(embed = msg)
 
 def setup(bot):
 	bot.add_cog(Helpme(bot))
