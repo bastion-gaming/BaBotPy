@@ -44,7 +44,7 @@ async def on_member_join(member):
 	#data = sqlite3.connect('connect.db')
 	#c = data.cursor()
 	id = member.id
-	if DB.newPlayer(id) == 100:
+	if DB.newPlayer(id) == "Le joueur a été ajouté !":
 		msg = ":black_small_square:Bienvenue {} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
 	else:
 		msg = "=====================\nBon retour parmis nous ! {}\n\n=====================".format(member.mention)
