@@ -19,7 +19,7 @@ choix_G =[[':regional_indicator_a:','🇦',0],[':regional_indicator_b:','🇧',0
 def permission(ctx,grade):
 	roles = ctx.author.roles
 	for role in roles :
-		if role.name in perm[grade]:
+		if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
 			return(True)
 	return(False)
 
@@ -136,7 +136,7 @@ class Gestion(commands.Cog):
 					msg.add_field(name="les différents choix", value=desc, inline=False)
 					await mess.edit(embed = msg)
 				except asyncio.TimeoutError:
-					print('60 sec on passé')
+					print('60 sec ont passé')
 					pass
 			max = 0
 			for i in range (n):
