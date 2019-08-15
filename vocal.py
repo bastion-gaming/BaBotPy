@@ -3,7 +3,7 @@ from discord.ext import commands
 import DB
 import youtube_dl
 import os
-
+import asyncio
 
 admin = 0
 Inquisiteur = 1
@@ -16,20 +16,56 @@ def permission(ctx,grade):
 			return(True)
 	return(False)
 
+class Info():
+	def __init__(self):
+		self.url = []
+		self.title = []
+		self.ydl_opt ={
+			'format':'bestaudio/best',
+			'postprocessors':
+				[{
+				'key':'FFmpegExtractAudio',
+				'preferredcodec':'mp3',
+				'preferredquality':'192',
+				}]
+		}
+	def add(self,url):
+		self.url.append(url)
+		with youtube_dl.YoutubeDL(self.ydl_opt) as ydl:
+			self.info = ydl.extract_info(url,download = False)
+		self.title.append(self.info.get('title',None))
+
+	def sup(self):
+		del self.url[0]
+		del self.title[0]
+
+	def last_title(self):
+		n = len(self.url)-1
+		return (self.title[n])
+
+	def last_url(self):
+		n = len(self.url)-1
+		return (self.url[n])
+
+	def purge(self):
+		self.url = []
+		self.title = []
 class Queue(commands.Cog):
 
 	def __init__(self,bot):
 		self.bot = bot
-		self.url = []
+		self.info = Info()
 
 	async def add_to_queue(self, ctx, url):
-		self.url.append(url)
+		self.info.add(url)
 		if not ctx.voice_client.is_playing():
+			await ctx.send("downloading file")
 			self.dl(url)
-			ctx.voice_client.play(discord.FFmpegPCMAudio("song.mp3"), after =lambda e: self.next(ctx))
-			await ctx.send("{} se lance".format(self.name))
+			song = discord.FFmpegPCMAudio("song.mp3")
+			ctx.voice_client.play(song, after =lambda e: self.next(ctx))
+			await ctx.send("{} se lance".format(self.info.title[0]))
 		else:
-			await ctx.send("ajouté à la queue")
+			await ctx.send("{} ajouté à la queue".format(self.info.last_title()))
 			# print("ajouté à la queue")
 	def dl(self, url):
 		ydl_opts ={
@@ -47,18 +83,29 @@ class Queue(commands.Cog):
 
 		for file in os.listdir('./'):
 			if file.endswith(".mp3"):
-				self.name = file
 				print("renamed File:{}".format(file))
 				os.rename(file,"song.mp3")
 
 	def next(self,ctx):
-		if not self.url:
+		try :
+			self.info.sup()
+		except ValueError:
+			print("liste vide")
+			pass
+		if not self.info.url:
+			msg = 'la queue est vide'
 			print('la queue est vide')
 		else:
-			del self.url[0]
-			self.dl (self.url[0])
+			msg = 'lecture de {}'.format(self.info.title[0])
+			self.dl (self.info.url[0])
 			ctx.voice_client.play(discord.FFmpegPCMAudio("song.mp3"), after =lambda e: self.next(ctx))
-
+		envoie = ctx.send(msg)
+		fut = asyncio.run_coroutine_threadsafe(envoie, self.bot.loop)
+		try:
+			fut.result()
+		except:
+			# an error happened sending the message
+			pass
 
 class Music(commands.Cog):
 
@@ -82,6 +129,7 @@ class Music(commands.Cog):
 	async def leave(self, ctx):
 		"""le bot quitte le channel vocal """
 		voice = ctx.voice_client
+		self.music.info.purge()
 		voice.stop()
 		await voice.disconnect()
 
@@ -100,7 +148,6 @@ class Music(commands.Cog):
 			ctx.send("ERROR music playing")
 			return
 
-		await ctx.send("getting everything ready now")
 		await self.music.add_to_queue(ctx,url)
 
 	@commands.command(pass_context=True)
@@ -109,8 +156,7 @@ class Music(commands.Cog):
 		if voice.is_connected():
 			if permission(ctx,Ambassadeur):
 				voice.stop()
-				self.music.next(ctx)
-				ctx.send("music skipped")
+				await ctx.send("music skipped")
 			else:
 				if ctx.member.id in self.skip:
 					return
@@ -120,12 +166,24 @@ class Music(commands.Cog):
 					m = len(ctx.author.voice.channel.members)
 					if n >= m/2:
 						voice.stop()
-						self.music.next(ctx)
-						ctx.send("music skipped")
+						await ctx.send("music skipped")
 					else:
 						ctx.send("il manque {} joueur.s pour skip".format(round((m/2)-n)))
 		else:
 			return
+
+	@commands.command(pass_context=True)
+	async def list(self, ctx):
+		self.list = self.music.info.title
+		desc = "*en cours* : {}\n".format(self.list[0])
+		self.list = self.list[1:]
+		if self.list :
+			i = 1
+			for song in self.list:
+				desc += "-{} {}\n".format(i,song)
+				i+=1
+		msg = discord.Embed(title = "Listes des musiques dans la liste",color= 12745742, description = desc)
+		await ctx.send(embed = msg, delete_after = 60)
 
 
 def setup(bot):
