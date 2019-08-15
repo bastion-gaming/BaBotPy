@@ -36,6 +36,18 @@ async def on_ready():
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
 	print('| Core Module | >> Connecté !')
 
+################### Core ####################################
+
+@client.command(pass_context=True)
+async def version(self, ctx):
+		"""
+		Permet d'avoir la version du bot.
+		"""
+		msg = "Je suis en version : **" +str(VERSION)+"**."
+		await ctx.channel.send(msg)
+
+################### Welcome #################################
+
 @client.event
 async def on_member_join(member):
 	await roles.autorole(member)
