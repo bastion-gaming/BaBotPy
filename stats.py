@@ -83,7 +83,7 @@ class Stats(commands.Cog):
 
 		if (ID != -1):
 			res = DB.valueAt(ID, "nbMsg")
-			msg=str(Nom)+" a posté "+ str(res) +"massages depuis le "+str(DB.valueAt(ID, "arrival")[:10])
+			msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(DB.valueAt(ID, "arrival")[:10])
 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
