@@ -21,7 +21,8 @@ class Helpme(commands.Cog):
 		for description in helptxt:
 			description = description.split("::")
 			msg.add_field(name=description[0], value=description[1], inline=False)
-		await ctx.channel.send(embed = msg)
+			await ctx.channel.send(embed = msg)
+			msg = discord.Embed(title = "",color= 12745742)
 		# description += "-{} : {}\n".format(com.name,com.help)
 		# msg.add_field(name=COG, value=description, inline=False)
 		# await ctx.channel.send(embed = msg)
