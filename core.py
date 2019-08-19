@@ -30,10 +30,17 @@ async def on_ready():
 		print("La DB "+ DB.DB_NOM +" existe, poursuite sans soucis.")
 	else :
 		print("La DB n'existait pas. Elle a été (re)créée.")
-	if DB.checkField():
-		print("Aucun champ n'a été ajouté.")
-	else :
+	flag = DB.checkField()
+	if flag == 0:
+		print("Aucun champ n'a été ajouté ni supprimé.")
+	elif "add" in flag:
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "sup" in flag:
+		print("Un ou plusieurs champs ont été supprimés de la DB.")
+	elif "type" in flag:
+		print("Un ou plusieurs type ont été modifié sur la DB.")
+
+
 	print('| Core Module | >> Connecté !')
 
 ################### Core ####################################

@@ -18,8 +18,11 @@ def fileExist():
 
 async def countMsg(message):
 	id = message.author.id
-	DB.updateField(id, "nbMsg", int(DB.valueAt(id, "nbMsg")+1))
-	return(DB.valueAt(id, "nbMsg"))
+	try:
+		DB.updateField(id, "nbMsg", int(DB.valueAt(id, "nbMsg")+1))
+	except:
+		return print("Le joueur n'existe pas.")
+	return print(DB.valueAt(id, "nbMsg"))
 
 def countTotalMsg():
 	#Init a

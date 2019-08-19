@@ -1,5 +1,6 @@
 import discord
 from tinydb import TinyDB, Query
+from tinydb.operations import delete
 import datetime as dt
 import time as t
 import json
@@ -26,21 +27,46 @@ def fieldList():
 		t = json.load(f)
 	return t
 
+def DBFieldList():
+	D = db
+	L=dict()
+	E=dict()
+	for x in D:
+		for y in x:
+			E={y:0}
+			L.update(E)
+	return L
+
 def checkField():
 	"""
 	Va vérifier que la base de donnée est à jour par rapport au fichier fieldTemplate.
 	Si il découvre un champ qui n'exsite pas, alors il met à jour.
 	"""
 	flag = 0
-	dico = fieldList()
-	for x in dico:
+	FL = fieldList() #Liste du template
+	DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+	#Ajout
+	for x in FL:
 		if db.search(Query()[x]) == []:
-			db.update({str(x):dico[x]})
-			flag = 1
-	if flag == 0:
-		return True
-	else :
-		return False
+			db.update({str(x):FL[x]})
+			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+			flag = "add"+str(flag)
+
+	#Supression
+	for x in DBFL:
+		if x not in FL:
+			db.update(delete(x))
+			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+			flag = "sup"+str(flag)
+
+	#Type
+	for x in DBFL:
+		if not isinstance(DBFL[x],type(FL[x])):
+			db.update({str(x):FL[x]})
+			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+			flag = "type"+str(flag)
+
+	return flag
 
 def newPlayer(ID):
 	"""
@@ -48,10 +74,11 @@ def newPlayer(ID):
 
 	ID: int de l'ID du joueur
 	"""
-
+	FieldsL = fieldList()
 	if db.search(Query().ID == ID) == []:
 		#Init du joueur avec les champs de base
 		db.insert(fieldList())
+		updateField(FieldsL["ID"], "ID", ID)
 		return ("Le joueur a été ajouté !")
 	else:
 		return ("Le joueur existe déjà")
