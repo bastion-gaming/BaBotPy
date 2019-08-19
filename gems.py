@@ -7,11 +7,18 @@ from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
 
-message_crime = ["You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal",
-"Tu as volé une pomme qui vaut","Tu as volé une carotte ! Prend tes", "Tu voles un bonbon ! Prend tes", "Tu as gangé au loto ! Prends tes", "J'ai plus d'idée prends ça:"]
+message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
+,"Tu as volé une pomme qui vaut"
+,"Tu as volé une carotte ! Prend tes"
+, "Tu voles un bonbon ! Prend tes"
+, "Tu as gangé au loto ! Prends tes"
+, "J'ai plus d'idée prends ça:"]
 # 4 phrases
-message_gamble = ["Tu as remporté le pari ! Tu obtiens","Une grande victoire pour toi ! Tu gagnes",
-"Bravo prends", "Heu....", "Pourquoi jouer à Fortnite quand tu peux gamble! Prends tes"]
+message_gamble = ["Tu as remporté le pari ! Tu obtiens"
+,"Une grande victoire pour toi ! Tu gagnes"
+,"Bravo prends"
+, "Heu...."
+,"Pourquoi jouer à Fortnite quand tu peux gamble! Prends tes"]
 # 4 phrases
 # se sont les phrases prononcé par le bot pour plus de diversité
 class Item:
@@ -219,7 +226,7 @@ class Gems(commands.Cog):
 			bonus = 125
 			gain = 100 + bonus*mult
 			addGems(ID, gain)
-			msg = "Récompense journalière! Tu as gagné 100:gem:"
+			msg = "Récompense journalière! Tu as gagné 100 :gem:"
 			if mult != 0:
 				msg += "\n\n Nouveau série: `{}`, Bonus: {}".format(mult, bonus*mult)
 			DB.updateComTime(ID, "daily")
