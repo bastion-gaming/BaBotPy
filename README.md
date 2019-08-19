@@ -55,6 +55,8 @@ aujourd'hui avec les mention de rôle) et c'est d'ailleurs ce que fera le bot MA
 parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur cette idée permettrait de poster un message sur les serveurs qui l'utilisent qui précise qui veut jouer et
 à quoi lorsque cette commande est entrée.
 
+**Live Notification**: Averti dans le salon #partage du début d'un live sur la chaine Twitch Bastion et celle des partenaires/kopains
+
 
 
 # État d'avancement du développement
@@ -80,3 +82,5 @@ Level
 Vote
 
 Game-Asker
+
+Live Notification
