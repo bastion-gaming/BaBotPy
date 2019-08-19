@@ -32,9 +32,10 @@ objet = [Item("pickaxe",20,5,5,608748195291594792,"outil","")
 ,Item("iron",30,r.randint(9,11),1,608748195685597235,"minerai","")
 ,Item("gold",100,r.randint(45, 56),1,608748194754723863,"minerai","")
 ,Item("diamond",200,r.randint(98, 120),1,608748194750529548,"minerai","")
-,Item("ruby",2000,1000,1,608748194406465557,"special","")
 ,Item("fish",5,2,0.5,608762539605753868,"poisson","")
-,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson","")]
+,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson","")
+,Item("cookie",150,75,1,"","friandise","")
+,Item("ruby",10000,5000,-10,608748194406465557,"special","")]
 
 
 class Trophy:
@@ -46,6 +47,8 @@ class Trophy:
 		self.mingem = mingem #nombre de gems minimum necessaire
 
 objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
+,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
+,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
 ,Trophy("Gems 500","`Avoir 500`:gem:","unique",500)
 ,Trophy("Gems 1k","`Avoir 1k`:gem:","unique",1000)
 ,Trophy("Gems 5k","`Avoir 5k`:gem:","unique",5000)
@@ -204,7 +207,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def daily(self, ctx):
-		""""""
+		"""Récupère ta récompense journalière!"""
 		ID = ctx.author.id
 		if spam(ID,couldown_D, "daily"):
 			if spam(ID,couldown_2D, "daily"):
@@ -213,13 +216,12 @@ class Gems(commands.Cog):
 			else:
 				mult = DB.valueAt(ID, "daily_mult")
 				DB.updateField(ID, "daily_mult", mult + 1)
-			if mult < 16:
-				bonus = 100
-			else:
-				bonus = 500
+			bonus = 125
 			gain = 100 + bonus*mult
 			addGems(ID, gain)
-			msg = "Récompense journalière! Tu as gagné {}:gem:".format(gain)
+			msg = "Récompense journalière! Tu as gagné 100:gem:"
+			if mult != 0:
+				msg += "\n\n Nouveau série: `{}`, Bonus: {}".format(mult, bonus*mult)
 			DB.updateComTime(ID, "daily")
 		else:
 			msg = "Tu as déja reçu ta récompense journalière ! Reviens demain pour en avoir plus"
@@ -229,7 +231,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def crime(self, ctx):
-		"""Commets un crime et gagne des :gem: !"""
+		"""Commets un crime et gagne des :gem: Attention au DiscordCop!"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l, "crime"):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
@@ -274,7 +276,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def baltop(self, ctx, n = 10):
-		"""Classement des joueurs"""
+		"""Classement des joueurs (10 premiers par défaut)"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "baltop"):
 			UserList = []
@@ -289,7 +291,7 @@ class Gems(commands.Cog):
 			i = DB.taille() - 1
 			j = 0
 			while i >= 0 and j != n : # affichage des données trié
-				baltop += "<@{0}> {1}:gem:\n".format(UserList[i][0], UserList[i][1])
+				baltop += "{2} | <@{0}> {1}:gem:\n".format(UserList[i][0], UserList[i][1], j+1)
 				i = i - 1
 				j = j + 1
 			DB.updateComTime(ID, "baltop")
@@ -353,7 +355,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def mine(self, ctx):
-		"""Minez compagnons !! vous pouvez récupérer 1 à 5 bloc de cobblestones, 1 lingot de fer, 1 lingot d'or ou 1 diamant brut"""
+		"""Minez compagnons !! Récupérer de la cobblestone, du fer, de l'or ou un diamant brut"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l, "mine"):
 			#print(nbElements(ID, "pickaxe"))
@@ -409,7 +411,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def fish(self, ctx):
-		"""Péchons compagnons !! vous pouvez récupérer 1 à 5 :fish: ou 1 :tropical_fish:"""
+		"""Péchons compagnons !! Récupérer des :fish: ou 1 :tropical_fish:"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l, "fish"):
 			nbrand = r.randint(0,99)
@@ -473,7 +475,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def recette(self, ctx):
-		"""Liste de toutes les recettes disponible !"""
+		"""Liste de toutes les recettes disponible dans la forge !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "recette"):
 			d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
@@ -499,12 +501,18 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_c, "inv"):
 			msg_inv = "Inventaire de {}\n\n".format(nom)
 			inv = DB.valueAt(ID, "inventory")
+			tailletot = 0
 			for c in objet:
 				for x in inv:
 					if c.nom == str(x):
 						if inv[x] > 0:
-							msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+							if c.type != "friandise":
+								msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+							else:
+								msg_inv = msg_inv+":{0}:`{0}`: `{1}`\n".format(str(x), str(inv[x]))
+							tailletot += c.poid*int(inv[x])
 
+			msg_inv += "\nTaille: `{}`".format(int(tailletot))
 			msg = discord.Embed(title = "Inventaire",color= 6466585, description = msg_inv)
 			DB.updateComTime(ID, "inv")
 			await ctx.channel.send(embed = msg)
@@ -521,7 +529,10 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_c, "market"):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 			for c in objet :
-				d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
+				if c.type != "friandise":
+					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
+				else:
+					d_market += ":{0}:`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid)
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			DB.updateComTime(ID, "market")
@@ -593,8 +604,155 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
+	async def slots(self, ctx, mise = None):
+		"""La machine à sous"""
+		ID = ctx.author.id
+		mini = 10
+		if mise != None:
+			if int(mise) < mini:
+				mise = mini
+		else:
+			mise = mini
+		if spam(ID,couldown_xl, "slots"):
+			tab = []
+			result = []
+			msg = "Votre mise: {} :gem:\n\n".format(mise)
+			val = 0-mise
+			addGems(ID, val)
+			for i in range(0,9):
+				if i == 3:
+					msg+="\n"
+				elif i == 6:
+					msg+=" :arrow_backward:\n"
+				tab.append(r.randint(0,160))
+				if tab[i] < 10 :
+					result.append("zero")
+				elif tab[i] >= 10 and tab[i] < 20:
+					result.append("one")
+				elif tab[i] >=  20 and tab[i] < 30:
+					result.append("two")
+				elif tab[i] >=  30 and tab[i] < 40:
+					result.append("three")
+				elif tab[i] >=  40 and tab[i] < 50:
+					result.append("four")
+				elif tab[i] >=  50 and tab[i] < 60:
+					result.append("five")
+				elif tab[i] >=  60 and tab[i] < 70:
+					result.append("six")
+				elif tab[i] >=  70 and tab[i] < 80:
+					result.append("seven")
+				elif tab[i] >=  80 and tab[i] < 90:
+					result.append("eight")
+				elif tab[i] >=  90 and tab[i] < 100:
+					result.append("nine")
+				elif tab[i] >=  100 and tab[i] < 110:
+					result.append("gem")
+				elif tab[i] >=  110 and tab[i] < 120:
+					result.append("ticket")
+				elif tab[i] >=  120 and tab[i] < 130:
+					result.append("boom")
+				elif tab[i] >=  130 and tab[i] < 140:
+					result.append("apple")
+				elif tab[i] >=  140 and tab[i] < 150:
+					result.append("cherries")
+				elif tab[i] >=  150 and tab[i] < 160:
+					result.append("cookie")
+				elif tab[i] == 160:
+					result.append("ruby")
+				if tab[i] < 160:
+					msg+=":{}:".format(result[i])
+				else:
+					msg+="<:gem_{}:{}>".format(result[i], get_idmogi(result[i]))
+			msg += "\n"
+			#===================================================================
+			#Super gain, 3 chiffres identique
+			if result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
+				gain = 200
+				addTrophy(ID, "Super Jackpot :seven::seven::seven:", 1)
+			elif result[3] == "one" and result[4] == "one" and result[5] == "one":
+				gain = 20
+			elif result[3] == "two" and result[4] == "two" and result[5] == "two":
+				gain = 30
+			elif result[3] == "three" and result[4] == "three" and result[5] == "three":
+				gain = 40
+			elif result[3] == "four" and result[4] == "four" and result[5] == "four":
+				gain = 50
+			elif result[3] == "five" and result[4] == "five" and result[5] == "five":
+				gain = 60
+			elif result[3] == "six" and result[4] == "six" and result[5] == "six":
+				gain = 70
+			elif result[3] == "eight" and result[4] == "eight" and result[5] == "eight":
+				gain = 80
+			elif result[3] == "nine" and result[4] == "nine" and result[5] == "nine":
+				gain = 90
+			elif result[3] == "zero" and result[4] == "zero" and result[5] == "zero":
+				gain = 100
+			#===================================================================
+			#Explosion de la machine
+			elif result[3] == "boom" and result[4] == "boom" and result[5] == "boom":
+				gain = -50
+			elif (result[3] == "boom" and result[4] == "boom") or (result[4] == "boom" and result[5] == "boom") or (result[3] == "boom" and result[5] == "boom"):
+				gain = -10
+			elif result[3] == "boom" or result[4] == "boom" or result[5] == "boom":
+				gain = -1
+			#===================================================================
+			#Gain de gem
+			elif result[3] == "gem" and result[4] == "gem" and result[5] == "gem":
+				gain = 15
+			elif (result[3] == "gem" and result[4] == "gem") or (result[4] == "gem" and result[5] == "gem") or (result[3] == "gem" and result[5] == "gem"):
+				gain = 5
+			elif result[3] == "gem" or result[4] == "gem" or result[5] == "gem":
+				gain = 2
+			#===================================================================
+			#Tichet gratuit
+			elif result[3] == "ticket" and result[4] == "ticket" and result[5] == "ticket":
+				gain = 5
+			elif (result[3] == "ticket" and result[4] == "ticket") or (result[4] == "ticket" and result[5] == "ticket") or (result[3] == "ticket" and result[5] == "ticket"):
+				gain = 3
+			elif result[3] == "ticket" or result[4] == "ticket" or result[5] == "ticket":
+				gain = 1
+			else:
+				gain = 0
+			#===================================================================
+			#Cookie
+			if result[3] == "cookie" and result[4] == "cookie" and result[5] == "cookie":
+				addInv(ID, "cookie", 3)
+				msg += "\nTu a trouvé 3 :cookie:`cookies`"
+			elif (result[3] == "cookie" and result[4] == "cookie") or (result[4] == "cookie" and result[5] == "cookie") or (result[3] == "cookie" and result[5] == "cookie"):
+				addInv(ID, "cookie", 2)
+				msg += "\nTu a trouvé 2 :cookie:`cookies`"
+			elif result[3] == "cookie" or result[4] == "cookie" or result[5] == "cookie":
+				addInv(ID, "cookie", 1)
+				msg += "\nTu a trouvé 1 :cookie:`cookie`"
+			#===================================================================
+			#Ruby (hyper rare)
+			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
+				addInv(ID, "ruby", 1)
+				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
+
+			#Calcul du prix
+			prix = gain * mise
+			if gain != 0 and gain != 1:
+				if prix > 0:
+					msg += "\nJackpot, vous venez de gagner {} :gem:".format(prix)
+				else:
+					msg += "\nLa machine viens d'exploser :boom:\nTu as perdu {} :gem:".format(-1*prix)
+				addGems(ID, prix)
+			elif gain == 1:
+				msg += "\nBravo, voici un ticket gratuit pour relancer la machine à sous"
+				addGems(ID, prix)
+			else:
+				msg += "\nLa machine à sous ne paya rien ..."
+			DB.updateComTime(ID, "slots")
+		else:
+			msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
+		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
 	async def trophy(self, ctx, nom = None):
-		"""Les trophées possédés !"""
+		"""Liste de vos trophées !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "trophy"):
 			if nom != None:
@@ -604,13 +762,13 @@ class Gems(commands.Cog):
 			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
 			trophy = DB.valueAt(ID, "trophy")
 			for c in objetTrophy:
-				if c.type != "unique":
+				if c.type != "unique" and c.type != "special":
 					for x in trophy:
 						if c.nom == str(x):
 							d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
 			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
 			for c in objetTrophy:
-				if c.type == "unique":
+				if c.type == "unique" and c.type != "special":
 					test = testTrophy(ID, c.nom)
 					if test == 0:
 						d_trophy += "**{}** :white_check_mark:\n".format(c.nom)
@@ -627,16 +785,20 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def trophylist(self, ctx):
-		"""Liste des trophées !"""
+		"""Liste de tout les trophées disponible !"""
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
 		if spam(ID,couldown_c, "trophylist"):
 			for c in objetTrophy:
-				if c.type != "unique":
+				if c.type != "unique" and c.type != "special":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
 			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
 			for c in objetTrophy:
-				if c.type == "unique":
+				if c.type != "unique" and c.type == "special":
+					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
+			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+			for c in objetTrophy:
+				if c.type == "unique" and c.type != "special":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
 
 			DB.updateComTime(ID, "trophylist")
