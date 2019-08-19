@@ -34,7 +34,7 @@ objet = [Item("pickaxe",20,5,5,608748195291594792,"outil","")
 ,Item("diamond",200,r.randint(98, 120),1,608748194750529548,"minerai","")
 ,Item("fish",5,2,0.5,608762539605753868,"poisson","")
 ,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson","")
-,Item("cookie",150,75,1,"","friandise","")
+,Item("cookie",20,10,1,"","friandise","")
 ,Item("ruby",10000,5000,-10,608748194406465557,"special","")]
 
 
