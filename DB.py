@@ -50,9 +50,7 @@ def newPlayer(ID):
 
 	if db.search(Query().ID == ID) == []:
 		#Init du joueur avec les champs de base
-		#########################MODIFIER ICI SI NVX CHAMPS#####################
 		db.insert(fieldList())
-		########################################################################
 		return ("Le joueur a été ajouté !")
 	else:
 		return ("Le joueur existe déjà")

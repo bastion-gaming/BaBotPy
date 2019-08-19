@@ -72,6 +72,21 @@ class Stats(commands.Cog):
 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
+	async def msgBy(self, ctx, Nom=None):
+		if len(Nom) == 21 :
+			ID = int(Nom[2:20])
+		elif len(Nom) == 22 :
+			ID = int(Nom[3:21])
+		else :
+			msg="Le nom que vous m'avez donné n'existe pas !"
+			ID = -1
+
+		if (ID != -1):
+			res = DB.valueAt(ID, "nbMsg")
+			msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(DB.valueAt(ID, "arrival")[:10])
+		await ctx.channel.send(msg)
+
+	@commands.command(pass_context=True)
 	async def hourMsg(self, ctx, ha=None, hb=None):
 		"""
 		Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.

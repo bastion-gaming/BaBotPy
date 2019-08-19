@@ -36,6 +36,18 @@ async def on_ready():
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
 	print('| Core Module | >> Connecté !')
 
+################### Core ####################################
+
+@client.command(pass_context=True)
+async def version(self, ctx):
+		"""
+		Permet d'avoir la version du bot.
+		"""
+		msg = "Je suis en version : **" +str(VERSION)+"**."
+		await ctx.channel.send(msg)
+
+################### Welcome #################################
+
 @client.event
 async def on_member_join(member):
 	await roles.autorole(member)
@@ -44,7 +56,7 @@ async def on_member_join(member):
 	#data = sqlite3.connect('connect.db')
 	#c = data.cursor()
 	id = member.id
-	if DB.newPlayer(id) == 100:
+	if DB.newPlayer(id) == "Le joueur a été ajouté !":
 		msg = ":black_small_square:Bienvenue {} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
 	else:
 		msg = "=====================\nBon retour parmis nous ! {}\n\n=====================".format(member.mention)
@@ -53,7 +65,7 @@ async def on_member_join(member):
 @client.event
 async def on_member_remove(member):
 	channel = client.get_channel(417445503110742048)
-	await channel.send("{member.mention} nous a quitté, pourtant si jeune...")
+	await channel.send("{} nous a quitté, pourtant si jeune...".format(member.mention))
 
 ####################### Stat ####################################
 
@@ -79,19 +91,5 @@ client.load_extension('gems')
 ####################### Commande help.py #######################
 
 client.load_extension('help')
-
-COGS = open("fichier_txt/cogs.txt","r").read()
-COGS = COGS.split('\n')
-COGS.pop()
-helptxt =open("fichier_txt/help.txt","a")
-for COG in COGS:
-	helptxt.write(COG+"::")
-	cog = client.get_cog(COG)
-	coms = cog.get_commands()
-	for com in coms :
-		arg = "-"+str(com.name)+" : "+str(com.help)+"\n"
-		helptxt.write(arg)
-	helptxt.write(";")
-helptxt.close()
 
 client.run(TOKEN)

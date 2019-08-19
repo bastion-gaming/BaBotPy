@@ -555,7 +555,11 @@ class Gems(commands.Cog):
 		"""**sell [item] [nombre]**"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
+		print(nb)
+		print(type(nb))
 		if spam(ID,couldown_c, "sell"):
+			if int(nb) == -1:
+				nb = nbElements(ID, item)
 			nb = int(nb)
 			if nbElements(ID, item) >= nb and nb > 0:
 				addInv(ID, item, -nb)
