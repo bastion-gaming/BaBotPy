@@ -56,6 +56,7 @@ class Trophy:
 objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
 ,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 ,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
+,Trophy("La Squelatitude", "`Avoir 3`:beer:` sur la machine à sous`", "special", 0)
 ,Trophy("Gems 500","`Avoir 500`:gem:","unique",500)
 ,Trophy("Gems 1k","`Avoir 1k`:gem:","unique",1000)
 ,Trophy("Gems 5k","`Avoir 5k`:gem:","unique",5000)
@@ -641,7 +642,7 @@ class Gems(commands.Cog):
 					msg+="\n"
 				elif i == 6:
 					msg+=" :arrow_backward:\n"
-				tab.append(r.randint(0,160))
+				tab.append(r.randint(0,230))
 				if tab[i] < 10 :
 					result.append("zero")
 				elif tab[i] >= 10 and tab[i] < 20:
@@ -671,12 +672,22 @@ class Gems(commands.Cog):
 				elif tab[i] >=  130 and tab[i] < 140:
 					result.append("apple")
 				elif tab[i] >=  140 and tab[i] < 150:
-					result.append("cherries")
+					result.append("green_apple")
 				elif tab[i] >=  150 and tab[i] < 160:
+					result.append("cherries")
+				elif tab[i] >=  160 and tab[i] < 170:
+					result.append("tangerine")
+				elif tab[i] >=  170 and tab[i] < 180:
+					result.append("banana")
+				elif tab[i] >=  180 and tab[i] < 190:
+					result.append("grapes")
+				elif tab[i] >=  190 and tab[i] < 200:
 					result.append("cookie")
-				elif tab[i] == 160:
+				elif tab[i] >=  200 and tab[i] < 230:
+					result.append("beer")
+				elif tab[i] == 230:
 					result.append("ruby")
-				if tab[i] < 160:
+				if tab[i] < 230:
 					msg+=":{}:".format(result[i])
 				else:
 					msg+="<:gem_{}:{}>".format(result[i], get_idmogi(result[i]))
@@ -741,6 +752,11 @@ class Gems(commands.Cog):
 			elif result[3] == "cookie" or result[4] == "cookie" or result[5] == "cookie":
 				addInv(ID, "cookie", 1)
 				msg += "\nTu a trouvé 1 :cookie:`cookie`"
+			#===================================================================
+			#Beer
+			if result[3] == "beer" or result[4] == "beer" or result[5] == "beer":
+				addTrophy(ID, "La Squelatitude", 1)
+				msg += "\n@Bot Player <@{}> paye sa tournée :beer::beer::beer:".format(ID)
 			#===================================================================
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
