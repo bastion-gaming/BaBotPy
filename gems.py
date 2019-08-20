@@ -626,7 +626,7 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		mini = 10
 		if mise != None:
-			if int(mise) < mini:
+			if mise < mini:
 				mise = mini
 		else:
 			mise = mini
