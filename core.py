@@ -31,7 +31,7 @@ async def on_ready():
 		print("La DB n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField()
 	if flag == 0:
-		print("Aucun champ n'a été ajouté ni supprimé.")
+		print("Aucun champ n'a été ajouté ni supprimé no modifié.")
 	elif "add" in flag:
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
 	elif "sup" in flag:
