@@ -4,6 +4,7 @@ import DB
 import youtube_dl
 import os
 import asyncio
+from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 
 admin = 0
 Inquisiteur = 1
@@ -50,6 +51,7 @@ class Info():
 	def purge(self):
 		self.url = []
 		self.title = []
+
 class Queue(commands.Cog):
 
 	def __init__(self,bot):
@@ -185,6 +187,42 @@ class Music(commands.Cog):
 		msg = discord.Embed(title = "Listes des musiques dans la liste",color= 12745742, description = desc)
 		await ctx.send(embed = msg, delete_after = 60)
 
+	@commands.command(pass_context=True)
+	async def search(self, ctx,*,args):
+		"""Donne les 5 premiers résultats de ta recherche sur youtube ! """
+		result = search_youtube(user_input=args, number=5)
+		embed = discord.Embed(color=0xFF0000)
+		embed.set_footer(text="Tapez un nombre pour faire votre choix "
+							  "ou dites \"cancel\" pour annuler")
+		for s in result:
+			url = get_youtube_url(s)
+			embed.add_field(name="{}.{}".format(result.index(s)+1,s['type']),
+							value="[{}]({})".format(s['title'],url), inline=False)
+		self_message = await ctx.send(embed=embed)
+
+		def check(message):
+			return message.author == ctx.author and (message.content == "cancel" or string_is_int(message.content))
+		try:
+			msg = await self.bot.wait_for("message", check=check, timeout=15)
+			if msg.content == "cancel":
+				await ctx.send("Annulé !", delete_after=5)
+				await self_message.delete(delay=None)
+				await ctx.message.delete(delay=2)
+				await msg.delete(delay=1)
+			else:
+				num = int(msg.content)
+				if num > 0 and num <= len(result):
+					url = get_youtube_url(result[num - 1])
+					await ctx.send(content="{}".format(url))
+					await ctx.message.delete(delay=2)
+					await self_message.delete(delay=None)
+					await msg.delete(delay=1)
+					await self.play(ctx,url)
+
+		except asyncio.TimeoutError:
+			await ctx.send("Tu as pris trop de temps pour répondre !", delete_after=5)
+			await self_message.delete(delay=None)
+			await ctx.message.delete(delay=2)
 
 def setup(bot):
 	bot.add_cog(Music(bot))
