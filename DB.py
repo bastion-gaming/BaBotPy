@@ -33,7 +33,7 @@ def DBFieldList():
 	E=dict()
 	for x in D:
 		for y in x:
-			E={y:0}
+			E={y:x[y]}
 			L.update(E)
 	return L
 
@@ -49,6 +49,7 @@ def checkField():
 	for x in FL:
 		if db.search(Query()[x]) == []:
 			db.update({str(x):FL[x]})
+			DBFL.clear()
 			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
 			flag = "add"+str(flag)
 
@@ -56,14 +57,18 @@ def checkField():
 	for x in DBFL:
 		if x not in FL:
 			db.update(delete(x))
+			DBFL.clear()
 			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
 			flag = "sup"+str(flag)
 
 	#Type
 	for x in DBFL:
 		if not isinstance(DBFL[x],type(FL[x])):
+			print("DBFL : "+str(x)+" "+str(DBFL[x])+" : "+str(type(DBFL[x])))
+			print("FL : "+str(x)+" "+str(FL[x])+" : "+str(type(FL[x])))
 			db.update({str(x):FL[x]})
-			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+			print("AFTER UP | DBFL : "+str(x)+" "+str(DBFL[x])+" : "+str(type(DBFL[x])))
+			print("AFTER UP |FL : "+str(x)+" "+str(FL[x])+" : "+str(type(FL[x])))
 			flag = "type"+str(flag)
 
 	return flag
