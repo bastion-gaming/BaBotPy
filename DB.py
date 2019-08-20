@@ -19,7 +19,6 @@ def dbExist():
 	return True
 
 db = TinyDB(DB_NOM)
-inv = dict()
 file = "fieldTemplate.json"
 
 def fieldList():
@@ -132,8 +131,10 @@ def userID(i):
 def userGems(i):
 	return db.search(Query().gems)[i]["gems"]
 
-def updateComTime(ID):
+def updateComTime(ID, nameElem):
 	"""
 	Met à jour la date du dernier appel à une fonction
 	"""
-	updateField(ID, "com_time", t.time())
+	ComTime = db.search(Query().ID == ID)[0]["com_time"]
+	ComTime[nameElem] = t.time()
+	updateField(ID, "com_time", ComTime)

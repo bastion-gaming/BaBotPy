@@ -4,13 +4,17 @@
 	"arrival":
 		"0",
 	"com_time":
-		0,
+		{},
 	"gems":
 		0,
 	"inventory":
-	{},
+		{},
 	"nbMsg":
 		0,
 	"lvl":
+		0,
+	"trophy":
+		{},
+	"daily_mult":
 		0
 }
