@@ -16,11 +16,17 @@ Inquisiteur = 1
 Ambassadeur = 2
 perm = [["Baron du Bastion"],["Baron du Bastion","Inquisiteur du Bastion"],["Inquisiteur du Bastion","Baron du Bastion","Ambassadeur"]]
 choix_G =[[':regional_indicator_a:','🇦',0],[':regional_indicator_b:','🇧',0],[':regional_indicator_c:','🇨',0],[':regional_indicator_d:','🇩',0],[':regional_indicator_e:','🇪',0]]
-def permission(ctx,grade):
-	roles = ctx.author.roles
-	for role in roles :
-		if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
-			return(True)
+def permission(ctx,grade,author = None):
+	if not author :
+		roles = ctx.author.roles
+		for role in roles :
+			if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
+				return(True)
+	else :
+		roles = author.roles
+		for role in roles :
+			if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
+				return(True)
 	return(False)
 
 class Gestion(commands.Cog):
@@ -70,13 +76,14 @@ class Gestion(commands.Cog):
 	@client.command(pass_context=True)
 	async def vote(self, ctx, *, args):
 		"""
-		<thème du vote>//<choix 1> <choix 2> <etc> créé un vote pendant 1h !
+		durée//<thème du vote>//<choix 1>/<choix 2>/<etc> créé un vote pendant 1h !
 		"""
 		if permission(ctx,Ambassadeur):
 			choix = choix_G[:]
 			args = args.split("//")
-			question = args[0]
-			props = args[1].split(" ")
+			temps = float(args[0])*3600
+			question = args[1]
+			props = args[2].split("/")
 			desc = ""
 			n = len(props)
 			if n>5:
@@ -95,12 +102,13 @@ class Gestion(commands.Cog):
 			votant ={}
 			global exit
 			exit = True
+
 			def check (reaction,user):
 				if user == client.user :
 					return(False)
 				if reaction.emoji == '🛑':
-					print(ctx.author.name)
-					if permission(ctx,Ambassadeur):
+					print(user.name)
+					if permission(ctx,Ambassadeur,user):
 						global exit
 						exit = False
 						return(False)
@@ -124,7 +132,7 @@ class Gestion(commands.Cog):
 						if reaction.emoji == choix[i][1]:
 							choix[i][2] += 1
 					return(True)
-			while t_init + 3600 > time.time() and exit:
+			while t_init + temps > time.time() and exit:
 				print(exit)
 				try :
 					reaction, user = await self.bot.wait_for('reaction_add', timeout=10, check = check)
