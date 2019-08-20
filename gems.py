@@ -346,7 +346,10 @@ class Gems(commands.Cog):
 					prix = 0 - (c.achat*nb)
 					if addGems(ID, prix) >= "0":
 						addInv(ID, c.nom, nb)
-						msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+						if c.type != "friandise":
+							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+						else:
+							msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
 					else :
 						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 					break
@@ -569,13 +572,16 @@ class Gems(commands.Cog):
 						test = False
 						gain = c.vente*nb
 						addGems(ID, gain)
-						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
+						if c.type != "friandise":
+							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
+						else:
+							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem: !".format(nb,item,gain)
 						break
 				if test:
 					msg = "Cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Tu n'as pas assez de <:gem_{0}:{2}>`{0}`. Il vous en reste : {1}".format(str(item),str(nbElements(ID, item)),get_idmogi(item))
+				msg = "Tu n'as pas assez de `{0}`. Il vous en reste : {1}".format(str(item),str(nbElements(ID, item)))
 
 			DB.updateComTime(ID, "sell")
 		else:
@@ -739,6 +745,7 @@ class Gems(commands.Cog):
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
 				addInv(ID, "ruby", 1)
+				addTrophy(ID, "Mineur de Merveilles", 1)
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
 
 			#Calcul du prix
