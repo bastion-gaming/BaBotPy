@@ -63,11 +63,7 @@ def checkField():
 	#Type
 	for x in DBFL:
 		if not isinstance(DBFL[x],type(FL[x])):
-			print("DBFL : "+str(x)+" "+str(DBFL[x])+" : "+str(type(DBFL[x])))
-			print("FL : "+str(x)+" "+str(FL[x])+" : "+str(type(FL[x])))
 			db.update({str(x):FL[x]})
-			print("AFTER UP | DBFL : "+str(x)+" "+str(DBFL[x])+" : "+str(type(DBFL[x])))
-			print("AFTER UP |FL : "+str(x)+" "+str(FL[x])+" : "+str(type(FL[x])))
 			flag = "type"+str(flag)
 
 	return flag

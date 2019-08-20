@@ -42,15 +42,9 @@ async def on_ready():
 
 	print('| Core Module | >> Connecté !')
 
-################### Core ####################################
+################### Core ############################
 
-@client.command(pass_context=True)
-async def version(self, ctx):
-		"""
-		Permet d'avoir la version du bot.
-		"""
-		msg = "Je suis en version : **" +str(VERSION)+"**."
-		await ctx.channel.send(msg)
+client.load_extension('utils')
 
 ################### Welcome #################################
 
