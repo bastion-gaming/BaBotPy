@@ -622,15 +622,16 @@ class Gems(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def slots(self, ctx, mise = None):
+	async def slots(self, ctx, imise = None):
 		"""La machine à sous"""
 		ID = ctx.author.id
-		mini = 10
-		if mise != None:
-			if mise < mini:
-				mise = mini
+		if imise != None:
+			if int(imise) < 10:
+				mise = 10
+			else:
+				mise = int(imise)
 		else:
-			mise = mini
+			mise = 10
 		if spam(ID,couldown_xl, "slots"):
 			tab = []
 			result = []
@@ -642,7 +643,7 @@ class Gems(commands.Cog):
 					msg+="\n"
 				elif i == 6:
 					msg+=" :arrow_backward:\n"
-				tab.append(r.randint(0,230))
+				tab.append(r.randint(0,231))
 				if tab[i] < 10 :
 					result.append("zero")
 				elif tab[i] >= 10 and tab[i] < 20:
@@ -685,7 +686,7 @@ class Gems(commands.Cog):
 					result.append("cookie")
 				elif tab[i] >=  200 and tab[i] < 230:
 					result.append("beer")
-				elif tab[i] == 230:
+				elif tab[i] >= 230:
 					result.append("ruby")
 				if tab[i] < 230:
 					msg+=":{}:".format(result[i])
@@ -693,28 +694,41 @@ class Gems(commands.Cog):
 					msg+="<:gem_{}:{}>".format(result[i], get_idmogi(result[i]))
 			msg += "\n"
 			#===================================================================
+			#Ruby (hyper rare)
+			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
+				addInv(ID, "ruby", 1)
+				addTrophy(ID, "Mineur de Merveilles", 1)
+				gain = 42
+				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
+			#===================================================================
 			#Super gain, 3 chiffres identique
-			if result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
-				gain = 200
+			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
+				gain = 2000
 				addTrophy(ID, "Super Jackpot :seven::seven::seven:", 1)
 			elif result[3] == "one" and result[4] == "one" and result[5] == "one":
-				gain = 20
+				gain = 200
 			elif result[3] == "two" and result[4] == "two" and result[5] == "two":
-				gain = 30
+				gain = 300
 			elif result[3] == "three" and result[4] == "three" and result[5] == "three":
-				gain = 40
+				gain = 400
 			elif result[3] == "four" and result[4] == "four" and result[5] == "four":
-				gain = 50
+				gain = 500
 			elif result[3] == "five" and result[4] == "five" and result[5] == "five":
-				gain = 60
+				gain = 600
 			elif result[3] == "six" and result[4] == "six" and result[5] == "six":
-				gain = 70
+				gain = 700
 			elif result[3] == "eight" and result[4] == "eight" and result[5] == "eight":
-				gain = 80
+				gain = 800
 			elif result[3] == "nine" and result[4] == "nine" and result[5] == "nine":
-				gain = 90
+				gain = 900
 			elif result[3] == "zero" and result[4] == "zero" and result[5] == "zero":
-				gain = 100
+				gain = 1000
+			#===================================================================
+			#Beer
+			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
+				addTrophy(ID, "La Squelatitude", 1)
+				gain = 2
+				msg += "\n<@532943340392677436> <@{}> paye sa tournée :beer:".format(ID)
 			#===================================================================
 			#Explosion de la machine
 			elif result[3] == "boom" and result[4] == "boom" and result[5] == "boom":
@@ -726,19 +740,19 @@ class Gems(commands.Cog):
 			#===================================================================
 			#Gain de gem
 			elif result[3] == "gem" and result[4] == "gem" and result[5] == "gem":
-				gain = 15
+				gain = 50
 			elif (result[3] == "gem" and result[4] == "gem") or (result[4] == "gem" and result[5] == "gem") or (result[3] == "gem" and result[5] == "gem"):
-				gain = 5
+				gain = 10
 			elif result[3] == "gem" or result[4] == "gem" or result[5] == "gem":
-				gain = 2
+				gain = 3
 			#===================================================================
 			#Tichet gratuit
 			elif result[3] == "ticket" and result[4] == "ticket" and result[5] == "ticket":
-				gain = 5
+				gain = 10
 			elif (result[3] == "ticket" and result[4] == "ticket") or (result[4] == "ticket" and result[5] == "ticket") or (result[3] == "ticket" and result[5] == "ticket"):
-				gain = 3
+				gain = 5
 			elif result[3] == "ticket" or result[4] == "ticket" or result[5] == "ticket":
-				gain = 1
+				gain = 2
 			else:
 				gain = 0
 			#===================================================================
@@ -752,17 +766,6 @@ class Gems(commands.Cog):
 			elif result[3] == "cookie" or result[4] == "cookie" or result[5] == "cookie":
 				addInv(ID, "cookie", 1)
 				msg += "\nTu a trouvé 1 :cookie:`cookie`"
-			#===================================================================
-			#Beer
-			if result[3] == "beer" and result[4] == "beer" and result[5] == "beer":
-				addTrophy(ID, "La Squelatitude", 1)
-				msg += "\n@Bot Player <@{}> paye sa tournée :beer::beer::beer:".format(ID)
-			#===================================================================
-			#Ruby (hyper rare)
-			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
-				addInv(ID, "ruby", 1)
-				addTrophy(ID, "Mineur de Merveilles", 1)
-				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
 
 			#Calcul du prix
 			prix = gain * mise
@@ -796,13 +799,13 @@ class Gems(commands.Cog):
 			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
 			trophy = DB.valueAt(ID, "trophy")
 			for c in objetTrophy:
-				if c.type != "unique" and c.type != "special":
+				if c.type != "unique":
 					for x in trophy:
 						if c.nom == str(x):
 							d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
 			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
 			for c in objetTrophy:
-				if c.type == "unique" and c.type != "special":
+				if c.type == "unique":
 					test = testTrophy(ID, c.nom)
 					if test == 0:
 						d_trophy += "**{}** :white_check_mark:\n".format(c.nom)
