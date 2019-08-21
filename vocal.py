@@ -161,17 +161,19 @@ class Music(commands.Cog):
 				voice.stop()
 				await ctx.send("music skipped")
 			else:
-				if ctx.member.id in self.skip:
+				if ctx.author.id in self.skip:
 					return
 				else:
-					self.skip.append(ctx.member.id)
+					self.skip.append(ctx.author.id)
 					n = len(self.skip)
-					m = len(ctx.author.voice.channel.members)
+					m = len(ctx.author.voice.channel.members)-1
+					print(n,m)
 					if n >= m/2:
 						voice.stop()
 						await ctx.send("music skipped")
+						self.skip = []
 					else:
-						ctx.send("il manque {} joueur.s pour skip".format(round((m/2)-n)))
+						await ctx.send("il manque {} joueur.s pour skip".format(round(m/2)-n))
 		else:
 			return
 
