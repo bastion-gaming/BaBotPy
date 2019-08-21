@@ -56,7 +56,7 @@ class Utils(commands.Cog):
 			await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
-	async def agenda(self, ctx):
+	async def github(self, ctx):
 			"""
 			Permet d'avoir le lien du github.
 			"""
