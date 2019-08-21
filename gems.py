@@ -754,7 +754,7 @@ class Gems(commands.Cog):
 				msg += "\nTu a trouvé 1 :cookie:`cookie`"
 			#===================================================================
 			#Beer
-			if result[3] == "beer" or result[4] == "beer" or result[5] == "beer":
+			if result[3] == "beer" and result[4] == "beer" and result[5] == "beer":
 				addTrophy(ID, "La Squelatitude", 1)
 				msg += "\n@Bot Player <@{}> paye sa tournée :beer::beer::beer:".format(ID)
 			#===================================================================
