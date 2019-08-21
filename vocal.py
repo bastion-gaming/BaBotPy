@@ -4,7 +4,7 @@ import DB
 import youtube_dl
 import os
 import asyncio
-from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
+from youtube import youtube_top_link, search_youtube, get_youtube_url
 
 admin = 0
 Inquisiteur = 1
@@ -154,6 +154,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def skip(self, ctx):
+		"""permet de passer la chanson en cours"""
 		voice = ctx.voice_client
 		if voice.is_connected():
 			if permission(ctx,Ambassadeur):
@@ -176,6 +177,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def list(self, ctx):
+		"""donne la liste des musiques dans la queue"""
 		self.list = self.music.info.title
 		desc = "*en cours* : {}\n".format(self.list[0])
 		self.list = self.list[1:]
@@ -201,7 +203,7 @@ class Music(commands.Cog):
 		self_message = await ctx.send(embed=embed)
 
 		def check(message):
-			return message.author == ctx.author and (message.content == "cancel" or string_is_int(message.content))
+			return message.author == ctx.author
 		try:
 			msg = await self.bot.wait_for("message", check=check, timeout=15)
 			if msg.content == "cancel":
@@ -217,7 +219,7 @@ class Music(commands.Cog):
 					await ctx.message.delete(delay=2)
 					await self_message.delete(delay=None)
 					await msg.delete(delay=1)
-					await self.play(ctx,url)
+
 
 		except asyncio.TimeoutError:
 			await ctx.send("Tu as pris trop de temps pour répondre !", delete_after=5)
