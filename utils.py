@@ -66,4 +66,4 @@ class Utils(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Utils(bot))
-	open("fichier_txt/cogs.txt","a").write("utils\n")
+	open("fichier_txt/cogs.txt","a").write("Utils\n")
