@@ -94,9 +94,12 @@ client.load_extension('gems')
 
 client.load_extension('help')
 
-####################### Commande vocal.py #######################
+###################### Commande vocal.py ########################
 
 client.load_extension('vocal')
+##################### Commande kaamelott.py #####################
+
+client.load_extension('kaamelott')
 
 ####################### Lancemement du bot ######################
 
