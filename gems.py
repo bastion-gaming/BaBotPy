@@ -229,7 +229,7 @@ class Gems(commands.Cog):
 			addGems(ID, gain)
 			msg = "Récompense journalière! Tu as gagné 100 :gem:"
 			if mult != 0:
-				msg += "\n\n Nouveau série: `{}`, Bonus: {}".format(mult, bonus*mult)
+				msg += "\n Nouvelle série: `{}`, Bonus: {}".format(mult, bonus*mult)
 			DB.updateComTime(ID, "daily")
 		else:
 			msg = "Tu as déja reçu ta récompense journalière ! Reviens demain pour en avoir plus"
@@ -379,20 +379,20 @@ class Gems(commands.Cog):
 				else :
 					if nbrand > 15 and nbrand < 40:
 						addInv(ID, "iron", 1)
-						msg = "Tu as obtenue 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
+						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
 					elif nbrand > 5 and nbrand < 15:
 						addInv(ID, "gold", 1)
-						msg = "Tu as obtenue 1 <:gem_gold:{}>`lingot d'or` !".format(get_idmogi("gold"))
+						msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or` !".format(get_idmogi("gold"))
 					elif nbrand < 5:
 						addInv(ID, "diamond", 1)
-						msg = "Tu as obtenue 1 <:gem_diamond:{}>`diamant brut` !".format(get_idmogi("diamond"))
+						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut` !".format(get_idmogi("diamond"))
 					else:
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
-							msg = "Tu as obtenue 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
+							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
 						else :
-							msg = "Tu as obtenue {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
+							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
 
 			#----------------- Pioche normal -----------------
 			elif nbElements(ID, "pickaxe") >= 1:
@@ -402,14 +402,14 @@ class Gems(commands.Cog):
 				else :
 					if nbrand < 20:
 						addInv(ID, "iron", 1)
-						msg = "Tu as obtenue 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
+						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
 					else:
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
-							msg = "Tu as obtenue 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
+							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
 						else :
-							msg = "Tu as obtenue {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
+							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
 			else:
 				msg = "Il faut acheter ou forger une pioche pour miner!"
 
@@ -434,11 +434,11 @@ class Gems(commands.Cog):
 				else :
 					if nbrand < 20:
 						addInv(ID, "tropical_fish", 1)
-						msg = "Tu as obtenue 1 <:gem_tropical_fish:{}>`tropical_fish` !".format(get_idmogi("tropical_fish"))
+						msg = "Tu as obtenu 1 <:gem_tropical_fish:{}>`tropical_fish` !".format(get_idmogi("tropical_fish"))
 					elif nbrand > 20 and nbrand < 95:
 						nbfish = r.randint(1,5)
 						addInv(ID, "fish", nbfish)
-						msg = "Tu as obtenue {} <:gem_fish:{}>`fish` !".format(nbfish, get_idmogi("fish"))
+						msg = "Tu as obtenu {} <:gem_fish:{}>`fish` !".format(nbfish, get_idmogi("fish"))
 					else:
 						msg = "Pas de poisson pour toi aujourd'hui :cry: "
 			else:
@@ -728,7 +728,7 @@ class Gems(commands.Cog):
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
 				addTrophy(ID, "La Squelatitude", 1)
 				gain = 2
-				msg += "\n<@532943340392677436> <@{}> paye sa tournée :beer:".format(ID)
+				msg += "\n<@Bot Player> <@{}> paye sa tournée :beer:".format(ID)
 			#===================================================================
 			#Explosion de la machine
 			elif result[3] == "boom" and result[4] == "boom" and result[5] == "boom":
