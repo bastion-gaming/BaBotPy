@@ -28,7 +28,7 @@ class Helpme(commands.Cog):
 				arg += "-"+str(com.name)+" : "+str(com.help)+"\n"
 			msg.add_field(name=COG, value=arg, inline=False)
 
-		await ctx.send(embed = msg, delete_after = 30)
+		await ctx.send(embed = msg, delete_after = 120)
 
 def setup(bot):
 	bot.add_cog(Helpme(bot))
