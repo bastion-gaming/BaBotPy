@@ -27,7 +27,7 @@ class Kaamelott(commands.Cog):
 		await ctx.send(msg)
 
 	@commands.command(pass_context=True)
-	async def citation(self, ctx, personnage = None):
+	async def citation(self, ctx, *, personnage = None):
 		f = open("fichier_txt/citation.txt","r").read().split('\n')
 		if personnage == None :
 			quote = f[r.randint(0,len(f)-2)].split('//')
