@@ -1,0 +1,1 @@
+enter twitch client id (application twitch developper)
