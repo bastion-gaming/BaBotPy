@@ -17,6 +17,9 @@ client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("fichier_txt/cogs.txt","w")
 NONE = open("fichier_txt/help.txt","w")
 
+TWITCH_CLIENT_ID = open("fichier_txt/twitch_client_id.txt", "r").read().replace("\n","")
+TWITCH_SECRET_ID = open("fichier_txt/twitch_secret_id.txt", "r").read().replace("\n","")
+
 client.remove_command("help")
 
 # Au démarrage du Bot.
@@ -87,6 +90,10 @@ client.load_extension('gestion')
 ####################### Commande gems.py #######################
 
 client.load_extension('gems')
+
+###################### Commande notification.py ################
+
+client.load_extension('notification')
 
 ####################### Commande help.py #######################
 
