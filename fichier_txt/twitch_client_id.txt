@@ -1,0 +1,3 @@
+enter twitch client id (client ID for application twitch developper)
+
+https://dev.twitch.tv/console/apps
