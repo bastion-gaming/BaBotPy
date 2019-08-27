@@ -60,12 +60,14 @@ async def on_member_join(member):
 		msg = ":black_small_square:Bienvenue {} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu :\n\n:arrow_right: Sur #⌈:closed_book:⌋•règles\n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
 	else:
 		msg = "=====================\nBon retour parmis nous ! {}\n\n=====================".format(member.mention)
+	stat.countCo()
 	await channel.send(msg)
 
 @client.event
 async def on_member_remove(member):
 	channel = client.get_channel(417445503110742048)
 	await channel.send("{} nous a quitté, pourtant si jeune...".format(member.mention))
+	stat.countDeco()
 
 ####################### Stat ####################################
 
