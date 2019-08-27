@@ -13,10 +13,10 @@ class Helpme(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def help(self, ctx):
-		"""affiche ce message !"""
+		"""Affiche ce message !"""
 		d_help = "Liste de toutes les fonctions utilisable avec le prefix {}".format(self.PREFIX)
 		msg = discord.Embed(title = "Fonction disponible",color= 12745742, description = d_help)
-
+		
 		COGS = open("fichier_txt/cogs.txt","r").read()
 		COGS = COGS.split('\n')
 		COGS.pop()
@@ -25,10 +25,13 @@ class Helpme(commands.Cog):
 			coms = cog.get_commands()
 			arg = ""
 			for com in coms :
-				arg += "-"+str(com.name)+" : "+str(com.help)+"\n"
-			msg.add_field(name=COG, value=arg, inline=False)
+				arg += "•"+str(com.name)+" : "+str(com.help)+"\n"
+			if COG == "Helpme":
+				msg.add_field(name=COG, value=arg, inline=False)
+			else:
+				msg = discord.Embed(title = COG,color= 12745742, description = arg)
 
-		await ctx.send(embed = msg, delete_after = 120)
+			await ctx.send(embed = msg, delete_after = 60)
 
 def setup(bot):
 	bot.add_cog(Helpme(bot))

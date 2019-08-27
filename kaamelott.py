@@ -21,6 +21,7 @@ class Kaamelott(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def personnage(self, ctx):
+		"""Liste des personnages de Kaamelott ayant une citation"""
 		msg = "**Voici la liste des personnages de Kaamelott ayant une citation :**\n"
 		for c in self.autheur :
 			msg +=c+" avec "+str( - self.autheur[c][0] + self.autheur[c][1] + 1)+" citation.s\n"
@@ -28,6 +29,7 @@ class Kaamelott(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def citation(self, ctx, *, personnage = None):
+		"""**[personnage]** | Donne une citation random ou d'un personnage en particulier"""
 		f = open("fichier_txt/citation.txt","r").read().split('\n')
 		if personnage == None :
 			quote = f[r.randint(0,len(f)-2)].split('//')

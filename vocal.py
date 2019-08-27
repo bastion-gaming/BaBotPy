@@ -118,7 +118,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def join(self, ctx):
-		"""le bot rejoint le channel vocal """
+		"""Le bot rejoint le channel vocal """
 		try :
 			vocal = ctx.author.voice.channel
 			print([y.name for y in vocal.members])
@@ -129,7 +129,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def leave(self, ctx):
-		"""le bot quitte le channel vocal """
+		"""Le bot quitte le channel vocal """
 		voice = ctx.voice_client
 		self.music.info.purge()
 		voice.stop()
@@ -137,7 +137,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def play(self, ctx, url):
-		"""Le bot joue la vidéo youtube (url uniquement)"""
+		"""**[url]** | Le bot joue la vidéo youtube (url uniquement)"""
 		voice = ctx.voice_client
 		song_there = os.path.isfile("song.mp3")
 		try :
@@ -154,7 +154,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def skip(self, ctx):
-		"""permet de passer la chanson en cours"""
+		"""Permet de passer la chanson en cours"""
 		voice = ctx.voice_client
 		if voice.is_connected():
 			if permission(ctx,Ambassadeur):
@@ -179,7 +179,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def list(self, ctx):
-		"""donne la liste des musiques dans la queue"""
+		"""Donne la liste des musiques dans la queue"""
 		self.list = self.music.info.title
 		desc = "*en cours* : {}\n".format(self.list[0])
 		self.list = self.list[1:]
@@ -193,7 +193,7 @@ class Music(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def search(self, ctx,*,args):
-		"""Donne les 5 premiers résultats de ta recherche sur youtube ! """
+		"""**[recherche]** | Donne les 5 premiers résultats de ta recherche sur youtube ! """
 		result = search_youtube(user_input=args, number=5)
 		embed = discord.Embed(color=0xFF0000)
 		embed.set_footer(text="Tapez un nombre pour faire votre choix "

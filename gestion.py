@@ -58,7 +58,7 @@ class Gestion(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def supp(self, ctx, nb):
-		"""suprime [nombre] de message dans le channel """
+		"""**[nombre]** | Supprime [nombre] de message dans le channel """
 		if permission(ctx,Inquisiteur):
 			try :
 				nb = int(nb)
@@ -76,7 +76,7 @@ class Gestion(commands.Cog):
 	@client.command(pass_context=True)
 	async def vote(self, ctx, *, args):
 		"""
-		durée//<thème du vote>//<choix 1>/<choix 2>/<etc> créé un vote pendant 1h !
+		**[durée]//[thème du vote]//[choix 1]/[choix 2]/<etc> ** | Créé un vote pendant 1h !
 		"""
 		if permission(ctx,Ambassadeur):
 			choix = choix_G[:]

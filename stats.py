@@ -114,6 +114,9 @@ class Stats(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def msgBy(self, ctx, Nom=None):
+		"""
+		**[nom]** | Permet de savoir combien de message à envoie [nom]
+		"""
 		if len(Nom) == 21 :
 			ID = int(Nom[2:20])
 		elif len(Nom) == 22 :
@@ -130,7 +133,7 @@ class Stats(commands.Cog):
 	@commands.command(pass_context=True)
 	async def hourMsg(self, ctx, ha=None, hb=None):
 		"""
-		Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.
+		**[heure de début] [heure de fin]** | Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.
 		"""
 		d=dt.datetime.now().hour
 		if fileExist()==False:
