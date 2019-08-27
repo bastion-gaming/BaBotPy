@@ -6,24 +6,30 @@
       "channel_name": "partage",
       "added_by_name": "Azerxim",
       "added_by_id": 129362501187010561,
-      "subscribed": []
-    },
-    {
-      "id": 589942497678196764,
-      "guild_name": "test",
-      "channel_name": "test",
-      "added_by_name": "Azerxim",
-      "added_by_id": 129362501187010561,
       "subscribed": [
-        "azerxim"
+        "bastionlivetv",
+        "azerxim",
+        "pimousse_"
       ]
     }
   ],
   "streams": [
     {
+      "login": "bastionlivetv",
+      "sent": "false",
+      "id": "425113214",
+      "status": ""
+    },
+    {
       "login": "azerxim",
       "sent": "false",
-      "id": "",
+      "id": "39666820",
+      "status": ""
+    },
+    {
+      "login": "pimousse_",
+      "sent": "false",
+      "id": "137541781",
       "status": ""
     }
   ]
