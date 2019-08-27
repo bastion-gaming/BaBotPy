@@ -52,19 +52,57 @@ def hourCount():
 
 class Stats(commands.Cog):
 
-	def __init__(self,ctx):
+	def __init__(self,bot):
+		self.hour = dt.datetime.now().hour
+		self.bot = bot
+		self.day = dt.date.today()
 		self.hourWrite.start()
 		return(None)
 
 	def cog_unload(self):
 		self.hourWrite.cancel()
 
-	@tasks.loop(hours=1.0)
+
+	@tasks.loop(seconds=300.0)
 	async def hourWrite(self):
 		"""
 		Va, toute les heures, écrire dans time.json le nombre total de message écrit sur le serveur.
 		"""
-		hourCount()
+		if self.hour != dt.datetime.now().hour :
+			if self.day != dt.date.today():
+				msg_total = countTotalMsg()
+				local_heure={}
+				f = open(file, "r")
+				total_heure = json.load(open(file, "r"))
+				for i in range(23):
+					local_heure[str(i)] = total_heure[str(i+1)] - total_heure[str(i)]
+				local_heure["23"] = msg_total - total_heure[str("23")]
+				msg_jour = msg_total - total_heure["0"]
+				co_local = 0
+				co_total = 0
+				deco_local = 0
+				deco_total = 0
+				nouveau_jour = {
+								"msg total jour" : msg_total,
+								"msg local jour" : msg_jour,
+								"msg total heures" : total_heure,
+								"msg local heures" :local_heure,
+								"co local jour" : 0,
+								"co total jour" : 0,
+								"deco total jour" : 0,
+								"deco local jour" : 0,
+								"nombre de joueurs" : 120
+								}
+				with open("logs/log-{}.json".format(dt.datetime.now().year), 'r') as f:
+					t = json.load(f)
+					t[str(dt.date.today())] = nouveau_jour
+					f.close()
+				with open("logs/log-{}.json".format(dt.datetime.now().year), 'w') as f:
+					f.write(json.dumps(t, indent=4))
+				self.day = dt.date.today()
+
+			hourCount()
+			self.hour = dt.datetime.now().hour
 
 	@commands.command(pass_context=True)
 	async def totalMsg(self, ctx):
@@ -76,6 +114,9 @@ class Stats(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def msgBy(self, ctx, Nom=None):
+		"""
+		**[nom]** | Permet de savoir combien de message à envoie [nom]
+		"""
 		if len(Nom) == 21 :
 			ID = int(Nom[2:20])
 		elif len(Nom) == 22 :
@@ -92,7 +133,7 @@ class Stats(commands.Cog):
 	@commands.command(pass_context=True)
 	async def hourMsg(self, ctx, ha=None, hb=None):
 		"""
-		Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.
+		**[heure de début] [heure de fin]** | Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.
 		"""
 		d=dt.datetime.now().hour
 		if fileExist()==False:

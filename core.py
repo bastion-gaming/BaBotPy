@@ -70,6 +70,10 @@ async def on_ready():
 
 	print('| Core Module | >> Connecté !')
 
+####################### Commande help.py #######################
+
+client.load_extension('help')
+
 ################### Core ############################
 
 client.load_extension('utils')
@@ -105,6 +109,8 @@ async def on_member_remove(member):
 async def on_message(message):
 	await stat.countMsg(message)
 	await client.process_commands(message)
+
+####################### Commande stats.py #######################
 
 client.load_extension('stats')
 
@@ -296,9 +302,15 @@ async def looped_task():
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 
-####################### Commande help.py #######################
+###################### Commande vocal.py ########################
 
-client.load_extension('help')
+client.load_extension('vocal')
+
+##################### Commande kaamelott.py #####################
+
+client.load_extension('kaamelott')
+
+####################### Lancemement du bot ######################
 
 
 client.loop.create_task(looped_task())

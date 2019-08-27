@@ -65,13 +65,17 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 
 Rôles
 
+Play-bot (alias Gems)
+
 DB
+
+Vote
+
+Live Notification
 
 ## En cours/test
 
 Core
-
-Play-bot (alias Gems)
 
 Stat
 
@@ -79,8 +83,4 @@ Stat
 
 Level
 
-Vote
-
 Game-Asker
-
-Live Notification
