@@ -263,7 +263,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def bal(self, ctx, nom = None):
-		"""Êtes vous riche ou pauvre ? bal vous le dit"""
+		"""**[nom]** | Êtes vous riche ou pauvre ? bal vous le dit"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "bal"):
 			#print(nom)
@@ -284,7 +284,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def baltop(self, ctx, n = 10):
-		"""Classement des joueurs (10 premiers par défaut)"""
+		"""**[nombre]** | Classement des joueurs (10 premiers par défaut)"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "baltop"):
 			UserList = []
@@ -313,7 +313,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def gamble(self, ctx,valeur):
-		"""**gamble [valeur]** Avez vous l'ame d'un parieur ?"""
+		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
 		if spam(ID,couldown_xl, "gamble"):
@@ -336,7 +336,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def buy (self, ctx,item,nb = 1):
-		"""**buy [item] [nombre]** Permet d'acheter les items vendus au marché"""
+		"""**[item] [nombre]** | Permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "buy"):
 			test = True
@@ -453,7 +453,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def forge(self, ctx, item, nb = 1):
-		"""**forge [item] [nombre]**"""
+		"""**[item] [nombre]** | Permet de concevoir des items spécifique"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "forge"):
 			if item == "iron_pickaxe":
@@ -556,7 +556,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def sell (self, ctx,item,nb = 1):
-		"""**sell [item] [nombre]**"""
+		"""**[item] [nombre]** | Permet de vendre vos items stockés dans votre inventaire"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
 		print(nb)
@@ -593,7 +593,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def pay (self, ctx, nom, gain):
-		"""**pay [nom] [gain]** Donner de l'argent à vos amis !"""
+		"""**[nom] [gain]** | Donner de l'argent à vos amis !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "pay"):
 			try:
@@ -623,7 +623,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def slots(self, ctx, imise = None):
-		"""La machine à sous"""
+		"""**[mise]** | La machine à sous (la mise minimum est de 10)"""
 		ID = ctx.author.id
 		if imise != None:
 			if int(imise) < 10:
@@ -789,7 +789,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def trophy(self, ctx, nom = None):
-		"""Liste de vos trophées !"""
+		"""**[nom]** | Liste de vos trophées !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "trophy"):
 			if nom != None:

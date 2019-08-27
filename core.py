@@ -42,6 +42,10 @@ async def on_ready():
 
 	print('| Core Module | >> Connecté !')
 
+####################### Commande help.py #######################
+
+client.load_extension('help')
+
 ################### Core ############################
 
 client.load_extension('utils')
@@ -89,10 +93,6 @@ client.load_extension('gestion')
 ####################### Commande gems.py #######################
 
 client.load_extension('gems')
-
-####################### Commande help.py #######################
-
-client.load_extension('help')
 
 ###################### Commande vocal.py ########################
 
