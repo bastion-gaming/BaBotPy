@@ -56,7 +56,7 @@ class Trophy:
 objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
 ,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 ,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
-,Trophy("La Squelatitude", "`Avoir 3`:beer:` sur la machine à sous`", "special", 0)
+,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
 ,Trophy("Gems 500","`Avoir 500`:gem:","unique",500)
 ,Trophy("Gems 1k","`Avoir 1k`:gem:","unique",1000)
 ,Trophy("Gems 5k","`Avoir 5k`:gem:","unique",5000)
@@ -124,6 +124,18 @@ def nbElements(ID, nameElem):
 
 
 
+def nbTrophy(ID, nameElem):
+	"""
+	Permet de savoir combien il y'a de nameElem dans l'inventaire des trophées de ID
+	"""
+	trophy = DB.valueAt(ID, "trophy")
+	if nameElem in trophy:
+		return trophy[nameElem]
+	else:
+		return 0
+
+
+
 def get_idmogi(nameElem):
 	"""
 	Permet de connaitre l'idmoji de l'item
@@ -164,10 +176,10 @@ def addTrophy(ID, nameElem, nbElem):
 	Pour en retirer mettez nbElemn en négatif
 	"""
 	trophy = DB.valueAt(ID, "trophy")
-	if nbElements(ID, nameElem) > 0 and nbElem < 0:
+	if nbTrophy(ID, nameElem) > 0 and nbElem < 0:
 		trophy[nameElem] += nbElem
 	elif nbElem >= 0:
-		if nbElements(ID, nameElem) == 0:
+		if nbTrophy(ID, nameElem) == 0:
 			trophy[nameElem] = nbElem
 		else :
 			trophy[nameElem] += nbElem
