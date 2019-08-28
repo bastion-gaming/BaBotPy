@@ -65,16 +65,19 @@ async def on_member_join(member):
 
 @client.event
 async def on_member_remove(member):
+	stat.countDeco()
 	channel = client.get_channel(417445503110742048)
 	await channel.send("{} nous a quitté, pourtant si jeune...".format(member.mention))
-	stat.countDeco()
 
 ####################### Stat ####################################
 
 @client.event
 async def on_message(message):
-	await stat.countMsg(message)
-	await client.process_commands(message)
+	if not (message.author.bot or message.content.startswith(PREFIX)) :
+		await stat.countMsg(message)
+		await client.process_commands(message)
+	else:
+		await client.process_commands(message)
 
 ####################### Commande stats.py #######################
 

@@ -17,15 +17,16 @@ def fileExist():
 	except IOError:
 	    return False
 	return True
+
 def countCo():
-	t = load(open("co.json","r"))
+	t = json.load(open("co.json","r"))
 	t["co local"]+=1
 	t["co total"]+=1
 	with open("co.json", 'w') as f:
 		f.write(json.dumps(t, indent=4))
 
 def countDeco():
-	t = load(open("co.json","r"))
+	t = json.load(open("co.json","r"))
 	t["deco local"]+=1
 	t["deco total"]+=1
 	with open("co.json", 'w') as f:
@@ -177,11 +178,15 @@ class Stats(commands.Cog):
 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
-	async def graphmsg(self, ctx, delta ="heure", statue = "local", jour = "now"):
-		"""|heure/jour local/total aaaa-mm-jj| affiche les graphes"""
-		logs = json.load(open("logs/log-{}.json".format(str(dt.date.today())[:7]),"r"))
+	async def graphheure(self, ctx, statue = "local", jour = "now"):
+		"""|local/total aaaa-mm-jj| affiche le graph des messages envoyés par heure"""
 		if jour =="now":
 			jour = str(dt.date.today())
+		try :
+			logs = json.load(open("logs/log-{}.json".format(jour[:7]),"r"))
+		except ValueError :
+			ctx.send("la date n'est pas correcte !")
+			pass
 		log = logs[jour]
 		heures = log["msg {} heures".format(statue)]
 		if os.path.isfile("graph.png"):
@@ -192,17 +197,80 @@ class Stats(commands.Cog):
 		for i in range(24):
 			x.append(i)
 			y.append(heures[str(i)])
-		if delta =="heure" and statue == "local":
+		if statue == "local":
 			plt.hist(x, bins = 24, weights = y)
 		else :
 			plt.plot(x,y,label="graph test")
 			plt.fill_between(x, y[0]-100, y, color='blue', alpha=0.5)
 		plt.xlabel('heures')
 		plt.ylabel('messages')
-		plt.title("msg {} heures".format(statue))
+		plt.title("msg / heure ({})".format(statue))
 		plt.savefig("graph.png")
 		await ctx.send(file=discord.File("graph.png"))
 		plt.clf()
+
+	@commands.command(pass_context=True)
+	async def graphjour(self, ctx, statue = "local", mois = "now"):
+		"""|local/total aaaa-mm| affiche le graph des messages envoyés par jour"""
+		if mois =="now":
+			mois = str(dt.date.today())[:7]
+		try :
+			logs = json.load(open("logs/log-{}.json".format(mois),"r"))
+		except ValueError :
+			ctx.send("la date n'est pas correcte !")
+			pass
+		if os.path.isfile("graph.png"):
+			os.remove('graph.png')
+			print('removed old graphe file')
+		msg = []
+		jour = []
+		text = "msg {} jour".format(statue)
+		for i in range (1,len(logs)+1):
+			if i<10:
+				msg.append(logs["{}-0{}".format(mois,i)][text])
+			else:
+				msg.append(logs["{}-{}".format(mois,i)][text])
+			jour.append(i)
+		if statue == "local":
+			plt.hist(jour, bins = len((logs)), weights = msg)
+		else :
+			plt.plot(jour,msg,label="graph test")
+			plt.fill_between(jour, msg[0]-200, msg, color='blue', alpha=0.5)
+		plt.xlabel('jour')
+		plt.ylabel('messages')
+		plt.title("msg / jour ({})".format(statue))
+		plt.savefig("graph.png")
+		await ctx.send(file=discord.File("graph.png"))
+		plt.clf()
+
+	@commands.command(pass_context=True)
+	async def graphmembre(self, ctx):
+		if os.path.isfile("graph.png"):
+			os.remove('graph.png')
+			print('removed old graphe file')
+		total = countTotalMsg()
+		a = []
+		for item in DB.db:
+			a.append([item["nbMsg"],item["ID"]])
+		a.sort(reverse = True)
+		richest = a[:6]
+		sous_total = 0
+		for i in range (6):
+			sous_total += richest[i][0]
+		labels = []
+		sizes = []
+		for i in range (6):
+			labels.append(ctx.guild.get_member(richest[i][1]).name)
+			sizes.append(richest[i][0])
+		labels.append("autre")
+		sizes.append(total - sous_total)
+		explode = (0,0,0,0,0,0,0.2)
+		plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
+		plt.axis('equal')
+		plt.savefig('graph.png')
+		plt.show()
+
+
 
 
 def setup(bot):
