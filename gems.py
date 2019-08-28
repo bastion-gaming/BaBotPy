@@ -23,7 +23,28 @@ message_gamble = ["Tu as remporté le pari ! Tu obtiens"
 # se sont les phrases prononcé par le bot pour plus de diversité
 class Item:
 
-	def __init__(self,nom,achat,vente,poid,idmoji,type,recette):
+	def __init__(self,nom,achat,vente,poid,idmoji,type):
+		self.nom = nom
+		self.achat = achat
+		self.vente = vente
+		self.poid = poid
+		self.idmoji = idmoji
+		self.type = type
+
+objet = [Item("cobblestone",3,1,0.5,608748492181078131,"minerai")
+,Item("iron",30,r.randint(9,11),1,608748195685597235,"minerai")
+,Item("gold",100,r.randint(45, 56),1,608748194754723863,"minerai")
+,Item("diamond",200,r.randint(98, 120),1,608748194750529548,"minerai")
+,Item("ruby",3000,1000,1,608748194406465557,"minerai")
+,Item("fish",5,2,0.5,608762539605753868,"poisson")
+,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson")
+,Item("cookie",20,10,1,"","friandise")
+,Item("backpack",5000,1,-20,616205834451550208,"special")]
+
+
+class Item:
+
+	def __init__(self,nom,achat,vente,poid,durabilite,idmoji,type,recette):
 		self.nom = nom
 		self.achat = achat
 		self.vente = vente
@@ -31,19 +52,12 @@ class Item:
 		self.idmoji = idmoji
 		self.type = type
 		self.recette = recette
+		self.durabilite = durabilite
 
-objet = [Item("pickaxe",20,5,5,608748195291594792,"outil","")
-,Item("iron_pickaxe",160,80,10,608748194775433256,"outil forger","4 <:gem_iron:608748195685597235>`lingots de fer` et 1 <:gem_pickaxe:608748195291594792>`pickaxe`")
-,Item("fishingrod",15,5,3,608748194318385173,"outil","")
-,Item("cobblestone",3,1,0.5,608748492181078131,"minerai","")
-,Item("iron",30,r.randint(9,11),1,608748195685597235,"minerai","")
-,Item("gold",100,r.randint(45, 56),1,608748194754723863,"minerai","")
-,Item("diamond",200,r.randint(98, 120),1,608748194750529548,"minerai","")
-,Item("ruby",3000,1000,1,608748194406465557,"minerai","")
-,Item("fish",5,2,0.5,608762539605753868,"poisson","")
-,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson","")
-,Item("cookie",20,10,1,"","friandise","")
-,Item("backpack",5000,1,-20,616205834451550208,"special","")]
+objetOutil = [Item("pickaxe",20,5,5,150,608748195291594792,"","")
+,Item("iron_pickaxe",160,80,10,800,608748194775433256,"forge","4 <:gem_iron:608748195685597235>`lingots de fer` et 1 <:gem_pickaxe:608748195291594792>`pickaxe`")
+,Item("fishingrod",15,5,3,200,608748194318385173,"","")]
+
 
 
 class Trophy:
@@ -209,6 +223,42 @@ def testTrophy(ID, nameElem):
 				addTrophy(ID, c.nom, 1)
 	return i
 
+
+
+def addDurabilité(ID, nameElem, nbElem):
+	"""
+	"""
+	durabilite = DB.valueAt(ID, "durabilite")
+	if nbElements(ID, nameElem) > 0 and nbElem < 0:
+		durabilite[nameElem] += nbElem
+	elif nbElem >= 0:
+		if nbElements(ID, nameElem) == 0:
+			durabilite[nameElem] = nbElem
+		else :
+			durabilite[nameElem] += nbElem
+	else:
+		print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		return 404
+	DB.updateField(ID, "durabilite", durabilite)
+
+
+
+def get_durabilite(ID, nameElem):
+	"""
+	Permet de savoir la durabilite de nameElem dans l'inventaire de ID
+	"""
+	nb = nbElements(ID, nameElem)
+	if nb > 0:
+		durabilite = DB.valueAt(ID, "durabilite")
+		for c in objetOutil:
+			if nameElem == c.nom:
+				if nameElem in durabilite:
+					return durabilite[nameElem] - ( (nb-1)*c.durabilite )
+	else:
+		return -1
+
+
+
 #===============================================================
 
 class Gems(commands.Cog):
@@ -367,6 +417,17 @@ class Gems(commands.Cog):
 					else :
 						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 					break
+			for c in objetOutil :
+				if item == c.nom :
+					test = False
+					prix = 0 - (c.achat*nb)
+					if addGems(ID, prix) >= "0":
+						addDurabilité(ID, c.nom, c.durabilite)
+						addInv(ID, c.nom, nb)
+						msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+					else :
+						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
+					break
 			if test :
 				msg = "Cet item n'est pas vendu au marché !"
 
@@ -386,19 +447,20 @@ class Gems(commands.Cog):
 			nbrand = r.randint(0,99)
 			#----------------- Pioche en fer -----------------
 			if nbElements(ID, "iron_pickaxe") >= 1:
-				if r.randint(0,39)==0:
+				if get_durabilite(ID, "iron_pickaxe") == 0:
 					addInv(ID,"iron_pickaxe", -1)
 					msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(get_idmogi("iron_pickaxe"))
 				else :
-					if nbrand > 15 and nbrand < 40:
-						addInv(ID, "iron", 1)
-						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
+					addDurabilité(ID, "iron_pickaxe", -1)
+					if nbrand < 5:
+						addInv(ID, "diamond", 1)
+						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut` !".format(get_idmogi("diamond"))
 					elif nbrand > 5 and nbrand < 15:
 						addInv(ID, "gold", 1)
 						msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or` !".format(get_idmogi("gold"))
-					elif nbrand < 5:
-						addInv(ID, "diamond", 1)
-						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut` !".format(get_idmogi("diamond"))
+					elif nbrand > 15 and nbrand < 40:
+						addInv(ID, "iron", 1)
+						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
 					else:
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
@@ -409,10 +471,11 @@ class Gems(commands.Cog):
 
 			#----------------- Pioche normal -----------------
 			elif nbElements(ID, "pickaxe") >= 1:
-				if r.randint(0,29)==0:
+				if get_durabilite(ID, "pickaxe") == 0:
 					addInv(ID,"pickaxe", -1)
 					msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(get_idmogi("pickaxe"))
 				else :
+					addDurabilité(ID, "pickaxe", -1)
 					if nbrand < 20:
 						addInv(ID, "iron", 1)
 						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
@@ -441,10 +504,11 @@ class Gems(commands.Cog):
 			nbrand = r.randint(0,99)
 			#print(nbElements(ID, "fishingrod"))
 			if nbElements(ID, "fishingrod") >= 1:
-				if r.randint(0,39)==0:
-					addInv(ID,"fishingrod," -1)
+				if get_durabilite(ID, "fishingrod") == 0:
+					addInv(ID,"fishingrod", -1)
 					msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(get_idmogi("fishingrod"))
 				else :
+					addDurabilité(ID, "fishingrod", -1)
 					if nbrand < 20:
 						addInv(ID, "tropical_fish", 1)
 						msg = "Tu as obtenu 1 <:gem_tropical_fish:{}>`tropical_fish` !".format(get_idmogi("tropical_fish"))
@@ -475,6 +539,9 @@ class Gems(commands.Cog):
 				nbIron = 4*nb
 				nbPickaxe = 1*nb
 				if nbElements(ID, "iron") >= nbIron and nbElements(ID, "pickaxe") >= nbPickaxe:
+					for c in objetOutil:
+						if c.nom == "iron_pickaxe":
+								addDurabilité(ID, "iron_pickaxe", c.durabilite)
 					addInv(ID, "iron_pickaxe", nb)
 					addInv(ID, "pickaxe", -nbPickaxe)
 					addInv(ID, "iron", -nbIron)
@@ -504,8 +571,8 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_c, "recette"):
 			d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
 			d_recette+="▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Forge**\n"
-			for c in objet :
-				if c.type == "outil forger":
+			for c in objetOutil :
+				if c.type == "forge":
 					d_recette += "<:gem_{0}:{1}>`{0}`: {2}\n".format(c.nom,c.idmoji,c.recette)
 
 			msg = discord.Embed(title = "Recettes",color= 15778560, description = d_recette)
@@ -526,14 +593,28 @@ class Gems(commands.Cog):
 			msg_inv = "Inventaire de {}\n\n".format(nom)
 			inv = DB.valueAt(ID, "inventory")
 			tailletot = 0
+			Titre = True
+			for c in objetOutil:
+				if Titre:
+					msg_inv += "**Outils**\n"
+					Titre = False
+				for x in inv:
+					if c.nom == str(x):
+						if inv[x] > 0:
+							msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, get_durabilite(ID, c.nom), c.durabilite)
+							tailletot += c.poid*int(inv[x])
+			Titre = True
 			for c in objet:
+				if Titre:
+					msg_inv += "\n**Items**\n"
+					Titre = False
 				for x in inv:
 					if c.nom == str(x):
 						if inv[x] > 0:
 							if c.type != "friandise":
-								msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+								msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 							else:
-								msg_inv = msg_inv+":{0}:`{0}`: `{1}`\n".format(str(x), str(inv[x]))
+								msg_inv = msg_inv+":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 							tailletot += c.poid*int(inv[x])
 
 			msg_inv += "\nTaille: `{}`".format(int(tailletot))
@@ -552,11 +633,21 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "market"):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
+			Titre = True
+			for c in objetOutil:
+				if Titre:
+					d_market += "**Outils**\n"
+					Titre = False
+				d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Durabilité: **{5}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji,c.durabilite)
+			Titre = True
 			for c in objet :
+				if Titre:
+					d_market += "\n**Items**\n"
+					Titre = False
 				if c.type != "friandise":
-					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
+					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
 				else:
-					d_market += ":{0}:`{0}`: Vente **{1}**, Achat **{2}**, Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid)
+					d_market += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid)
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			DB.updateComTime(ID, "market")
@@ -582,6 +673,16 @@ class Gems(commands.Cog):
 				addInv(ID, item, -nb)
 				test = True
 				for c in objet:
+					if item == c.nom:
+						test = False
+						gain = c.vente*nb
+						addGems(ID, gain)
+						if c.type != "friandise":
+							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
+						else:
+							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem: !".format(nb,item,gain)
+						break
+				for c in objetOutil:
 					if item == c.nom:
 						test = False
 						gain = c.vente*nb
