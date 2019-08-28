@@ -232,10 +232,7 @@ def addDurabilité(ID, nameElem, nbElem):
 	if nbElements(ID, nameElem) > 0 and nbElem < 0:
 		durabilite[nameElem] += nbElem
 	elif nbElem >= 0:
-		if nbElements(ID, nameElem) == 0:
-			durabilite[nameElem] = nbElem
-		else :
-			durabilite[nameElem] += nbElem
+		durabilite[nameElem] = nbElem
 	else:
 		print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
@@ -253,7 +250,7 @@ def get_durabilite(ID, nameElem):
 		for c in objetOutil:
 			if nameElem == c.nom:
 				if nameElem in durabilite:
-					return durabilite[nameElem] - ( (nb-1)*c.durabilite )
+					return durabilite[nameElem]
 	else:
 		return -1
 
@@ -422,7 +419,6 @@ class Gems(commands.Cog):
 					test = False
 					prix = 0 - (c.achat*nb)
 					if addGems(ID, prix) >= "0":
-						addDurabilité(ID, c.nom, c.durabilite)
 						addInv(ID, c.nom, nb)
 						msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 					else :
@@ -449,8 +445,16 @@ class Gems(commands.Cog):
 			if nbElements(ID, "iron_pickaxe") >= 1:
 				if get_durabilite(ID, "iron_pickaxe") == 0:
 					addInv(ID,"iron_pickaxe", -1)
+					if nbElements(ID,"iron_pickaxe") > 0:
+						for c in objetOutil:
+							if c.nom == "iron_pickaxe":
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(get_idmogi("iron_pickaxe"))
 				else :
+					if get_durabilite(ID,"iron_pickaxe") == None:
+						for c in objetOutil:
+							if c.nom == "iron_pickaxe":
+								addDurabilité(ID, c.nom, c.durabilite)
 					addDurabilité(ID, "iron_pickaxe", -1)
 					if nbrand < 5:
 						addInv(ID, "diamond", 1)
@@ -473,8 +477,16 @@ class Gems(commands.Cog):
 			elif nbElements(ID, "pickaxe") >= 1:
 				if get_durabilite(ID, "pickaxe") == 0:
 					addInv(ID,"pickaxe", -1)
+					if nbElements(ID,"pickaxe") > 0:
+						for c in objetOutil:
+							if c.nom == "pickaxe":
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(get_idmogi("pickaxe"))
 				else :
+					if get_durabilite(ID,"pickaxe") == None:
+						for c in objetOutil:
+							if c.nom == "pickaxe":
+								addDurabilité(ID, c.nom, c.durabilite)
 					addDurabilité(ID, "pickaxe", -1)
 					if nbrand < 20:
 						addInv(ID, "iron", 1)
@@ -506,8 +518,16 @@ class Gems(commands.Cog):
 			if nbElements(ID, "fishingrod") >= 1:
 				if get_durabilite(ID, "fishingrod") == 0:
 					addInv(ID,"fishingrod", -1)
+					if nbElements(ID,"fishingrod") > 0:
+						for c in objetOutil:
+							if c.nom == "fishingrod":
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(get_idmogi("fishingrod"))
 				else :
+					if get_durabilite(ID,"fishingrod") == None:
+						for c in objetOutil:
+							if c.nom == "fishingrod":
+								addDurabilité(ID, c.nom, c.durabilite)
 					addDurabilité(ID, "fishingrod", -1)
 					if nbrand < 20:
 						addInv(ID, "tropical_fish", 1)
@@ -539,9 +559,6 @@ class Gems(commands.Cog):
 				nbIron = 4*nb
 				nbPickaxe = 1*nb
 				if nbElements(ID, "iron") >= nbIron and nbElements(ID, "pickaxe") >= nbPickaxe:
-					for c in objetOutil:
-						if c.nom == "iron_pickaxe":
-								addDurabilité(ID, "iron_pickaxe", c.durabilite)
 					addInv(ID, "iron_pickaxe", nb)
 					addInv(ID, "pickaxe", -nbPickaxe)
 					addInv(ID, "iron", -nbIron)
@@ -670,7 +687,6 @@ class Gems(commands.Cog):
 				nb = nbElements(ID, item)
 			nb = int(nb)
 			if nbElements(ID, item) >= nb and nb > 0:
-				addInv(ID, item, -nb)
 				test = True
 				for c in objet:
 					if item == c.nom:
@@ -687,11 +703,12 @@ class Gems(commands.Cog):
 						test = False
 						gain = c.vente*nb
 						addGems(ID, gain)
-						if c.type != "friandise":
-							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
-						else:
-							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem: !".format(nb,item,gain)
+						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
+						if nbElements(ID, item) == 1:
+							addDurabilité(ID, item, -1)
 						break
+
+				addInv(ID, item, -nb)
 				if test:
 					msg = "Cette objet n'existe pas"
 			else:
