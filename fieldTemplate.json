@@ -9,12 +9,14 @@
 		0,
 	"inventory":
 		{},
+	"durabilite":
+		{},
+	"trophy":
+		{},
 	"nbMsg":
 		0,
 	"lvl":
 		0,
-	"trophy":
-		{},
 	"daily_mult":
 		0
 }
