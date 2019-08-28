@@ -39,10 +39,11 @@ objet = [Item("pickaxe",20,5,5,608748195291594792,"outil","")
 ,Item("iron",30,r.randint(9,11),1,608748195685597235,"minerai","")
 ,Item("gold",100,r.randint(45, 56),1,608748194754723863,"minerai","")
 ,Item("diamond",200,r.randint(98, 120),1,608748194750529548,"minerai","")
+,Item("ruby",3000,1000,1,608748194406465557,"minerai","")
 ,Item("fish",5,2,0.5,608762539605753868,"poisson","")
 ,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson","")
 ,Item("cookie",20,10,1,"","friandise","")
-,Item("ruby",10000,5000,-10,608748194406465557,"special","")]
+,Item("backpack",5000,1,-20,616205834451550208,"special","")]
 
 
 class Trophy:
@@ -655,7 +656,7 @@ class Gems(commands.Cog):
 					msg+="\n"
 				elif i == 6:
 					msg+=" :arrow_backward:\n"
-				tab.append(r.randint(0,231))
+				tab.append(r.randint(0,232))
 				if tab[i] < 10 :
 					result.append("zero")
 				elif tab[i] >= 10 and tab[i] < 20:
@@ -698,7 +699,9 @@ class Gems(commands.Cog):
 					result.append("cookie")
 				elif tab[i] >=  200 and tab[i] < 230:
 					result.append("beer")
-				elif tab[i] >= 230:
+				elif tab[i] >= 230 and tab[i] < 231:
+					result.append("backpack")
+				elif tab[i] >= 231:
 					result.append("ruby")
 				if tab[i] < 230:
 					msg+=":{}:".format(result[i])
