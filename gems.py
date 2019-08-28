@@ -781,6 +781,11 @@ class Gems(commands.Cog):
 			elif result[3] == "cookie" or result[4] == "cookie" or result[5] == "cookie":
 				addInv(ID, "cookie", 1)
 				msg += "\nTu a trouvé 1 :cookie:`cookie`"
+			#===================================================================
+			#Backpack (hyper rare)
+			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
+				addInv(ID, "backpack", 1)
+				msg += "\nEn trouvant ce <:gem_backpack:{}>`backpack` tu gagne 20 points d'inventaire".format(get_idmogi("backpack"))
 
 			#Calcul du prix
 			prix = gain * mise
