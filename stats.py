@@ -189,8 +189,8 @@ class Stats(commands.Cog):
 			pass
 		log = logs[jour]
 		heures = log["msg {} heures".format(statue)]
-		if os.path.isfile("graph.png"):
-			os.remove('graph.png')
+		if os.path.isfile("cache/graphheure.png"):
+			os.remove('cache/graphheure.png')
 			print('removed old graphe file')
 		x = []
 		y = []
@@ -205,8 +205,8 @@ class Stats(commands.Cog):
 		plt.xlabel('heures')
 		plt.ylabel('messages')
 		plt.title("msg / heure ({})".format(statue))
-		plt.savefig("graph.png")
-		await ctx.send(file=discord.File("graph.png"))
+		plt.savefig("cache/graphheure.png")
+		await ctx.send(file=discord.File("cache/graphheure.png"))
 		plt.clf()
 
 	@commands.command(pass_context=True)
@@ -219,8 +219,8 @@ class Stats(commands.Cog):
 		except ValueError :
 			ctx.send("la date n'est pas correcte !")
 			pass
-		if os.path.isfile("graph.png"):
-			os.remove('graph.png')
+		if os.path.isfile("cache/graphjour.png"):
+			os.remove('cache/graphjour.png')
 			print('removed old graphe file')
 		msg = []
 		jour = []
@@ -239,14 +239,14 @@ class Stats(commands.Cog):
 		plt.xlabel('jour')
 		plt.ylabel('messages')
 		plt.title("msg / jour ({})".format(statue))
-		plt.savefig("graph.png")
-		await ctx.send(file=discord.File("graph.png"))
+		plt.savefig("cache/graphjour.png")
+		await ctx.send(file=discord.File("cache/graphjour.png"))
 		plt.clf()
 
 	@commands.command(pass_context=True)
 	async def graphmembre(self, ctx):
-		if os.path.isfile("graph.png"):
-			os.remove('graph.png')
+		if os.path.isfile("cache/piegraph.png"):
+			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
 		total = countTotalMsg()
 		a = []
@@ -267,8 +267,8 @@ class Stats(commands.Cog):
 		explode = (0,0,0,0,0,0,0.2)
 		plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
 		plt.axis('equal')
-		plt.savefig('graph.png')
-		plt.show()
+		plt.savefig('cache/piegraph.png')
+		await ctx.send(file=discord.File("cache/piegraph.png"))
 
 
 

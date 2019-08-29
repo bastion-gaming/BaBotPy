@@ -63,7 +63,7 @@ class Queue(commands.Cog):
 		if not ctx.voice_client.is_playing():
 			await ctx.send("downloading file")
 			self.dl(url)
-			song = discord.FFmpegPCMAudio("song.mp3")
+			song = discord.FFmpegPCMAudio("cache/song.mp3")
 			ctx.voice_client.play(song, after =lambda e: self.next(ctx))
 			await ctx.send("{} se lance".format(self.info.title[0]))
 		else:
@@ -72,6 +72,7 @@ class Queue(commands.Cog):
 	def dl(self, url):
 		ydl_opts ={
 			'format':'bestaudio/best',
+			'outtmpl':'cache/song.mp3',
 			'postprocessors':
 				[{
 				'key':'FFmpegExtractAudio',
@@ -83,10 +84,6 @@ class Queue(commands.Cog):
 			print('Downloading song now;\n')
 			ydl.download([url])
 
-		for file in os.listdir('./'):
-			if file.endswith(".mp3"):
-				print("renamed File:{}".format(file))
-				os.rename(file,"song.mp3")
 
 	def next(self,ctx):
 		try :
@@ -98,9 +95,19 @@ class Queue(commands.Cog):
 			msg = 'la queue est vide'
 			print('la queue est vide')
 		else:
+			song_there = os.path.isfile("cache/song.mp3")
+			try :
+				if song_there:
+					os.remove('cache/song.mp3')
+					print('removed old song file')
+			except PermissionError:
+				print('trying to delete the song file')
+				ctx.send("ERROR music playing")
+				pass
+
 			msg = 'lecture de {}'.format(self.info.title[0])
 			self.dl (self.info.url[0])
-			ctx.voice_client.play(discord.FFmpegPCMAudio("song.mp3"), after =lambda e: self.next(ctx))
+			ctx.voice_client.play(discord.FFmpegPCMAudio("cache/song.mp3"), after =lambda e: self.next(ctx))
 		envoie = ctx.send(msg)
 		fut = asyncio.run_coroutine_threadsafe(envoie, self.bot.loop)
 		try:
@@ -139,10 +146,10 @@ class Music(commands.Cog):
 	async def play(self, ctx, url):
 		"""Le bot joue la vidéo youtube (url uniquement)"""
 		voice = ctx.voice_client
-		song_there = os.path.isfile("song.mp3")
+		song_there = os.path.isfile("cache/song.mp3")
 		try :
 			if song_there:
-				os.remove('song.mp3')
+				os.remove('cache/song.mp3')
 				print('removed old song file')
 
 		except PermissionError:
