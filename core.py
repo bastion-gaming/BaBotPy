@@ -96,10 +96,12 @@ async def on_member_join(member):
 		":arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
 	else:
 		msg = "=====================\nBon retour parmis nous ! {}\n\n=====================".format(member.mention)
+	stat.countCo()
 	await channel.send(msg)
 
 @client.event
 async def on_member_remove(member):
+	stat.countDeco()
 	channel = client.get_channel(417445503110742048)
 	await channel.send("{} nous a quitté, pourtant si jeune...".format(member.mention))
 
@@ -107,8 +109,11 @@ async def on_member_remove(member):
 
 @client.event
 async def on_message(message):
-	await stat.countMsg(message)
-	await client.process_commands(message)
+	if not (message.author.bot or message.content.startswith(PREFIX)) :
+		await stat.countMsg(message)
+		await client.process_commands(message)
+	else:
+		await client.process_commands(message)
 
 ####################### Commande stats.py #######################
 
