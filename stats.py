@@ -116,7 +116,7 @@ class Stats(commands.Cog):
 					f.write(json.dumps(connexion, indent=4))
 				with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'r') as f:
 					t = json.load(f)
-					t[str(dt.date.today())] = nouveau_jour
+					t[str(dt.date.today()-dt.timedelta(days = 1))] = nouveau_jour
 					f.close()
 				with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'w') as f:
 					f.write(json.dumps(t, indent=4))
