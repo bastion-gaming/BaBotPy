@@ -178,15 +178,15 @@ class Stats(commands.Cog):
 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
-	async def graphheure(self, ctx, statue = "local", jour = "now"):
+	async def graphheure(self, ctx, statue = "local", jour = "yesterday"):
 		"""|local/total aaaa-mm-jj| affiche le graph des messages envoyés par heure"""
-		if jour =="now":
-			jour = str(dt.date.today())
+		if jour =="yesterday":
+			jour = str(dt.date.today()-dt.timedelta(days = 1))
 		try :
 			logs = json.load(open("logs/log-{}.json".format(jour[:7]),"r"))
-		except ValueError :
-			ctx.send("la date n'est pas correcte !")
-			pass
+		except FileNotFoundError :
+			await ctx.send("la date n'est pas correcte !")
+			return
 		log = logs[jour]
 		heures = log["msg {} heures".format(statue)]
 		if os.path.isfile("cache/graphheure.png"):
@@ -204,7 +204,7 @@ class Stats(commands.Cog):
 			plt.fill_between(x, y[0]-100, y, color='blue', alpha=0.5)
 		plt.xlabel('heures')
 		plt.ylabel('messages')
-		plt.title("msg / heure ({})".format(statue))
+		plt.title("graphique du {}".format(jour))
 		plt.savefig("cache/graphheure.png")
 		await ctx.send(file=discord.File("cache/graphheure.png"))
 		plt.clf()
@@ -214,6 +214,8 @@ class Stats(commands.Cog):
 		"""|local/total aaaa-mm| affiche le graph des messages envoyés par jour"""
 		if mois =="now":
 			mois = str(dt.date.today())[:7]
+		aaaa , mm = mois.split("-")
+		nom_mois = dt.datetime(int(aaaa),int(mm),1).strftime("%B")
 		try :
 			logs = json.load(open("logs/log-{}.json".format(mois),"r"))
 		except ValueError :
@@ -225,12 +227,15 @@ class Stats(commands.Cog):
 		msg = []
 		jour = []
 		text = "msg {} jour".format(statue)
-		for i in range (1,len(logs)+1):
-			if i<10:
-				msg.append(logs["{}-0{}".format(mois,i)][text])
-			else:
-				msg.append(logs["{}-{}".format(mois,i)][text])
-			jour.append(i)
+		for i in range (1,32):
+			try :
+				if i<10:
+					msg.append(logs["{}-0{}".format(mois,i)][text])
+				else:
+					msg.append(logs["{}-{}".format(mois,i)][text])
+				jour.append(i)
+			except KeyError :
+				pass
 		if statue == "local":
 			plt.hist(jour, bins = len((logs)), weights = msg)
 		else :
@@ -238,7 +243,7 @@ class Stats(commands.Cog):
 			plt.fill_between(jour, msg[0]-200, msg, color='blue', alpha=0.5)
 		plt.xlabel('jour')
 		plt.ylabel('messages')
-		plt.title("msg / jour ({})".format(statue))
+		plt.title("graphique du {} au {} {}".format(jour[0],jour[len(jour)-1],nom_mois))
 		plt.savefig("cache/graphjour.png")
 		await ctx.send(file=discord.File("cache/graphjour.png"))
 		plt.clf()
