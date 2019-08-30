@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 import os
 
 client = discord.Client()
-file="time.json"
+file="fichier_json/time.json"
+co="fichier_json/co.json"
 def fileExist():
 	try:
 		with open(file): pass
@@ -19,17 +20,17 @@ def fileExist():
 	return True
 
 def countCo():
-	t = json.load(open("co.json","r"))
+	t = json.load(open(co,"r"))
 	t["co local"]+=1
 	t["co total"]+=1
-	with open("co.json", 'w') as f:
+	with open(co, 'w') as f:
 		f.write(json.dumps(t, indent=4))
 
 def countDeco():
-	t = json.load(open("co.json","r"))
+	t = json.load(open(co,"r"))
 	t["deco local"]+=1
 	t["deco total"]+=1
-	with open("co.json", 'w') as f:
+	with open(co, 'w') as f:
 		f.write(json.dumps(t, indent=4))
 
 async def countMsg(message):
@@ -89,7 +90,7 @@ class Stats(commands.Cog):
 				msg_total = countTotalMsg()
 				local_heure={}
 				f = open(file, "r")
-				connexion = json.load(open("co.json", "r"))
+				connexion = json.load(open(co, "r"))
 				total_heure = json.load(open(file, "r"))
 				for i in range(23):
 					local_heure[str(i)] = total_heure[str(i+1)] - total_heure[str(i)]
@@ -112,7 +113,7 @@ class Stats(commands.Cog):
 								}
 				connexion["co local"] = 0
 				connexion["deco local"] = 0
-				with open("co.json", 'w') as f:
+				with open(co, 'w') as f:
 					f.write(json.dumps(connexion, indent=4))
 				with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'r') as f:
 					t = json.load(f)
