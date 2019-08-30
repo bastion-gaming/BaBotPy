@@ -6,7 +6,7 @@ import time as t
 import json
 
 
-DB_NOM = 'bastionDB.json'
+DB_NOM = 'fichier_json/bastionDB.json'
 
 def dbExist():
 	"""
@@ -19,7 +19,7 @@ def dbExist():
 	return True
 
 db = TinyDB(DB_NOM)
-file = "fieldTemplate.json"
+file = "fichier_json/fieldTemplate.json"
 
 def fieldList():
 	with open(file, "r") as f:

@@ -1,0 +1,5 @@
+discord.py
+tinydb
+matplotlib
+youtube_dl
+googleapiclient
