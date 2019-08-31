@@ -49,6 +49,14 @@ def countTotalMsg():
 		a = a + int(item["nbMsg"])
 	return a
 
+def countTotalGems():
+	#Init a
+	a=0
+	for item in DB.db:
+#On additionne le nombre de message posté en tout
+		a = a + int(item["gems"])
+	return a
+
 def hourCount():
 	d=dt.datetime.now().hour
 	if fileExist() == False:
@@ -278,7 +286,35 @@ class Stats(commands.Cog):
 		plt.axis('equal')
 		plt.savefig('cache/piegraph.png')
 		await ctx.send(file=discord.File("cache/piegraph.png"))
+		plt.clf()
 
+	@commands.command(pass_context=True)
+	async def graphgems(self, ctx):
+		if os.path.isfile("cache/piegraph.png"):
+			os.remove('cache/piegraph.png')
+			print('removed old graphe file')
+		total = countTotalGems()
+		a = []
+		for item in DB.db:
+			a.append([item["gems"],item["ID"]])
+		a.sort(reverse = True)
+		richest = a[:6]
+		sous_total = 0
+		for i in range (6):
+			sous_total += richest[i][0]
+		labels = []
+		sizes = []
+		for i in range (6):
+			labels.append(ctx.guild.get_member(richest[i][1]).name)
+			sizes.append(richest[i][0])
+		labels.append("autre")
+		sizes.append(total - sous_total)
+		explode = (0,0,0,0,0,0,0.2)
+		plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
+		plt.axis('equal')
+		plt.savefig('cache/piegraph.png')
+		await ctx.send(file=discord.File("cache/piegraph.png"))
+		plt.clf()
 
 
 
