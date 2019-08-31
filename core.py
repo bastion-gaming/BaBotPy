@@ -259,19 +259,14 @@ async def looped_task():
 								# Sends message to channel, then saves sent status to json
 								if status == 'live' and stream_index['sent'] == 'false' and stream_index['login'] != "bastionlivetv":
 									msg = "======= @everyone LIVE =======\n"
-									":regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\n"
-									"{0} est en live !!!\n"
-									"Allez voir -> https://www.twitch.tv/{0}".format(stream_index['login'])
+									":regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\n{0} est en live !!!\nAllez voir -> https://www.twitch.tv/{0}".format(stream_index['login'])
 
 									channel_to_send = client.get_channel(channel_id)
 									await channel_to_send.send(msg)
 
 								elif status == 'live' and stream_index['sent'] == 'false' and stream_index['login'] == "bastionlivetv":
 									msg = "======= @everyone LIVE =======\n"
-									":regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\n"
-									"Nous sommes en live sur BastionLiveTv !\n"
-									"Regardez nous ici : https://www.twitch.tv/{0}\n"
-									"Pour voir les dates => http://www.bastion-gaming.fr/agenda.html".format(stream_index['login'])
+									":regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\nNous sommes en live sur BastionLiveTv !\nRegardez nous ici : https://www.twitch.tv/{0}\nPour voir les dates => http://www.bastion-gaming.fr/agenda.html".format(stream_index['login'])
 
 									channel_to_send = client.get_channel(channel_id)
 									await channel_to_send.send(msg)
