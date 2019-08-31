@@ -89,13 +89,9 @@ async def on_member_join(member):
 	#c = data.cursor()
 	id = member.id
 	if DB.newPlayer(id) == "Le joueur a été ajouté !":
-		msg = ":black_small_square:Bienvenue {} sur Bastion!:black_small_square: \n\n\n"
-		"Nous sommes ravis que tu aies rejoint notre communauté !\n"
-		"Tu es attendu :\n\n"
-		":arrow_right: Sur #⌈:closed_book:⌋•règles\n"
-		":arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
+		msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur #⌈:closed_book:⌋•règles \n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
 	else:
-		msg = "=====================\nBon retour parmis nous ! {}\n\n=====================".format(member.mention)
+		msg = "=====================\nBon retour parmis nous ! {0}\n\n=====================".format(member.mention)
 	stat.countCo()
 	await channel.send(msg)
 
@@ -103,7 +99,7 @@ async def on_member_join(member):
 async def on_member_remove(member):
 	stat.countDeco()
 	channel = client.get_channel(417445503110742048)
-	await channel.send("{} nous a quitté, pourtant si jeune...".format(member.mention))
+	await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.mention))
 
 ####################### Stat ####################################
 
