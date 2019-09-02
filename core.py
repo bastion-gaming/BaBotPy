@@ -4,10 +4,13 @@ from discord.ext.commands import Bot
 from discord.utils import get
 import datetime as t
 from datetime import datetime
+
 import DB
 import roles
 import stats as stat
 import notification as notif
+import level as lvl
+
 import asyncio
 import aiohttp
 import json
@@ -67,8 +70,7 @@ async def on_ready():
 	elif "type" in flag:
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
-
-	print('| Core Module | >> Connecté !')
+	print('------\n')
 
 ####################### Commande help.py #######################
 
@@ -107,6 +109,7 @@ async def on_member_remove(member):
 async def on_message(message):
 	if not (message.author.bot or message.content.startswith(PREFIX)) :
 		await stat.countMsg(message)
+		await lvl.checklevel(message)
 		await client.process_commands(message)
 	else:
 		await client.process_commands(message)
@@ -118,6 +121,10 @@ client.load_extension('stats')
 ####################### Commande roles.py #######################
 
 client.load_extension('roles')
+
+####################### Commande level.py #######################
+
+client.load_extension('level')
 
 ###################### Commande gestion.py #####################
 
@@ -181,8 +188,8 @@ async def looped_task():
 
 			for i, stream in enumerate(local['streams']):
 				if stream['login'] not in all_subscriptions:
-					print('\nTime: ' + str(datetime.now()) + '\nAucun channel souscrit pour diffuser:\nSUPPRESSION: ' +
-						  stream['login'] + ' de local["streams"]\n')
+					# print('\nTime: ' + str(datetime.now()) + '\nAucun channel souscrit pour diffuser:\nSUPPRESSION: ' +
+					# 	  stream['login'] + ' de local["streams"]\n')
 					stream_list = local['streams']
 					stream_list.pop(i)
 
@@ -201,9 +208,9 @@ async def looped_task():
 						sub_list = channel['subscribed']
 						sub_list.remove(subscription)
 
-						print('\nTime: ' + str(datetime.now()))
-						print("Le flux Twitch n'existe pas: ")
-						print('SUPPRESSION STREAM: ' + subscription + '\nCHANNEL ID: ' + str(channel_id))
+						# print('\nTime: ' + str(datetime.now()))
+						# print("Le flux Twitch n'existe pas: ")
+						# print('SUPPRESSION STREAM: ' + subscription + '\nCHANNEL ID: ' + str(channel_id))
 						msg = subscription + " n'existe pas, suppression du channel de la liste de notification."
 
 						channel_to_send = client.get_channel(channel_id)
@@ -215,19 +222,19 @@ async def looped_task():
 			# If stream is offline, set 'sent' key value to false, then save and reload the local JSON file
 			for index in local['streams']:
 
-				print('\nSTREAM NAME: ' + index['login'])
-				print('STREAM ID: ' + index['id'])
+				# print('\nSTREAM NAME: ' + index['login'])
+				# print('STREAM ID: ' + index['id'])
 
 				found_match = 0
 				for api_index in api['data']:
 					if api_index['user_id'] == index['id']:
-						print("ID CORRESPONDANT DE L'API: " + api_index['user_id'])
+						# print("ID CORRESPONDANT DE L'API: " + api_index['user_id'])
 						found_match = 1
 						live_counter += 1
 						live_streams.append(index['login'])
 
 				if found_match == 0:
-					print('ID CORRESPONDANT NON TROUVÉ')
+					# print('ID CORRESPONDANT NON TROUVÉ')
 					index['sent'] = 'false'
 					index['status'] = 'offline'
 					await notif.dump_json()
@@ -235,7 +242,7 @@ async def looped_task():
 				else:
 					index['status'] = 'live'
 
-				print('')
+				# print('')
 
 			streams_sent = []
 

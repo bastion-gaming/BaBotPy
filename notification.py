@@ -149,8 +149,8 @@ class Notification(commands.Cog):
 		channel_exists = 0
 		has_subscriptions = 0
 
-		print('\n------\n\nTime: ' + str(datetime.now()))
-		print('Demande de liste du channel' + str(channel_id))
+		# print('\n------\n\nTime: ' + str(datetime.now()))
+		# print('Demande de liste du channel' + str(channel_id))
 
 		msg = 'Vous recevez actuellement des notifications pour les channels suivants:\n'
 		for channel in local['channels']:
@@ -165,18 +165,18 @@ class Notification(commands.Cog):
 		# Si le channel n'existe pas, envoyez un message à ctx et retournez
 		if channel_exists == 0:
 			msg = "Ce channel discord n'a pas encore été vérifié."
-			print("Impossible de supprimer le flux, le channel n'a pas été ajouté au bot.\n------\n")
+			# print("Impossible de supprimer le flux, le channel n'a pas été ajouté au bot.\n------\n")
 			await ctx.channel.send(msg)
 			return
 
 		elif not has_subscriptions:
 			msg = "Vous n'avez ajouté aucun twitch channels."
-			print('Aucun abonnement ajouté.\n------\n')
+			# print('Aucun abonnement ajouté.\n------\n')
 			await ctx.channel.send(msg)
 			return
 
 		else:
-			print('\n------\n')
+			# print('\n------\n')
 			await ctx.channel.send(msg)
 
 
@@ -220,8 +220,8 @@ class Notification(commands.Cog):
 		channel_exists = 0
 		arg = str(arg.lower())
 
-		print('\n------\n\nTime: ' + str(datetime.now()))
-		print('Remove request from channel ' + str(channel_id) + ' for stream name ' + arg)
+		# print('\n------\n\nTime: ' + str(datetime.now()))
+		# print('Remove request from channel ' + str(channel_id) + ' for stream name ' + arg)
 
 		# Vérifiez si le channel a été ajouté à local.json
 		for channel in local['channels']:
@@ -231,13 +231,13 @@ class Notification(commands.Cog):
 		# Si le channel n'existe pas, envoyez un message à ctx et retournez
 		if channel_exists == 0:
 			msg = "Ce channel discord n'a pas encore été vérifié."
-			print("Impossible de supprimer le flux, le channel n'a pas été ajouté au bot.")
+			# print("Impossible de supprimer le flux, le channel n'a pas été ajouté au bot.")
 			await ctx.channel.send(msg)
 			return
 
 		if not re.match('^[a-zA-Z0-9_]+$', arg):
 			msg = 'Le nom ne doit pas contenir de caractères spéciaux.'
-			print(msg)
+			# print(msg)
 			await ctx.channel.send(msg)
 			return
 
@@ -255,13 +255,13 @@ class Notification(commands.Cog):
 					subscriptions.remove(arg)
 					await dump_json()
 
-					print('\nENLEVÉ: \nSTREAM: ' + arg + '\nCHANNEL ID: ' + str(channel_id) + '\n------\n')
+					# print('\nENLEVÉ: \nSTREAM: ' + arg + '\nCHANNEL ID: ' + str(channel_id) + '\n------\n')
 
 					msg = 'Enlevé ' + arg + '.'
 					await ctx.channel.send(msg)
 
 				else:
-					print(arg + " n'existe pas dans les abonnements aux chaînes")
+					# print(arg + " n'existe pas dans les abonnements aux chaînes")
 
 					msg = arg + " n'est pas actuellement dans vos notifications."
 					await ctx.channel.send(msg)
@@ -283,12 +283,12 @@ class Notification(commands.Cog):
 			"status": ""
 		}
 
-		print('\n------\n\nTime: ' + str(datetime.now()))
-		print('Ajouter une demande du channel ' + str(channel_id) + ' pour le flux ' + arg)
+		# print('\n------\n\nTime: ' + str(datetime.now()))
+		# print('Ajouter une demande du channel ' + str(channel_id) + ' pour le flux ' + arg)
 
 		if not re.match('^[a-zA-Z0-9_]+$', arg):
 			msg = 'Le nom ne doit pas contenir de caractères spéciaux.'
-			print(msg)
+			# print(msg)
 			await ctx.channel.send(msg)
 			return
 
@@ -313,7 +313,7 @@ class Notification(commands.Cog):
 		# Si le channel n'existe pas, envoyez un message à ctx et retournez
 		if channel_exists == 0:
 			msg = "Ce channel discord n'a pas encore été vérifié."
-			print("Impossible d'ajouter le flux, le channel n'a pas été ajouté au bot.")
+			# print("Impossible d'ajouter le flux, le channel n'a pas été ajouté au bot.")
 			await ctx.channel.send(msg)
 			return
 
@@ -329,7 +329,7 @@ class Notification(commands.Cog):
 
 			await dump_json()
 
-			print('\nAJOUTÉ: \nSTREAM: ' + arg + '\nCHANNEL ID: ' + str(channel_id) + '\nAJOUTÉ AUX FLUX\n------\n')
+			# print('\nAJOUTÉ: \nSTREAM: ' + arg + '\nCHANNEL ID: ' + str(channel_id) + '\nAJOUTÉ AUX FLUX\n------\n')
 
 			msg = arg + ' a été ajouté à vos notifications.'
 			await ctx.channel.send(msg)
@@ -340,7 +340,7 @@ class Notification(commands.Cog):
 
 			await dump_json()
 
-			print('\nAJOUTÉ AUX FLUX\n------\n')
+			# print('\nAJOUTÉ AUX FLUX\n------\n')
 
 			msg = arg + ' est déjà dans vos notifications.'
 			await ctx.channel.send(msg)
@@ -351,7 +351,7 @@ class Notification(commands.Cog):
 					change = channel['subscribed']
 					change.append(arg)
 
-			print('\nAJOUTÉ: \nSTREAM: ' + arg + '\nCHANNEL ID: ' + str(channel_id) + '\n------\n')
+			# print('\nAJOUTÉ: \nSTREAM: ' + arg + '\nCHANNEL ID: ' + str(channel_id) + '\n------\n')
 
 			await dump_json()
 
@@ -359,7 +359,7 @@ class Notification(commands.Cog):
 			await ctx.channel.send(msg)
 
 		elif subscription_exists == 1 and stream_exists == 1:
-			print('DÉJÀ AJOUTÉ')
+			# print('DÉJÀ AJOUTÉ')
 			msg = arg + ' a déjà été ajouté à vos notifications!'
 			await ctx.channel.send(msg)
 
@@ -375,9 +375,9 @@ class Notification(commands.Cog):
 
 		verified = 0
 		duplicate = 0
-		print('\n------\n\nTime: ' + str(datetime.now()))
-		print("Requete d'ajout de channel pour:\nSERVER: {}\nCHANNEL: {} avec l'ID {}"
-			  "\nUSER: {} avec l'ID {}".format(s_name, c_name, c_id, u_name, u_id))
+		# print('\n------\n\nTime: ' + str(datetime.now()))
+		# print("Requete d'ajout de channel pour:\nSERVER: {}\nCHANNEL: {} avec l'ID {}"
+		# 	  "\nUSER: {} avec l'ID {}".format(s_name, c_name, c_id, u_name, u_id))
 
 		# Vérifier si l'utilisateur est autorisé à ajouter des channels
 		for id in user_list['verified_users']:
@@ -407,16 +407,16 @@ class Notification(commands.Cog):
 				await dump_json()
 
 				msg = 'Channel ajouté!'
-				print(msg + '\n------\n')
+				# print(msg + '\n------\n')
 				await ctx.channel.send(msg)
 
 			else:
 				msg = 'Ce channel a déjà été ajouté!'
-				print(msg + '\n------\n')
+				# print(msg + '\n------\n')
 				await ctx.channel.send(msg)
 
 		else:
-			print("L'utilisateur n'est pas autorisé à ajouter des channels.\n------\n")
+			# print("L'utilisateur n'est pas autorisé à ajouter des channels.\n------\n")
 			msg = "Vous n'êtes pas autorisé à ajouter des channels."
 			await ctx.channel.send(msg)
 
@@ -433,9 +433,9 @@ class Notification(commands.Cog):
 		verified = 0
 		channel_exists = 0
 
-		print('\n------\n\nTime: ' + str(datetime.now()))
-		print("Requete de suppression de channel pour:\nSERVER: {}\nCHANNEL: {} avec l'ID {}"
-			  "\nUSER: {} avec l'ID {}".format(s_name, c_name, c_id, u_name, u_id))
+		# print('\n------\n\nTime: ' + str(datetime.now()))
+		# print("Requete de suppression de channel pour:\nSERVER: {}\nCHANNEL: {} avec l'ID {}"
+		# 	  "\nUSER: {} avec l'ID {}".format(s_name, c_name, c_id, u_name, u_id))
 
 		# Check if user is allowed to add channels
 		for id in user_list['verified_users']:
@@ -453,16 +453,16 @@ class Notification(commands.Cog):
 
 			if channel_exists:
 				msg = 'Channel supprimé!'
-				print(msg + '\n------\n')
+				# print(msg + '\n------\n')
 				await ctx.channel.send(msg)
 
 			else:
 				msg = "Le channel a déjà été supprimée ou n'a jamais été ajoutée."
-				print(msg + '\n------\n')
+				# print(msg + '\n------\n')
 				await ctx.channel.send(msg)
 
 		else:
-			print("L'utilisateur n'est pas autorisé à supprimer des channels.\n------\n")
+			# print("L'utilisateur n'est pas autorisé à supprimer des channels.\n------\n")
 			msg = "Vous n'êtes pas autorisé à supprimer des channels."
 			await ctx.channel.send(msg)
 
@@ -476,15 +476,15 @@ class Notification(commands.Cog):
 		u_id = ctx.message.author.id
 		u_name = ctx.message.author.name
 
-		print('\n------\n\nTime: ' + str(datetime.now()))
-		print('Verify User request from:\nSERVER: {}\nCHANNEL: {} with ID {}'
-			  '\nUSER: {} with ID {}\nFor user ID: {}'.format(s_name, c_name, c_id, u_name, u_id, arg))
+		# print('\n------\n\nTime: ' + str(datetime.now()))
+		# print('Verify User request from:\nSERVER: {}\nCHANNEL: {} with ID {}'
+		# 	  '\nUSER: {} with ID {}\nFor user ID: {}'.format(s_name, c_name, c_id, u_name, u_id, arg))
 
 
 		# Check if user is master user
 		if u_id not in user_list['master_users']:
 			msg = 'You are not authorized to add users.'
-			print('User is not a master user.')
+			# print('User is not a master user.')
 			await ctx.channel.send(msg)
 			return
 
@@ -492,7 +492,7 @@ class Notification(commands.Cog):
 		try:
 			arg = int(arg)
 		except ValueError:
-			print('Request cancelled, invalid argument.\n------\n')
+			# print('Request cancelled, invalid argument.\n------\n')
 			await ctx.channel.send("That didn't work, please try again.")
 			return
 
@@ -502,12 +502,12 @@ class Notification(commands.Cog):
 			await dump_json()
 
 			msg = 'User ID {} is now verified.'.format(str(arg))
-			print(msg + '\n------\n')
+			# print(msg + '\n------\n')
 			await ctx.channel.send(msg)
 
 		else:
 			msg = 'User ID {} is already verified.'.format(str(arg))
-			print(msg + '\n------\n')
+			# print(msg + '\n------\n')
 			await ctx.channel.send(msg)
 
 
@@ -520,14 +520,14 @@ class Notification(commands.Cog):
 		u_id = ctx.message.author.id
 		u_name = ctx.message.author.name
 
-		print('\n------\n\nTime: ' + str(datetime.now()))
-		print('Remove Verified User request from:\nSERVER: {}\nCHANNEL: {} with ID {}'
-			  '\nUSER: {} with ID {}\nFor user ID: {}'.format(s_name, c_name, c_id, u_name, u_id, arg))
+		# print('\n------\n\nTime: ' + str(datetime.now()))
+		# print('Remove Verified User request from:\nSERVER: {}\nCHANNEL: {} with ID {}'
+		# 	  '\nUSER: {} with ID {}\nFor user ID: {}'.format(s_name, c_name, c_id, u_name, u_id, arg))
 
 		# Check if user is master user
 		if u_id not in user_list['master_users']:
 			msg = 'You are not authorized to remove users.'
-			print('User is not a master user.')
+			# print('User is not a master user.')
 			await ctx.channel.send(msg)
 			return
 
@@ -535,7 +535,7 @@ class Notification(commands.Cog):
 		try:
 			arg = int(arg)
 		except ValueError:
-			print('Request cancelled, invalid argument.\n------\n')
+			# print('Request cancelled, invalid argument.\n------\n')
 			await ctx.channel.send("That didn't work, please try again.")
 			return
 
@@ -545,12 +545,12 @@ class Notification(commands.Cog):
 			await dump_json()
 
 			msg = 'Removed user ID {} from verified users.'.format(str(arg))
-			print(msg + '\n------\n')
+			# print(msg + '\n------\n')
 			await ctx.channel.send(msg)
 
 		except ValueError:
 			msg = 'User ID {} is not a verified user.'.format(str(arg))
-			print(msg + '\n------\n')
+			# print(msg + '\n------\n')
 			await ctx.channel.send(msg)
 
 

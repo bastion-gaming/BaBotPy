@@ -93,11 +93,11 @@ def updateField(ID, fieldName, fieldValue):
 	fieldValue: string qui va remplacer l'ancienne valeur
 	"""
 	if db.search(getattr(Query(),fieldName)) == []:
-		print("Le champ n'existe pas")
+		# print("Le champ n'existe pas")
 		return "201"
 	else:
 		db.update({fieldName: fieldValue}, Query().ID == ID)
-		print("Le champ a été mis à jour")
+		# print("Le champ a été mis à jour")
 		return "200"
 
 
