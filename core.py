@@ -8,6 +8,7 @@ import DB
 import roles
 import stats as stat
 import notification as notif
+import level as lvl
 import asyncio
 import aiohttp
 import json
@@ -107,6 +108,7 @@ async def on_member_remove(member):
 async def on_message(message):
 	if not (message.author.bot or message.content.startswith(PREFIX)) :
 		await stat.countMsg(message)
+		await lvl.checklevel(message)
 		await client.process_commands(message)
 	else:
 		await client.process_commands(message)
@@ -118,6 +120,10 @@ client.load_extension('stats')
 ####################### Commande roles.py #######################
 
 client.load_extension('roles')
+
+####################### Commande level.py #######################
+
+client.load_extension('level')
 
 ###################### Commande gestion.py #####################
 
