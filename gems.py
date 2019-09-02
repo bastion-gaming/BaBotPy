@@ -138,9 +138,9 @@ def addGems(ID, nbGems):
 	new_value = int(old_value) + nbGems
 	if new_value >= 0:
 		DB.updateField(ID, "gems", new_value)
-		print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
-	else:
-		print("Il n'y a pas assez sur ce compte !")
+		# print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+	# else:
+	# 	print("Il n'y a pas assez sur ce compte !")
 	return str(new_value)
 
 
@@ -202,7 +202,7 @@ def addInv(ID, nameElem, nbElem):
 		else :
 			inventory[nameElem] += nbElem
 	else:
-		print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
 	DB.updateField(ID, "inventory", inventory)
 
@@ -222,7 +222,7 @@ def addTrophy(ID, nameElem, nbElem):
 		else :
 			trophy[nameElem] += nbElem
 	else:
-		print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
 	DB.updateField(ID, "trophy", trophy)
 
@@ -257,7 +257,7 @@ def addDurabilité(ID, nameElem, nbElem):
 	elif nbElem >= 0:
 		durabilite[nameElem] = nbElem
 	else:
-		print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
 	DB.updateField(ID, "durabilite", durabilite)
 
@@ -739,8 +739,8 @@ class Gems(commands.Cog):
 		"""**[item] [nombre]** | Permet de vendre vos items !"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
-		print(nb)
-		print(type(nb))
+		# print(nb)
+		# print(type(nb))
 		if spam(ID,couldown_c, "sell"):
 			if int(nb) == -1:
 				nb = nbElements(ID, item)
@@ -792,7 +792,7 @@ class Gems(commands.Cog):
 					don = -gain
 					ID_recu = nom_ID(nom)
 					if int(DB.valueAt(ID, "gems")) >= 0:
-						print(ID_recu)
+						# print(ID_recu)
 						addGems(ID_recu, gain)
 						addGems(ID,don)
 						msg = "<@{0}> donne {1}:gem: à <@{2}> !".format(ID,gain,ID_recu)
