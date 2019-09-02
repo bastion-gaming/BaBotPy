@@ -101,7 +101,7 @@ class Level(commands.Cog):
 	@commands.command(pass_context=True)
 	async def forcelevel(self, ctx, Nom = None):
 			"""
-			Permet d'actualiser l'xp d'un utilisateur
+			Permet d'actualiser le level d'un utilisateur
 			"""
 			if Nom == None:
 				ID = ctx.author.id

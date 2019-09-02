@@ -39,7 +39,7 @@ async def countMsg(message):
 		DB.updateField(id, "nbMsg", int(DB.valueAt(id, "nbMsg")+1))
 	except:
 		return print("Le joueur n'existe pas.")
-	return print(DB.valueAt(id, "nbMsg"))
+	# return print(DB.valueAt(id, "nbMsg"))
 
 def countTotalMsg():
 	#Init a
