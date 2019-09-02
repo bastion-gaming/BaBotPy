@@ -288,11 +288,11 @@ class Gems(commands.Cog):
 
 
 
-	@commands.command(pass_context=True)
-	async def begin(self, ctx):
-		"""Pour t'ajouter dans la base de données !"""
-		ID = ctx.author.id
-		await ctx.channel.send(DB.newPlayer(ID))
+	# @commands.command(pass_context=True)
+	# async def begin(self, ctx):
+	# 	"""Pour t'ajouter dans la base de données !"""
+	# 	ID = ctx.author.id
+	# 	await ctx.channel.send(DB.newPlayer(ID))
 
 
 
@@ -312,7 +312,7 @@ class Gems(commands.Cog):
 			addGems(ID, gain)
 			msg = "Récompense journalière! Tu as gagné 100 :gem:"
 			if mult != 0:
-				msg += "\n Nouvelle série: `{}`, Bonus: {}".format(mult, bonus*mult)
+				msg += "\nNouvelle série: `{}`, Bonus: {} :gem:".format(mult, bonus*mult)
 			DB.updateComTime(ID, "daily")
 		else:
 			msg = "Tu as déja reçu ta récompense journalière ! Reviens demain pour en avoir plus"
@@ -346,7 +346,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def bal(self, ctx, nom = None):
-		"""**[nom]** | Êtes vous riche ou pauvre ? bal vous le dit"""
+		"""**[nom]** | Êtes vous riche ou pauvre ?"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "bal"):
 			#print(nom)
@@ -459,7 +459,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def mine(self, ctx):
-		"""Minez compagnons !! Récupérer de la cobblestone, du fer, de l'or ou un diamant brut"""
+		"""Minez compagnons !!"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l, "mine"):
 			#print(nbElements(ID, "pickaxe"))
@@ -540,7 +540,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def fish(self, ctx):
-		"""Péchons compagnons !! Récupérer des :fish: ou 1 :tropical_fish:"""
+		"""Péchons compagnons !!"""
 		ID = ctx.author.id
 		if spam(ID,couldown_l, "fish"):
 			nbrand = r.randint(0,99)
@@ -598,7 +598,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def forge(self, ctx, item, nb = 1):
-		"""**[item] [nombre]** | Permet de concevoir des items spécifique"""
+		"""**[item] [nombre]** | Permet de concevoir des items spécifiques"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "forge"):
 			if item == "iron_pickaxe":
@@ -631,7 +631,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def recette(self, ctx):
-		"""Liste de toutes les recettes disponible dans la forge !"""
+		"""Liste de toutes les recettes disponibles !"""
 		ID = ctx.author.id
 		if spam(ID,couldown_c, "recette"):
 			d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
@@ -736,7 +736,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def sell (self, ctx,item,nb = 1):
-		"""**[item] [nombre]** | Permet de vendre vos items stockés dans votre inventaire"""
+		"""**[item] [nombre]** | Permet de vendre vos items !"""
 		#cobble 1, iron 10, gold 50, diams 100
 		ID = ctx.author.id
 		# print(nb)
@@ -813,7 +813,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def slots(self, ctx, imise = None):
-		"""**[mise]** | La machine à sous (la mise minimum est de 10)"""
+		"""**[mise]** | La machine à sous, la mise minimum est de 10 :gem:"""
 		ID = ctx.author.id
 		if imise != None:
 			if int(imise) < 10:
@@ -1019,7 +1019,7 @@ class Gems(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def trophylist(self, ctx):
-		"""Liste de tout les trophées disponible !"""
+		"""Liste de tout les trophées disponibles !"""
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
 		if spam(ID,couldown_c, "trophylist"):
