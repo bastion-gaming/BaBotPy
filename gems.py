@@ -23,40 +23,58 @@ message_gamble = ["Tu as remporté le pari ! Tu obtiens"
 # se sont les phrases prononcé par le bot pour plus de diversité
 class Item:
 
-	def __init__(self,nom,achat,vente,poid,idmoji,type):
+	def __init__(self,nom,vente,achat,poid,idmoji,type):
 		self.nom = nom
-		self.achat = achat
 		self.vente = vente
+		self.achat = achat
 		self.poid = poid
 		self.idmoji = idmoji
 		self.type = type
 
-objet = [Item("cobblestone",3,1,0.5,608748492181078131,"minerai")
-,Item("iron",30,r.randint(9,11),1,608748195685597235,"minerai")
-,Item("gold",100,r.randint(45, 56),1,608748194754723863,"minerai")
-,Item("diamond",200,r.randint(98, 120),1,608748194750529548,"minerai")
-,Item("ruby",6000,4000,1,608748194406465557,"minerai")
-,Item("fish",5,2,0.5,608762539605753868,"poisson")
-,Item("tropical_fish",60,r.randint(25, 36),1,608762539030872079,"poisson")
-,Item("cookie",20,10,1,"","friandise")
-,Item("backpack",5000,1,-20,616205834451550208,"special")]
+objet = [Item("cobblestone",1,3,0.5,608748492181078131,"minerai")
+,Item("iron",r.randint(9,11),30,1,608748195685597235,"minerai")
+,Item("gold",r.randint(45, 56),100,2,608748194754723863,"minerai")
+,Item("diamond",r.randint(98, 120),200,3,608748194750529548,"minerai")
+,Item("ruby",2000,3000,5,608748194406465557,"minerai")
+,Item("fish",2,5,0.5,608762539605753868,"poisson")
+,Item("tropicalfish",r.randint(25, 36),60,1,608762539030872079,"poisson")
+,Item("blowfish",r.randint(25, 36),60,1,618058831863218176,"poisson")
+,Item("octopus",50,90,3,618058832790421504,"poisson")
+,Item("cookie",10,20,1,"","friandise")
+,Item("backpack",1,5000,-40,616205834451550208,"special")]
 
 
 class Item:
 
-	def __init__(self,nom,achat,vente,poid,durabilite,idmoji,type,recette):
+	def __init__(self,nom,vente,achat,poid,durabilite,idmoji,type):
 		self.nom = nom
-		self.achat = achat
 		self.vente = vente
+		self.achat = achat
 		self.poid = poid
+		self.durabilite = durabilite
 		self.idmoji = idmoji
 		self.type = type
-		self.recette = recette
-		self.durabilite = durabilite
 
-objetOutil = [Item("pickaxe",20,5,5,150,608748195291594792,"","")
-,Item("iron_pickaxe",160,80,10,800,608748194775433256,"forge","4 <:gem_iron:608748195685597235>`lingots de fer` et 1 <:gem_pickaxe:608748195291594792>`pickaxe`")
-,Item("fishingrod",15,5,3,200,608748194318385173,"","")]
+objetOutil = [Item("pickaxe",5,20,5,150,608748195291594792,"")
+,Item("iron_pickaxe",80,160,10,800,608748194775433256,"forge")
+,Item("fishingrod",5,15,3,200,608748194318385173,"")]
+
+
+class Item:
+
+	def __init__(self,nom,type, nb1,item1, nb2,item2, nb3,item3, nb4,item4):
+		self.nom = nom
+		self.type = type
+		self.nb1 = nb1
+		self.item1 = item1
+		self.nb2 = nb2
+		self.item2 = item2
+		self.nb3 = nb3
+		self.item3 = item3
+		self.nb4 = nb4
+		self.item4 = item4
+
+objetRecette = [Item("iron_pickaxe","forge",4,"iron",1,"pickaxe",0,"",0,"")]
 
 
 
@@ -157,6 +175,11 @@ def get_idmogi(nameElem):
 	"""
 	test = False
 	for c in objet:
+		if c.nom == nameElem:
+			test = True
+			return c.idmoji
+
+	for c in objetOutil:
 		if c.nom == nameElem:
 			test = True
 			return c.idmoji
@@ -458,20 +481,27 @@ class Gems(commands.Cog):
 					addDurabilité(ID, "iron_pickaxe", -1)
 					if nbrand < 5:
 						addInv(ID, "diamond", 1)
-						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut` !".format(get_idmogi("diamond"))
+						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(get_idmogi("diamond"))
 					elif nbrand > 5 and nbrand < 15:
 						addInv(ID, "gold", 1)
-						msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or` !".format(get_idmogi("gold"))
+						msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or`".format(get_idmogi("gold"))
 					elif nbrand > 15 and nbrand < 40:
 						addInv(ID, "iron", 1)
-						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
+						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
+					elif nbrand >= 95:
+						if r.randint(0,10) == 10:
+							addInv(ID, "ruby", 1)
+							addTrophy(ID, "Mineur de Merveilles", 1)
+							msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
+						else:
+							msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 					else:
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
-							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
+							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
 						else :
-							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
+							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, get_idmogi("cobblestone"))
 
 			#----------------- Pioche normal -----------------
 			elif nbElements(ID, "pickaxe") >= 1:
@@ -490,14 +520,14 @@ class Gems(commands.Cog):
 					addDurabilité(ID, "pickaxe", -1)
 					if nbrand < 20:
 						addInv(ID, "iron", 1)
-						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer` !".format(get_idmogi("iron"))
+						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
 					else:
 						nbcobble = r.randint(1,5)
 						addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
-							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone` !".format(get_idmogi("cobblestone"))
+							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
 						else :
-							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone` !".format(nbcobble, get_idmogi("cobblestone"))
+							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, get_idmogi("cobblestone"))
 			else:
 				msg = "Il faut acheter ou forger une pioche pour miner!"
 
@@ -529,13 +559,31 @@ class Gems(commands.Cog):
 							if c.nom == "fishingrod":
 								addDurabilité(ID, c.nom, c.durabilite)
 					addDurabilité(ID, "fishingrod", -1)
-					if nbrand < 20:
+
+					if nbrand < 15:
 						addInv(ID, "tropical_fish", 1)
-						msg = "Tu as obtenu 1 <:gem_tropical_fish:{}>`tropical_fish` !".format(get_idmogi("tropical_fish"))
-					elif nbrand > 20 and nbrand < 95:
-						nbfish = r.randint(1,5)
+						msg = "Tu as obtenu 1 <:gem_tropical_fish:{}>`tropicalfish`".format(get_idmogi("tropicalfish"))
+						nbfish = r.randint(0,3)
+						if nbfish != 0:
+							addInv(ID, "fish", nbfish)
+							msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
+
+					elif nbrand >= 15 and nbrand < 30:
+						addInv(ID, "blow_fish", 1)
+						msg = "Tu as obtenu 1 <:gem_blow_fish:{}>`blowfish`".format(get_idmogi("blowfish"))
+						nbfish = r.randint(0,3)
+						if nbfish != 0:
+							addInv(ID, "fish", nbfish)
+							msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
+
+					elif nbrand >= 30 and nbrand < 40:
+						addInv(ID, "octopus", 1)
+						msg = "Tu as obtenu 1 <:gem_octopus:{}>`octopus`".format(get_idmogi("octopus"))
+
+					elif nbrand >= 40 and nbrand < 95:
+						nbfish = r.randint(1,7)
 						addInv(ID, "fish", nbfish)
-						msg = "Tu as obtenu {} <:gem_fish:{}>`fish` !".format(nbfish, get_idmogi("fish"))
+						msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
 					else:
 						msg = "Pas de poisson pour toi aujourd'hui :cry: "
 			else:
@@ -562,7 +610,7 @@ class Gems(commands.Cog):
 					addInv(ID, "iron_pickaxe", nb)
 					addInv(ID, "pickaxe", -nbPickaxe)
 					addInv(ID, "iron", -nbIron)
-					msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:{1}>`iron_pickaxe` !".format(nb, get_idmogi("iron_pickaxe"))
+					msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:608748194775433256>`iron_pickaxe` !".format(nb)
 				elif nbElements(ID, "iron") < nbIron and nbElements(ID, "pickaxe") < nbPickaxe:
 					msg = "tu n'as pas assez de <:gem_iron:{1}>`lingots de fer` et de <:gem_pickaxe:{2}>`pickaxe` pour forger {0} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nb,get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
 				elif nbElements(ID, "iron") < nbIron:
@@ -588,9 +636,20 @@ class Gems(commands.Cog):
 		if spam(ID,couldown_c, "recette"):
 			d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
 			d_recette+="▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Forge**\n"
-			for c in objetOutil :
-				if c.type == "forge":
-					d_recette += "<:gem_{0}:{1}>`{0}`: {2}\n".format(c.nom,c.idmoji,c.recette)
+			for c in objetOutil:
+				for r in objetRecette :
+					if c.type == "forge":
+						if c.nom == r.nom:
+							d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
+							if r.nb1 > 0:
+								d_recette += "{0} <:gem_{1}:{2}>`{1}` ".format(r.nb1, r.item1, get_idmogi(r.item1))
+							if r.nb2 > 0:
+								d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb2, r.item2, get_idmogi(r.item2))
+							if r.nb3 > 0:
+								d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb3, r.item3, get_idmogi(r.item3))
+							if r.nb4 > 0:
+								d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb4, r.item4, get_idmogi(r.item4))
+							d_recette += "\n"
 
 			msg = discord.Embed(title = "Recettes",color= 15778560, description = d_recette)
 			DB.updateComTime(ID, "recette")
@@ -768,60 +827,59 @@ class Gems(commands.Cog):
 			result = []
 			msg = "Votre mise: {} :gem:\n\n".format(mise)
 			val = 0-mise
-			addGems(ID, val)
 			for i in range(0,9):
 				if i == 3:
 					msg+="\n"
 				elif i == 6:
 					msg+=" :arrow_backward:\n"
-				tab.append(r.randint(0,232))
-				if tab[i] < 10 :
+				tab.append(r.randint(0,361))
+				if tab[i] < 20 :
 					result.append("zero")
-				elif tab[i] >= 10 and tab[i] < 20:
+				elif tab[i] >= 20 and tab[i] < 40:
 					result.append("one")
-				elif tab[i] >=  20 and tab[i] < 30:
+				elif tab[i] >=  40 and tab[i] < 60:
 					result.append("two")
-				elif tab[i] >=  30 and tab[i] < 40:
+				elif tab[i] >=  60 and tab[i] < 80:
 					result.append("three")
-				elif tab[i] >=  40 and tab[i] < 50:
+				elif tab[i] >=  80 and tab[i] < 100:
 					result.append("four")
-				elif tab[i] >=  50 and tab[i] < 60:
+				elif tab[i] >=  100 and tab[i] < 120:
 					result.append("five")
-				elif tab[i] >=  60 and tab[i] < 70:
+				elif tab[i] >=  120 and tab[i] < 140:
 					result.append("six")
-				elif tab[i] >=  70 and tab[i] < 80:
+				elif tab[i] >=  140 and tab[i] < 160:
 					result.append("seven")
-				elif tab[i] >=  80 and tab[i] < 90:
+				elif tab[i] >=  160 and tab[i] < 180:
 					result.append("eight")
-				elif tab[i] >=  90 and tab[i] < 100:
+				elif tab[i] >=  180 and tab[i] < 200:
 					result.append("nine")
-				elif tab[i] >=  100 and tab[i] < 110:
+				elif tab[i] >=  200 and tab[i] < 220:
 					result.append("gem")
-				elif tab[i] >=  110 and tab[i] < 120:
+				elif tab[i] >=  220 and tab[i] < 240:
 					result.append("ticket")
-				elif tab[i] >=  120 and tab[i] < 130:
+				elif tab[i] >=  240 and tab[i] < 260:
 					result.append("boom")
-				elif tab[i] >=  130 and tab[i] < 140:
+				elif tab[i] >=  260 and tab[i] < 270:
 					result.append("apple")
-				elif tab[i] >=  140 and tab[i] < 150:
+				elif tab[i] >=  270 and tab[i] < 280:
 					result.append("green_apple")
-				elif tab[i] >=  150 and tab[i] < 160:
+				elif tab[i] >=  280 and tab[i] < 290:
 					result.append("cherries")
-				elif tab[i] >=  160 and tab[i] < 170:
+				elif tab[i] >=  290 and tab[i] < 300:
 					result.append("tangerine")
-				elif tab[i] >=  170 and tab[i] < 180:
+				elif tab[i] >=  300 and tab[i] < 310:
 					result.append("banana")
-				elif tab[i] >=  180 and tab[i] < 190:
+				elif tab[i] >=  310 and tab[i] < 320:
 					result.append("grapes")
-				elif tab[i] >=  190 and tab[i] < 200:
+				elif tab[i] >=  320 and tab[i] < 330:
 					result.append("cookie")
-				elif tab[i] >=  200 and tab[i] < 230:
+				elif tab[i] >=  330 and tab[i] < 360:
 					result.append("beer")
-				elif tab[i] >= 230 and tab[i] < 231:
+				elif tab[i] >= 360 and tab[i] < 361:
 					result.append("backpack")
-				elif tab[i] >= 231:
+				elif tab[i] >= 361:
 					result.append("ruby")
-				if tab[i] < 230:
+				if tab[i] < 360:
 					msg+=":{}:".format(result[i])
 				else:
 					msg+="<:gem_{}:{}>".format(result[i], get_idmogi(result[i]))
@@ -860,8 +918,8 @@ class Gems(commands.Cog):
 			#Beer
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
 				addTrophy(ID, "La Squelatitude", 1)
-				gain = 2
-				msg += "\n<@Bot Player> <@{}> paye sa tournée :beer:".format(ID)
+				gain = 4
+				msg += "\n<@{}> paye sa tournée :beer:".format(ID)
 			#===================================================================
 			#Explosion de la machine
 			elif result[3] == "boom" and result[4] == "boom" and result[5] == "boom":
@@ -869,15 +927,15 @@ class Gems(commands.Cog):
 			elif (result[3] == "boom" and result[4] == "boom") or (result[4] == "boom" and result[5] == "boom") or (result[3] == "boom" and result[5] == "boom"):
 				gain = -10
 			elif result[3] == "boom" or result[4] == "boom" or result[5] == "boom":
-				gain = -1
+				gain = -2
 			#===================================================================
 			#Gain de gem
 			elif result[3] == "gem" and result[4] == "gem" and result[5] == "gem":
 				gain = 50
 			elif (result[3] == "gem" and result[4] == "gem") or (result[4] == "gem" and result[5] == "gem") or (result[3] == "gem" and result[5] == "gem"):
-				gain = 10
+				gain = 15
 			elif result[3] == "gem" or result[4] == "gem" or result[5] == "gem":
-				gain = 3
+				gain = 5
 			#===================================================================
 			#Tichet gratuit
 			elif result[3] == "ticket" and result[4] == "ticket" and result[5] == "ticket":
@@ -918,6 +976,7 @@ class Gems(commands.Cog):
 				addGems(ID, prix)
 			else:
 				msg += "\nLa machine à sous ne paya rien ..."
+				addGems(ID, val)
 			DB.updateComTime(ID, "slots")
 		else:
 			msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
