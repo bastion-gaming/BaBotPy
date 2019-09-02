@@ -104,10 +104,6 @@ class Stats(commands.Cog):
 					local_heure[str(i)] = total_heure[str(i+1)] - total_heure[str(i)]
 				local_heure["23"] = msg_total - total_heure[str("23")]
 				msg_jour = msg_total - total_heure["0"]
-				co_local = 0
-				co_total = 0
-				deco_local = 0
-				deco_total = 0
 				nouveau_jour = {
 								"msg total jour" : msg_total,
 								"msg local jour" : msg_jour,
@@ -117,7 +113,7 @@ class Stats(commands.Cog):
 								"co total" : connexion["co total"],
 								"deco total" : connexion["deco total"],
 								"deco local" : connexion["deco local"],
-								"nombre de joueurs" : 120
+								"nombre de joueurs" : 185+int(connexion["co total"])-int(connexion["deco local"])
 								}
 				connexion["co local"] = 0
 				connexion["deco local"] = 0
