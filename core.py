@@ -18,6 +18,7 @@ import re
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
+idBASTION = 417445502641111051
 
 VERSION = open("fichier_txt/version.txt").read().replace("\n","")
 TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
@@ -107,10 +108,11 @@ async def on_member_remove(member):
 
 @client.event
 async def on_message(message):
-	if not (message.author.bot or message.content.startswith(PREFIX)) :
-		await stat.countMsg(message)
-		await lvl.checklevel(message)
-		await client.process_commands(message)
+	if not (message.author.bot or message.content.startswith(PREFIX) or message.content.startswith("-") or message.content.startswith(') or message.content.startswith("/") or message.content.startswith("\")) :
+		if message.guild.id == idBASTION:
+			await stat.countMsg(message)
+			await lvl.checklevel(message)
+			await client.process_commands(message)
 	else:
 		await client.process_commands(message)
 
