@@ -113,7 +113,7 @@ class Stats(commands.Cog):
 								"co total" : connexion["co total"],
 								"deco total" : connexion["deco total"],
 								"deco local" : connexion["deco local"],
-								"nombre de joueurs" : 185+int(connexion["co total"])-int(connexion["deco local"])
+								"nombre de joueurs" : 185+int(connexion["co total"])-int(connexion["deco total"])
 								}
 				connexion["co local"] = 0
 				connexion["deco local"] = 0
