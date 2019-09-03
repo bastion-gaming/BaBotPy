@@ -85,30 +85,32 @@ client.load_extension('utils')
 
 @client.event
 async def on_member_join(member):
-	await roles.autorole(member)
-	channel = client.get_channel(417445503110742048)
-	time = t.time()
-	#data = sqlite3.connect('connect.db')
-	#c = data.cursor()
-	id = member.id
-	if DB.newPlayer(id) == "Le joueur a été ajouté !":
-		msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur #⌈:closed_book:⌋•règles \n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
-	else:
-		msg = "=====================\nBon retour parmis nous ! {0}\n\n=====================".format(member.mention)
-	stat.countCo()
-	await channel.send(msg)
+	if member.guild.id == idBASTION:
+		await roles.autorole(member)
+		channel = client.get_channel(417445503110742048)
+		time = t.time()
+		#data = sqlite3.connect('connect.db')
+		#c = data.cursor()
+		id = member.id
+		if DB.newPlayer(id) == "Le joueur a été ajouté !":
+			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur #⌈:closed_book:⌋•règles \n:arrow_right: Sur #⌈:ledger:⌋•liste-salons\n\n=====================".format(member.mention)
+		else:
+			msg = "=====================\nBon retour parmis nous ! {0}\n\n=====================".format(member.mention)
+		stat.countCo()
+		await channel.send(msg)
 
 @client.event
 async def on_member_remove(member):
-	stat.countDeco()
-	channel = client.get_channel(417445503110742048)
-	await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.mention))
+	if member.guild.id == idBASTION:
+		stat.countDeco()
+		channel = client.get_channel(417445503110742048)
+		await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.mention))
 
 ####################### Stat ####################################
 
 @client.event
 async def on_message(message):
-	if not (message.author.bot or message.content.startswith(PREFIX) or message.content.startswith("-") or message.content.startswith("'") or message.content.startswith("/") or message.content.startswith("\")) :
+	if not (message.author.bot or message.content.startswith(PREFIX)) :
 		if message.guild.id == idBASTION:
 			await stat.countMsg(message)
 			await lvl.checklevel(message)
