@@ -108,10 +108,12 @@ async def on_member_remove(member):
 
 @client.event
 async def on_message(message):
-	if not (message.author.bot or message.content.startswith(PREFIX) or message.content.startswith("-") or message.content.startswith(') or message.content.startswith("/") or message.content.startswith("\")) :
+	if not (message.author.bot or message.content.startswith(PREFIX) or message.content.startswith("-") or message.content.startswith("'") or message.content.startswith("/") or message.content.startswith("\")) :
 		if message.guild.id == idBASTION:
 			await stat.countMsg(message)
 			await lvl.checklevel(message)
+			await client.process_commands(message)
+		else:
 			await client.process_commands(message)
 	else:
 		await client.process_commands(message)
