@@ -63,9 +63,13 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 
 ## Terminés
 
+Core
+
 Rôles
 
 Play-bot (alias Gems)
+
+Level
 
 DB
 
@@ -75,12 +79,8 @@ Live Notification
 
 ## En cours/test
 
-Core
-
 Stat
 
 ## Non commencé
-
-Level
 
 Game-Asker
