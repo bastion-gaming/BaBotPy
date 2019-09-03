@@ -961,7 +961,11 @@ class Gems(commands.Cog):
 			#Backpack (hyper rare)
 			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
 				addInv(ID, "backpack", 1)
-				msg += "\nEn trouvant ce <:gem_backpack:{}>`backpack` tu gagne 20 points d'inventaire".format(get_idmogi("backpack"))
+				p = 0
+				for c in objet:
+					if c.nom == "backpack":
+						p = c.poid * (-1)
+				msg += "\nEn trouvant ce <:gem_backpack:{0}>`backpack` tu gagne {1} points d'inventaire".format(get_idmogi("backpack"),p)
 
 			#Calcul du prix
 			prix = gain * mise
