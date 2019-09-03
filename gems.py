@@ -569,8 +569,8 @@ class Gems(commands.Cog):
 							msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
 
 					elif nbrand >= 15 and nbrand < 30:
-						addInv(ID, "blow_fish", 1)
-						msg = "Tu as obtenu 1 <:gem_blow_fish:{}>`blowfish`".format(get_idmogi("blowfish"))
+						addInv(ID, "blowfish", 1)
+						msg = "Tu as obtenu 1 <:gem_blowfish:{}>`blowfish`".format(get_idmogi("blowfish"))
 						nbfish = r.randint(0,3)
 						if nbfish != 0:
 							addInv(ID, "fish", nbfish)
