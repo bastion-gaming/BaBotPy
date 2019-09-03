@@ -63,7 +63,7 @@ async def checklevel(message):
 			if lvl == x.level:
 				if nbMsg >= x.somMsg:
 					DB.updateField(ID, "lvl", lvl+1)
-					msg = ":data: {1} a atteint le level **{0}**".format(lvl+1, Nom)
+					msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
 					await message.channel.send(msg)
 	except:
 		return print("Le joueur n'existe pas.")
