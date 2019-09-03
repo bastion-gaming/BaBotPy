@@ -561,8 +561,8 @@ class Gems(commands.Cog):
 					addDurabilité(ID, "fishingrod", -1)
 
 					if nbrand < 15:
-						addInv(ID, "tropical_fish", 1)
-						msg = "Tu as obtenu 1 <:gem_tropical_fish:{}>`tropicalfish`".format(get_idmogi("tropicalfish"))
+						addInv(ID, "tropicalfish", 1)
+						msg = "Tu as obtenu 1 <:gem_tropicalfish:{}>`tropicalfish`".format(get_idmogi("tropicalfish"))
 						nbfish = r.randint(0,3)
 						if nbfish != 0:
 							addInv(ID, "fish", nbfish)
