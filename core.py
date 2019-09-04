@@ -313,6 +313,10 @@ async def looped_task():
 
 client.load_extension('vocal')
 
+###################### Commande parrain.py ########################
+
+client.load_extension('parrain')
+
 ##################### Commande kaamelott.py #####################
 
 client.load_extension('kaamelott')
