@@ -184,7 +184,7 @@ def nom_ID(nom):
 		ID = int(nom[3:21])
 	else :
 		print("mauvais nom")
-		ID = "prout"
+		ID = -1
 	return(ID)
 
 def nbElements(ID, nameElem):

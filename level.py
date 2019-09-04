@@ -90,17 +90,47 @@ class Level(commands.Cog):
 			else :
 				msg="Le nom que vous m'avez donné n'existe pas !"
 				ID = -1
+				await ctx.channel.send(msg)
+				return
 
 			if (ID != -1):
 				lvl = DB.valueAt(ID, "lvl")
 				nbMsg = DB.valueAt(ID, "nbMsg")
-				msg = "Utilisateur: {}\n".format(Nom)
+				msg = "**Utilisateur:** {}".format(Nom)
+
+				# Niveaux part
+				msg+= "\n\n**Niveau :**\n"
 				for x in objet:
 					if lvl == x.level:
-						msg += "Level **{0}** \nXP: `{1}/{2}`".format(DB.valueAt(ID, "lvl"),nbMsg,x.somMsg)
+						msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(DB.valueAt(ID, "lvl"),nbMsg,x.somMsg)
 				if lvl == lvlmax:
-					msg += "Level **{0}** \nLevel max atteint".format(DB.valueAt(ID, "lvl"))
-			await ctx.channel.send(msg)
+					msg += "Actuel **{0}** \nLevel max atteint".format(DB.valueAt(ID, "lvl"))
+
+				# Gems
+				msg+="\n\n**Balance:** *{0}* :gem:".format(DB.valueAt(ID,"gems"))
+
+				# Parrainage
+				P = DB.valueAt(ID,"parrain")
+				F_li = DB.valueAt(ID, "filleul")
+				msg+="\n\n**Parrainage:**"
+				if P != 0:
+					msg+="\nParrain: <@{0}>".format(P)
+				else :
+					msg +="\nParain: `None`"
+
+				if len(F_li) > 0:
+					if len(F_li)>1:
+						sV = "s"
+					else:
+						sV= ""
+					msg+="\nFilleul{1} `x{0}`:".format(len(F_li),sV)
+					for one in F_li:
+						msg+="\n<@"+str(one)+">"
+
+
+				emb = discord.Embed(title = "Informations :",color= 13752280, description = msg)
+				await ctx.channel.send(embed = emb)
+
 
 
 

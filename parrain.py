@@ -38,6 +38,36 @@ class Parrain(commands.Cog):
 
 		await ctx.channel.send(msg)
 
+	@commands.command(pass_context=True)
+	async def filleul(self, ctx, nom=None):
+		"""
+		Affiche la liste des filleuls d'un joueur
+		"""
+		if nom == None:
+			ID = ctx.author.id
+			Nom = ctx.author.name
+		else :
+			ID = DB.nom_ID(nom)
+			if ID == -1:
+				msg = "Ce joueur n'existe pas !"
+				await ctx.channel.send(msg)
+				return
+
+		F_li = DB.valueAt(ID, "filleul")
+		if len(F_li) > 0:
+			if len(F_li)>1:
+				sV = "s"
+			else:
+				sV= ""
+			msg="Filleul{1} `x{0}`:".format(len(F_li),sV)
+			for one in F_li:
+				msg+="\n<@"+str(one)+">"
+			emb = discord.Embed(title = "Informations :",color= 13752280, description = msg)
+			await ctx.channel.send(embed = emb)
+		else:
+			msg = "Vous n'avez pas de filleul, invitez de nouveaux joueurs !"
+			await ctx.channel.send(msg)
+
 def setup(bot):
 	bot.add_cog(Parrain(bot))
 	open("fichier_txt/cogs.txt","a").write("Parrain\n")
