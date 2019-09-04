@@ -36,6 +36,16 @@ def DBFieldList():
 			L.update(E)
 	return L
 
+def nom_ID(nom):
+	if len(nom) == 21 :
+		ID = int(nom[2:20])
+	elif len(nom) == 22 :
+		ID = int(nom[3:21])
+	else :
+		print("mauvais nom")
+		ID = "prout"
+	return(ID)
+
 def checkField():
 	"""
 	Va vérifier que la base de donnée est à jour par rapport au fichier fieldTemplate.
@@ -124,6 +134,12 @@ def taille():
 def userID(i):
 	return db.search(Query().ID)[i]["ID"]
 
+def userExist(id):
+	if db.search(Query().ID == id) == []:
+		return False
+	else :
+		return True
+
 def userGems(i):
 	return db.search(Query().gems)[i]["gems"]
 
@@ -134,3 +150,68 @@ def updateComTime(ID, nameElem):
 	ComTime = db.search(Query().ID == ID)[0]["com_time"]
 	ComTime[nameElem] = t.time()
 	updateField(ID, "com_time", ComTime)
+
+def addGems(ID, nbGems):
+	"""
+	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
+	Si vous souhaitez en retirer mettez un nombre négatif.
+	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
+	strictement inférieur à 0.
+	"""
+	old_value = valueAt(ID, "gems")
+	new_value = int(old_value) + nbGems
+	if new_value >= 0:
+		updateField(ID, "gems", new_value)
+		# print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+	# else:
+	# 	print("Il n'y a pas assez sur ce compte !")
+	return str(new_value)
+
+def spam(ID,couldown, nameElem):
+	ComTime = valueAt(ID, "com_time")
+	if nameElem in ComTime:
+		time = ComTime[nameElem]
+	else:
+		return True
+
+	# on récupère le la date de la dernière commande
+	return(time < t.time()-couldown)
+
+def nom_ID(nom):
+	if len(nom) == 21 :
+		ID = int(nom[2:20])
+	elif len(nom) == 22 :
+		ID = int(nom[3:21])
+	else :
+		print("mauvais nom")
+		ID = -1
+	return(ID)
+
+def nbElements(ID, nameElem):
+	"""
+	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
+	"""
+	inventory = valueAt(ID, "inventory")
+	if nameElem in inventory:
+		return inventory[nameElem]
+	else:
+		return 0
+
+
+def addInv(ID, nameElem, nbElem):
+	"""
+	Permet de modifier le nombre de nameElem pour ID dans l'inventaire
+	Pour en retirer mettez nbElemn en négatif
+	"""
+	inventory = valueAt(ID, "inventory")
+	if nbElements(ID, nameElem) > 0 and nbElem < 0:
+		inventory[nameElem] += nbElem
+	elif nbElem >= 0:
+		if nbElements(ID, nameElem) == 0:
+			inventory[nameElem] = nbElem
+		else :
+			inventory[nameElem] += nbElem
+	else:
+		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		return 404
+	updateField(ID, "inventory", inventory)

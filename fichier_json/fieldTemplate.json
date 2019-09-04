@@ -18,5 +18,9 @@
 	"lvl":
 		0,
 	"daily_mult":
-		0
+		0,
+	"parrain":
+		0,
+	"filleul":
+		[]
 }
