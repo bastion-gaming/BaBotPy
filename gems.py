@@ -99,63 +99,13 @@ objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la Dis
 ,Trophy("Gems 1M","`Avoir 1 Million`:gem:","unique",1000000)
 ,Trophy("Le Milliard !!!","`Avoir 1 Milliard`:gem:","unique",1000000000)]
 
-#anti-spam
+#anti-DB.spam
 couldown_D = 86400 # D pour days (journalier)
 couldown_2D = 2 * couldown_D
 couldown_xl = 10
 couldown_l = 8 # l pour long
 couldown_c = 6 # c pour court
 # nb de sec nécessaire entre 2 commandes
-
-def spam(ID,couldown, nameElem):
-	ComTime = DB.valueAt(ID, "com_time")
-	if nameElem in ComTime:
-		time = ComTime[nameElem]
-	else:
-		return True
-
-	# on récupère le la date de la dernière commande
-	return(time < t.time()-couldown)
-
-def nom_ID(nom):
-	if len(nom) == 21 :
-		ID = int(nom[2:20])
-	elif len(nom) == 22 :
-		ID = int(nom[3:21])
-	else :
-		print("mauvais nom")
-		ID = "prout"
-	return(ID)
-
-def addGems(ID, nbGems):
-	"""
-	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
-	Si vous souhaitez en retirer mettez un nombre négatif.
-	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
-	strictement inférieur à 0.
-	"""
-	old_value = DB.valueAt(ID, "gems")
-	new_value = int(old_value) + nbGems
-	if new_value >= 0:
-		DB.updateField(ID, "gems", new_value)
-		# print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
-	# else:
-	# 	print("Il n'y a pas assez sur ce compte !")
-	return str(new_value)
-
-
-
-def nbElements(ID, nameElem):
-	"""
-	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
-	"""
-	inventory = DB.valueAt(ID, "inventory")
-	if nameElem in inventory:
-		return inventory[nameElem]
-	else:
-		return 0
-
-
 
 def nbTrophy(ID, nameElem):
 	"""
@@ -185,28 +135,6 @@ def get_idmogi(nameElem):
 			return c.idmoji
 	if test == False:
 		return 0
-
-
-
-def addInv(ID, nameElem, nbElem):
-	"""
-	Permet de modifier le nombre de nameElem pour ID dans l'inventaire
-	Pour en retirer mettez nbElemn en négatif
-	"""
-	inventory = DB.valueAt(ID, "inventory")
-	if nbElements(ID, nameElem) > 0 and nbElem < 0:
-		inventory[nameElem] += nbElem
-	elif nbElem >= 0:
-		if nbElements(ID, nameElem) == 0:
-			inventory[nameElem] = nbElem
-		else :
-			inventory[nameElem] += nbElem
-	else:
-		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
-		return 404
-	DB.updateField(ID, "inventory", inventory)
-
-
 
 def addTrophy(ID, nameElem, nbElem):
 	"""
@@ -252,7 +180,7 @@ def addDurabilité(ID, nameElem, nbElem):
 	"""
 	"""
 	durabilite = DB.valueAt(ID, "durabilite")
-	if nbElements(ID, nameElem) > 0 and nbElem < 0:
+	if DB.nbElements(ID, nameElem) > 0 and nbElem < 0:
 		durabilite[nameElem] += nbElem
 	elif nbElem >= 0:
 		durabilite[nameElem] = nbElem
@@ -267,7 +195,7 @@ def get_durabilite(ID, nameElem):
 	"""
 	Permet de savoir la durabilite de nameElem dans l'inventaire de ID
 	"""
-	nb = nbElements(ID, nameElem)
+	nb = DB.nbElements(ID, nameElem)
 	if nb > 0:
 		durabilite = DB.valueAt(ID, "durabilite")
 		for c in objetOutil:
@@ -300,8 +228,8 @@ class Gems(commands.Cog):
 	async def daily(self, ctx):
 		"""Récupère ta récompense journalière!"""
 		ID = ctx.author.id
-		if spam(ID,couldown_D, "daily"):
-			if spam(ID,couldown_2D, "daily"):
+		if DB.spam(ID,couldown_D, "daily"):
+			if DB.spam(ID,couldown_2D, "daily"):
 				DB.updateField(ID, "daily_mult", 0)
 				mult = 0
 			else:
@@ -309,7 +237,7 @@ class Gems(commands.Cog):
 				DB.updateField(ID, "daily_mult", mult + 1)
 			bonus = 125
 			gain = 100 + bonus*mult
-			addGems(ID, gain)
+			DB.addGems(ID, gain)
 			msg = "Récompense journalière! Tu as gagné 100 :gem:"
 			if mult != 0:
 				msg += "\nNouvelle série: `{}`, Bonus: {} :gem:".format(mult, bonus*mult)
@@ -324,18 +252,18 @@ class Gems(commands.Cog):
 	async def crime(self, ctx):
 		"""Commets un crime et gagne des :gem: Attention au DiscordCop!"""
 		ID = ctx.author.id
-		if spam(ID,couldown_l, "crime"):
+		if DB.spam(ID,couldown_l, "crime"):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
 				addTrophy(ID, "DiscordCop Arrestation", 1)
-				if int(addGems(ID, -10)) >= 0:
+				if int(DB.addGems(ID, -10)) >= 0:
 					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
 				else:
 					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem: pour payer une amende"
 			else :
 				gain = r.randint(2,8)
 				msg = message_crime[r.randint(0,3)]+" "+str(gain)+":gem:"
-				addGems(ID, gain)
+				DB.addGems(ID, gain)
 
 			DB.updateComTime(ID, "crime")
 		else:
@@ -348,10 +276,10 @@ class Gems(commands.Cog):
 	async def bal(self, ctx, nom = None):
 		"""**[nom]** | Êtes vous riche ou pauvre ?"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "bal"):
+		if DB.spam(ID,couldown_c, "bal"):
 			#print(nom)
 			if nom != None:
-				ID = nom_ID(nom)
+				ID = DB.nom_ID(nom)
 				gem = DB.valueAt(ID, "gems")
 				msg = nom+" a actuellement : "+str(gem)+" :gem: !"
 			else:
@@ -369,7 +297,7 @@ class Gems(commands.Cog):
 	async def baltop(self, ctx, n = 10):
 		"""**[nombre]** | Classement des joueurs (10 premiers par défaut)"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "baltop"):
+		if DB.spam(ID,couldown_c, "baltop"):
 			UserList = []
 			baltop = ""
 			i = 0
@@ -399,15 +327,15 @@ class Gems(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
-		if spam(ID,couldown_xl, "gamble"):
+		if DB.spam(ID,couldown_xl, "gamble"):
 			if r.randint(0,3) == 0:
 				gain = valeur*3
 				# l'espérence est de 0 sur la gamble
 				msg = message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
-				addGems(ID, gain)
+				DB.addGems(ID, gain)
 			else:
 				val = 0-valeur
-				addGems(ID,val)
+				DB.addGems(ID,val)
 				msg = "Dommage tu as perdu "+str(valeur)+":gem:"
 
 			DB.updateComTime(ID, "gamble")
@@ -421,15 +349,15 @@ class Gems(commands.Cog):
 	async def buy (self, ctx,item,nb = 1):
 		"""**[item] [nombre]** | Permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "buy"):
+		if DB.spam(ID,couldown_c, "buy"):
 			test = True
 			nb = int(nb)
 			for c in objet :
 				if item == c.nom :
 					test = False
 					prix = 0 - (c.achat*nb)
-					if addGems(ID, prix) >= "0":
-						addInv(ID, c.nom, nb)
+					if DB.addGems(ID, prix) >= "0":
+						DB.addInv(ID, c.nom, nb)
 						if c.type != "friandise":
 							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 						else:
@@ -441,8 +369,8 @@ class Gems(commands.Cog):
 				if item == c.nom :
 					test = False
 					prix = 0 - (c.achat*nb)
-					if addGems(ID, prix) >= "0":
-						addInv(ID, c.nom, nb)
+					if DB.addGems(ID, prix) >= "0":
+						DB.addInv(ID, c.nom, nb)
 						msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 					else :
 						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
@@ -461,14 +389,14 @@ class Gems(commands.Cog):
 	async def mine(self, ctx):
 		"""Minez compagnons !!"""
 		ID = ctx.author.id
-		if spam(ID,couldown_l, "mine"):
-			#print(nbElements(ID, "pickaxe"))
+		if DB.spam(ID,couldown_l, "mine"):
+			#print(DB.nbElements(ID, "pickaxe"))
 			nbrand = r.randint(0,99)
 			#----------------- Pioche en fer -----------------
-			if nbElements(ID, "iron_pickaxe") >= 1:
+			if DB.nbElements(ID, "iron_pickaxe") >= 1:
 				if get_durabilite(ID, "iron_pickaxe") == 0:
-					addInv(ID,"iron_pickaxe", -1)
-					if nbElements(ID,"iron_pickaxe") > 0:
+					DB.addInv(ID,"iron_pickaxe", -1)
+					if DB.nbElements(ID,"iron_pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "iron_pickaxe":
 								addDurabilité(ID, c.nom, c.durabilite)
@@ -480,34 +408,34 @@ class Gems(commands.Cog):
 								addDurabilité(ID, c.nom, c.durabilite)
 					addDurabilité(ID, "iron_pickaxe", -1)
 					if nbrand < 5:
-						addInv(ID, "diamond", 1)
+						DB.addInv(ID, "diamond", 1)
 						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(get_idmogi("diamond"))
 					elif nbrand > 5 and nbrand < 15:
-						addInv(ID, "gold", 1)
+						DB.addInv(ID, "gold", 1)
 						msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or`".format(get_idmogi("gold"))
 					elif nbrand > 15 and nbrand < 40:
-						addInv(ID, "iron", 1)
+						DB.addInv(ID, "iron", 1)
 						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
 					elif nbrand >= 95:
 						if r.randint(0,10) == 10:
-							addInv(ID, "ruby", 1)
+							DB.addInv(ID, "ruby", 1)
 							addTrophy(ID, "Mineur de Merveilles", 1)
 							msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
 						else:
 							msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 					else:
 						nbcobble = r.randint(1,5)
-						addInv(ID, "cobblestone", nbcobble)
+						DB.addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
 							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
 						else :
 							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, get_idmogi("cobblestone"))
 
 			#----------------- Pioche normal -----------------
-			elif nbElements(ID, "pickaxe") >= 1:
+			elif DB.nbElements(ID, "pickaxe") >= 1:
 				if get_durabilite(ID, "pickaxe") == 0:
-					addInv(ID,"pickaxe", -1)
-					if nbElements(ID,"pickaxe") > 0:
+					DB.addInv(ID,"pickaxe", -1)
+					if DB.nbElements(ID,"pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "pickaxe":
 								addDurabilité(ID, c.nom, c.durabilite)
@@ -519,11 +447,11 @@ class Gems(commands.Cog):
 								addDurabilité(ID, c.nom, c.durabilite)
 					addDurabilité(ID, "pickaxe", -1)
 					if nbrand < 20:
-						addInv(ID, "iron", 1)
+						DB.addInv(ID, "iron", 1)
 						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
 					else:
 						nbcobble = r.randint(1,5)
-						addInv(ID, "cobblestone", nbcobble)
+						DB.addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
 							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
 						else :
@@ -542,13 +470,13 @@ class Gems(commands.Cog):
 	async def fish(self, ctx):
 		"""Péchons compagnons !!"""
 		ID = ctx.author.id
-		if spam(ID,couldown_l, "fish"):
+		if DB.spam(ID,couldown_l, "fish"):
 			nbrand = r.randint(0,99)
-			#print(nbElements(ID, "fishingrod"))
-			if nbElements(ID, "fishingrod") >= 1:
+			#print(DB.nbElements(ID, "fishingrod"))
+			if DB.nbElements(ID, "fishingrod") >= 1:
 				if get_durabilite(ID, "fishingrod") == 0:
-					addInv(ID,"fishingrod", -1)
-					if nbElements(ID,"fishingrod") > 0:
+					DB.addInv(ID,"fishingrod", -1)
+					if DB.nbElements(ID,"fishingrod") > 0:
 						for c in objetOutil:
 							if c.nom == "fishingrod":
 								addDurabilité(ID, c.nom, c.durabilite)
@@ -561,28 +489,28 @@ class Gems(commands.Cog):
 					addDurabilité(ID, "fishingrod", -1)
 
 					if nbrand < 15:
-						addInv(ID, "tropicalfish", 1)
+						DB.addInv(ID, "tropicalfish", 1)
 						msg = "Tu as obtenu 1 <:gem_tropicalfish:{}>`tropicalfish`".format(get_idmogi("tropicalfish"))
 						nbfish = r.randint(0,3)
 						if nbfish != 0:
-							addInv(ID, "fish", nbfish)
+							DB.addInv(ID, "fish", nbfish)
 							msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
 
 					elif nbrand >= 15 and nbrand < 30:
-						addInv(ID, "blowfish", 1)
+						DB.addInv(ID, "blowfish", 1)
 						msg = "Tu as obtenu 1 <:gem_blowfish:{}>`blowfish`".format(get_idmogi("blowfish"))
 						nbfish = r.randint(0,3)
 						if nbfish != 0:
-							addInv(ID, "fish", nbfish)
+							DB.addInv(ID, "fish", nbfish)
 							msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
 
 					elif nbrand >= 30 and nbrand < 40:
-						addInv(ID, "octopus", 1)
+						DB.addInv(ID, "octopus", 1)
 						msg = "Tu as obtenu 1 <:gem_octopus:{}>`octopus`".format(get_idmogi("octopus"))
 
 					elif nbrand >= 40 and nbrand < 95:
 						nbfish = r.randint(1,7)
-						addInv(ID, "fish", nbfish)
+						DB.addInv(ID, "fish", nbfish)
 						msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
 					else:
 						msg = "Pas de poisson pour toi aujourd'hui :cry: "
@@ -600,24 +528,24 @@ class Gems(commands.Cog):
 	async def forge(self, ctx, item, nb = 1):
 		"""**[item] [nombre]** | Permet de concevoir des items spécifiques"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "forge"):
+		if DB.spam(ID,couldown_c, "forge"):
 			if item == "iron_pickaxe":
-				#print("iron: {}, pickaxe: {}".format(nbElements(ID, "iron"), nbElements(ID, "pickaxe")))
+				#print("iron: {}, pickaxe: {}".format(DB.nbElements(ID, "iron"), DB.nbElements(ID, "pickaxe")))
 				nb = int(nb)
 				nbIron = 4*nb
 				nbPickaxe = 1*nb
-				if nbElements(ID, "iron") >= nbIron and nbElements(ID, "pickaxe") >= nbPickaxe:
-					addInv(ID, "iron_pickaxe", nb)
-					addInv(ID, "pickaxe", -nbPickaxe)
-					addInv(ID, "iron", -nbIron)
+				if DB.nbElements(ID, "iron") >= nbIron and DB.nbElements(ID, "pickaxe") >= nbPickaxe:
+					DB.addInv(ID, "iron_pickaxe", nb)
+					DB.addInv(ID, "pickaxe", -nbPickaxe)
+					DB.addInv(ID, "iron", -nbIron)
 					msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:608748194775433256>`iron_pickaxe` !".format(nb)
-				elif nbElements(ID, "iron") < nbIron and nbElements(ID, "pickaxe") < nbPickaxe:
+				elif DB.nbElements(ID, "iron") < nbIron and DB.nbElements(ID, "pickaxe") < nbPickaxe:
 					msg = "tu n'as pas assez de <:gem_iron:{1}>`lingots de fer` et de <:gem_pickaxe:{2}>`pickaxe` pour forger {0} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nb,get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
-				elif nbElements(ID, "iron") < nbIron:
-					nbmissing = (nbElements(ID, "iron") - nbIron)*-1
+				elif DB.nbElements(ID, "iron") < nbIron:
+					nbmissing = (DB.nbElements(ID, "iron") - nbIron)*-1
 					msg = "Il te manque {0} <:gem_iron:{2}>`lingots de fer` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb,get_idmogi("iron"), get_idmogi("iron_pickaxe"))
 				else:
-					nbmissing = (nbElements(ID, "pickaxe") - nbPickaxe)*-1
+					nbmissing = (DB.nbElements(ID, "pickaxe") - nbPickaxe)*-1
 					msg = "Il te manque {0} <:gem_pickaxe:{2}>`pickaxe` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb, get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
 			else:
 				msg = "Impossible d'exécuter de forger cet item !"
@@ -633,7 +561,7 @@ class Gems(commands.Cog):
 	async def recette(self, ctx):
 		"""Liste de toutes les recettes disponibles !"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "recette"):
+		if DB.spam(ID,couldown_c, "recette"):
 			d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
 			d_recette+="▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Forge**\n"
 			for c in objetOutil:
@@ -665,7 +593,7 @@ class Gems(commands.Cog):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
 		nom = ctx.author.mention
-		if spam(ID,couldown_c, "inv"):
+		if DB.spam(ID,couldown_c, "inv"):
 			msg_inv = "Inventaire de {}\n\n".format(nom)
 			inv = DB.valueAt(ID, "inventory")
 			tailletot = 0
@@ -707,7 +635,7 @@ class Gems(commands.Cog):
 	async def market (self, ctx):
 		"""Permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "market"):
+		if DB.spam(ID,couldown_c, "market"):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 			Titre = True
 			for c in objetOutil:
@@ -741,17 +669,17 @@ class Gems(commands.Cog):
 		ID = ctx.author.id
 		# print(nb)
 		# print(type(nb))
-		if spam(ID,couldown_c, "sell"):
+		if DB.spam(ID,couldown_c, "sell"):
 			if int(nb) == -1:
-				nb = nbElements(ID, item)
+				nb = DB.nbElements(ID, item)
 			nb = int(nb)
-			if nbElements(ID, item) >= nb and nb > 0:
+			if DB.nbElements(ID, item) >= nb and nb > 0:
 				test = True
 				for c in objet:
 					if item == c.nom:
 						test = False
 						gain = c.vente*nb
-						addGems(ID, gain)
+						DB.addGems(ID, gain)
 						if c.type != "friandise":
 							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
 						else:
@@ -761,18 +689,18 @@ class Gems(commands.Cog):
 					if item == c.nom:
 						test = False
 						gain = c.vente*nb
-						addGems(ID, gain)
+						DB.addGems(ID, gain)
 						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
-						if nbElements(ID, item) == 1:
+						if DB.nbElements(ID, item) == 1:
 							addDurabilité(ID, item, -1)
 						break
 
-				addInv(ID, item, -nb)
+				DB.addInv(ID, item, -nb)
 				if test:
 					msg = "Cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Tu n'as pas assez de `{0}`. Il vous en reste : {1}".format(str(item),str(nbElements(ID, item)))
+				msg = "Tu n'as pas assez de `{0}`. Il vous en reste : {1}".format(str(item),str(DB.nbElements(ID, item)))
 
 			DB.updateComTime(ID, "sell")
 		else:
@@ -785,16 +713,16 @@ class Gems(commands.Cog):
 	async def pay (self, ctx, nom, gain):
 		"""**[nom] [gain]** | Donner de l'argent à vos amis !"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "pay"):
+		if DB.spam(ID,couldown_c, "pay"):
 			try:
 				if int(gain) > 0:
 					gain = int(gain)
 					don = -gain
-					ID_recu = nom_ID(nom)
+					ID_recu = DB.nom_ID(nom)
 					if int(DB.valueAt(ID, "gems")) >= 0:
 						# print(ID_recu)
-						addGems(ID_recu, gain)
-						addGems(ID,don)
+						DB.addGems(ID_recu, gain)
+						DB.addGems(ID,don)
 						msg = "<@{0}> donne {1}:gem: à <@{2}> !".format(ID,gain,ID_recu)
 					else:
 						msg = "<@{0}> n'a pas assez pour donner à <@{2}> !".format(ID,gain,ID_recu)
@@ -822,7 +750,7 @@ class Gems(commands.Cog):
 				mise = int(imise)
 		else:
 			mise = 10
-		if spam(ID,couldown_xl, "slots"):
+		if DB.spam(ID,couldown_xl, "slots"):
 			tab = []
 			result = []
 			msg = "Votre mise: {} :gem:\n\n".format(mise)
@@ -887,7 +815,7 @@ class Gems(commands.Cog):
 			#===================================================================
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
-				addInv(ID, "ruby", 1)
+				DB.addInv(ID, "ruby", 1)
 				addTrophy(ID, "Mineur de Merveilles", 1)
 				gain = 42
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
@@ -949,18 +877,18 @@ class Gems(commands.Cog):
 			#===================================================================
 			#Cookie
 			if result[3] == "cookie" and result[4] == "cookie" and result[5] == "cookie":
-				addInv(ID, "cookie", 3)
+				DB.addInv(ID, "cookie", 3)
 				msg += "\nTu a trouvé 3 :cookie:`cookies`"
 			elif (result[3] == "cookie" and result[4] == "cookie") or (result[4] == "cookie" and result[5] == "cookie") or (result[3] == "cookie" and result[5] == "cookie"):
-				addInv(ID, "cookie", 2)
+				DB.addInv(ID, "cookie", 2)
 				msg += "\nTu a trouvé 2 :cookie:`cookies`"
 			elif result[3] == "cookie" or result[4] == "cookie" or result[5] == "cookie":
-				addInv(ID, "cookie", 1)
+				DB.addInv(ID, "cookie", 1)
 				msg += "\nTu a trouvé 1 :cookie:`cookie`"
 			#===================================================================
 			#Backpack (hyper rare)
 			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
-				addInv(ID, "backpack", 1)
+				DB.addInv(ID, "backpack", 1)
 				p = 0
 				for c in objet:
 					if c.nom == "backpack":
@@ -974,13 +902,13 @@ class Gems(commands.Cog):
 					msg += "\nJackpot, vous venez de gagner {} :gem:".format(prix)
 				else:
 					msg += "\nLa machine viens d'exploser :boom:\nTu as perdu {} :gem:".format(-1*prix)
-				addGems(ID, prix)
+				DB.addGems(ID, prix)
 			elif gain == 1:
 				msg += "\nBravo, voici un ticket gratuit pour relancer la machine à sous"
-				addGems(ID, prix)
+				DB.addGems(ID, prix)
 			else:
 				msg += "\nLa machine à sous ne paya rien ..."
-				addGems(ID, val)
+				DB.addGems(ID, val)
 			DB.updateComTime(ID, "slots")
 		else:
 			msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
@@ -992,9 +920,9 @@ class Gems(commands.Cog):
 	async def trophy(self, ctx, nom = None):
 		"""**[nom]** | Liste de vos trophées !"""
 		ID = ctx.author.id
-		if spam(ID,couldown_c, "trophy"):
+		if DB.spam(ID,couldown_c, "trophy"):
 			if nom != None:
-				ID = nom_ID(nom)
+				ID = DB.nom_ID(nom)
 			else:
 				nom = ctx.author.mention
 			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)

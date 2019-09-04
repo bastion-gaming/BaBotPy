@@ -6,23 +6,6 @@ import discord
 
 client = discord.Client()
 
-
-def addGems(ID, nbGems):
-	"""
-	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
-	Si vous souhaitez en retirer mettez un nombre négatif.
-	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
-	strictement inférieur à 0.
-	"""
-	old_value = DB.valueAt(ID, "gems")
-	new_value = int(old_value) + nbGems
-	if new_value >= 0:
-		DB.updateField(ID, "gems", new_value)
-		# print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
-	# else:
-	# 	print("Il n'y a pas assez sur ce compte !")
-	return str(new_value)
-
 #===============================================================
 
 class Parrain(commands.Cog):
@@ -45,9 +28,10 @@ class Parrain(commands.Cog):
 				fil_L = DB.valueAt(ID_p, "filleul")
 				fil_L.append(ID)
 				DB.updateField(ID_p, "filleul", fil_L)
-				addGems(ID, 50)
-				addGems(ID_p, 100 * len(fil_L))
-				msg = "Votre parrain a bien été ajouté ! Vous empochez 50 et lui 100 plus son multiplicateur"
+				DB.addGems(ID, 50)
+				gain_p = 100 * len(fil_L)
+				DB.addGems(ID_p, gain_p)
+				msg = "Votre parrain a bien été ajouté ! Vous empochez 50 :gem: et lui "+str(gain_p)+" :gem:."
 			else :
 				print("Impossible d'ajouter ce joueur comme parrain")
 				msg = "Impossible d'ajouter ce joueur comme parrain"
