@@ -954,7 +954,7 @@ class Gems(commands.Cog):
 		"""Liste de tout les trophées disponibles !"""
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
-		if spam(ID,couldown_c, "trophylist"):
+		if DB.spam(ID,couldown_c, "trophylist"):
 			for c in objetTrophy:
 				if c.type != "unique" and c.type != "special":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
