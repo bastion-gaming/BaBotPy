@@ -833,7 +833,7 @@ class Gems(commands.Cog):
 					result.append("backpack")
 				elif tab[i] >= 343:
 					result.append("ruby")
-				if tab[i] < 360:
+				if tab[i] < 340:
 					msg+=":{}:".format(result[i])
 				else:
 					msg+="<:gem_{}:{}>".format(result[i], get_idmogi(result[i]))
