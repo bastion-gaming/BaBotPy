@@ -416,8 +416,8 @@ class Gems(commands.Cog):
 			#----------------- Pioche en fer -----------------
 			if DB.nbElements(ID, "iron_pickaxe") >= 1:
 				if get_durabilite(ID, "iron_pickaxe") == 0:
-					DB.addInv(ID,"iron_pickaxe", -1)
 					addDurabilité(ID, "iron_pickaxe", -1)
+					DB.addInv(ID,"iron_pickaxe", -1)
 					if DB.nbElements(ID,"iron_pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "iron_pickaxe":
@@ -456,8 +456,8 @@ class Gems(commands.Cog):
 			#----------------- Pioche normal -----------------
 			elif DB.nbElements(ID, "pickaxe") >= 1:
 				if get_durabilite(ID, "pickaxe") == 0:
-					DB.addInv(ID,"pickaxe", -1)
 					addDurabilité(ID, "pickaxe", -1)
+					DB.addInv(ID,"pickaxe", -1)
 					if DB.nbElements(ID,"pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "pickaxe":
@@ -498,8 +498,8 @@ class Gems(commands.Cog):
 			#print(DB.nbElements(ID, "fishingrod"))
 			if DB.nbElements(ID, "fishingrod") >= 1:
 				if get_durabilite(ID, "fishingrod") == 0:
-					DB.addInv(ID,"fishingrod", -1)
 					addDurabilité(ID, "fishingrod", -1)
+					DB.addInv(ID,"fishingrod", -1)
 					if DB.nbElements(ID,"fishingrod") > 0:
 						for c in objetOutil:
 							if c.nom == "fishingrod":
