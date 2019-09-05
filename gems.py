@@ -90,7 +90,7 @@ class Trophy:
 
 objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
 ,Trophy("Gamble Win", "`Nombre de gamble gagné`","stack",0)
-,Trophy("Gamble Jackpot", "`Gagner plus de 10000 :gem: au gamble`","special",20000)
+,Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`","special",20000)
 ,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 ,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
 ,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
