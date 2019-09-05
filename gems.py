@@ -7,6 +7,8 @@ from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
 
+Mois = ("","janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre")
+
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
 ,"Tu as volé une carotte ! Prend tes"
@@ -245,7 +247,17 @@ class Gems(commands.Cog):
 				msg += "\nNouvelle série: `{}`, Bonus: {} :gem:".format(mult, bonus*mult)
 			DB.updateComTime(ID, "daily")
 		else:
-			msg = "Tu as déja reçu ta récompense journalière ! Reviens demain pour en avoir plus"
+			ComTime = DB.valueAt(ID, "com_time")
+			if "daily" in ComTime:
+				time = ComTime["daily"]
+			timeDaily = t.gmtime(time)
+			if timeDaily.tm_min < 10:
+				temp = timeDaily.tm_min
+				timeDailymin = str(0) + str(temp)
+			else:
+				timeDailymin = timeDaily.tm_min
+
+			msg = "Tu as déja reçu ta récompense journalière le `{0} {1} {2} à {3}h{4} GMT`".format(timeDaily.tm_mday, Mois[timeDaily.tm_mon], timeDaily.tm_year, timeDaily.tm_hour, timeDailymin)
 		await ctx.channel.send(msg)
 
 
