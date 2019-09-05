@@ -341,27 +341,30 @@ class Gems(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
-		if DB.spam(ID,couldown_xl, "gamble"):
-			if r.randint(0,3) == 0:
-				gain = valeur*3
-				# l'espérence est de 0 sur la gamble
-				msg = message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
-				addTrophy(ID, "Gamble Win", 1)
-				for x in objetTrophy:
-					if x.nom == "Gamble Jackpot":
-						jackpot = x.mingem
-				if gain >= jackpot:
-					addTrophy(ID, "Gamble Jackpot", 1)
-					msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
-				DB.addGems(ID, gain)
-			else:
-				val = 0-valeur
-				DB.addGems(ID,val)
-				msg = "Dommage tu as perdu "+str(valeur)+":gem:"
+		if valeur > 0:
+			if DB.spam(ID,couldown_xl, "gamble"):
+				if r.randint(0,3) == 0:
+					gain = valeur*3
+					# l'espérence est de 0 sur la gamble
+					msg = message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
+					addTrophy(ID, "Gamble Win", 1)
+					for x in objetTrophy:
+						if x.nom == "Gamble Jackpot":
+							jackpot = x.mingem
+					if gain >= jackpot:
+						addTrophy(ID, "Gamble Jackpot", 1)
+						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
+					DB.addGems(ID, gain)
+				else:
+					val = 0-valeur
+					DB.addGems(ID,val)
+					msg = "Dommage tu as perdu "+str(valeur)+":gem:"
 
-			DB.updateComTime(ID, "gamble")
+				DB.updateComTime(ID, "gamble")
+			else:
+				msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
 		else:
-			msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
+			msg = "La valeur rentré est incorrect"
 		await ctx.channel.send(msg)
 
 
