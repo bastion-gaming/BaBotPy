@@ -7,6 +7,8 @@ from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
 
+Mois = ("","janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre")
+
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
 ,"Tu as volé une carotte ! Prend tes"
@@ -87,6 +89,8 @@ class Trophy:
 		self.mingem = mingem #nombre de gems minimum necessaire
 
 objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
+,Trophy("Gamble Win", "`Nombre de gamble gagné`","stack",0)
+,Trophy("Gamble Jackpot", "`Gagner plus de 10000 :gem: au gamble`","special",20000)
 ,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 ,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
 ,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
@@ -243,7 +247,17 @@ class Gems(commands.Cog):
 				msg += "\nNouvelle série: `{}`, Bonus: {} :gem:".format(mult, bonus*mult)
 			DB.updateComTime(ID, "daily")
 		else:
-			msg = "Tu as déja reçu ta récompense journalière ! Reviens demain pour en avoir plus"
+			ComTime = DB.valueAt(ID, "com_time")
+			if "daily" in ComTime:
+				time = ComTime["daily"]
+			timeDaily = t.gmtime(time)
+			if timeDaily.tm_min < 10:
+				temp = timeDaily.tm_min
+				timeDailymin = str(0) + str(temp)
+			else:
+				timeDailymin = timeDaily.tm_min
+
+			msg = "Tu as déja reçu ta récompense journalière le `{0} {1} {2} à {3}h{4} GMT`".format(timeDaily.tm_mday, Mois[timeDaily.tm_mon], timeDaily.tm_year, timeDaily.tm_hour, timeDailymin)
 		await ctx.channel.send(msg)
 
 
@@ -332,6 +346,13 @@ class Gems(commands.Cog):
 				gain = valeur*3
 				# l'espérence est de 0 sur la gamble
 				msg = message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
+				addTrophy(ID, "Gamble Win", 1)
+				for x in objetTrophy:
+					if x.nom == "Gamble Jackpot":
+						jackpot = x.mingem
+				if gain >= jackpot:
+					addTrophy(ID, "Gamble Jackpot", 1)
+					msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
 				DB.addGems(ID, gain)
 			else:
 				val = 0-valeur
@@ -760,7 +781,7 @@ class Gems(commands.Cog):
 					msg+="\n"
 				elif i == 6:
 					msg+=" :arrow_backward:\n"
-				tab.append(r.randint(0,361))
+				tab.append(r.randint(0,364))
 				if tab[i] < 20 :
 					result.append("zero")
 				elif tab[i] >= 20 and tab[i] < 40:
@@ -803,9 +824,9 @@ class Gems(commands.Cog):
 					result.append("cookie")
 				elif tab[i] >=  330 and tab[i] < 360:
 					result.append("beer")
-				elif tab[i] >= 360 and tab[i] < 361:
+				elif tab[i] >= 360 and tab[i] < 363:
 					result.append("backpack")
-				elif tab[i] >= 361:
+				elif tab[i] >= 363:
 					result.append("ruby")
 				if tab[i] < 360:
 					msg+=":{}:".format(result[i])
@@ -824,6 +845,8 @@ class Gems(commands.Cog):
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
 				gain = 2000
 				addTrophy(ID, "Super Jackpot :seven::seven::seven:", 1)
+				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
+				msg += "\n{} Bravo <@{}>! Le Super Jackpot :seven::seven::seven: est tombé :tada: ".format(botplayer.mention,ID)
 			elif result[3] == "one" and result[4] == "one" and result[5] == "one":
 				gain = 200
 			elif result[3] == "two" and result[4] == "two" and result[5] == "two":
@@ -847,7 +870,8 @@ class Gems(commands.Cog):
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
 				addTrophy(ID, "La Squelatitude", 1)
 				gain = 4
-				msg += "\n<@{}> paye sa tournée :beer:".format(ID)
+				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
+				msg += "\n{} <@{}> paye sa tournée :beer:".format(botplayer.mention,ID)
 			#===================================================================
 			#Explosion de la machine
 			elif result[3] == "boom" and result[4] == "boom" and result[5] == "boom":
