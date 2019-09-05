@@ -770,6 +770,8 @@ class Gems(commands.Cog):
 		if imise != None:
 			if int(imise) < 10:
 				mise = 10
+			if int(imise) > 100:
+				mise = 100
 			else:
 				mise = int(imise)
 		else:
@@ -784,52 +786,52 @@ class Gems(commands.Cog):
 					msg+="\n"
 				elif i == 6:
 					msg+=" :arrow_backward:\n"
-				tab.append(r.randint(0,364))
-				if tab[i] < 20 :
+				tab.append(r.randint(0,344))
+				if tab[i] < 15 :
 					result.append("zero")
-				elif tab[i] >= 20 and tab[i] < 40:
+				elif tab[i] >= 15 and tab[i] < 30:
 					result.append("one")
-				elif tab[i] >=  40 and tab[i] < 60:
+				elif tab[i] >=  30 and tab[i] < 45:
 					result.append("two")
-				elif tab[i] >=  60 and tab[i] < 80:
+				elif tab[i] >=  45 and tab[i] < 60:
 					result.append("three")
-				elif tab[i] >=  80 and tab[i] < 100:
+				elif tab[i] >=  60 and tab[i] < 75:
 					result.append("four")
-				elif tab[i] >=  100 and tab[i] < 120:
+				elif tab[i] >=  75 and tab[i] < 90:
 					result.append("five")
-				elif tab[i] >=  120 and tab[i] < 140:
+				elif tab[i] >=  90 and tab[i] < 105:
 					result.append("six")
-				elif tab[i] >=  140 and tab[i] < 160:
+				elif tab[i] >=  105 and tab[i] < 120:
 					result.append("seven")
-				elif tab[i] >=  160 and tab[i] < 180:
+				elif tab[i] >=  120 and tab[i] < 135:
 					result.append("eight")
-				elif tab[i] >=  180 and tab[i] < 200:
+				elif tab[i] >=  135 and tab[i] < 150:
 					result.append("nine")
-				elif tab[i] >=  200 and tab[i] < 220:
+				elif tab[i] >=  150 and tab[i] < 170:
 					result.append("gem")
-				elif tab[i] >=  220 and tab[i] < 240:
+				elif tab[i] >=  170 and tab[i] < 190:
 					result.append("ticket")
-				elif tab[i] >=  240 and tab[i] < 260:
+				elif tab[i] >=  190 and tab[i] < 210:
 					result.append("boom")
-				elif tab[i] >=  260 and tab[i] < 270:
+				elif tab[i] >=  210 and tab[i] < 220:
 					result.append("apple")
-				elif tab[i] >=  270 and tab[i] < 280:
+				elif tab[i] >=  220 and tab[i] < 230:
 					result.append("green_apple")
-				elif tab[i] >=  280 and tab[i] < 290:
+				elif tab[i] >=  230 and tab[i] < 240:
 					result.append("cherries")
-				elif tab[i] >=  290 and tab[i] < 300:
+				elif tab[i] >=  240 and tab[i] < 250:
 					result.append("tangerine")
-				elif tab[i] >=  300 and tab[i] < 310:
+				elif tab[i] >=  250 and tab[i] < 260:
 					result.append("banana")
-				elif tab[i] >=  310 and tab[i] < 320:
+				elif tab[i] >=  260 and tab[i] < 280:
 					result.append("grapes")
-				elif tab[i] >=  320 and tab[i] < 330:
+				elif tab[i] >=  280 and tab[i] < 310:
 					result.append("cookie")
-				elif tab[i] >=  330 and tab[i] < 360:
+				elif tab[i] >=  310 and tab[i] < 340:
 					result.append("beer")
-				elif tab[i] >= 360 and tab[i] < 363:
+				elif tab[i] >= 340 and tab[i] < 343:
 					result.append("backpack")
-				elif tab[i] >= 363:
+				elif tab[i] >= 343:
 					result.append("ruby")
 				if tab[i] < 360:
 					msg+=":{}:".format(result[i])
@@ -846,28 +848,28 @@ class Gems(commands.Cog):
 			#===================================================================
 			#Super gain, 3 chiffres identique
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
-				gain = 2000
+				gain = 1000
 				addTrophy(ID, "Super Jackpot :seven::seven::seven:", 1)
 				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
 				msg += "\n{} Bravo <@{}>! Le Super Jackpot :seven::seven::seven: est tombé :tada: ".format(botplayer.mention,ID)
 			elif result[3] == "one" and result[4] == "one" and result[5] == "one":
-				gain = 200
+				gain = 100
 			elif result[3] == "two" and result[4] == "two" and result[5] == "two":
-				gain = 300
+				gain = 150
 			elif result[3] == "three" and result[4] == "three" and result[5] == "three":
-				gain = 400
+				gain = 200
 			elif result[3] == "four" and result[4] == "four" and result[5] == "four":
-				gain = 500
+				gain = 250
 			elif result[3] == "five" and result[4] == "five" and result[5] == "five":
-				gain = 600
+				gain = 300
 			elif result[3] == "six" and result[4] == "six" and result[5] == "six":
-				gain = 700
+				gain = 350
 			elif result[3] == "eight" and result[4] == "eight" and result[5] == "eight":
-				gain = 800
+				gain = 400
 			elif result[3] == "nine" and result[4] == "nine" and result[5] == "nine":
-				gain = 900
+				gain = 450
 			elif result[3] == "zero" and result[4] == "zero" and result[5] == "zero":
-				gain = 1000
+				gain = 500
 			#===================================================================
 			#Beer
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
