@@ -770,15 +770,25 @@ class Gems(commands.Cog):
 	async def slots(self, ctx, imise = None):
 		"""**[mise]** | La machine à sous, la mise minimum est de 10 :gem:"""
 		ID = ctx.author.id
+
 		if imise != None:
-			if int(imise) < 10:
+			if int(imise) < 0:
+				msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
+				if DB.valueAt(ID, "gems") > 100 :
+					DB.addGems(ID, -100)
+				else :
+					DB.addGems(ID, 0-DB.valueAt(ID, "gems"))
+				await ctx.channel.send(msg)
+				return
+			elif int(imise) < 10:
 				mise = 10
-			if int(imise) > 100:
+			elif int(imise) > 100:
 				mise = 100
 			else:
 				mise = int(imise)
 		else:
 			mise = 10
+
 		if DB.spam(ID,couldown_xl, "slots"):
 			tab = []
 			result = []
