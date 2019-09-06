@@ -878,8 +878,7 @@ class Gems(commands.Cog):
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
 				addTrophy(ID, "La Squelatitude", 1)
 				gain = 4
-				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
-				msg += "\n{} <@{}> paye sa tournée :beer:".format(botplayer.mention,ID)
+				msg += "\n<@{}> paye sa tournée :beer:".format(ID)
 			#===================================================================
 			#Explosion de la machine
 			elif result[3] == "boom" and result[4] == "boom" and result[5] == "boom":
