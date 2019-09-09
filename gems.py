@@ -106,17 +106,16 @@ objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`
 
 class StatGems:
 
-	def __init__(self,nom,desc,type,mingem):
+	def __init__(self,nom,desc):
 		self.nom = nom
 		self.desc = desc
-		self.type = type
-		self.mingem = mingem #nombre de gems minimum necessaire
 
-objetStat = [StatGems("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
-,StatGems("Gamble Win", "`Nombre de gamble gagné`","stack",0)
-,StatGems("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
-,StatGems("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
-,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)]
+objetStat = [StatGems("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`")
+,StatGems("DiscordCop Ammende","`Nombre d'ammende recue par la DiscordCop`")
+,StatGems("Gamble Win", "`Nombre de gamble gagné`")
+,StatGems("Super Jackpot :seven::seven::seven:", "`Nombre de super jackpot gagné sur la machine à sous`")
+,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:608748194406465557>`ruby` trouvé")
+,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
 #anti-DB.spam
 couldown_D = 86400 # D pour days (journalier)
@@ -348,15 +347,17 @@ class Gems(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
+		gems = DB.valueAt(ID, "gems")
 		if valeur < 0:
 			msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
-			if DB.valueAt(ID, "gems") > 100 :
+			DB.addStatGems(ID, "DiscordCop Ammende", 1)
+			if gems > 100 :
 				DB.addGems(ID, -100)
 			else :
 				DB.addGems(ID, 0-DB.valueAt(ID, "gems"))
 			await ctx.channel.send(msg)
 			return
-		elif valeur > 0:
+		elif valeur > 0 and gems >= valeur:
 			if DB.spam(ID,couldown_xl, "gamble"):
 				if r.randint(0,3) == 0:
 					gain = valeur*3
@@ -378,6 +379,8 @@ class Gems(commands.Cog):
 				DB.updateComTime(ID, "gamble")
 			else:
 				msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
+		elif gems < valeur:
+			msg = "Tu n'as pas assez de :gem:`gems` en banque"
 		else:
 			msg = "La valeur rentré est incorrect"
 		await ctx.channel.send(msg)
@@ -790,6 +793,7 @@ class Gems(commands.Cog):
 		if imise != None:
 			if int(imise) < 0:
 				msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
+				DB.addStatGems(ID, "DiscordCop Ammende", 1)
 				if DB.valueAt(ID, "gems") > 100 :
 					DB.addGems(ID, -100)
 				else :
