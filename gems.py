@@ -232,11 +232,11 @@ class Gems(commands.Cog):
 
 
 
-	# @commands.command(pass_context=True)
-	# async def begin(self, ctx):
-	# 	"""Pour t'ajouter dans la base de données !"""
-	# 	ID = ctx.author.id
-	# 	await ctx.channel.send(DB.newPlayer(ID))
+	@commands.command(pass_context=True)
+	async def begin(self, ctx):
+		"""Pour t'ajouter dans la base de données !"""
+		ID = ctx.author.id
+		await ctx.channel.send(DB.newPlayer(ID))
 
 
 
