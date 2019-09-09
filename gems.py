@@ -89,9 +89,7 @@ class Trophy:
 		self.type = type
 		self.mingem = mingem #nombre de gems minimum necessaire
 
-objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
-,Trophy("Gamble Win", "`Nombre de gamble gagné`","stack",0)
-,Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`","special",10000)
+objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`","special",10000)
 ,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 ,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
 ,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
@@ -104,6 +102,22 @@ objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la Dis
 ,Trophy("Gems 1M","`Avoir 1 Million`:gem:","unique",1000000)
 ,Trophy("Le Milliard !!!","`Avoir 1 Milliard`:gem:","unique",1000000000)]
 
+
+
+class StatGems:
+
+	def __init__(self,nom,desc,type,mingem):
+		self.nom = nom
+		self.desc = desc
+		self.type = type
+		self.mingem = mingem #nombre de gems minimum necessaire
+
+objetStat = [StatGems("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
+,StatGems("Gamble Win", "`Nombre de gamble gagné`","stack",0)
+,StatGems("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
+,StatGems("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
+,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)]
+
 #anti-DB.spam
 couldown_D = 86400 # D pour days (journalier)
 couldown_2D = 2 * couldown_D
@@ -111,17 +125,6 @@ couldown_xl = 10
 couldown_l = 8 # l pour long
 couldown_c = 6 # c pour court
 # nb de sec nécessaire entre 2 commandes
-
-def nbTrophy(ID, nameElem):
-	"""
-	Permet de savoir combien il y'a de nameElem dans l'inventaire des trophées de ID
-	"""
-	trophy = DB.valueAt(ID, "trophy")
-	if nameElem in trophy:
-		return trophy[nameElem]
-	else:
-		return 0
-
 
 
 def get_idmogi(nameElem):
@@ -141,9 +144,22 @@ def get_idmogi(nameElem):
 	if test == False:
 		return 0
 
+
+def nbTrophy(ID, nameElem):
+	"""
+	Permet de savoir combien il y'a de nameElem dans Trophy de ID
+	"""
+	trophy = DB.valueAt(ID, "trophy")
+	if nameElem in trophy:
+		return trophy[nameElem]
+	else:
+		return 0
+
+
+
 def addTrophy(ID, nameElem, nbElem):
 	"""
-	Permet de modifier le nombre de nameElem pour ID dans les trophées
+	Permet de modifier le nombre de nameElem pour ID dans Trophy
 	Pour en retirer mettez nbElemn en négatif
 	"""
 	trophy = DB.valueAt(ID, "trophy")
@@ -152,8 +168,6 @@ def addTrophy(ID, nameElem, nbElem):
 	elif nbElem >= 0:
 		if nbTrophy(ID, nameElem) == 0:
 			trophy[nameElem] = nbElem
-		else :
-			trophy[nameElem] += nbElem
 	else:
 		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
@@ -262,7 +276,7 @@ class Gems(commands.Cog):
 		if DB.spam(ID,couldown_l, "crime"):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
-				addTrophy(ID, "DiscordCop Arrestation", 1)
+				DB.addStatGems(ID, "DiscordCop Arrestation", 1)
 				if int(DB.addGems(ID, -10)) >= 0:
 					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
 				else:
@@ -334,13 +348,21 @@ class Gems(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
-		if valeur > 0:
+		if valeur < 0:
+			msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
+			if DB.valueAt(ID, "gems") > 100 :
+				DB.addGems(ID, -100)
+			else :
+				DB.addGems(ID, 0-DB.valueAt(ID, "gems"))
+			await ctx.channel.send(msg)
+			return
+		elif valeur > 0:
 			if DB.spam(ID,couldown_xl, "gamble"):
 				if r.randint(0,3) == 0:
 					gain = valeur*3
 					# l'espérence est de 0 sur la gamble
 					msg = message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
-					addTrophy(ID, "Gamble Win", 1)
+					DB.addStatGems(ID, "Gamble Win", 1)
 					for x in objetTrophy:
 						if x.nom == "Gamble Jackpot":
 							jackpot = x.mingem
@@ -437,6 +459,7 @@ class Gems(commands.Cog):
 					elif nbrand >= 95:
 						if r.randint(0,10) == 10:
 							DB.addInv(ID, "ruby", 1)
+							DB.addStatGems(ID, "Mineur de Merveilles", 1)
 							addTrophy(ID, "Mineur de Merveilles", 1)
 							msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
 						else:
@@ -848,6 +871,7 @@ class Gems(commands.Cog):
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
 				DB.addInv(ID, "ruby", 1)
+				DB.addStatGems(ID, "Mineur de Merveilles", 1)
 				addTrophy(ID, "Mineur de Merveilles", 1)
 				gain = 42
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
@@ -855,6 +879,7 @@ class Gems(commands.Cog):
 			#Super gain, 3 chiffres identique
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
 				gain = 1000
+				DB.addStatGems(ID, "Super Jackpot :seven::seven::seven:", 1)
 				addTrophy(ID, "Super Jackpot :seven::seven::seven:", 1)
 				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
 				msg += "\n{} Bravo <@{}>! Le Super Jackpot :seven::seven::seven: est tombé :tada: ".format(botplayer.mention,ID)
@@ -879,6 +904,7 @@ class Gems(commands.Cog):
 			#===================================================================
 			#Beer
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
+				DB.addStatGems(ID, "La Squelatitude", 1)
 				addTrophy(ID, "La Squelatitude", 1)
 				gain = 4
 				msg += "\n<@{}> paye sa tournée :beer:".format(ID)
@@ -962,17 +988,14 @@ class Gems(commands.Cog):
 			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
 			trophy = DB.valueAt(ID, "trophy")
 			for c in objetTrophy:
-				if c.type != "unique":
-					for x in trophy:
-						if c.nom == str(x):
-							d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
-			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
-			for c in objetTrophy:
-				if c.type == "unique":
-					test = testTrophy(ID, c.nom)
-					if test == 0:
-						d_trophy += "**{}** :white_check_mark:\n".format(c.nom)
+				testTrophy(ID, c.nom)
 
+			trophy = DB.valueAt(ID, "trophy")
+			for c in objetTrophy:
+				for x in trophy:
+					if c.nom == str(x):
+						if trophy[x] > 0:
+							d_trophy += "•**{}**\n".format(c.nom)
 
 			DB.updateComTime(ID, "trophy")
 			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
