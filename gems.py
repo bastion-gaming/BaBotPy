@@ -8,8 +8,6 @@ from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
 
-Mois = ("","janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre")
-
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
 ,"Tu as volé une carotte ! Prend tes"
@@ -111,7 +109,7 @@ class StatGems:
 		self.desc = desc
 
 objetStat = [StatGems("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`")
-,StatGems("DiscordCop Ammende","`Nombre d'ammende recue par la DiscordCop`")
+,StatGems("DiscordCop Amende","`Nombre d'ammende recue par la DiscordCop`")
 ,StatGems("Gamble Win", "`Nombre de gamble gagné`")
 ,StatGems("Super Jackpot :seven::seven::seven:", "`Nombre de super jackpot gagné sur la machine à sous`")
 ,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:608748194406465557>`ruby` trouvé")
@@ -350,7 +348,7 @@ class Gems(commands.Cog):
 		gems = DB.valueAt(ID, "gems")
 		if valeur < 0:
 			msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
-			DB.addStatGems(ID, "DiscordCop Ammende", 1)
+			DB.addStatGems(ID, "DiscordCop Amende", 1)
 			if gems > 100 :
 				DB.addGems(ID, -100)
 			else :
@@ -793,7 +791,7 @@ class Gems(commands.Cog):
 		if imise != None:
 			if int(imise) < 0:
 				msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
-				DB.addStatGems(ID, "DiscordCop Ammende", 1)
+				DB.addStatGems(ID, "DiscordCop Amende", 1)
 				if DB.valueAt(ID, "gems") > 100 :
 					DB.addGems(ID, -100)
 				else :
