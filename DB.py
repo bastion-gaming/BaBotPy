@@ -167,6 +167,25 @@ def addGems(ID, nbGems):
 	# 	print("Il n'y a pas assez sur ce compte !")
 	return str(new_value)
 
+def daily_data(ID, nameElem):
+	DailyData = valueAt(ID, "daily")
+	if nameElem in DailyData:
+		data = DailyData[nameElem]
+	else:
+		return True
+	return data
+
+def updateDaily(ID, nameElem, value):
+	"""
+	Met à jour les info du daily
+	"""
+	DailyData = valueAt(ID, "daily")
+	if nameElem == "dailymult":
+		DailyData[nameElem] = value
+	else:
+		DailyData[nameElem] = str(value)
+	updateField(ID, "daily", DailyData)
+
 def spam(ID,couldown, nameElem):
 	ComTime = valueAt(ID, "com_time")
 	if nameElem in ComTime:
