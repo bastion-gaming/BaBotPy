@@ -36,6 +36,7 @@ objetItem = [Item("cobblestone",1,3,0.5,608748492181078131,"minerai")
 ,Item("iron",r.randint(9,11),30,1,608748195685597235,"minerai")
 ,Item("gold",r.randint(45, 56),100,2,608748194754723863,"minerai")
 ,Item("diamond",r.randint(98, 120),200,3,608748194750529548,"minerai")
+,Item("emerald",r.randint(148, 175),320,4,608748194653798431,"minerai")
 ,Item("ruby",2000,3000,5,608748194406465557,"minerai")
 ,Item("fish",2,5,0.5,608762539605753868,"poisson")
 ,Item("tropicalfish",r.randint(25, 36),60,1,608762539030872079,"poisson")
@@ -717,7 +718,7 @@ class Gems(commands.Cog):
 					if DB.nbElements(ID,"iron_pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "iron_pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite + 1)
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(get_idmogi("iron_pickaxe"))
 				else :
 					if get_durabilite(ID,"iron_pickaxe") == None or get_durabilite(ID,"iron_pickaxe") < 0:
@@ -726,14 +727,29 @@ class Gems(commands.Cog):
 								addDurabilité(ID, c.nom, c.durabilite)
 					addDurabilité(ID, "iron_pickaxe", -1)
 					if nbrand < 5:
+						DB.addInv(ID, "emerald", 1)
+						msg = "Tu as obtenu 1 <:gem_emerald:{}>`émeraude`".format(get_idmogi("emerald"))
+					elif nbrand > 5 and nbrand < 15:
 						DB.addInv(ID, "diamond", 1)
 						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(get_idmogi("diamond"))
-					elif nbrand > 5 and nbrand < 15:
+						nbcobble = r.randint(0,5)
+						if nbcobble != 0 :
+							DB.addInv(ID, "cobblestone", nbcobble)
+							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
+					elif nbrand > 15 and nbrand < 30:
 						DB.addInv(ID, "gold", 1)
 						msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or`".format(get_idmogi("gold"))
-					elif nbrand > 15 and nbrand < 40:
+						nbcobble = r.randint(0,5)
+						if nbcobble != 0 :
+							DB.addInv(ID, "cobblestone", nbcobble)
+							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
+					elif nbrand > 30 and nbrand < 60:
 						DB.addInv(ID, "iron", 1)
 						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
+						nbcobble = r.randint(0,5)
+						if nbcobble != 0 :
+							DB.addInv(ID, "cobblestone", nbcobble)
+							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
 					elif nbrand >= 95:
 						if r.randint(0,10) == 10:
 							DB.addInv(ID, "ruby", 1)
@@ -743,7 +759,7 @@ class Gems(commands.Cog):
 						else:
 							msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 					else:
-						nbcobble = r.randint(1,5)
+						nbcobble = r.randint(1,10)
 						DB.addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
 							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
@@ -758,7 +774,7 @@ class Gems(commands.Cog):
 					if DB.nbElements(ID,"pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite + 1)
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(get_idmogi("pickaxe"))
 				else :
 					if get_durabilite(ID,"pickaxe") == None or get_durabilite(ID,"pickaxe") < 0:
@@ -769,8 +785,12 @@ class Gems(commands.Cog):
 					if nbrand < 20:
 						DB.addInv(ID, "iron", 1)
 						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
+						nbcobble = r.randint(0,5)
+						if nbcobble != 0 :
+							DB.addInv(ID, "cobblestone", nbcobble)
+							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
 					else:
-						nbcobble = r.randint(1,5)
+						nbcobble = r.randint(1,10)
 						DB.addInv(ID, "cobblestone", nbcobble)
 						if nbcobble == 1 :
 							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
@@ -800,7 +820,7 @@ class Gems(commands.Cog):
 					if DB.nbElements(ID,"fishingrod") > 0:
 						for c in objetOutil:
 							if c.nom == "fishingrod":
-								addDurabilité(ID, c.nom, c.durabilite + 1)
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(get_idmogi("fishingrod"))
 				else :
 					if get_durabilite(ID,"fishingrod") == None or get_durabilite(ID,"fishingrod") < 0:
