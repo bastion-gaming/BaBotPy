@@ -16,6 +16,7 @@ class Helpme(commands.Cog):
 		"""Affiche ce message !"""
 		d_help = "Liste de toutes les fonctions utilisable avec le prefix {}".format(self.PREFIX)
 		msg = discord.Embed(title = "Fonction disponible",color= 12745742, description = d_help)
+		arg = ""
 
 		COGS = open("fichier_txt/cogs.txt","r").read()
 		COGS = COGS.split('\n')
@@ -27,22 +28,18 @@ class Helpme(commands.Cog):
 				if mCOG == nameElem:
 					cog = self.bot.get_cog(COG)
 					coms = cog.get_commands()
-					arg = ""
 					for com in coms :
-						arg += "•"+str(com.name)+" : "+str(com.help)+"\n"
+						arg += "• "+str(com.name)+" : "+str(com.help)+"\n"
 					msg.add_field(name=COG, value=arg, inline=False)
 					await ctx.send(embed = msg, delete_after = 60)
+					return
 			else:
 				cog = self.bot.get_cog(COG)
 				coms = cog.get_commands()
-				arg = ""
-				for com in coms :
-					arg += "•"+str(com.name)+" : "+str(com.help)+"\n"
-				if COG == "Helpme":
-					msg.add_field(name=COG, value=arg, inline=False)
-				else:
-					msg = discord.Embed(title = COG,color= 12745742, description = arg)
-				await ctx.send(embed = msg, delete_after = 60)
+				if COG != "Helpme":
+					arg += "\n• "+str(COG)
+		msg.add_field(name="Liste des modules", value=arg, inline=False)
+		await ctx.send(embed = msg, delete_after = 60)
 
 def setup(bot):
 	bot.add_cog(Helpme(bot))
