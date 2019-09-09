@@ -36,13 +36,8 @@ class Helpme(commands.Cog):
 			else:
 				cog = self.bot.get_cog(COG)
 				coms = cog.get_commands()
-				arg += "\n• "+str(COG)
-				# for com in coms :
-				# 	arg += "•"+str(com.name)+" : "+str(com.help)+"\n"
-				# if COG == "Helpme":
-				# 	msg.add_field(name=COG, value=arg, inline=False)
-				# else:
-				# 	msg = discord.Embed(title = COG,color= 12745742, description = arg)
+				if COG != "Helpme":
+					arg += "\n• "+str(COG)
 		msg.add_field(name="Liste des modules", value=arg, inline=False)
 		await ctx.send(embed = msg, delete_after = 60)
 
