@@ -717,7 +717,7 @@ class Gems(commands.Cog):
 					if DB.nbElements(ID,"iron_pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "iron_pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite + 1)
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(get_idmogi("iron_pickaxe"))
 				else :
 					if get_durabilite(ID,"iron_pickaxe") == None or get_durabilite(ID,"iron_pickaxe") < 0:
@@ -758,7 +758,7 @@ class Gems(commands.Cog):
 					if DB.nbElements(ID,"pickaxe") > 0:
 						for c in objetOutil:
 							if c.nom == "pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite + 1)
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(get_idmogi("pickaxe"))
 				else :
 					if get_durabilite(ID,"pickaxe") == None or get_durabilite(ID,"pickaxe") < 0:
@@ -800,7 +800,7 @@ class Gems(commands.Cog):
 					if DB.nbElements(ID,"fishingrod") > 0:
 						for c in objetOutil:
 							if c.nom == "fishingrod":
-								addDurabilité(ID, c.nom, c.durabilite + 1)
+								addDurabilité(ID, c.nom, c.durabilite)
 					msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(get_idmogi("fishingrod"))
 				else :
 					if get_durabilite(ID,"fishingrod") == None or get_durabilite(ID,"fishingrod") < 0:
