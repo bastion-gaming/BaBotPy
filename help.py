@@ -29,7 +29,7 @@ class Helpme(commands.Cog):
 					cog = self.bot.get_cog(COG)
 					coms = cog.get_commands()
 					for com in coms :
-						arg += "•"+str(com.name)+" : "+str(com.help)+"\n"
+						arg += "• "+str(com.name)+" : "+str(com.help)+"\n"
 					msg.add_field(name=COG, value=arg, inline=False)
 					await ctx.send(embed = msg, delete_after = 60)
 					return
