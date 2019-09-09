@@ -90,6 +90,8 @@ def newPlayer(ID):
 		db.insert(fieldList())
 		updateField(FieldsL["ID"], "ID", ID)
 		return ("Le joueur a été ajouté !")
+	elif valueAt(ID, "arrival") == "0":
+		return ("Le joueur a été ajouté !")
 	else:
 		return ("Le joueur existe déjà")
 

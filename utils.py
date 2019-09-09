@@ -44,7 +44,7 @@ class Utils(commands.Cog):
 			"""
 			Permet d'avoir le lien du twitch.
 			"""
-			msg = "Notre chaine twitch --> **https://www.twitch.tv/bastionlivetv/videos**."
+			msg = "Notre chaine twitch --> **https://www.twitch.tv/bastionlivetv/**."
 			await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
