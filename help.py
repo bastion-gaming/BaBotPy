@@ -21,26 +21,39 @@ class Helpme(commands.Cog):
 		COGS = open("fichier_txt/cogs.txt","r").read()
 		COGS = COGS.split('\n')
 		COGS.pop()
-		for COG in COGS:
-			if nameElem != None:
-				mCOG = COG.lower()
-				nameElem = nameElem.lower()
-				if mCOG == nameElem:
-					cog = self.bot.get_cog(COG)
-					coms = cog.get_commands()
-					for com in coms :
-						arg += "• "+str(com.name)+" : "+str(com.help)+"\n"
-					msg.add_field(name=COG, value=arg, inline=False)
-					await ctx.send(embed = msg, delete_after = 60)
-					return
+
+		if nameElem != None:
+			nameElem = nameElem.lower()
+			if nameElem == "gems" or nameElem == "gemsbase":
+				for COG in COGS:
+					mCOG = COG.lower()
+					if mCOG == "gems" or mCOG == "gemsbase":
+						cog = self.bot.get_cog(COG)
+						coms = cog.get_commands()
+						for com in coms :
+							arg += "• "+str(com.name)+" : "+str(com.help)+"\n"
+						msg.add_field(name=COG, value=arg, inline=False)
+						arg = ""
+				await ctx.send(embed = msg, delete_after = 60)
+				return
 			else:
+				for COG in COGS:
+					mCOG = COG.lower()
+					if mCOG == nameElem:
+						cog = self.bot.get_cog(COG)
+						coms = cog.get_commands()
+						for com in coms :
+							arg += "• "+str(com.name)+" : "+str(com.help)+"\n"
+						msg.add_field(name=COG, value=arg, inline=False)
+						await ctx.send(embed = msg, delete_after = 60)
+						return
+		else:
+			for COG in COGS:
 				cog = self.bot.get_cog(COG)
 				coms = cog.get_commands()
-				if COG != "Helpme":
-					arg += "\n• "+str(COG)
-		msg.add_field(name="Liste des modules", value=arg, inline=False)
-		await ctx.send(embed = msg, delete_after = 60)
+				arg += "\n• "+str(COG)
+			msg.add_field(name="Liste des modules", value=arg, inline=False)
+			await ctx.send(embed = msg, delete_after = 60)
 
 def setup(bot):
 	bot.add_cog(Helpme(bot))
-	open("fichier_txt/cogs.txt","a").write("Helpme\n")
