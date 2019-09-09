@@ -167,6 +167,25 @@ def addGems(ID, nbGems):
 	# 	print("Il n'y a pas assez sur ce compte !")
 	return str(new_value)
 
+def daily_data(ID, nameElem):
+	DailyData = valueAt(ID, "daily")
+	if nameElem in DailyData:
+		data = DailyData[nameElem]
+	else:
+		return True
+	return data
+
+def updateDaily(ID, nameElem, value):
+	"""
+	Met à jour les info du daily
+	"""
+	DailyData = valueAt(ID, "daily")
+	if nameElem == "dailymult":
+		DailyData[nameElem] = value
+	else:
+		DailyData[nameElem] = str(value)
+	updateField(ID, "daily", DailyData)
+
 def spam(ID,couldown, nameElem):
 	ComTime = valueAt(ID, "com_time")
 	if nameElem in ComTime:
@@ -215,3 +234,33 @@ def addInv(ID, nameElem, nbElem):
 		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
 	updateField(ID, "inventory", inventory)
+
+
+def nbStatGems(ID, nameElem):
+	"""
+	Permet de savoir combien il y'a de nameElem dans StatGems de ID
+	"""
+	statgems = valueAt(ID, "StatGems")
+	if nameElem in statgems:
+		return statgems[nameElem]
+	else:
+		return 0
+
+
+def addStatGems(ID, nameElem, nbElem):
+	"""
+	Permet de modifier le nombre de nameElem pour ID dans StatGems
+	Pour en retirer mettez nbElemn en négatif
+	"""
+	statgems = valueAt(ID, "StatGems")
+	if nbStatGems(ID, nameElem) > 0 and nbElem < 0:
+		statgems[nameElem] += nbElem
+	elif nbElem >= 0:
+		if nbStatGems(ID, nameElem) == 0:
+			statgems[nameElem] = nbElem
+		else :
+			statgems[nameElem] += nbElem
+	else:
+		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		return 404
+	updateField(ID, "StatGems", statgems)

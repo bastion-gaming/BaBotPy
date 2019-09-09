@@ -109,6 +109,16 @@ class Level(commands.Cog):
 				# Gems
 				msg+="\n\n**Balance:** *{0}* :gem:".format(DB.valueAt(ID,"gems"))
 
+				# Statistique de l'utilisateur pour le module Gems
+				statgems = DB.valueAt(ID, "StatGems")
+				Titre = True
+				for x in statgems:
+					if statgems[x] > 0:
+						if Titre:
+							msg += "\n\n**Statistiques de *Get Gems* **"
+							Titre = False
+						msg += "\n• {}: `x{}`".format(str(x), statgems[x])
+
 				# Parrainage
 				P = DB.valueAt(ID,"parrain")
 				F_li = DB.valueAt(ID, "filleul")

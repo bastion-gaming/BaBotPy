@@ -1,13 +1,12 @@
 import discord
 import random as r
 import time as t
+import datetime as dt
 import DB
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
-
-Mois = ("","janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre")
 
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
@@ -33,7 +32,7 @@ class Item:
 		self.idmoji = idmoji
 		self.type = type
 
-objet = [Item("cobblestone",1,3,0.5,608748492181078131,"minerai")
+objetItem = [Item("cobblestone",1,3,0.5,608748492181078131,"minerai")
 ,Item("iron",r.randint(9,11),30,1,608748195685597235,"minerai")
 ,Item("gold",r.randint(45, 56),100,2,608748194754723863,"minerai")
 ,Item("diamond",r.randint(98, 120),200,3,608748194750529548,"minerai")
@@ -46,7 +45,7 @@ objet = [Item("cobblestone",1,3,0.5,608748492181078131,"minerai")
 ,Item("backpack",1,5000,-40,616205834451550208,"special")]
 
 
-class Item:
+class Outil:
 
 	def __init__(self,nom,vente,achat,poid,durabilite,idmoji,type):
 		self.nom = nom
@@ -57,12 +56,12 @@ class Item:
 		self.idmoji = idmoji
 		self.type = type
 
-objetOutil = [Item("pickaxe",5,20,5,150,608748195291594792,"")
-,Item("iron_pickaxe",80,160,10,800,608748194775433256,"forge")
-,Item("fishingrod",5,15,3,200,608748194318385173,"")]
+objetOutil = [Outil("pickaxe",5,20,5,150,608748195291594792,"")
+,Outil("iron_pickaxe",80,160,10,800,608748194775433256,"forge")
+,Outil("fishingrod",5,15,3,200,608748194318385173,"")]
 
 
-class Item:
+class Recette:
 
 	def __init__(self,nom,type, nb1,item1, nb2,item2, nb3,item3, nb4,item4):
 		self.nom = nom
@@ -76,7 +75,7 @@ class Item:
 		self.nb4 = nb4
 		self.item4 = item4
 
-objetRecette = [Item("iron_pickaxe","forge",4,"iron",1,"pickaxe",0,"",0,"")]
+objetRecette = [Recette("iron_pickaxe","forge",4,"iron",1,"pickaxe",0,"",0,"")]
 
 
 
@@ -88,9 +87,7 @@ class Trophy:
 		self.type = type
 		self.mingem = mingem #nombre de gems minimum necessaire
 
-objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`","stack",0)
-,Trophy("Gamble Win", "`Nombre de gamble gagné`","stack",0)
-,Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`","special",10000)
+objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`","special",10000)
 ,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 ,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
 ,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
@@ -103,6 +100,21 @@ objetTrophy = [Trophy("DiscordCop Arrestation","`Nombre d'arrestation par la Dis
 ,Trophy("Gems 1M","`Avoir 1 Million`:gem:","unique",1000000)
 ,Trophy("Le Milliard !!!","`Avoir 1 Milliard`:gem:","unique",1000000000)]
 
+
+
+class StatGems:
+
+	def __init__(self,nom,desc):
+		self.nom = nom
+		self.desc = desc
+
+objetStat = [StatGems("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`")
+,StatGems("DiscordCop Amende","`Nombre d'ammende recue par la DiscordCop`")
+,StatGems("Gamble Win", "`Nombre de gamble gagné`")
+,StatGems("Super Jackpot :seven::seven::seven:", "`Nombre de super jackpot gagné sur la machine à sous`")
+,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:608748194406465557>`ruby` trouvé")
+,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
+
 #anti-DB.spam
 couldown_D = 86400 # D pour days (journalier)
 couldown_2D = 2 * couldown_D
@@ -111,24 +123,13 @@ couldown_l = 8 # l pour long
 couldown_c = 6 # c pour court
 # nb de sec nécessaire entre 2 commandes
 
-def nbTrophy(ID, nameElem):
-	"""
-	Permet de savoir combien il y'a de nameElem dans l'inventaire des trophées de ID
-	"""
-	trophy = DB.valueAt(ID, "trophy")
-	if nameElem in trophy:
-		return trophy[nameElem]
-	else:
-		return 0
-
-
 
 def get_idmogi(nameElem):
 	"""
 	Permet de connaitre l'idmoji de l'item
 	"""
 	test = False
-	for c in objet:
+	for c in objetItem:
 		if c.nom == nameElem:
 			test = True
 			return c.idmoji
@@ -140,9 +141,22 @@ def get_idmogi(nameElem):
 	if test == False:
 		return 0
 
+
+def nbTrophy(ID, nameElem):
+	"""
+	Permet de savoir combien il y'a de nameElem dans Trophy de ID
+	"""
+	trophy = DB.valueAt(ID, "trophy")
+	if nameElem in trophy:
+		return trophy[nameElem]
+	else:
+		return 0
+
+
+
 def addTrophy(ID, nameElem, nbElem):
 	"""
-	Permet de modifier le nombre de nameElem pour ID dans les trophées
+	Permet de modifier le nombre de nameElem pour ID dans Trophy
 	Pour en retirer mettez nbElemn en négatif
 	"""
 	trophy = DB.valueAt(ID, "trophy")
@@ -151,8 +165,6 @@ def addTrophy(ID, nameElem, nbElem):
 	elif nbElem >= 0:
 		if nbTrophy(ID, nameElem) == 0:
 			trophy[nameElem] = nbElem
-		else :
-			trophy[nameElem] += nbElem
 	else:
 		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
@@ -232,32 +244,24 @@ class Gems(commands.Cog):
 	async def daily(self, ctx):
 		"""Récupère ta récompense journalière!"""
 		ID = ctx.author.id
-		if DB.spam(ID,couldown_D, "daily"):
-			if DB.spam(ID,couldown_2D, "daily"):
-				DB.updateField(ID, "daily_mult", 0)
-				mult = 0
-			else:
-				mult = DB.valueAt(ID, "daily_mult")
-				DB.updateField(ID, "daily_mult", mult + 1)
+		DailyTime = DB.daily_data(ID, "dailytime")
+		DailyMult = DB.daily_data(ID, "dailymult")
+		jour = dt.date.today()
+		if DailyTime == str(jour - dt.timedelta(days=1)):
+			DB.updateDaily(ID, "dailytime", jour)
+			DB.updateDaily(ID, "dailymult", DailyMult + 1)
 			bonus = 125
-			gain = 100 + bonus*mult
+			gain = 100 + bonus*DailyMult
 			DB.addGems(ID, gain)
-			msg = "Récompense journalière! Tu as gagné 100 :gem:"
-			if mult != 0:
-				msg += "\nNouvelle série: `{}`, Bonus: {} :gem:".format(mult, bonus*mult)
-			DB.updateComTime(ID, "daily")
-		else:
-			ComTime = DB.valueAt(ID, "com_time")
-			if "daily" in ComTime:
-				time = ComTime["daily"]
-			timeDaily = t.gmtime(time)
-			if timeDaily.tm_min < 10:
-				temp = timeDaily.tm_min
-				timeDailymin = str(0) + str(temp)
-			else:
-				timeDailymin = timeDaily.tm_min
+			msg = "Récompense journalière! Tu as gagné 100:gem:"
+			msg += "\nNouvelle série: `{}`, Bonus: {}:gem:".format(DailyMult, bonus*DailyMult)
 
-			msg = "Tu as déja reçu ta récompense journalière le `{0} {1} {2} à {3}h{4} GMT`".format(timeDaily.tm_mday, Mois[timeDaily.tm_mon], timeDaily.tm_year, timeDaily.tm_hour, timeDailymin)
+		elif DailyTime == str(jour):
+			msg = "Tu as déja reçu ta récompense journalière aujourd'hui. Reviens demain pour gagner plus de :gem:"
+		else:
+			DB.updateDaily(ID, "dailytime", jour)
+			DB.updateDaily(ID, "dailymult", 1)
+			msg = "Récompense journalière! Tu as gagné 100 :gem:"
 		await ctx.channel.send(msg)
 
 
@@ -269,7 +273,7 @@ class Gems(commands.Cog):
 		if DB.spam(ID,couldown_l, "crime"):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
-				addTrophy(ID, "DiscordCop Arrestation", 1)
+				DB.addStatGems(ID, "DiscordCop Arrestation", 1)
 				if int(DB.addGems(ID, -10)) >= 0:
 					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
 				else:
@@ -341,13 +345,23 @@ class Gems(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
-		if valeur > 0:
+		gems = DB.valueAt(ID, "gems")
+		if valeur < 0:
+			msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
+			DB.addStatGems(ID, "DiscordCop Amende", 1)
+			if gems > 100 :
+				DB.addGems(ID, -100)
+			else :
+				DB.addGems(ID, 0-DB.valueAt(ID, "gems"))
+			await ctx.channel.send(msg)
+			return
+		elif valeur > 0 and gems >= valeur:
 			if DB.spam(ID,couldown_xl, "gamble"):
 				if r.randint(0,3) == 0:
 					gain = valeur*3
 					# l'espérence est de 0 sur la gamble
 					msg = message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
-					addTrophy(ID, "Gamble Win", 1)
+					DB.addStatGems(ID, "Gamble Win", 1)
 					for x in objetTrophy:
 						if x.nom == "Gamble Jackpot":
 							jackpot = x.mingem
@@ -363,6 +377,8 @@ class Gems(commands.Cog):
 				DB.updateComTime(ID, "gamble")
 			else:
 				msg = "Il faut attendre "+str(couldown_xl)+" secondes entre chaque commande !"
+		elif gems < valeur:
+			msg = "Tu n'as pas assez de :gem:`gems` en banque"
 		else:
 			msg = "La valeur rentré est incorrect"
 		await ctx.channel.send(msg)
@@ -376,7 +392,7 @@ class Gems(commands.Cog):
 		if DB.spam(ID,couldown_c, "buy"):
 			test = True
 			nb = int(nb)
-			for c in objet :
+			for c in objetItem :
 				if item == c.nom :
 					test = False
 					prix = 0 - (c.achat*nb)
@@ -444,6 +460,7 @@ class Gems(commands.Cog):
 					elif nbrand >= 95:
 						if r.randint(0,10) == 10:
 							DB.addInv(ID, "ruby", 1)
+							DB.addStatGems(ID, "Mineur de Merveilles", 1)
 							addTrophy(ID, "Mineur de Merveilles", 1)
 							msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
 						else:
@@ -635,7 +652,7 @@ class Gems(commands.Cog):
 							msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, get_durabilite(ID, c.nom), c.durabilite)
 							tailletot += c.poid*int(inv[x])
 			Titre = True
-			for c in objet:
+			for c in objetItem:
 				if Titre:
 					msg_inv += "\n**Items**\n"
 					Titre = False
@@ -671,7 +688,7 @@ class Gems(commands.Cog):
 					Titre = False
 				d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Durabilité: **{5}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji,c.durabilite)
 			Titre = True
-			for c in objet :
+			for c in objetItem :
 				if Titre:
 					d_market += "\n**Items**\n"
 					Titre = False
@@ -702,7 +719,7 @@ class Gems(commands.Cog):
 			nb = int(nb)
 			if DB.nbElements(ID, item) >= nb and nb > 0:
 				test = True
-				for c in objet:
+				for c in objetItem:
 					if item == c.nom:
 						test = False
 						gain = c.vente*nb
@@ -774,6 +791,7 @@ class Gems(commands.Cog):
 		if imise != None:
 			if int(imise) < 0:
 				msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
+				DB.addStatGems(ID, "DiscordCop Amende", 1)
 				if DB.valueAt(ID, "gems") > 100 :
 					DB.addGems(ID, -100)
 				else :
@@ -855,6 +873,7 @@ class Gems(commands.Cog):
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
 				DB.addInv(ID, "ruby", 1)
+				DB.addStatGems(ID, "Mineur de Merveilles", 1)
 				addTrophy(ID, "Mineur de Merveilles", 1)
 				gain = 42
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
@@ -862,6 +881,7 @@ class Gems(commands.Cog):
 			#Super gain, 3 chiffres identique
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
 				gain = 1000
+				DB.addStatGems(ID, "Super Jackpot :seven::seven::seven:", 1)
 				addTrophy(ID, "Super Jackpot :seven::seven::seven:", 1)
 				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
 				msg += "\n{} Bravo <@{}>! Le Super Jackpot :seven::seven::seven: est tombé :tada: ".format(botplayer.mention,ID)
@@ -886,6 +906,7 @@ class Gems(commands.Cog):
 			#===================================================================
 			#Beer
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
+				DB.addStatGems(ID, "La Squelatitude", 1)
 				addTrophy(ID, "La Squelatitude", 1)
 				gain = 4
 				msg += "\n<@{}> paye sa tournée :beer:".format(ID)
@@ -931,7 +952,7 @@ class Gems(commands.Cog):
 			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
 				DB.addInv(ID, "backpack", 1)
 				p = 0
-				for c in objet:
+				for c in objetItem:
 					if c.nom == "backpack":
 						p = c.poid * (-1)
 				msg += "\nEn trouvant ce <:gem_backpack:{0}>`backpack` tu gagne {1} points d'inventaire".format(get_idmogi("backpack"),p)
@@ -969,17 +990,14 @@ class Gems(commands.Cog):
 			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
 			trophy = DB.valueAt(ID, "trophy")
 			for c in objetTrophy:
-				if c.type != "unique":
-					for x in trophy:
-						if c.nom == str(x):
-							d_trophy += "**{}**: x{}\n".format(str(x), str(trophy[x]))
-			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
-			for c in objetTrophy:
-				if c.type == "unique":
-					test = testTrophy(ID, c.nom)
-					if test == 0:
-						d_trophy += "**{}** :white_check_mark:\n".format(c.nom)
+				testTrophy(ID, c.nom)
 
+			trophy = DB.valueAt(ID, "trophy")
+			for c in objetTrophy:
+				for x in trophy:
+					if c.nom == str(x):
+						if trophy[x] > 0:
+							d_trophy += "•**{}**\n".format(c.nom)
 
 			DB.updateComTime(ID, "trophy")
 			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
