@@ -676,6 +676,7 @@ class Gems(commands.Cog):
 				desc = "**bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
 				desc += "\n**add** *[nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
 				desc += "\n**epargne** | Permet de calculer son épargne (utilisable toute les 4h)"
+				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("banque_upgrade", get_idmogi("banque_upgrade"))
 				msg.add_field(name="Commandes", value=desc, inline=False)
 				await ctx.channel.send(embed = msg)
 				DB.updateComTime(ID, "banque_bal")
