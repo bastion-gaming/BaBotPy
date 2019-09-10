@@ -694,7 +694,7 @@ class Gems(commands.Cog):
 			await ctx.channel.send(msg)
 			return
 		elif mARG == "epargne":
-			if DB.spam(ID,couldown_l, "banque_epargne"):
+			if DB.spam(ID,couldown_xxxl, "banque_epargne"):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
 				else:
