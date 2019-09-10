@@ -24,11 +24,11 @@ message_gamble = ["Tu as remporté le pari ! Tu obtiens"
 # se sont les phrases prononcé par le bot pour plus de diversité
 class Item:
 
-	def __init__(self,nom,vente,achat,poid,idmoji,type):
+	def __init__(self,nom,vente,achat,poids,idmoji,type):
 		self.nom = nom
 		self.vente = vente
 		self.achat = achat
-		self.poid = poid
+		self.poids = poids
 		self.idmoji = idmoji
 		self.type = type
 
@@ -48,18 +48,19 @@ objetItem = [Item("cobblestone",1,3,0.5,608748492181078131,"minerai")
 
 class Outil:
 
-	def __init__(self,nom,vente,achat,poid,durabilite,idmoji,type):
+	def __init__(self,nom,vente,achat,poids,durabilite,idmoji,type):
 		self.nom = nom
 		self.vente = vente
 		self.achat = achat
-		self.poid = poid
+		self.poids = poids
 		self.durabilite = durabilite
 		self.idmoji = idmoji
 		self.type = type
 
 objetOutil = [Outil("pickaxe",5,20,5,150,608748195291594792,"")
 ,Outil("iron_pickaxe",80,160,10,800,608748194775433256,"forge")
-,Outil("fishingrod",5,15,3,200,608748194318385173,"")]
+,Outil("fishingrod",5,15,3,200,608748194318385173,"")
+,Outil("banque_upgrade",0,10000,10000,None,421465024201097237,"banque")]
 
 
 class Recette:
@@ -300,10 +301,31 @@ class GemsBase(commands.Cog):
 			for c in objetOutil :
 				if item == c.nom :
 					test = False
-					prix = 0 - (c.achat*nb)
+					if c.type == "banque":
+						soldeMax = DB.nbElements(ID, "soldeMax", "banque")
+						if soldeMax == 0:
+							soldeMax = c.poids
+							DB.addBanque(ID, "soldeMax", c.poids)
+						soldeMult = soldeMax/c.poids
+						prix = 0
+						i = 1
+						while i <= nb:
+							prix += c.achat*soldeMult
+							soldeMult+=1
+							i+=1
+						prix = -1 * prix
+						prix = int(prix)
+					else:
+						prix = -1 * (c.achat*nb)
 					if DB.addGems(ID, prix) >= "0":
-						DB.addInv(ID, c.nom, nb)
-						msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+						if c.type == "banque":
+							DB.addBanque(ID, "soldeMax", nb*c.poids)
+							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+							await ctx.channel.send(msg)
+							return
+						else:
+							DB.addInv(ID, c.nom, nb)
+							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 					else :
 						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 					break
@@ -382,7 +404,7 @@ class GemsBase(commands.Cog):
 					if c.nom == str(x):
 						if inv[x] > 0:
 							msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, get_durabilite(ID, c.nom), c.durabilite)
-							tailletot += c.poid*int(inv[x])
+							tailletot += c.poids*int(inv[x])
 			Titre = True
 			for c in objetItem:
 				if Titre:
@@ -395,7 +417,7 @@ class GemsBase(commands.Cog):
 								msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 							else:
 								msg_inv = msg_inv+":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
-							tailletot += c.poid*int(inv[x])
+							tailletot += c.poids*int(inv[x])
 
 			msg_inv += "\nTaille: `{}`".format(int(tailletot))
 			msg = discord.Embed(title = "Inventaire",color= 6466585, description = msg_inv)
@@ -418,16 +440,19 @@ class GemsBase(commands.Cog):
 				if Titre:
 					d_market += "**Outils**\n"
 					Titre = False
-				d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Durabilité: **{5}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji,c.durabilite)
+				d_market += "<:gem_{0}:{3}>`{0}`: Vente **{1}** | Achat **{2}** ".format(c.nom,c.vente,c.achat,c.idmoji)
+				if c.durabilite != None:
+					d_market += "| Durabilité: **{}** ".format(c.durabilite)
+				d_market += "| Poid **{}**\n".format(c.poids)
 			Titre = True
 			for c in objetItem :
 				if Titre:
 					d_market += "\n**Items**\n"
 					Titre = False
 				if c.type != "friandise":
-					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid,c.idmoji)
+					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
 				else:
-					d_market += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poid)
+					d_market += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			DB.updateComTime(ID, "market")
@@ -1118,7 +1143,7 @@ class Gems(commands.Cog):
 				p = 0
 				for c in objetItem:
 					if c.nom == "backpack":
-						p = c.poid * (-1)
+						p = c.poids * (-1)
 				msg += "\nEn trouvant ce <:gem_backpack:{0}>`backpack` tu gagne {1} points d'inventaire".format(get_idmogi("backpack"),p)
 
 			#Calcul du prix
