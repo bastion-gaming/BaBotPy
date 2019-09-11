@@ -32,18 +32,20 @@ class Item:
 		self.idmoji = idmoji
 		self.type = type
 
-objetItem = [Item("cobblestone",1,3,0.5,608748492181078131,"minerai")
-,Item("iron",r.randint(9,11),30,1,608748195685597235,"minerai")
-,Item("gold",r.randint(45, 56),100,2,608748194754723863,"minerai")
-,Item("diamond",r.randint(98, 120),200,3,608748194750529548,"minerai")
-,Item("emerald",r.randint(148, 175),320,4,608748194653798431,"minerai")
-,Item("ruby",2000,3000,5,608748194406465557,"minerai")
-,Item("fish",2,5,0.5,608762539605753868,"poisson")
-,Item("tropicalfish",r.randint(25, 36),60,1,608762539030872079,"poisson")
-,Item("blowfish",r.randint(25, 36),60,1,618058831863218176,"poisson")
-,Item("octopus",50,90,3,618058832790421504,"poisson")
-,Item("cookie",10,20,1,"","friandise")
-,Item("backpack",1,5000,-40,616205834451550208,"special")]
+objetItem = [Item("cobblestone",1,3,1,608748492181078131,"minerai")
+,Item("iron",r.randint(9,11),30,5,608748195685597235,"minerai")
+,Item("gold",r.randint(45, 56),100,10,608748194754723863,"minerai")
+,Item("diamond",r.randint(98, 120),200,20,608748194750529548,"minerai")
+,Item("emerald",r.randint(148, 175),320,30,608748194653798431,"minerai")
+,Item("ruby",2000,3000,50,608748194406465557,"minerai")
+,Item("fish",2,5,1,608762539605753868,"poisson")
+,Item("tropicalfish",r.randint(25, 36),60,4,608762539030872079,"poisson")
+,Item("blowfish",r.randint(25, 36),60,4,618058831863218176,"poisson")
+,Item("octopus",50,90,8,618058832790421504,"poisson")
+,Item("cookie",30,40,1,"","consommable")
+,Item("grapes",15,25,1,"","consommable")
+,Item("wine_glass",150,210,3,"","consommable")
+,Item("backpack",1,5000,-100,616205834451550208,"special")]
 
 
 class Outil:
@@ -57,9 +59,9 @@ class Outil:
 		self.idmoji = idmoji
 		self.type = type
 
-objetOutil = [Outil("pickaxe",5,20,5,150,608748195291594792,"")
-,Outil("iron_pickaxe",80,160,10,800,608748194775433256,"forge")
-,Outil("fishingrod",5,15,3,200,608748194318385173,"")
+objetOutil = [Outil("pickaxe",5,20,15,150,608748195291594792,"")
+,Outil("iron_pickaxe",80,160,40,800,608748194775433256,"forge")
+,Outil("fishingrod",5,15,25,200,608748194318385173,"")
 ,Outil("banque_upgrade",0,10000,10000,None,421465024201097237,"banque")]
 
 
@@ -236,13 +238,19 @@ class GemsBase(commands.Cog):
 			#print(nom)
 			if nom != None:
 				ID = DB.nom_ID(nom)
-				gem = DB.valueAt(ID, "gems")
-				msg = nom+" a actuellement : "+str(gem)+" :gem: !"
+				nom = ctx.guild.get_member(ID)
+				nom = nom.name
 			else:
-				gem = DB.valueAt(ID, "gems")
-				msg = "tu as actuellement : "+str(gem)+" :gem: !"
+				nom = ctx.author.name
+			solde = DB.valueAt(ID, "gems")
+			title = "Compte principale de {}".format(nom)
+			msg = discord.Embed(title = title,color= 13752280, description = "")
+			desc = "{} :gem:\n".format(solde)
+			msg.add_field(name="Balance", value=desc, inline=False)
 
 			DB.updateComTime(ID, "bal")
+			await ctx.channel.send(embed = msg)
+			return
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -291,7 +299,7 @@ class GemsBase(commands.Cog):
 					prix = 0 - (c.achat*nb)
 					if DB.addGems(ID, prix) >= "0":
 						DB.addInv(ID, c.nom, nb)
-						if c.type != "friandise":
+						if c.type != "consommable":
 							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 						else:
 							msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
@@ -357,10 +365,14 @@ class GemsBase(commands.Cog):
 						test = False
 						gain = c.vente*nb
 						DB.addGems(ID, gain)
-						if c.type != "friandise":
+						if c.type != "consommable":
 							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
 						else:
 							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem: !".format(nb,item,gain)
+							if c.nom == "grapes" and int (nb/10) >= 1:
+								nbwine = int(nb/10)
+								DB.addInv(ID, "wine_glass", nbwine)
+								msg+="\nTu gagne {}:wine_glass:`verre de vin`".format(nbwine)
 						break
 				for c in objetOutil:
 					if item == c.nom:
@@ -390,9 +402,9 @@ class GemsBase(commands.Cog):
 	async def inv (self, ctx):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
-		nom = ctx.author.mention
+		nom = ctx.author.name
 		if DB.spam(ID,couldown_c, "inv"):
-			msg_inv = "Inventaire de {}\n\n".format(nom)
+			msg_inv = ""
 			inv = DB.valueAt(ID, "inventory")
 			tailletot = 0
 			Titre = True
@@ -413,14 +425,15 @@ class GemsBase(commands.Cog):
 				for x in inv:
 					if c.nom == str(x):
 						if inv[x] > 0:
-							if c.type != "friandise":
+							if c.type != "consommable":
 								msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 							else:
 								msg_inv = msg_inv+":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 							tailletot += c.poids*int(inv[x])
 
 			msg_inv += "\nTaille: `{}`".format(int(tailletot))
-			msg = discord.Embed(title = "Inventaire",color= 6466585, description = msg_inv)
+			msg_titre = "Inventaire de {}\n\n".format(nom)
+			msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
 			DB.updateComTime(ID, "inv")
 			await ctx.channel.send(embed = msg)
 		else:
@@ -443,16 +456,16 @@ class GemsBase(commands.Cog):
 				d_market += "<:gem_{0}:{3}>`{0}`: Vente **{1}** | Achat **{2}** ".format(c.nom,c.vente,c.achat,c.idmoji)
 				if c.durabilite != None:
 					d_market += "| Durabilité: **{}** ".format(c.durabilite)
-				d_market += "| Poid **{}**\n".format(c.poids)
+				d_market += "| Poids **{}**\n".format(c.poids)
 			Titre = True
 			for c in objetItem :
 				if Titre:
 					d_market += "\n**Items**\n"
 					Titre = False
-				if c.type != "friandise":
-					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				if c.type != "consommable":
+					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
 				else:
-					d_market += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poid **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+					d_market += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			DB.updateComTime(ID, "market")
@@ -643,6 +656,20 @@ class Gems(commands.Cog):
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", 1)
 			msg = "Récompense journalière! Tu as gagné 100 :gem:"
+		if DailyTime != str(jour):
+			for c in objetOutil:
+				if c.type == "banque":
+					Taille = c.poids
+			solde = DB.nbElements(ID, "solde", "banque")
+			soldeMax = DB.nbElements(ID, "soldeMax", "banque")
+			if soldeMax == 0:
+				soldeMax = Taille
+			if solde > soldeMax:
+				ARG2 = solde - soldeMax
+				DB.addGems(ID, ARG2)
+				nbgm = -1*ARG2
+				DB.addBanque(ID, "solde", nbgm)
+				msg += "\n\nTon compte épargne a été débiter de {} :gem:\nCes :gem: ont été transférer sur ton compte principale".format(ARG2)
 		await ctx.channel.send(msg)
 
 
@@ -658,17 +685,23 @@ class Gems(commands.Cog):
 		else:
 			mARG = "bal"
 		msg = ""
-		Taille = 10000
+		for c in objetOutil:
+			if c.type == "banque":
+				Taille = c.poids
 
 		if mARG == "bal":
 			if DB.spam(ID,couldown_c, "banque_bal"):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
+					nom = ctx.guild.get_member(ID)
+					ARG2 = nom.name
 					title = "Compte épargne de {}".format(ARG2)
 				else:
 					title = "Compte épargne de {}".format(ctx.author.name)
 				solde = DB.nbElements(ID, "solde", "banque")
 				soldeMax = DB.nbElements(ID, "soldeMax", "banque")
+				if soldeMax == 0:
+					soldeMax = Taille
 				msg = discord.Embed(title = title,color= 13752280, description = "")
 				desc = "{} / {} :gem:\n".format(solde, soldeMax)
 				msg.add_field(name="Balance", value=desc, inline=False)
@@ -729,7 +762,7 @@ class Gems(commands.Cog):
 					if soldeMax == 0:
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
-					soldeAdd = (0.25 + ( int(soldeMult)*0.05 ))*solde
+					soldeAdd = (0.20 + ( int(soldeMult)*0.01 ))*solde
 					DB.addBanque(ID, "solde", int(soldeAdd))
 					msg = "Tu as épargné {} :gem:\nNouveau solde: {} :gem:".format(int(soldeAdd), DB.nbElements(ID, "solde", "banque"))
 
@@ -1137,6 +1170,17 @@ class Gems(commands.Cog):
 			elif result[3] == "cookie" or result[4] == "cookie" or result[5] == "cookie":
 				DB.addInv(ID, "cookie", 1)
 				msg += "\nTu a trouvé 1 :cookie:`cookie`"
+			#===================================================================
+			#grappe
+			if result[3] == "grapes" and result[4] == "grapes" and result[5] == "grapes":
+				DB.addInv(ID, "grapes", 3)
+				msg += "\nTu a trouvé 3 :grapes:`grapes`"
+			elif (result[3] == "grapes" and result[4] == "grapes") or (result[4] == "grapes" and result[5] == "grapes") or (result[3] == "grapes" and result[5] == "grapes"):
+				DB.addInv(ID, "grapes", 2)
+				msg += "\nTu a trouvé 2 :grapes:`grapes`"
+			elif result[3] == "grapes" or result[4] == "grapes" or result[5] == "grapes":
+				DB.addInv(ID, "grapes", 1)
+				msg += "\nTu a trouvé 1 :grapes:`grapes`"
 			#===================================================================
 			#Backpack (hyper rare)
 			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
