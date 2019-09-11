@@ -213,6 +213,31 @@ def get_durabilite(ID, nameElem):
 	else:
 		return -1
 
+
+
+def recette(ctx):
+	"""Liste de toutes les recettes disponibles !"""
+	d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
+	d_recette+="▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Forge**\n"
+	for c in objetOutil:
+		for r in objetRecette :
+			if c.type == "forge":
+				if c.nom == r.nom:
+					d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
+					if r.nb1 > 0:
+						d_recette += "{0} <:gem_{1}:{2}>`{1}` ".format(r.nb1, r.item1, get_idmogi(r.item1))
+					if r.nb2 > 0:
+						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb2, r.item2, get_idmogi(r.item2))
+					if r.nb3 > 0:
+						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb3, r.item3, get_idmogi(r.item3))
+					if r.nb4 > 0:
+						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb4, r.item4, get_idmogi(r.item4))
+					d_recette += "\n"
+
+	msg = discord.Embed(title = "Recettes",color= 15778560, description = d_recette)
+	return msg
+
+
 #===============================================================
 
 class GemsBase(commands.Cog):
@@ -507,11 +532,15 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def forge(self, ctx, item, nb = 1):
+	async def forge(self, ctx, item = None, nb = 1):
 		"""**[item] [nombre]** | Permet de concevoir des items spécifiques"""
 		ID = ctx.author.id
 		if DB.spam(ID,couldown_c, "forge"):
-			if item == "iron_pickaxe":
+			if item == None:
+				msg = recette(ctx)
+				await ctx.channel.send(embed = msg)
+				return
+			elif item == "iron_pickaxe":
 				#print("iron: {}, pickaxe: {}".format(DB.nbElements(ID, "iron", "inventory"), DB.nbElements(ID, "pickaxe", "inventory")))
 				nb = int(nb)
 				nbIron = 4*nb
@@ -536,37 +565,6 @@ class GemsBase(commands.Cog):
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
-
-
-
-	@commands.command(pass_context=True)
-	async def recette(self, ctx):
-		"""Liste de toutes les recettes disponibles !"""
-		ID = ctx.author.id
-		if DB.spam(ID,couldown_c, "recette"):
-			d_recette="Permet de voir la liste de toutes les recettes disponible !\n\n"
-			d_recette+="▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Forge**\n"
-			for c in objetOutil:
-				for r in objetRecette :
-					if c.type == "forge":
-						if c.nom == r.nom:
-							d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
-							if r.nb1 > 0:
-								d_recette += "{0} <:gem_{1}:{2}>`{1}` ".format(r.nb1, r.item1, get_idmogi(r.item1))
-							if r.nb2 > 0:
-								d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb2, r.item2, get_idmogi(r.item2))
-							if r.nb3 > 0:
-								d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb3, r.item3, get_idmogi(r.item3))
-							if r.nb4 > 0:
-								d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb4, r.item4, get_idmogi(r.item4))
-							d_recette += "\n"
-
-			msg = discord.Embed(title = "Recettes",color= 15778560, description = d_recette)
-			DB.updateComTime(ID, "recette")
-			await ctx.channel.send(embed = msg)
-		else:
-			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
-			await ctx.channel.send(msg)
 
 
 
