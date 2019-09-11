@@ -208,13 +208,13 @@ def nom_ID(nom):
 		ID = -1
 	return(ID)
 
-def nbElements(ID, nameElem):
+def nbElements(ID, nameElem, stockeur):
 	"""
 	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
 	"""
-	inventory = valueAt(ID, "inventory")
-	if nameElem in inventory:
-		return inventory[nameElem]
+	Stockeur = valueAt(ID, stockeur)
+	if nameElem in Stockeur:
+		return Stockeur[nameElem]
 	else:
 		return 0
 
@@ -225,10 +225,10 @@ def addInv(ID, nameElem, nbElem):
 	Pour en retirer mettez nbElemn en négatif
 	"""
 	inventory = valueAt(ID, "inventory")
-	if nbElements(ID, nameElem) > 0 and nbElem < 0:
+	if nbElements(ID, nameElem, "inventory") > 0 and nbElem < 0:
 		inventory[nameElem] += nbElem
 	elif nbElem >= 0:
-		if nbElements(ID, nameElem) == 0:
+		if nbElements(ID, nameElem, "inventory") == 0:
 			inventory[nameElem] = nbElem
 		else :
 			inventory[nameElem] += nbElem
@@ -238,27 +238,16 @@ def addInv(ID, nameElem, nbElem):
 	updateField(ID, "inventory", inventory)
 
 
-def nbStatGems(ID, nameElem):
-	"""
-	Permet de savoir combien il y'a de nameElem dans StatGems de ID
-	"""
-	statgems = valueAt(ID, "StatGems")
-	if nameElem in statgems:
-		return statgems[nameElem]
-	else:
-		return 0
-
-
 def addStatGems(ID, nameElem, nbElem):
 	"""
 	Permet de modifier le nombre de nameElem pour ID dans StatGems
 	Pour en retirer mettez nbElemn en négatif
 	"""
 	statgems = valueAt(ID, "StatGems")
-	if nbStatGems(ID, nameElem) > 0 and nbElem < 0:
+	if nbElements(ID, nameElem, "StatGems") > 0 and nbElem < 0:
 		statgems[nameElem] += nbElem
 	elif nbElem >= 0:
-		if nbStatGems(ID, nameElem) == 0:
+		if nbElements(ID, nameElem, "StatGems") == 0:
 			statgems[nameElem] = nbElem
 		else :
 			statgems[nameElem] += nbElem
@@ -266,3 +255,21 @@ def addStatGems(ID, nameElem, nbElem):
 		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
 	updateField(ID, "StatGems", statgems)
+
+def addBanque(ID, nameElem, nbElem):
+	"""
+	Permet de modifier le nombre de nameElem pour ID dans la banque
+	Pour en retirer mettez nbElemn en négatif
+	"""
+	banque = valueAt(ID, "banque")
+	if nbElements(ID, nameElem, "banque") > 0 and nbElem < 0:
+		banque[nameElem] += nbElem
+	elif nbElem >= 0:
+		if nbElements(ID, nameElem, "banque") == 0:
+			banque[nameElem] = nbElem
+		else :
+			banque[nameElem] += nbElem
+	else:
+		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
+		return 404
+	updateField(ID, "banque", banque)
