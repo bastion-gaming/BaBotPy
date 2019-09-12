@@ -765,9 +765,9 @@ class Gems(commands.Cog):
 				desc = "{} / {} :gem:\n".format(solde, soldeMax)
 				msg.add_field(name="Balance", value=desc, inline=False)
         
-				desc = "**bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
-				desc += "\n**add** *[+/- nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
-				desc += "\n**epargne** | Permet de calculer son épargne (utilisable toute les 4h)"
+				desc = "bank **bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
+				desc += "\nbank **add** *[+/- nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
+				desc += "\nbank **saving** | Permet de calculer son épargne (utilisable toute les 4h)"
 				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("banque_upgrade", get_idmogi("banque_upgrade"))
         
 				msg.add_field(name="Commandes", value=desc, inline=False)
