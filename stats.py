@@ -301,7 +301,8 @@ class Stats(commands.Cog):
 		labels = []
 		sizes = []
 		for i in range (6):
-			labels.append(ctx.guild.get_member(richest[i][1]).name)
+			nom = ctx.guild.get_member(richest[i][1])
+			labels.append(nom.name)
 			sizes.append(richest[i][0])
 		labels.append("autre")
 		sizes.append(total - sous_total)
