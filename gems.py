@@ -270,7 +270,7 @@ class GemsBase(commands.Cog):
 			else:
 				nom = ctx.author.name
 			solde = DB.valueAt(ID, "gems")
-			title = "Compte principale de {}".format(nom)
+			title = "Compte principal de {}".format(nom)
 			msg = discord.Embed(title = title,color= 13752280, description = "")
 			desc = "{} :gem:\n".format(solde)
 			msg.add_field(name="Balance", value=desc, inline=False)
@@ -721,8 +721,8 @@ class Gems(commands.Cog):
 				ARG2 = solde - soldeMax
 				DB.addGems(ID, ARG2)
 				nbgm = -1*ARG2
-				DB.addBank(ID, "solde", nbgm)
-				msg += "\n\nTon compte épargne a été débiter de {} :gem:\nCes :gem: ont été transférer sur ton compte principale".format(ARG2)
+				DB.addBanque(ID, "solde", nbgm)
+				msg += "\n\nTon compte épargne a été débité de {} :gem:\nCes :gem: ont été transférer sur ton compte principal".format(ARG2)
 		await ctx.channel.send(msg)
 
 
@@ -764,11 +764,12 @@ class Gems(commands.Cog):
 				msg = discord.Embed(title = title,color= 13752280, description = "")
 				desc = "{} / {} :gem:\n".format(solde, soldeMax)
 				msg.add_field(name="Balance", value=desc, inline=False)
-
-				desc = "**bank bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
-				desc += "\n**bank add** *[nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
-				desc += "\n**bank saving** | Permet de calculer son épargne (utilisable toute les 4h)"
-				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("bank_upgrade", get_idmogi("bank_upgrade"))
+        
+				desc = "**bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
+				desc += "\n**add** *[+/- nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
+				desc += "\n**epargne** | Permet de calculer son épargne (utilisable toute les 4h)"
+				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("banque_upgrade", get_idmogi("banque_upgrade"))
+        
 				msg.add_field(name="Commandes", value=desc, inline=False)
 				await ctx.channel.send(embed = msg)
 				DB.updateComTime(ID, "bank_bal")
@@ -803,8 +804,8 @@ class Gems(commands.Cog):
 							return
 						nbgm = -1*ARG2
 						DB.addGems(ID, nbgm)
-						DB.addBank(ID, "solde", ARG2)
-						msg += "Ton compte épargne a été créditer de {} :gem:".format(ARG2)
+						DB.addBanque(ID, "solde", ARG2)
+						msg += "Ton compte épargne a été crédité de {} :gem:".format(ARG2)
 						msg += "\nNouveau solde: {} :gem:".format(DB.nbElements(ID, "solde", "banque"))
 						DB.updateComTime(ID, "bank_add")
 					else:
