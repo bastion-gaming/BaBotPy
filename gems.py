@@ -62,7 +62,7 @@ class Outil:
 objetOutil = [Outil("pickaxe",5,20,15,150,608748195291594792,"")
 ,Outil("iron_pickaxe",80,160,40,800,608748194775433256,"forge")
 ,Outil("fishingrod",5,15,25,200,608748194318385173,"")
-,Outil("banque_upgrade",0,10000,10000,None,421465024201097237,"banque")]
+,Outil("bank_upgrade",0,10000,10000,None,421465024201097237,"bank")]
 
 
 class Recette:
@@ -334,11 +334,11 @@ class GemsBase(commands.Cog):
 			for c in objetOutil :
 				if item == c.nom :
 					test = False
-					if c.type == "banque":
+					if c.type == "bank":
 						soldeMax = DB.nbElements(ID, "soldeMax", "banque")
 						if soldeMax == 0:
 							soldeMax = c.poids
-							DB.addBanque(ID, "soldeMax", c.poids)
+							DB.addBank(ID, "soldeMax", c.poids)
 						soldeMult = soldeMax/c.poids
 						prix = 0
 						i = 1
@@ -351,8 +351,8 @@ class GemsBase(commands.Cog):
 					else:
 						prix = -1 * (c.achat*nb)
 					if DB.addGems(ID, prix) >= "0":
-						if c.type == "banque":
-							DB.addBanque(ID, "soldeMax", nb*c.poids)
+						if c.type == "bank":
+							DB.addBank(ID, "soldeMax", nb*c.poids)
 							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 							await ctx.channel.send(msg)
 							return
@@ -656,7 +656,7 @@ class Gems(commands.Cog):
 			msg = "Récompense journalière! Tu as gagné 100 :gem:"
 		if DailyTime != str(jour):
 			for c in objetOutil:
-				if c.type == "banque":
+				if c.type == "bank":
 					Taille = c.poids
 			solde = DB.nbElements(ID, "solde", "banque")
 			soldeMax = DB.nbElements(ID, "soldeMax", "banque")
@@ -666,14 +666,14 @@ class Gems(commands.Cog):
 				ARG2 = solde - soldeMax
 				DB.addGems(ID, ARG2)
 				nbgm = -1*ARG2
-				DB.addBanque(ID, "solde", nbgm)
+				DB.addBank(ID, "solde", nbgm)
 				msg += "\n\nTon compte épargne a été débiter de {} :gem:\nCes :gem: ont été transférer sur ton compte principale".format(ARG2)
 		await ctx.channel.send(msg)
 
 
 
 	@commands.command(pass_context=True)
-	async def banque(self, ctx, ARG = None, ARG2 = None):
+	async def bank(self, ctx, ARG = None, ARG2 = None):
 		"""
 		Compte épargne
 		"""
@@ -684,11 +684,11 @@ class Gems(commands.Cog):
 			mARG = "bal"
 		msg = ""
 		for c in objetOutil:
-			if c.type == "banque":
+			if c.type == "bank":
 				Taille = c.poids
 
 		if mARG == "bal":
-			if DB.spam(ID,couldown_c, "banque_bal"):
+			if DB.spam(ID,couldown_c, "bank_bal"):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
 					nom = ctx.guild.get_member(ID)
@@ -704,13 +704,13 @@ class Gems(commands.Cog):
 				desc = "{} / {} :gem:\n".format(solde, soldeMax)
 				msg.add_field(name="Balance", value=desc, inline=False)
 
-				desc = "**bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
-				desc += "\n**add** *[nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
-				desc += "\n**epargne** | Permet de calculer son épargne (utilisable toute les 4h)"
-				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("banque_upgrade", get_idmogi("banque_upgrade"))
+				desc = "**bank bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
+				desc += "\n**bank add** *[nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
+				desc += "\n**bank saving** | Permet de calculer son épargne (utilisable toute les 4h)"
+				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("bank_upgrade", get_idmogi("bank_upgrade"))
 				msg.add_field(name="Commandes", value=desc, inline=False)
 				await ctx.channel.send(embed = msg)
-				DB.updateComTime(ID, "banque_bal")
+				DB.updateComTime(ID, "bank_bal")
 				return
 			else:
 				msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
@@ -718,7 +718,7 @@ class Gems(commands.Cog):
 			return
 
 		elif mARG == "add":
-			if DB.spam(ID,couldown_c, "banque_add"):
+			if DB.spam(ID,couldown_c, "bank_add"):
 				if ARG2 != None:
 					ARG2 = int(ARG2)
 					gems = DB.valueAt(ID, "gems")
@@ -738,10 +738,10 @@ class Gems(commands.Cog):
 							return
 						nbgm = -1*ARG2
 						DB.addGems(ID, nbgm)
-						DB.addBanque(ID, "solde", ARG2)
+						DB.addBank(ID, "solde", ARG2)
 						msg += "Ton compte épargne a été créditer de {} :gem:".format(ARG2)
 						msg += "\nNouveau solde: {} :gem:".format(DB.nbElements(ID, "solde", "banque"))
-						DB.updateComTime(ID, "banque_add")
+						DB.updateComTime(ID, "bank_add")
 					else:
 						msg = "Tu n'as pas assez de :gem:`gems` pour épargner cette somme"
 				else:
@@ -750,8 +750,8 @@ class Gems(commands.Cog):
 				msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 			return
-		elif mARG == "epargne":
-			if DB.spam(ID,couldown_xxxl, "banque_epargne"):
+		elif mARG == "saving":
+			if DB.spam(ID,couldown_xxxl, "bank_saving"):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
 				else:
@@ -761,12 +761,20 @@ class Gems(commands.Cog):
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
 					soldeAdd = (0.20 + ( int(soldeMult)*0.01 ))*solde
-					DB.addBanque(ID, "solde", int(soldeAdd))
+					DB.addBank(ID, "solde", int(soldeAdd))
 					msg = "Tu as épargné {} :gem:\nNouveau solde: {} :gem:".format(int(soldeAdd), DB.nbElements(ID, "solde", "banque"))
 
-				DB.updateComTime(ID, "banque_epargne")
+				DB.updateComTime(ID, "bank_saving")
 			else:
-				msg = "Il faut attendre 4h entre chaque épargne !"
+				ComTime = DB.valueAt(ID, "com_time")
+				if "bank_saving" in ComTime:
+					time = ComTime["bank_saving"]
+				time = time - (t.time()-couldown_xxxl)
+				timeH = int(time / 60 / 60)
+				time = time - timeH * 3600
+				timeM = int(time / 60)
+				timeS = int(time - timeM * 60)
+				msg = "Il te faut attendre `{}h {}m {}s` avant d'épargner à nouveau !".format(timeH,timeM,timeS)
 			await ctx.channel.send(msg)
 			return
 

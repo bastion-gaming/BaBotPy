@@ -256,7 +256,7 @@ def addStatGems(ID, nameElem, nbElem):
 		return 404
 	updateField(ID, "StatGems", statgems)
 
-def addBanque(ID, nameElem, nbElem):
+def addBank(ID, nameElem, nbElem):
 	"""
 	Permet de modifier le nombre de nameElem pour ID dans la banque
 	Pour en retirer mettez nbElemn en négatif
