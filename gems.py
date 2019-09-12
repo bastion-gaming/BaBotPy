@@ -268,7 +268,7 @@ class GemsBase(commands.Cog):
 			else:
 				nom = ctx.author.name
 			solde = DB.valueAt(ID, "gems")
-			title = "Compte principale de {}".format(nom)
+			title = "Compte principal de {}".format(nom)
 			msg = discord.Embed(title = title,color= 13752280, description = "")
 			desc = "{} :gem:\n".format(solde)
 			msg.add_field(name="Balance", value=desc, inline=False)
@@ -667,7 +667,7 @@ class Gems(commands.Cog):
 				DB.addGems(ID, ARG2)
 				nbgm = -1*ARG2
 				DB.addBanque(ID, "solde", nbgm)
-				msg += "\n\nTon compte épargne a été débiter de {} :gem:\nCes :gem: ont été transférer sur ton compte principale".format(ARG2)
+				msg += "\n\nTon compte épargne a été débité de {} :gem:\nCes :gem: ont été transférer sur ton compte principal".format(ARG2)
 		await ctx.channel.send(msg)
 
 
@@ -739,7 +739,7 @@ class Gems(commands.Cog):
 						nbgm = -1*ARG2
 						DB.addGems(ID, nbgm)
 						DB.addBanque(ID, "solde", ARG2)
-						msg += "Ton compte épargne a été créditer de {} :gem:".format(ARG2)
+						msg += "Ton compte épargne a été crédité de {} :gem:".format(ARG2)
 						msg += "\nNouveau solde: {} :gem:".format(DB.nbElements(ID, "solde", "banque"))
 						DB.updateComTime(ID, "banque_add")
 					else:
