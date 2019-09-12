@@ -186,6 +186,7 @@ def testTrophy(ID, nameElem):
 
 def addDurabilité(ID, nameElem, nbElem):
 	"""
+	Modifie la durabilité de l'outil nameElem
 	"""
 	durabilite = DB.valueAt(ID, "durabilite")
 	if DB.nbElements(ID, nameElem, "inventory") > 0 and nbElem < 0:
@@ -255,6 +256,7 @@ class GemsBase(commands.Cog):
 
 
 
+
 	@commands.command(pass_context=True)
 	async def bal(self, ctx, nom = None):
 		"""**[nom]** | Êtes vous riche ou pauvre ?"""
@@ -275,6 +277,8 @@ class GemsBase(commands.Cog):
 
 			DB.updateComTime(ID, "bal")
 			await ctx.channel.send(embed = msg)
+			# Message de réussite dans la console
+			print("Gems >> Balance de {} affichée".format(nom))
 			return
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
@@ -305,6 +309,8 @@ class GemsBase(commands.Cog):
 			DB.updateComTime(ID, "baltop")
 			msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
 			await ctx.channel.send(embed = msg)
+			# Message de réussite dans la console
+			print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,n))
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
@@ -328,6 +334,8 @@ class GemsBase(commands.Cog):
 							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 						else:
 							msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
+						# Message de réussite dans la console
+						print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
 					else :
 						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 					break
@@ -354,6 +362,8 @@ class GemsBase(commands.Cog):
 						if c.type == "bank":
 							DB.addBank(ID, "soldeMax", nb*c.poids)
 							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+							# Message de réussite dans la console
+							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
 							await ctx.channel.send(msg)
 							return
 						else:
@@ -392,8 +402,12 @@ class GemsBase(commands.Cog):
 						DB.addGems(ID, gain)
 						if c.type != "consommable":
 							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
+							# Message de réussite dans la console
+							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 						else:
 							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem: !".format(nb,item,gain)
+							# Message de réussite dans la console
+							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 							if c.nom == "grapes" and int (nb/10) >= 1:
 								nbwine = int(nb/10)
 								DB.addInv(ID, "wine_glass", nbwine)
@@ -407,6 +421,8 @@ class GemsBase(commands.Cog):
 						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
 						if DB.nbElements(ID, item, "inventory") == 1:
 							addDurabilité(ID, item, -1)
+						# Message de réussite dans la console
+						print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 						break
 
 				DB.addInv(ID, item, -nb)
@@ -495,6 +511,8 @@ class GemsBase(commands.Cog):
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			DB.updateComTime(ID, "market")
 			await ctx.channel.send(embed = msg)
+			# Message de réussite dans la console
+			print("Gems >> {} a afficher le marché".format(ctx.author.name))
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
@@ -516,6 +534,8 @@ class GemsBase(commands.Cog):
 						DB.addGems(ID_recu, gain)
 						DB.addGems(ID,don)
 						msg = "<@{0}> donne {1}:gem: à <@{2}> !".format(ID,gain,ID_recu)
+						# Message de réussite dans la console
+						print("Gems >> {} a donné {} Gems à {}".format(ctx.author.name,gain,ctx.guild.get_member(ID_recu).name))
 					else:
 						msg = "<@{0}> n'a pas assez pour donner à <@{2}> !".format(ID,gain,ID_recu)
 
@@ -536,12 +556,17 @@ class GemsBase(commands.Cog):
 		"""**[item] [nombre]** | Permet de concevoir des items spécifiques"""
 		ID = ctx.author.id
 		if DB.spam(ID,couldown_c, "forge"):
+			#-------------------------------------
+			# Affichage des recettes disponible
 			if item == None:
 				msg = recette(ctx)
 				await ctx.channel.send(embed = msg)
+				# Message de réussite dans la console
+				print("Gems >> {} a afficher les recettes".format(ctx.author.name))
 				return
+			#-------------------------------------
+			# Forgeage des items (pour l'instant uniquement la pioche en fer)
 			elif item == "iron_pickaxe":
-				#print("iron: {}, pickaxe: {}".format(DB.nbElements(ID, "iron", "inventory"), DB.nbElements(ID, "pickaxe", "inventory")))
 				nb = int(nb)
 				nbIron = 4*nb
 				nbPickaxe = 1*nb
@@ -550,6 +575,8 @@ class GemsBase(commands.Cog):
 					DB.addInv(ID, "pickaxe", -nbPickaxe)
 					DB.addInv(ID, "iron", -nbIron)
 					msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:608748194775433256>`iron_pickaxe` !".format(nb)
+					# Message de réussite dans la console
+					print("Gems >> {} a forgé une pioche en fer".format(ctx.author.name))
 				elif DB.nbElements(ID, "iron", "inventory") < nbIron and DB.nbElements(ID, "pickaxe", "inventory") < nbPickaxe:
 					msg = "tu n'as pas assez de <:gem_iron:{1}>`lingots de fer` et de <:gem_pickaxe:{2}>`pickaxe` pour forger {0} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nb,get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
 				elif DB.nbElements(ID, "iron", "inventory") < nbIron:
@@ -575,13 +602,20 @@ class GemsBase(commands.Cog):
 		if DB.spam(ID,couldown_c, "trophy"):
 			if nom != None:
 				ID = DB.nom_ID(nom)
+				nom = ctx.guild.get_member(ID)
+				nom = nom.name
 			else:
-				nom = ctx.author.mention
+				nom = ctx.author.name
 			d_trophy = ":trophy:Trophées de {}\n\n".format(nom)
+			#-------------------------------------
+			# Récupération de la liste des trophées de ID
+			# et attribution de nouveau trophée si les conditions sont rempli
 			trophy = DB.valueAt(ID, "trophy")
 			for c in objetTrophy:
 				testTrophy(ID, c.nom)
 
+			#-------------------------------------
+			# Affichage des trophées possédés par ID
 			trophy = DB.valueAt(ID, "trophy")
 			for c in objetTrophy:
 				for x in trophy:
@@ -591,6 +625,8 @@ class GemsBase(commands.Cog):
 
 			DB.updateComTime(ID, "trophy")
 			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
+			# Message de réussite dans la console
+			print("Gems >> {} a affiché les trophées de {}".format(ctx.author.name,nom))
 			await ctx.channel.send(embed = msg)
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
@@ -604,20 +640,28 @@ class GemsBase(commands.Cog):
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
 		if DB.spam(ID,couldown_c, "trophylist"):
+			#-------------------------------------
+			# Affichage des trophées standard
 			for c in objetTrophy:
 				if c.type != "unique" and c.type != "special":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
 			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+			#-------------------------------------
+			# Affichage des trophées spéciaux
 			for c in objetTrophy:
 				if c.type != "unique" and c.type == "special":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
 			d_trophy += "▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+			#-------------------------------------
+			# Affichage des trophées uniques
 			for c in objetTrophy:
 				if c.type == "unique" and c.type != "special":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
 
 			DB.updateComTime(ID, "trophylist")
 			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
+			# Message de réussite dans la console
+			print("Gems >> {} a affiché la liste des trophées".format(ctx.author.name))
 			await ctx.channel.send(embed = msg)
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
@@ -635,10 +679,16 @@ class Gems(commands.Cog):
 	@commands.command(pass_context=True)
 	async def daily(self, ctx):
 		"""Récupère ta récompense journalière!"""
+		#=======================================================================
+		# Initialisation des variables générales de la fonction
+		#=======================================================================
 		ID = ctx.author.id
 		DailyTime = DB.daily_data(ID, "dailytime")
 		DailyMult = DB.daily_data(ID, "dailymult")
 		jour = dt.date.today()
+		#=======================================================================
+		# Détermination du daily
+		#=======================================================================
 		if DailyTime == str(jour - dt.timedelta(days=1)):
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", DailyMult + 1)
@@ -654,7 +704,12 @@ class Gems(commands.Cog):
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", 1)
 			msg = "Récompense journalière! Tu as gagné 100 :gem:"
+		#=======================================================================
+		# Récupération du surplus du compte épargne
+		#=======================================================================
 		if DailyTime != str(jour):
+			# Message re réussite dans la console
+			print("Gems >> {} a effectué son daily".format(ctx.author.name))
 			for c in objetOutil:
 				if c.type == "bank":
 					Taille = c.poids
@@ -677,6 +732,9 @@ class Gems(commands.Cog):
 		"""
 		Compte épargne
 		"""
+		#=======================================================================
+		# Initialistation des variables générales de la fonction
+		#=======================================================================
 		ID = ctx.author.id
 		if ARG != None:
 			mARG = ARG.lower()
@@ -686,7 +744,10 @@ class Gems(commands.Cog):
 		for c in objetOutil:
 			if c.type == "bank":
 				Taille = c.poids
-
+		#=======================================================================
+		# Affiche le menu principal de la banque
+		# !bank bal <nom d'un joueur> permet de visualiser l'état de la banque de ce joueur
+		#=======================================================================
 		if mARG == "bal":
 			if DB.spam(ID,couldown_c, "bank_bal"):
 				if ARG2 != None:
@@ -716,7 +777,11 @@ class Gems(commands.Cog):
 				msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 			return
-
+		#=======================================================================
+		# Ajoute ou enlève des Gems sur le compte épargne
+		# un nombre positif ajoute des Gems
+		# un nombre négatif enlève des Gems
+		#=======================================================================
 		elif mARG == "add":
 			if DB.spam(ID,couldown_c, "bank_add"):
 				if ARG2 != None:
@@ -750,6 +815,10 @@ class Gems(commands.Cog):
 				msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 			return
+		#=======================================================================
+		# Fonction d'épargne
+		# L'intéret est de 20% avec un bonus de 1% pour chanque bank_upgrade possédée
+		#=======================================================================
 		elif mARG == "saving":
 			if DB.spam(ID,couldown_xxxl, "bank_saving"):
 				if ARG2 != None:
@@ -1041,7 +1110,7 @@ class Gems(commands.Cog):
 			result = []
 			msg = "Votre mise: {} :gem:\n\n".format(mise)
 			val = 0-mise
-			for i in range(0,9):
+			for i in range(0,9): #Creation de la machine à sous
 				if i == 3:
 					msg+="\n"
 				elif i == 6:
@@ -1098,6 +1167,9 @@ class Gems(commands.Cog):
 				else:
 					msg+="<:gem_{}:{}>".format(result[i], get_idmogi(result[i]))
 			msg += "\n"
+
+			#===================================================================
+			# Attribution des prix
 			#===================================================================
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":

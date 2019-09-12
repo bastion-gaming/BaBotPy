@@ -42,7 +42,7 @@ def nom_ID(nom):
 	elif len(nom) == 22 :
 		ID = int(nom[3:21])
 	else :
-		print("mauvais nom")
+		print("DB >> mauvais nom")
 		ID = "prout"
 	return(ID)
 
@@ -105,11 +105,11 @@ def updateField(ID, fieldName, fieldValue):
 	fieldValue: string qui va remplacer l'ancienne valeur
 	"""
 	if db.search(getattr(Query(),fieldName)) == []:
-		# print("Le champ n'existe pas")
+		print("DB >> Le champ n'existe pas")
 		return "201"
 	else:
 		db.update({fieldName: fieldValue}, Query().ID == ID)
-		# print("Le champ a été mis à jour")
+		print("DB >> Le champ a été mis à jour")
 		return "200"
 
 
@@ -164,9 +164,9 @@ def addGems(ID, nbGems):
 	new_value = int(old_value) + nbGems
 	if new_value >= 0:
 		updateField(ID, "gems", new_value)
-		# print("Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
-	# else:
-	# 	print("Il n'y a pas assez sur ce compte !")
+		print("DB >> Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+	else:
+	 	print("DB >> Il n'y a pas assez sur ce compte !")
 	return str(new_value)
 
 def daily_data(ID, nameElem):
@@ -204,7 +204,7 @@ def nom_ID(nom):
 	elif len(nom) == 22 :
 		ID = int(nom[3:21])
 	else :
-		print("mauvais nom")
+		print("DB >> mauvais nom")
 		ID = -1
 	return(ID)
 

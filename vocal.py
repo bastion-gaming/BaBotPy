@@ -68,7 +68,7 @@ class Queue(commands.Cog):
 			await ctx.send("{} se lance".format(self.info.title[0]))
 		else:
 			await ctx.send("{} ajouté à la queue".format(self.info.last_title()))
-			# print("ajouté à la queue")
+			print("Vocal >> ajouté à la queue")
 	def dl(self, url):
 		ydl_opts ={
 			'format':'bestaudio/best',
@@ -81,7 +81,7 @@ class Queue(commands.Cog):
 				}]
 		}
 		with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-			print('Downloading song now;\n')
+			print('Vocal >> Downloading song now;\n')
 			ydl.download([url])
 
 
@@ -89,19 +89,19 @@ class Queue(commands.Cog):
 		try :
 			self.info.sup()
 		except ValueError:
-			print("liste vide")
+			print("Vocal >> liste vide")
 			pass
 		if not self.info.url:
 			msg = 'la queue est vide'
-			print('la queue est vide')
+			print('Vocal >> la queue est vide')
 		else:
 			song_there = os.path.isfile("cache/song.mp3")
 			try :
 				if song_there:
 					os.remove('cache/song.mp3')
-					print('removed old song file')
+					print('Vocal >> removed old song file')
 			except PermissionError:
-				print('trying to delete the song file')
+				print('Vocal >> trying to delete the song file')
 				ctx.send("ERROR music playing")
 				pass
 
@@ -150,10 +150,10 @@ class Music(commands.Cog):
 		try :
 			if song_there:
 				os.remove('cache/song.mp3')
-				print('removed old song file')
+				print('Vocal >> removed old song file')
 
 		except PermissionError:
-			print('trying to delete the song file')
+			print('Vocal >> trying to delete the song file')
 			ctx.send("ERROR music playing")
 			return
 
