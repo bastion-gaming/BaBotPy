@@ -804,7 +804,7 @@ class Gems(commands.Cog):
 							return
 						nbgm = -1*ARG2
 						DB.addGems(ID, nbgm)
-						DB.addBanque(ID, "solde", ARG2)
+						DB.addBank(ID, "solde", ARG2)
 						msg += "Ton compte épargne a été crédité de {} :gem:".format(ARG2)
 						msg += "\nNouveau solde: {} :gem:".format(DB.nbElements(ID, "solde", "banque"))
 						DB.updateComTime(ID, "bank_add")
