@@ -6,6 +6,10 @@ async def autorole(member):
 	role = discord.utils.get(member.guild.roles, name="Joueurs")
 	await member.add_roles(role)
 
+async def addrole(member, role):
+	setrole = discord.utils.get(member.guild.roles, name=role)
+	await member.add_roles(setrole)
+
 class Roles(commands.Cog):
 
 	def __init__(self,ctx):

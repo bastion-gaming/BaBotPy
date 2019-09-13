@@ -86,18 +86,19 @@ client.load_extension('utils')
 @client.event
 async def on_member_join(member):
 	if member.guild.id == idBASTION:
-		await roles.autorole(member)
 		channel = client.get_channel(417445503110742048)
 		time = t.time()
 		#data = sqlite3.connect('connect.db')
 		#c = data.cursor()
 		id = member.id
 		if DB.newPlayer(id) == "Le joueur a été ajouté !":
+			await roles.autorole(member)
 			updateField(ID, "arrival", str(dt.datetime.now()))
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur #417454223224209408 \n:arrow_right: Sur #545204163341058058\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention)
 		else:
 			if valueAt(ID, "arrival") == "0":
 				updateField(ID, "arrival", str(dt.datetime.now()))
+			await roles.addrole(member, "Joueurs")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
 		await channel.send(msg)
