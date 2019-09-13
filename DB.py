@@ -208,7 +208,7 @@ def nom_ID(nom):
 		ID = -1
 	return(ID)
 
-def nbElements(ID, nameElem, stockeur):
+def nbElements(ID, stockeur, nameElem):
 	"""
 	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
 	"""
@@ -219,57 +219,20 @@ def nbElements(ID, nameElem, stockeur):
 		return 0
 
 
-def addInv(ID, nameElem, nbElem):
+def add(ID, stockeur, nameElem, nbElem):
 	"""
-	Permet de modifier le nombre de nameElem pour ID dans l'inventaire
+	Permet de modifier le nombre de nameElem pour ID dans le stockeur (inventory | StatGems | Trophy | banque)
 	Pour en retirer mettez nbElemn en négatif
 	"""
-	inventory = valueAt(ID, "inventory")
-	if nbElements(ID, nameElem, "inventory") > 0 and nbElem < 0:
-		inventory[nameElem] += nbElem
+	Stockeur = valueAt(ID, stockeur)
+	if nbElements(ID, stockeur, nameElem) > 0 and nbElem < 0:
+		Stockeur[nameElem] += nbElem
 	elif nbElem >= 0:
-		if nbElements(ID, nameElem, "inventory") == 0:
-			inventory[nameElem] = nbElem
+		if nbElements(ID, stockeur, nameElem) == 0:
+			Stockeur[nameElem] = nbElem
 		else :
-			inventory[nameElem] += nbElem
+			Stockeur[nameElem] += nbElem
 	else:
 		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
-	updateField(ID, "inventory", inventory)
-
-
-def addStatGems(ID, nameElem, nbElem):
-	"""
-	Permet de modifier le nombre de nameElem pour ID dans StatGems
-	Pour en retirer mettez nbElemn en négatif
-	"""
-	statgems = valueAt(ID, "StatGems")
-	if nbElements(ID, nameElem, "StatGems") > 0 and nbElem < 0:
-		statgems[nameElem] += nbElem
-	elif nbElem >= 0:
-		if nbElements(ID, nameElem, "StatGems") == 0:
-			statgems[nameElem] = nbElem
-		else :
-			statgems[nameElem] += nbElem
-	else:
-		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
-		return 404
-	updateField(ID, "StatGems", statgems)
-
-def addBank(ID, nameElem, nbElem):
-	"""
-	Permet de modifier le nombre de nameElem pour ID dans la banque
-	Pour en retirer mettez nbElemn en négatif
-	"""
-	banque = valueAt(ID, "banque")
-	if nbElements(ID, nameElem, "banque") > 0 and nbElem < 0:
-		banque[nameElem] += nbElem
-	elif nbElem >= 0:
-		if nbElements(ID, nameElem, "banque") == 0:
-			banque[nameElem] = nbElem
-		else :
-			banque[nameElem] += nbElem
-	else:
-		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
-		return 404
-	updateField(ID, "banque", banque)
+	updateField(ID, stockeur, Stockeur)
