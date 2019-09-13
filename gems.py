@@ -257,14 +257,6 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def test(self, ctx):
-		"""Pour t'ajouter dans la base de données !"""
-		ID = ctx.author.id
-		await ctx.channel.send(testInvTaille(ID))
-
-
-
-	@commands.command(pass_context=True)
 	async def begin(self, ctx):
 		"""Pour t'ajouter dans la base de données !"""
 		ID = ctx.author.id
