@@ -735,7 +735,7 @@ class Gems(commands.Cog):
 				ARG2 = solde - soldeMax
 				DB.addGems(ID, ARG2)
 				nbgm = -1*ARG2
-				DB.add(ID, "banquue", "solde", nbgm)
+				DB.add(ID, "banque", "solde", nbgm)
 				msg += "\n\nTon compte épargne a été débité de {} :gem:\nCes :gem: ont été transférer sur ton compte principal".format(ARG2)
 		await ctx.channel.send(msg)
 
