@@ -22,6 +22,10 @@ message_gamble = ["Tu as remporté le pari ! Tu obtiens"
 ,"Pourquoi jouer à Fortnite quand tu peux gamble! Prends tes"]
 # 4 phrases
 # se sont les phrases prononcé par le bot pour plus de diversité
+
+# Taille max de l'Inventaire
+invMax = 10000
+
 class Item:
 
 	def __init__(self,nom,vente,achat,poids,idmoji,type):
@@ -146,6 +150,28 @@ def get_idmogi(nameElem):
 
 
 
+def testInvTaille(ID):
+	inv = DB.valueAt(ID, "inventory")
+	tailletot = 0
+	for c in objetOutil:
+		for x in inv:
+			if c.nom == str(x):
+				if inv[x] > 0:
+					tailletot += c.poids*int(inv[x])
+
+	for c in objetItem:
+		for x in inv:
+			if c.nom == str(x):
+				if inv[x] > 0:
+					tailletot += c.poids*int(inv[x])
+
+	if tailletot <= invMax:
+		return True
+	else:
+		return False
+
+
+
 def addTrophy(ID, nameElem, nbElem):
 	"""
 	Permet de modifier le nombre de nameElem pour ID dans Trophy
@@ -249,6 +275,14 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
+	async def test(self, ctx):
+		"""Pour t'ajouter dans la base de données !"""
+		ID = ctx.author.id
+		await ctx.channel.send(testInvTaille(ID))
+
+
+
+	@commands.command(pass_context=True)
 	async def begin(self, ctx):
 		"""Pour t'ajouter dans la base de données !"""
 		ID = ctx.author.id
@@ -322,60 +356,63 @@ class GemsBase(commands.Cog):
 		"""**[item] [nombre]** | Permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
 		if DB.spam(ID,couldown_c, "buy"):
-			test = True
-			nb = int(nb)
-			for c in objetItem :
-				if item == c.nom :
-					test = False
-					prix = 0 - (c.achat*nb)
-					if DB.addGems(ID, prix) >= "0":
-						DB.addInv(ID, c.nom, nb)
-						if c.type != "consommable":
-							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
-						else:
-							msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
-						# Message de réussite dans la console
-						print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
-					else :
-						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
-					break
-			for c in objetOutil :
-				if item == c.nom :
-					test = False
-					if c.type == "bank":
-						soldeMax = DB.nbElements(ID, "soldeMax", "banque")
-						if soldeMax == 0:
-							soldeMax = c.poids
-							DB.addBank(ID, "soldeMax", c.poids)
-						soldeMult = soldeMax/c.poids
-						prix = 0
-						i = 1
-						while i <= nb:
-							prix += c.achat*soldeMult
-							soldeMult+=1
-							i+=1
-						prix = -1 * prix
-						prix = int(prix)
-					else:
-						prix = -1 * (c.achat*nb)
-					if DB.addGems(ID, prix) >= "0":
-						if c.type == "bank":
-							DB.addBank(ID, "soldeMax", nb*c.poids)
-							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+			if testInvTaille(ID):
+				test = True
+				nb = int(nb)
+				for c in objetItem :
+					if item == c.nom :
+						test = False
+						prix = 0 - (c.achat*nb)
+						if DB.addGems(ID, prix) >= "0":
+							DB.addInv(ID, c.nom, nb)
+							if c.type != "consommable":
+								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+							else:
+								msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
-							await ctx.channel.send(msg)
-							return
+						else :
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
+						break
+				for c in objetOutil :
+					if item == c.nom :
+						test = False
+						if c.type == "bank":
+							soldeMax = DB.nbElements(ID, "soldeMax", "banque")
+							if soldeMax == 0:
+								soldeMax = c.poids
+								DB.addBank(ID, "soldeMax", c.poids)
+							soldeMult = soldeMax/c.poids
+							prix = 0
+							i = 1
+							while i <= nb:
+								prix += c.achat*soldeMult
+								soldeMult+=1
+								i+=1
+							prix = -1 * prix
+							prix = int(prix)
 						else:
-							DB.addInv(ID, c.nom, nb)
-							msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
-					else :
-						msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
-					break
-			if test :
-				msg = "Cet item n'est pas vendu au marché !"
+							prix = -1 * (c.achat*nb)
+						if DB.addGems(ID, prix) >= "0":
+							if c.type == "bank":
+								DB.addBank(ID, "soldeMax", nb*c.poids)
+								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+								# Message de réussite dans la console
+								print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
+								await ctx.channel.send(msg)
+								return
+							else:
+								DB.addInv(ID, c.nom, nb)
+								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+						else :
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
+						break
+				if test :
+					msg = "Cet item n'est pas vendu au marché !"
 
-			DB.updateComTime(ID, "buy")
+				DB.updateComTime(ID, "buy")
+			else:
+				msg = "Ton inventaire est plein"
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -472,7 +509,7 @@ class GemsBase(commands.Cog):
 								msg_inv = msg_inv+":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 							tailletot += c.poids*int(inv[x])
 
-			msg_inv += "\nTaille: `{}`".format(int(tailletot))
+			msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),invMax)
 			msg_titre = "Inventaire de {}\n\n".format(nom)
 			msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
 			DB.updateComTime(ID, "inv")
@@ -556,39 +593,42 @@ class GemsBase(commands.Cog):
 		"""**[item] [nombre]** | Permet de concevoir des items spécifiques"""
 		ID = ctx.author.id
 		if DB.spam(ID,couldown_c, "forge"):
-			#-------------------------------------
-			# Affichage des recettes disponible
-			if item == None:
-				msg = recette(ctx)
-				await ctx.channel.send(embed = msg)
-				# Message de réussite dans la console
-				print("Gems >> {} a afficher les recettes".format(ctx.author.name))
-				return
-			#-------------------------------------
-			# Forgeage des items (pour l'instant uniquement la pioche en fer)
-			elif item == "iron_pickaxe":
-				nb = int(nb)
-				nbIron = 4*nb
-				nbPickaxe = 1*nb
-				if DB.nbElements(ID, "iron", "inventory") >= nbIron and DB.nbElements(ID, "pickaxe", "inventory") >= nbPickaxe:
-					DB.addInv(ID, "iron_pickaxe", nb)
-					DB.addInv(ID, "pickaxe", -nbPickaxe)
-					DB.addInv(ID, "iron", -nbIron)
-					msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:608748194775433256>`iron_pickaxe` !".format(nb)
+			if testInvTaille(ID):
+				#-------------------------------------
+				# Affichage des recettes disponible
+				if item == None:
+					msg = recette(ctx)
+					await ctx.channel.send(embed = msg)
 					# Message de réussite dans la console
-					print("Gems >> {} a forgé une pioche en fer".format(ctx.author.name))
-				elif DB.nbElements(ID, "iron", "inventory") < nbIron and DB.nbElements(ID, "pickaxe", "inventory") < nbPickaxe:
-					msg = "tu n'as pas assez de <:gem_iron:{1}>`lingots de fer` et de <:gem_pickaxe:{2}>`pickaxe` pour forger {0} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nb,get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
-				elif DB.nbElements(ID, "iron", "inventory") < nbIron:
-					nbmissing = (DB.nbElements(ID, "iron", "inventory") - nbIron)*-1
-					msg = "Il te manque {0} <:gem_iron:{2}>`lingots de fer` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb,get_idmogi("iron"), get_idmogi("iron_pickaxe"))
+					print("Gems >> {} a afficher les recettes".format(ctx.author.name))
+					return
+				#-------------------------------------
+				# Forgeage des items (pour l'instant uniquement la pioche en fer)
+				elif item == "iron_pickaxe":
+					nb = int(nb)
+					nbIron = 4*nb
+					nbPickaxe = 1*nb
+					if DB.nbElements(ID, "iron", "inventory") >= nbIron and DB.nbElements(ID, "pickaxe", "inventory") >= nbPickaxe:
+						DB.addInv(ID, "iron_pickaxe", nb)
+						DB.addInv(ID, "pickaxe", -nbPickaxe)
+						DB.addInv(ID, "iron", -nbIron)
+						msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:608748194775433256>`iron_pickaxe` !".format(nb)
+						# Message de réussite dans la console
+						print("Gems >> {} a forgé une pioche en fer".format(ctx.author.name))
+					elif DB.nbElements(ID, "iron", "inventory") < nbIron and DB.nbElements(ID, "pickaxe", "inventory") < nbPickaxe:
+						msg = "tu n'as pas assez de <:gem_iron:{1}>`lingots de fer` et de <:gem_pickaxe:{2}>`pickaxe` pour forger {0} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nb,get_idmogi("iron"), get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
+					elif DB.nbElements(ID, "iron", "inventory") < nbIron:
+						nbmissing = (DB.nbElements(ID, "iron", "inventory") - nbIron)*-1
+						msg = "Il te manque {0} <:gem_iron:{2}>`lingots de fer` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb,get_idmogi("iron"), get_idmogi("iron_pickaxe"))
+					else:
+						nbmissing = (DB.nbElements(ID, "pickaxe", "inventory") - nbPickaxe)*-1
+						msg = "Il te manque {0} <:gem_pickaxe:{2}>`pickaxe` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb, get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
 				else:
-					nbmissing = (DB.nbElements(ID, "pickaxe", "inventory") - nbPickaxe)*-1
-					msg = "Il te manque {0} <:gem_pickaxe:{2}>`pickaxe` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb, get_idmogi("pickaxe"), get_idmogi("iron_pickaxe"))
-			else:
-				msg = "Impossible d'exécuter de forger cet item !"
+					msg = "Impossible d'exécuter de forger cet item !"
 
-			DB.updateComTime(ID, "forge")
+				DB.updateComTime(ID, "forge")
+			else:
+				msg = "Ton inventaire est plein"
 		else:
 			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -764,12 +804,12 @@ class Gems(commands.Cog):
 				msg = discord.Embed(title = title,color= 13752280, description = "")
 				desc = "{} / {} :gem:\n".format(solde, soldeMax)
 				msg.add_field(name="Balance", value=desc, inline=False)
-        
+
 				desc = "bank **bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
 				desc += "\nbank **add** *[+/- nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
 				desc += "\nbank **saving** | Permet de calculer son épargne (utilisable toute les 4h)"
 				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("bank_upgrade", get_idmogi("bank_upgrade"))
-        
+
 				msg.add_field(name="Commandes", value=desc, inline=False)
 				await ctx.channel.send(embed = msg)
 				DB.updateComTime(ID, "bank_bal")
@@ -925,98 +965,101 @@ class Gems(commands.Cog):
 		"""Minez compagnons !!"""
 		ID = ctx.author.id
 		if DB.spam(ID,couldown_l, "mine"):
-			#print(DB.nbElements(ID, "pickaxe", "inventory"))
-			nbrand = r.randint(0,99)
-			#----------------- Pioche en fer -----------------
-			if DB.nbElements(ID, "iron_pickaxe", "inventory") >= 1:
-				if get_durabilite(ID, "iron_pickaxe") == 0:
-					addDurabilité(ID, "iron_pickaxe", -1)
-					DB.addInv(ID,"iron_pickaxe", -1)
-					if DB.nbElements(ID,"iron_pickaxe", "inventory") > 0:
-						for c in objetOutil:
-							if c.nom == "iron_pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite)
-					msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(get_idmogi("iron_pickaxe"))
-				else :
-					if get_durabilite(ID,"iron_pickaxe") == None or get_durabilite(ID,"iron_pickaxe") < 0:
-						for c in objetOutil:
-							if c.nom == "iron_pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite)
-					addDurabilité(ID, "iron_pickaxe", -1)
-					if nbrand < 5:
-						DB.addInv(ID, "emerald", 1)
-						msg = "Tu as obtenu 1 <:gem_emerald:{}>`émeraude`".format(get_idmogi("emerald"))
-					elif nbrand > 5 and nbrand < 15:
-						DB.addInv(ID, "diamond", 1)
-						msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(get_idmogi("diamond"))
-						nbcobble = r.randint(0,5)
-						if nbcobble != 0 :
-							DB.addInv(ID, "cobblestone", nbcobble)
-							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
-					elif nbrand > 15 and nbrand < 30:
-						DB.addInv(ID, "gold", 1)
-						msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or`".format(get_idmogi("gold"))
-						nbcobble = r.randint(0,5)
-						if nbcobble != 0 :
-							DB.addInv(ID, "cobblestone", nbcobble)
-							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
-					elif nbrand > 30 and nbrand < 60:
-						DB.addInv(ID, "iron", 1)
-						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
-						nbcobble = r.randint(0,5)
-						if nbcobble != 0 :
-							DB.addInv(ID, "cobblestone", nbcobble)
-							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
-					elif nbrand >= 95:
-						if r.randint(0,10) == 10:
-							DB.addInv(ID, "ruby", 1)
-							DB.addStatGems(ID, "Mineur de Merveilles", 1)
-							addTrophy(ID, "Mineur de Merveilles", 1)
-							msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
+			if testInvTaille(ID):
+				#print(DB.nbElements(ID, "pickaxe", "inventory"))
+				nbrand = r.randint(0,99)
+				#----------------- Pioche en fer -----------------
+				if DB.nbElements(ID, "iron_pickaxe", "inventory") >= 1:
+					if get_durabilite(ID, "iron_pickaxe") == 0:
+						addDurabilité(ID, "iron_pickaxe", -1)
+						DB.addInv(ID,"iron_pickaxe", -1)
+						if DB.nbElements(ID,"iron_pickaxe", "inventory") > 0:
+							for c in objetOutil:
+								if c.nom == "iron_pickaxe":
+									addDurabilité(ID, c.nom, c.durabilite)
+						msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(get_idmogi("iron_pickaxe"))
+					else :
+						if get_durabilite(ID,"iron_pickaxe") == None or get_durabilite(ID,"iron_pickaxe") < 0:
+							for c in objetOutil:
+								if c.nom == "iron_pickaxe":
+									addDurabilité(ID, c.nom, c.durabilite)
+						addDurabilité(ID, "iron_pickaxe", -1)
+						if nbrand < 5:
+							DB.addInv(ID, "emerald", 1)
+							msg = "Tu as obtenu 1 <:gem_emerald:{}>`émeraude`".format(get_idmogi("emerald"))
+						elif nbrand > 5 and nbrand < 15:
+							DB.addInv(ID, "diamond", 1)
+							msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(get_idmogi("diamond"))
+							nbcobble = r.randint(0,5)
+							if nbcobble != 0 :
+								DB.addInv(ID, "cobblestone", nbcobble)
+								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
+						elif nbrand > 15 and nbrand < 30:
+							DB.addInv(ID, "gold", 1)
+							msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or`".format(get_idmogi("gold"))
+							nbcobble = r.randint(0,5)
+							if nbcobble != 0 :
+								DB.addInv(ID, "cobblestone", nbcobble)
+								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
+						elif nbrand > 30 and nbrand < 60:
+							DB.addInv(ID, "iron", 1)
+							msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
+							nbcobble = r.randint(0,5)
+							if nbcobble != 0 :
+								DB.addInv(ID, "cobblestone", nbcobble)
+								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
+						elif nbrand >= 95:
+							if r.randint(0,10) == 10:
+								DB.addInv(ID, "ruby", 1)
+								DB.addStatGems(ID, "Mineur de Merveilles", 1)
+								addTrophy(ID, "Mineur de Merveilles", 1)
+								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(get_idmogi("ruby"))
+							else:
+								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 						else:
-							msg = "La pioche n'est pas très efficace pour miner la `dirt`"
-					else:
-						nbcobble = r.randint(1,10)
-						DB.addInv(ID, "cobblestone", nbcobble)
-						if nbcobble == 1 :
-							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
-						else :
-							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, get_idmogi("cobblestone"))
-
-			#----------------- Pioche normal -----------------
-			elif DB.nbElements(ID, "pickaxe", "inventory") >= 1:
-				if get_durabilite(ID, "pickaxe") == 0:
-					addDurabilité(ID, "pickaxe", -1)
-					DB.addInv(ID,"pickaxe", -1)
-					if DB.nbElements(ID,"pickaxe", "inventory") > 0:
-						for c in objetOutil:
-							if c.nom == "pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite)
-					msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(get_idmogi("pickaxe"))
-				else :
-					if get_durabilite(ID,"pickaxe") == None or get_durabilite(ID,"pickaxe") < 0:
-						for c in objetOutil:
-							if c.nom == "pickaxe":
-								addDurabilité(ID, c.nom, c.durabilite)
-					addDurabilité(ID, "pickaxe", -1)
-					if nbrand < 20:
-						DB.addInv(ID, "iron", 1)
-						msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
-						nbcobble = r.randint(0,5)
-						if nbcobble != 0 :
+							nbcobble = r.randint(1,10)
 							DB.addInv(ID, "cobblestone", nbcobble)
-							msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
-					else:
-						nbcobble = r.randint(1,10)
-						DB.addInv(ID, "cobblestone", nbcobble)
-						if nbcobble == 1 :
-							msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
-						else :
-							msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, get_idmogi("cobblestone"))
-			else:
-				msg = "Il faut acheter ou forger une pioche pour miner!"
+							if nbcobble == 1 :
+								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
+							else :
+								msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, get_idmogi("cobblestone"))
 
-			DB.updateComTime(ID, "mine")
+				#----------------- Pioche normal -----------------
+				elif DB.nbElements(ID, "pickaxe", "inventory") >= 1:
+					if get_durabilite(ID, "pickaxe") == 0:
+						addDurabilité(ID, "pickaxe", -1)
+						DB.addInv(ID,"pickaxe", -1)
+						if DB.nbElements(ID,"pickaxe", "inventory") > 0:
+							for c in objetOutil:
+								if c.nom == "pickaxe":
+									addDurabilité(ID, c.nom, c.durabilite)
+						msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(get_idmogi("pickaxe"))
+					else :
+						if get_durabilite(ID,"pickaxe") == None or get_durabilite(ID,"pickaxe") < 0:
+							for c in objetOutil:
+								if c.nom == "pickaxe":
+									addDurabilité(ID, c.nom, c.durabilite)
+						addDurabilité(ID, "pickaxe", -1)
+						if nbrand < 20:
+							DB.addInv(ID, "iron", 1)
+							msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(get_idmogi("iron"))
+							nbcobble = r.randint(0,5)
+							if nbcobble != 0 :
+								DB.addInv(ID, "cobblestone", nbcobble)
+								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,get_idmogi("cobblestone"))
+						else:
+							nbcobble = r.randint(1,10)
+							DB.addInv(ID, "cobblestone", nbcobble)
+							if nbcobble == 1 :
+								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(get_idmogi("cobblestone"))
+							else :
+								msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, get_idmogi("cobblestone"))
+				else:
+					msg = "Il faut acheter ou forger une pioche pour miner!"
+
+				DB.updateComTime(ID, "mine")
+			else:
+				msg = "Ton inventaire est plein"
 		else:
 			msg = "Il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -1028,54 +1071,57 @@ class Gems(commands.Cog):
 		"""Péchons compagnons !!"""
 		ID = ctx.author.id
 		if DB.spam(ID,couldown_l, "fish"):
-			nbrand = r.randint(0,99)
-			#print(DB.nbElements(ID, "fishingrod", "inventory"))
-			if DB.nbElements(ID, "fishingrod", "inventory") >= 1:
-				if get_durabilite(ID, "fishingrod") == 0:
-					addDurabilité(ID, "fishingrod", -1)
-					DB.addInv(ID,"fishingrod", -1)
-					if DB.nbElements(ID,"fishingrod", "inventory") > 0:
-						for c in objetOutil:
-							if c.nom == "fishingrod":
-								addDurabilité(ID, c.nom, c.durabilite)
-					msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(get_idmogi("fishingrod"))
-				else :
-					if get_durabilite(ID,"fishingrod") == None or get_durabilite(ID,"fishingrod") < 0:
-						for c in objetOutil:
-							if c.nom == "fishingrod":
-								addDurabilité(ID, c.nom, c.durabilite)
-					addDurabilité(ID, "fishingrod", -1)
+			if testInvTaille(ID):
+				nbrand = r.randint(0,99)
+				#print(DB.nbElements(ID, "fishingrod", "inventory"))
+				if DB.nbElements(ID, "fishingrod", "inventory") >= 1:
+					if get_durabilite(ID, "fishingrod") == 0:
+						addDurabilité(ID, "fishingrod", -1)
+						DB.addInv(ID,"fishingrod", -1)
+						if DB.nbElements(ID,"fishingrod", "inventory") > 0:
+							for c in objetOutil:
+								if c.nom == "fishingrod":
+									addDurabilité(ID, c.nom, c.durabilite)
+						msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(get_idmogi("fishingrod"))
+					else :
+						if get_durabilite(ID,"fishingrod") == None or get_durabilite(ID,"fishingrod") < 0:
+							for c in objetOutil:
+								if c.nom == "fishingrod":
+									addDurabilité(ID, c.nom, c.durabilite)
+						addDurabilité(ID, "fishingrod", -1)
 
-					if nbrand < 15:
-						DB.addInv(ID, "tropicalfish", 1)
-						msg = "Tu as obtenu 1 <:gem_tropicalfish:{}>`tropicalfish`".format(get_idmogi("tropicalfish"))
-						nbfish = r.randint(0,3)
-						if nbfish != 0:
+						if nbrand < 15:
+							DB.addInv(ID, "tropicalfish", 1)
+							msg = "Tu as obtenu 1 <:gem_tropicalfish:{}>`tropicalfish`".format(get_idmogi("tropicalfish"))
+							nbfish = r.randint(0,3)
+							if nbfish != 0:
+								DB.addInv(ID, "fish", nbfish)
+								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
+
+						elif nbrand >= 15 and nbrand < 30:
+							DB.addInv(ID, "blowfish", 1)
+							msg = "Tu as obtenu 1 <:gem_blowfish:{}>`blowfish`".format(get_idmogi("blowfish"))
+							nbfish = r.randint(0,3)
+							if nbfish != 0:
+								DB.addInv(ID, "fish", nbfish)
+								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
+
+						elif nbrand >= 30 and nbrand < 40:
+							DB.addInv(ID, "octopus", 1)
+							msg = "Tu as obtenu 1 <:gem_octopus:{}>`octopus`".format(get_idmogi("octopus"))
+
+						elif nbrand >= 40 and nbrand < 95:
+							nbfish = r.randint(1,7)
 							DB.addInv(ID, "fish", nbfish)
-							msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
+							msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
+						else:
+							msg = "Pas de poisson pour toi aujourd'hui :cry: "
+				else:
+					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(get_idmogi("fishingrod"))
 
-					elif nbrand >= 15 and nbrand < 30:
-						DB.addInv(ID, "blowfish", 1)
-						msg = "Tu as obtenu 1 <:gem_blowfish:{}>`blowfish`".format(get_idmogi("blowfish"))
-						nbfish = r.randint(0,3)
-						if nbfish != 0:
-							DB.addInv(ID, "fish", nbfish)
-							msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
-
-					elif nbrand >= 30 and nbrand < 40:
-						DB.addInv(ID, "octopus", 1)
-						msg = "Tu as obtenu 1 <:gem_octopus:{}>`octopus`".format(get_idmogi("octopus"))
-
-					elif nbrand >= 40 and nbrand < 95:
-						nbfish = r.randint(1,7)
-						DB.addInv(ID, "fish", nbfish)
-						msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, get_idmogi("fish"))
-					else:
-						msg = "Pas de poisson pour toi aujourd'hui :cry: "
+				DB.updateComTime(ID, "fish")
 			else:
-				msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(get_idmogi("fishingrod"))
-
-			DB.updateComTime(ID, "fish")
+				msg = "Ton inventaire est plein"
 		else:
 			msg = "Il faut attendre "+str(couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -1240,26 +1286,34 @@ class Gems(commands.Cog):
 				gain = 0
 			#===================================================================
 			#Cookie
+			nbCookie = 0
 			if result[3] == "cookie" and result[4] == "cookie" and result[5] == "cookie":
-				DB.addInv(ID, "cookie", 3)
-				msg += "\nTu a trouvé 3 :cookie:`cookies`"
+				nbCookie = 3
 			elif (result[3] == "cookie" and result[4] == "cookie") or (result[4] == "cookie" and result[5] == "cookie") or (result[3] == "cookie" and result[5] == "cookie"):
-				DB.addInv(ID, "cookie", 2)
-				msg += "\nTu a trouvé 2 :cookie:`cookies`"
+				nbCookie = 2
 			elif result[3] == "cookie" or result[4] == "cookie" or result[5] == "cookie":
-				DB.addInv(ID, "cookie", 1)
-				msg += "\nTu a trouvé 1 :cookie:`cookie`"
+				nbCookie = 1
+			if nbCookie != 0:
+				if testInvTaille(ID):
+					msg += "\nTu a trouvé {} :cookie:`cookie`".format(nbCookie)
+					DB.addInv(ID,"cookie",nbCookie)
+				else:
+					msg += "\nTon inventaire est plein"
 			#===================================================================
 			#grappe
+			nbGrapes = 0
 			if result[3] == "grapes" and result[4] == "grapes" and result[5] == "grapes":
-				DB.addInv(ID, "grapes", 3)
-				msg += "\nTu a trouvé 3 :grapes:`grapes`"
+				nbGrapes = 3
 			elif (result[3] == "grapes" and result[4] == "grapes") or (result[4] == "grapes" and result[5] == "grapes") or (result[3] == "grapes" and result[5] == "grapes"):
-				DB.addInv(ID, "grapes", 2)
-				msg += "\nTu a trouvé 2 :grapes:`grapes`"
+				nbGrapes = 2
 			elif result[3] == "grapes" or result[4] == "grapes" or result[5] == "grapes":
-				DB.addInv(ID, "grapes", 1)
-				msg += "\nTu a trouvé 1 :grapes:`grapes`"
+				nbGrapes = 1
+			if nbGrapes != 0:
+				if testInvTaille(ID):
+					msg += "\nTu a trouvé {} :grapes:`grapes`".format(nbGrapes)
+					DB.addInv(ID,"grapes",nbGrapes)
+				else:
+					msg += "\nTon inventaire est plein"
 			#===================================================================
 			#Backpack (hyper rare)
 			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
