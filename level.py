@@ -1,6 +1,7 @@
 import random as r
 import datetime as dt
 import DB
+import roles
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -65,6 +66,9 @@ async def checklevel(message):
 					DB.updateField(ID, "lvl", lvl+1)
 					msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
 					await message.channel.send(msg)
+		lvl2 = DB.valueAt(ID, "lvl")
+		if lvl == 0 and lvl2 == 1:
+			roles.addrole(message.author, "Joueurs")
 	except:
 		return print("Le joueur n'existe pas.")
 
