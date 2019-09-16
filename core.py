@@ -19,6 +19,9 @@ import re
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 idBASTION = 417445502641111051
+idchannel_botplay = 533048015758426112
+idchannel_nsfw = 425391362737700894
+idcategory_admin = 417453424402235407
 
 VERSION = open("fichier_txt/version.txt").read().replace("\n","")
 TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
@@ -88,16 +91,14 @@ async def on_member_join(member):
 	if member.guild.id == idBASTION:
 		channel = client.get_channel(417445503110742048)
 		time = t.time()
-		#data = sqlite3.connect('connect.db')
-		#c = data.cursor()
 		id = member.id
 		if DB.newPlayer(id) == "Le joueur a été ajouté !":
-			await roles.autorole(member)
-			updateField(ID, "arrival", str(dt.datetime.now()))
+			await roles.addrole(member, "Nouveau")
+			updateField(id, "arrival", str(dt.datetime.now()))
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur #417454223224209408 \n:arrow_right: Sur #545204163341058058\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention)
 		else:
-			if valueAt(ID, "arrival") == "0":
-				updateField(ID, "arrival", str(dt.datetime.now()))
+			if DB.valueAt(id, "arrival") == "0":
+				updateField(id, "arrival", str(dt.datetime.now()))
 			await roles.addrole(member, "Joueurs")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
@@ -116,9 +117,10 @@ async def on_member_remove(member):
 async def on_message(message):
 	if not (message.author.bot or message.content.startswith(PREFIX)) :
 		if message.guild.id == idBASTION:
-			await stat.countMsg(message)
-			await lvl.checklevel(message)
-			await client.process_commands(message)
+			if message.channel.id != idchannel_botplay and message.channel.id != idchannel_nsfw and message.channel.category_id != idcategory_admin:
+				await stat.countMsg(message)
+				await lvl.checklevel(message)
+				await client.process_commands(message)
 		else:
 			await client.process_commands(message)
 	else:
