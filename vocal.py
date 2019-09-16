@@ -138,6 +138,16 @@ class Music(commands.Cog):
 	async def leave(self, ctx):
 		"""Le bot quitte le channel vocal """
 		voice = ctx.voice_client
+		song_there = os.path.isfile("cache/song.mp3")
+		try :
+			if song_there:
+				os.remove('cache/song.mp3')
+				print('Vocal >> removed old song file')
+
+		except PermissionError:
+			print('Vocal >> trying to delete the song file')
+			ctx.send("ERROR music playing")
+			return
 		self.music.info.purge()
 		voice.stop()
 		await voice.disconnect()
@@ -225,6 +235,7 @@ class Music(commands.Cog):
 				if num > 0 and num <= len(result):
 					url = get_youtube_url(result[num - 1])
 					await ctx.send(content="{}".format(url))
+					await self.music.add_to_queue(ctx,url)
 					await ctx.message.delete(delay=2)
 					await self_message.delete(delay=None)
 					await msg.delete(delay=1)
