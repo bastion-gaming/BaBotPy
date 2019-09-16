@@ -94,11 +94,11 @@ async def on_member_join(member):
 		id = member.id
 		if DB.newPlayer(id) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			DB.updateField(id, "arrival", str(dt.datetime.now()))
+			DB.updateField(id, "arrival", str(t.datetime.now()))
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur #417454223224209408 \n:arrow_right: Sur #545204163341058058\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention)
 		else:
 			if DB.valueAt(id, "arrival") == "0":
-				DB.updateField(id, "arrival", str(dt.datetime.now()))
+				DB.updateField(id, "arrival", str(t.datetime.now()))
 			await roles.addrole(member, "Joueurs")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
