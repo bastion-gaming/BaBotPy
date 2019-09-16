@@ -102,7 +102,7 @@ async def on_member_join(member):
 		else:
 			if DB.valueAt(id, "arrival") == "0":
 				DB.updateField(id, "arrival", str(t.datetime.now()))
-			await roles.addrole(member, "Joueurs")
+			await roles.addrole(member, "Nouveau")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
 		await channel.send(msg)
