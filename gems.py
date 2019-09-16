@@ -758,6 +758,7 @@ class Gems(commands.Cog):
 		for c in objetOutil:
 			if c.type == "bank":
 				Taille = c.poids
+		msg = ""
 		#=======================================================================
 		# Affiche le menu principal de la banque
 		# !bank bal <nom d'un joueur> permet de visualiser l'état de la banque de ce joueur
@@ -844,9 +845,18 @@ class Gems(commands.Cog):
 					if soldeMax == 0:
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
-					soldeAdd = (0.20 + ( int(soldeMult)*0.01 ))*solde
+					soldeAdd = (0.10 + ( int(soldeMult)*0.01 ))*solde
 					DB.add(ID, "banque", "solde", int(soldeAdd))
-					msg = "Tu as épargné {} :gem:\nNouveau solde: {} :gem:".format(int(soldeAdd), DB.nbElements(ID, "banque", "solde"))
+					msg = "Tu as épargné {} :gem:\n".format(int(soldeAdd))
+					soldeNew = solde + soldeAdd
+					if soldeNew > soldeMax:
+						soldeMove = soldeNew - soldeMax
+						nbgm = -1 * soldeMove
+						DB.addGems(ID, int(soldeMove))
+						DB.add(ID, "banque", "solde", int(nbgm))
+						msg += "Plafond de {} :gem: du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
+
+					msg += "Nouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde"))
 
 				DB.updateComTime(ID, "bank_saving")
 			else:

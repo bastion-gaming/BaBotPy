@@ -2,10 +2,6 @@ import discord
 from discord.ext import commands
 import gestion as ge
 
-async def autorole(member):
-	role = discord.utils.get(member.guild.roles, name="Joueurs")
-	await member.add_roles(role)
-
 async def addrole(member, role):
 	setrole = discord.utils.get(member.guild.roles, name=role)
 	await member.add_roles(setrole)
