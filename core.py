@@ -109,7 +109,7 @@ async def on_member_remove(member):
 	if member.guild.id == idBASTION:
 		stat.countDeco()
 		channel = client.get_channel(417445503110742048)
-		await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.mention))
+		await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
 
 ####################### Stat ####################################
 
