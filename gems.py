@@ -48,7 +48,7 @@ objetItem = [Item("cobblestone",1,3,1,608748492181078131,"minerai")
 ,Item("octopus",50,90,8,618058832790421504,"poisson")
 ,Item("cookie",30,40,1,"","consommable")
 ,Item("grapes",15,25,1,"","consommable")
-,Item("wine_glass",150,210,3,"","consommable")
+,Item("wine_glass",120,210,3,"","consommable")
 ,Item("backpack",1,5000,-100,616205834451550208,"special")]
 
 
