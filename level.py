@@ -59,10 +59,10 @@ async def checklevel(message):
 	Nom = message.author.name
 	try:
 		lvl = DB.valueAt(ID, "lvl")
-		nbMsg = DB.valueAt(ID, "nbMsg")
+		xp = DB.valueAt(ID, "xp")
 		for x in objet:
 			if lvl == x.level:
-				if nbMsg >= x.somMsg:
+				if xp >= x.somMsg:
 					DB.updateField(ID, "lvl", lvl+1)
 					msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
 					await message.channel.send(msg)
@@ -99,14 +99,14 @@ class Level(commands.Cog):
 
 			if (ID != -1):
 				lvl = DB.valueAt(ID, "lvl")
-				nbMsg = DB.valueAt(ID, "nbMsg")
+				xp = DB.valueAt(ID, "xp")
 				msg = "**Utilisateur:** {}".format(Nom)
 
 				# Niveaux part
 				msg+= "\n\n**Niveau :**\n"
 				for x in objet:
 					if lvl == x.level:
-						msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(DB.valueAt(ID, "lvl"),nbMsg,x.somMsg)
+						msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(DB.valueAt(ID, "lvl"),xp,x.somMsg)
 				if lvl == lvlmax:
 					msg += "Actuel **{0}** \nLevel max atteint".format(DB.valueAt(ID, "lvl"))
 
@@ -166,14 +166,14 @@ class Level(commands.Cog):
 
 			if (ID != -1):
 				lvl = DB.valueAt(ID, "lvl")
-				nbMsg = DB.valueAt(ID, "nbMsg")
+				xp = DB.valueAt(ID, "xp")
 				for x in objet:
 					if lvl == x.level:
-						if nbMsg >= x.somMsg:
+						if xp >= x.somMsg:
 							DB.updateField(ID, "lvl", lvl+1)
 							msg = ":data: {1} Levelup, tu as atteint le level **{0}**".format(lvl+1, Nom)
 						else:
-							msg = "Nombre de message insuffisant pour levelup\nXP de {2}: `{0}/{1}`".format(nbMsg, x.somMsg, Nom)
+							msg = "Nombre de message insuffisant pour levelup\nXP de {2}: `{0}/{1}`".format(xp, x.somMsg, Nom)
 				if lvl == lvlmax:
 					msg = "Level max atteint"
 			await ctx.channel.send(msg)
