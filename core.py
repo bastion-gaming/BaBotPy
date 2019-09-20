@@ -90,16 +90,19 @@ client.load_extension('utils')
 async def on_member_join(member):
 	if member.guild.id == idBASTION:
 		channel = client.get_channel(417445503110742048)
+		channel_regle = client.get_channel(417454223224209408)
+		channel_salon = client.get_channel(545204163341058058)
+		channel_presentation = client.get_channel(623077212798582808)
 		time = t.time()
 		id = member.id
 		if DB.newPlayer(id) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			updateField(id, "arrival", str(dt.datetime.now()))
-			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur #417454223224209408 \n:arrow_right: Sur #545204163341058058\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention)
+			DB.updateField(id, "arrival", str(t.datetime.now()))
+			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1} \n:arrow_right: Sur {2} \n:arrow_right: Sur {3}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention, channel_regle.mention, channel_pres.mention, channel_salon.mention)
 		else:
 			if DB.valueAt(id, "arrival") == "0":
-				updateField(id, "arrival", str(dt.datetime.now()))
-			await roles.addrole(member, "Joueurs")
+				DB.updateField(id, "arrival", str(t.datetime.now()))
+			await roles.addrole(member, "Nouveau")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
 		await channel.send(msg)
@@ -108,6 +111,8 @@ async def on_member_join(member):
 async def on_member_remove(member):
 	if member.guild.id == idBASTION:
 		stat.countDeco()
+		DB.updateField(ID, "lvl", 0)
+		DB.updateField(ID, "xp", 0)
 		channel = client.get_channel(417445503110742048)
 		await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
 
