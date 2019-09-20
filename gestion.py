@@ -14,7 +14,8 @@ client = Bot(command_prefix = "{0}".format(PREFIX))
 admin = 0
 Inquisiteur = 1
 Ambassadeur = 2
-perm = [["Baron du Bastion"],["Baron du Bastion","Inquisiteur du Bastion"],["Inquisiteur du Bastion","Baron du Bastion","Ambassadeur"]]
+Joueurs = 3
+perm = [["Baron du Bastion"],["Baron du Bastion","Inquisiteur du Bastion"],["Inquisiteur du Bastion","Baron du Bastion","Ambassadeur"],["Inquisiteur du Bastion","Baron du Bastion","Ambassadeur","Joueurs"]]
 choix_G =[[':regional_indicator_a:','🇦',0],[':regional_indicator_b:','🇧',0],[':regional_indicator_c:','🇨',0],[':regional_indicator_d:','🇩',0],[':regional_indicator_e:','🇪',0]]
 def permission(ctx,grade,author = None):
 	if not author :
