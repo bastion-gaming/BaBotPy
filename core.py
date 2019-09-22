@@ -15,6 +15,7 @@ import asyncio
 import aiohttp
 import json
 import re
+import time
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
@@ -34,6 +35,8 @@ NONE = open("fichier_txt/help.txt","w")
 TWITCH_CLIENT_ID = open("fichier_txt/twitch_client_id.txt", "r").read().replace("\n","")
 TWITCH_SECRET_ID = open("fichier_txt/twitch_secret_id.txt", "r").read().replace("\n","")
 unresolved_ids = 0
+on_vocal = {}
+
 # Reset all sent key values to false
 with open('fichier_json/local.json', 'r') as fp:
 	reset_values = json.load(fp)
@@ -115,6 +118,17 @@ async def on_member_remove(member):
 		DB.updateField(ID, "xp", 0)
 		channel = client.get_channel(417445503110742048)
 		await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
+
+@client.event
+async def on_voice_state_update(member,before,after):
+	if after.channel != None and not (member.name in on_vocal) and after.channel.id != 417453006326464512:
+		on_vocal[member.name] = time.time()
+	elif (after.channel == None or  after.channel.id == 417453006326464512) and  member.name in on_vocal :
+		time_on_vocal = round((time.time() - on_vocal[member.name])/60)
+		print('{} as passé {} minutes on vocal !'.format(member.name,time_on_vocal))
+		del on_vocal[member.name]
+	else :
+		print("rien à faire")
 
 ####################### Stat ####################################
 
