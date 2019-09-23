@@ -8,6 +8,10 @@ from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
 
+idBaBot = 604776153458278415
+idGetGems = 620558080551157770
+idBASTION = 417445502641111051
+
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
 ,"Tu as volé une carotte ! Prend tes"
@@ -245,6 +249,14 @@ def recette(ctx):
 
 	msg = discord.Embed(title = "Recettes",color= 15778560, description = d_recette)
 	return msg
+
+
+
+def taxe(solde, pourcentage):
+	soldeTaxe = solde * pourcentage
+	soldeNew = solde - soldeTaxe
+	taxe = (soldeTaxe, soldeNew)
+	return taxe
 
 
 #===============================================================
@@ -733,7 +745,13 @@ class Gems(commands.Cog):
 				soldeMax = Taille
 			if solde > soldeMax:
 				ARG2 = solde - soldeMax
+				soldeTaxe = taxe(ARG2, 0.1)
+				ARG2 = soldeTaxe[1]
 				DB.addGems(ID, ARG2)
+				if ctx.guild.id != idBASTION:
+					DB.addGems(idGetGems,int(soldeTaxe[0]))
+				elif ctx.guild.id == idBASTION:
+					DB.addGems(idBaBot,int(soldeTaxe[0]))
 				nbgm = -1*ARG2
 				DB.add(ID, "banque", "solde", nbgm)
 				msg += "\n\nTon compte épargne a été débité de {} :gem:\nCes :gem: ont été transférer sur ton compte principal".format(ARG2)
@@ -845,7 +863,9 @@ class Gems(commands.Cog):
 					if soldeMax == 0:
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
-					soldeAdd = (0.10 + ( int(soldeMult)*0.01 ))*solde
+					soldeAdd = (0.15 + ( int(soldeMult)*0.01 ))*solde
+					soldeTaxe = taxe(soldeAdd, 0.1)
+					soldeAdd = soldeTaxe[1]
 					DB.add(ID, "banque", "solde", int(soldeAdd))
 					msg = "Tu as épargné {} :gem:\n".format(int(soldeAdd))
 					soldeNew = solde + soldeAdd
@@ -857,6 +877,11 @@ class Gems(commands.Cog):
 						msg += "Plafond de {} :gem: du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
 
 					msg += "Nouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde"))
+
+					if ctx.guild.id != idBASTION:
+						DB.addGems(idGetGems,int(soldeTaxe[0]))
+					elif ctx.guild.id == idBASTION:
+						DB.addGems(idBaBot,int(soldeTaxe[0]))
 
 				DB.updateComTime(ID, "bank_saving")
 			else:
