@@ -6,7 +6,7 @@ from discord.utils import get
 import DB
 
 # initialisation des variables.
-DEFAUT_PREFIX = "'"
+DEFAUT_PREFIX = "*"
 
 idGetGems = 620558080551157770
 idBASTION = 417445502641111051
