@@ -134,9 +134,22 @@ class Roles(commands.Cog):
 		"""Affiche la liste des jeux"""
 		desc = ""
 		jsonlist = ctx.guild.roles
-		# print(jsonlist)
-		for i in range(2, len(jsonlist)-14):
-			desc += "{}\n".format(jsonlist[i])
+		rolelist = []
+		gamelist = []
+		check = False
+		for i in range(0, len(jsonlist)):
+			temp = "{}".format(jsonlist[i])
+			rolelist.append(temp)
+		for i in range(0, len(rolelist)):
+			if rolelist[i] == "Joueurs":
+				check = False
+			if check:
+				gamelist.append(rolelist[i])
+			if rolelist[i] == "Nouveau":
+				check = True
+		gamelist.sort()
+		for i in range(0, len(gamelist)):
+			desc += "{}\n".format(gamelist[i])
 		msg = discord.Embed(title = "Liste des jeux",color=35723, description = desc)
 		await ctx.channel.send(embed = msg)
 

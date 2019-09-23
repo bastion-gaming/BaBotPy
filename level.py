@@ -60,12 +60,14 @@ async def checklevel(message):
 	try:
 		lvl = DB.valueAt(ID, "lvl")
 		xp = DB.valueAt(ID, "xp")
+		check = True
 		for x in objet:
-			if lvl == x.level:
+			if lvl == x.level and check:
 				if xp >= x.somMsg:
 					DB.updateField(ID, "lvl", lvl+1)
 					msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
 					await message.channel.send(msg)
+					check = False
 		lvl2 = DB.valueAt(ID, "lvl")
 		if lvl == 0 and lvl2 == 1:
 			roles.addrole(message.author, "Joueurs")
