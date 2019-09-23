@@ -19,6 +19,8 @@ import time
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
+
+idBaBot = 604776153458278415
 idBASTION = 417445502641111051
 idchannel_botplay = 533048015758426112
 idchannel_nsfw = 425391362737700894
@@ -112,8 +114,15 @@ async def on_member_join(member):
 
 @client.event
 async def on_member_remove(member):
+	ID = member.id
 	if member.guild.id == idBASTION:
 		stat.countDeco()
+		gems = DB.valueAt(ID, "gems")
+		BotGems = DB.valueAt(idBaBot, "gems")
+		pourcentage = 0.3
+		transfert = gems * pourcentage
+		DB.updateField(idBaBot, "gems", BotGems + int(transfert))
+		DB.updateField(ID, "gems", gems - int(transfert))
 		DB.updateField(ID, "lvl", 0)
 		DB.updateField(ID, "xp", 0)
 		channel = client.get_channel(417445503110742048)
