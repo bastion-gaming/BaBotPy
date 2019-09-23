@@ -125,10 +125,10 @@ async def on_voice_state_update(member,before,after):
 		on_vocal[member.name] = time.time()
 	elif (after.channel == None or  after.channel.id == 417453006326464512) and  member.name in on_vocal :
 		time_on_vocal = round((time.time() - on_vocal[member.name])/60)
-		print('{} as passé {} minutes on vocal !'.format(member.name,time_on_vocal))
+		print('{} as passé {} minutes en vocal !'.format(member.name,time_on_vocal))
+		XP = int(DB.valueAt(member.id, "xp")) + int(time_on_vocal)
+		DB.updateField(member.id, "xp", XP)
 		del on_vocal[member.name]
-	else :
-		print("rien à faire")
 
 ####################### Stat ####################################
 
