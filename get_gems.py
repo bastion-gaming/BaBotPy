@@ -12,7 +12,7 @@ idGetGems = 620558080551157770
 idBASTION = 417445502641111051
 
 VERSION = open("fichier_txt/version.txt").read().replace("\n","")
-TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
+TOKEN = open("fichier_txt/token_getgems.txt", "r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(DEFAUT_PREFIX))
 NONE = open("fichier_txt/cogs.txt","w")
 NONE = open("fichier_txt/help.txt","w")
