@@ -730,31 +730,6 @@ class Gems(commands.Cog):
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", 1)
 			msg = "Récompense journalière! Tu as gagné 100 :gem:"
-		#=======================================================================
-		# Récupération du surplus du compte épargne
-		#=======================================================================
-		if DailyTime != str(jour):
-			# Message re réussite dans la console
-			print("Gems >> {} a effectué son daily".format(ctx.author.name))
-			for c in objetOutil:
-				if c.type == "bank":
-					Taille = c.poids
-			solde = DB.nbElements(ID, "banque", "solde")
-			soldeMax = DB.nbElements(ID, "banque", "soldeMax")
-			if soldeMax == 0:
-				soldeMax = Taille
-			if solde > soldeMax:
-				ARG2 = solde - soldeMax
-				soldeTaxe = taxe(ARG2, 0.1)
-				ARG2 = soldeTaxe[1]
-				DB.addGems(ID, ARG2)
-				if ctx.guild.id != idBASTION:
-					DB.addGems(idGetGems,int(soldeTaxe[0]))
-				elif ctx.guild.id == idBASTION:
-					DB.addGems(idBaBot,int(soldeTaxe[0]))
-				nbgm = -1*ARG2
-				DB.add(ID, "banque", "solde", nbgm)
-				msg += "\n\nTon compte épargne a été débité de {} :gem:\nCes :gem: ont été transférer sur ton compte principal".format(ARG2)
 		await ctx.channel.send(msg)
 
 
@@ -863,7 +838,8 @@ class Gems(commands.Cog):
 					if soldeMax == 0:
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
-					soldeAdd = (0.15 + ( int(soldeMult)*0.01 ))*solde
+					pourcentage = 0.200 + soldeMult*0.002
+					soldeAdd = pourcentage*solde
 					soldeTaxe = taxe(soldeAdd, 0.1)
 					soldeAdd = soldeTaxe[1]
 					DB.add(ID, "banque", "solde", int(soldeAdd))
