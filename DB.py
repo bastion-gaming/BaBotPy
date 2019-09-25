@@ -122,14 +122,6 @@ def valueAt(ID, fieldName):
 	"""
 	return db.search(Query().ID == ID)[0][fieldName]
 
-async def count(message):
-	l=len(db)
-	if l == 0:
-		await message.channel.send('Aucun utilisaeur enregistrer dans la BDD')
-	else:
-		await message.channel.send('{l} utilisateur inscrit')
-	return l
-
 def taille():
 	return len(db)
 

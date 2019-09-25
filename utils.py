@@ -63,6 +63,17 @@ class Utils(commands.Cog):
 			msg = "Le github du Bot --> **https://github.com/bastion-gaming/bot-discord**."
 			await ctx.channel.send(msg)
 
+	@commands.command(pass_context=True)
+	async def usercount(self, ctx):
+		"""
+		Affiche le nombre d'utilisateurs inscrit dans la base de données
+		"""
+		l=DB.taille()
+		if l == 0:
+			await ctx.channel.send("Aucun utilisaeur enregistrer dans la base de donées")
+		else:
+			await ctx.channel.send("{} utilisateur inscrit".format(l))
+
 
 def setup(bot):
 	bot.add_cog(Utils(bot))
