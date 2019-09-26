@@ -75,6 +75,8 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
+	activity = discord.Activity(type=discord.ActivityType.playing, name="bastion-gaming.fr")
+	await client.change_presence(status=discord.Status.online, activity=activity)
 
 ####################### Commande help.py #######################
 
