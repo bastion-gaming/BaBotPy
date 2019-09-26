@@ -12,6 +12,8 @@ import roles
 
 client = discord.Client()
 
+idBaBot = 604776153458278415
+idGetGems = 620558080551157770
 
 idBASTION = 417445502641111051
 idchannel_botplay = 533048015758426112
@@ -43,16 +45,22 @@ async def memberjoin(member, channel):
 
 
 def memberremove(member):
+	ID = member.id
+	gems = DB.valueAt(ID, "gems")
 	if member.guild.id == idBASTION:
 		stat.countDeco()
-		gems = DB.valueAt(ID, "gems")
 		BotGems = DB.valueAt(idBaBot, "gems")
+		idBot = idBaBot
 		pourcentage = 0.3
-		transfert = gems * pourcentage
-		DB.updateField(idBaBot, "gems", BotGems + int(transfert))
-		DB.updateField(ID, "gems", gems - int(transfert))
 		DB.updateField(ID, "lvl", 0)
 		DB.updateField(ID, "xp", 0)
+	else:
+		BotGems = DB.valueAt(idGetGems, "gems")
+		idBot = idGetGems
+		pourcentage = 0.02
+	transfert = gems * pourcentage
+	DB.updateField(idBot, "gems", BotGems + int(transfert))
+	DB.updateField(ID, "gems", gems - int(transfert))
 	print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
 
 

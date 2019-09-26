@@ -21,8 +21,6 @@ import time
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
-idBaBot = 604776153458278415
-
 VERSION = open("fichier_txt/version.txt").read().replace("\n","")
 TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
 PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
@@ -105,7 +103,6 @@ async def on_member_remove(member):
 		systemchannel = guild.system_channel.id
 	else:
 		systemchannel = 0
-	ID = member.id
 	wel.memberremove(member)
 	channel = client.get_channel(systemchannel)
 	await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
