@@ -70,6 +70,13 @@ def images_download(k):
 	arguments = {"keywords":k,"limit":20,"print_urls":False,"size":"medium","silent_mode":True,"safe_search":True}   #creating list of arguments
 	paths = response.download(arguments)
 
+def images_download_nsfw(k):
+	"""
+	Télécharge les images demandées dans le dossier downloads
+	"""
+	arguments = {"keywords":k,"limit":20,"print_urls":False,"size":"medium","silent_mode":True}   #creating list of arguments
+	paths = response.download(arguments)
+
 
 class Images(commands.Cog):
 
@@ -114,7 +121,7 @@ class ImagesNSFW(commands.Cog):
 		"""
 		if ctx.channel.id == wel.idchannel_nsfw :
 			nbfiles = 0
-			images_download(keyword)
+			images_download_nsfw(keyword)
 			counter = Counter("downloads/{}".format(keyword))
 			for cls in counter.work():
 				# Afficher seulement les dossiers non vides
