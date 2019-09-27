@@ -62,10 +62,13 @@ class Counter(object):
 
 
 
-def images_download(k):
+def images_download(k, nb):
+	"""
+	Télécharge les images demandées dans le dossier downloads
+	"""
 	arguments = {"keywords":k,"limit":20,"print_urls":False,"size":"medium","silent_mode":True,"safe_search":True}   #creating list of arguments
 	paths = response.download(arguments)   #passing the arguments to the function
-	print(paths)   #printing absolute paths of the downloaded images
+	# print(paths)   #printing absolute paths of the downloaded images
 
 
 class Images(commands.Cog):
@@ -77,9 +80,11 @@ class Images(commands.Cog):
 	@commands.command(pass_context=True)
 	async def img(self, ctx, keyword):
 		"""
+		**[image]** | Affiche une image aléatoire
 		"""
+		print("")
 		nbfiles = 0
-		images_download(keyword)
+		images_download(keyword, nb)
 		counter = Counter("downloads/{}".format(keyword))
 		for cls in counter.work():
 			# Afficher seulement les dossiers non vides
@@ -88,11 +93,12 @@ class Images(commands.Cog):
 		if nbfiles != 0:
 			choise_nbfile=r.randint(1, nbfiles)
 			listfiles=os.listdir("downloads/{}".format(keyword))
-		await ctx.channel.send(file=discord.File("downloads/{0}/{1}".format(keyword, listfiles[choise_nbfile])))
-		contenu=os.listdir('downloads/{}'.format(keyword))
-		for x in contenu:
-		   os.remove('downloads/{0}/{1}'.format(keyword, x))#on supprime tous les fichier dans le dossier
-		os.rmdir('downloads/{}'.format(keyword))#puis on supprime le dossier
+			await ctx.channel.send(file=discord.File("downloads/{0}/{1}".format(keyword, listfiles[choise_nbfile])))
+			print("Image >> image de {} numéro {} affichée".format(keyword, choise_nbfile))
+			contenu=os.listdir('downloads/{}'.format(keyword))
+			for x in contenu:
+			   os.remove('downloads/{0}/{1}'.format(keyword, x))	# on supprime tous les fichier dans le dossier
+			os.rmdir('downloads/{}'.format(keyword))				# puis on supprime le dossier
 
 
 
