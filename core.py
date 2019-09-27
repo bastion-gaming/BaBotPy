@@ -333,6 +333,10 @@ async def looped_task():
 
 client.load_extension('vocal')
 
+##################### Commande images.py #####################
+
+client.load_extension('images')
+
 ###################### Commande parrain.py ########################
 
 client.load_extension('parrain')
