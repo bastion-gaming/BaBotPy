@@ -3,9 +3,10 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
 import random as r
-from google_images_download import google_images_download   #importing the library
+import welcome as wel
+from google_images_download import google_images_download
 
-response = google_images_download.googleimagesdownload()   #class instantiation
+response = google_images_download.googleimagesdownload()
 
 
 import os.path
@@ -67,8 +68,7 @@ def images_download(k):
 	Télécharge les images demandées dans le dossier downloads
 	"""
 	arguments = {"keywords":k,"limit":20,"print_urls":False,"size":"medium","silent_mode":True,"safe_search":True}   #creating list of arguments
-	paths = response.download(arguments)   #passing the arguments to the function
-	# print(paths)   #printing absolute paths of the downloaded images
+	paths = response.download(arguments)
 
 
 class Images(commands.Cog):
@@ -82,7 +82,6 @@ class Images(commands.Cog):
 		"""
 		**[image]** | Affiche une image aléatoire
 		"""
-		print("")
 		nbfiles = 0
 		images_download(keyword)
 		counter = Counter("downloads/{}".format(keyword))
@@ -102,6 +101,40 @@ class Images(commands.Cog):
 
 
 
+class ImagesNSFW(commands.Cog):
+
+	def __init__(self,ctx):
+		return(None)
+
+
+	@commands.command(pass_context=True)
+	async def imgp(self, ctx, keyword):
+		"""
+		**[image]** | Affiche une image NSFW aléatoire
+		"""
+		if ctx.channel.id == wel.idchannel_nsfw :
+			nbfiles = 0
+			images_download(keyword)
+			counter = Counter("downloads/{}".format(keyword))
+			for cls in counter.work():
+				# Afficher seulement les dossiers non vides
+				if cls.files:
+					nbfiles = cls.files
+			if nbfiles != 0:
+				choise_nbfile=r.randint(1, nbfiles)
+				listfiles=os.listdir("downloads/{}".format(keyword))
+				await ctx.channel.send(file=discord.File("downloads/{0}/{1}".format(keyword, listfiles[choise_nbfile])))
+				print("Image >> image de {} numéro {} affichée".format(keyword, choise_nbfile))
+				contenu=os.listdir('downloads/{}'.format(keyword))
+				for x in contenu:
+				   os.remove('downloads/{0}/{1}'.format(keyword, x))	# on supprime tous les fichier dans le dossier
+				os.rmdir('downloads/{}'.format(keyword))				# puis on supprime le dossier
+		else:
+			await ctx.channel.send("Tu ne peux pas utilisé cette commande dans ce salon")
+
+
+
 def setup(bot):
 	bot.add_cog(Images(bot))
+	bot.add_cog(ImagesNSFW(bot))
 	open("fichier_txt/cogs.txt","a").write("Images\n")
