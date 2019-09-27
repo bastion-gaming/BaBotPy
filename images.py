@@ -131,7 +131,7 @@ class ImagesNSFW(commands.Cog):
 				choise_nbfile=r.randint(1, nbfiles)
 				listfiles=os.listdir("downloads/{}".format(keyword))
 				await ctx.channel.send(file=discord.File("downloads/{0}/{1}".format(keyword, listfiles[choise_nbfile])))
-				print("Image >> image de {} numéro {} affichée".format(keyword, choise_nbfile))
+				print("Image NSFW >> image de {} numéro {} affichée".format(keyword, choise_nbfile))
 				contenu=os.listdir('downloads/{}'.format(keyword))
 				for x in contenu:
 				   os.remove('downloads/{0}/{1}'.format(keyword, x))	# on supprime tous les fichier dans le dossier
