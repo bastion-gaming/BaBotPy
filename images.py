@@ -62,7 +62,7 @@ class Counter(object):
 
 
 
-def images_download(k, nb):
+def images_download(k):
 	"""
 	Télécharge les images demandées dans le dossier downloads
 	"""
@@ -84,7 +84,7 @@ class Images(commands.Cog):
 		"""
 		print("")
 		nbfiles = 0
-		images_download(keyword, nb)
+		images_download(keyword)
 		counter = Counter("downloads/{}".format(keyword))
 		for cls in counter.work():
 			# Afficher seulement les dossiers non vides
