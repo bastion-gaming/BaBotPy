@@ -3,14 +3,11 @@ import random as r
 import time as t
 import datetime as dt
 import DB
+import welcome as wel
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
-
-idBaBot = 604776153458278415
-idGetGems = 620558080551157770
-idBASTION = 417445502641111051
 
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
@@ -30,47 +27,88 @@ message_gamble = ["Tu as remporté le pari ! Tu obtiens"
 # Taille max de l'Inventaire
 invMax = 10000
 
-class Item:
+global globalvar
+globalvar = -1
 
-	def __init__(self,nom,vente,achat,poids,idmoji,type):
-		self.nom = nom
-		self.vente = vente
-		self.achat = achat
-		self.poids = poids
-		self.idmoji = idmoji
-		self.type = type
-
-objetItem = [Item("cobblestone",1,3,1,608748492181078131,"minerai")
-,Item("iron",r.randint(9,11),30,5,608748195685597235,"minerai")
-,Item("gold",r.randint(45, 56),100,10,608748194754723863,"minerai")
-,Item("diamond",r.randint(98, 120),200,20,608748194750529548,"minerai")
-,Item("emerald",r.randint(148, 175),320,30,608748194653798431,"minerai")
-,Item("ruby",2000,3000,50,608748194406465557,"minerai")
-,Item("fish",2,5,1,608762539605753868,"poisson")
-,Item("tropicalfish",r.randint(25, 36),60,4,608762539030872079,"poisson")
-,Item("blowfish",r.randint(25, 36),60,4,618058831863218176,"poisson")
-,Item("octopus",50,90,8,618058832790421504,"poisson")
-,Item("cookie",30,40,1,"","consommable")
-,Item("grapes",15,25,1,"","consommable")
-,Item("wine_glass",120,210,3,"","consommable")
-,Item("backpack",1,5000,-100,616205834451550208,"special")]
+def incrementebourse():
+	global globalvar
+	if globalvar == 0:
+		loadItem()
+		globalvar += 1
+		print("\nGems >> Mise à jour de la bourse")
+	elif globalvar >= 60:
+		globalvar = 0
+	else:
+		globalvar += 1
 
 
-class Outil:
 
-	def __init__(self,nom,vente,achat,poids,durabilite,idmoji,type):
-		self.nom = nom
-		self.vente = vente
-		self.achat = achat
-		self.poids = poids
-		self.durabilite = durabilite
-		self.idmoji = idmoji
-		self.type = type
+def itemBourse(item):
+	if item == "iron":
+		Vente = r.randint(9,11)
+	elif item == "gold":
+		Vente = r.randint(45, 56)
+	elif item == "diamond":
+		Vente = r.randint(98, 120)
+	elif item == "emerald":
+		Vente = r.randint(148, 175)
+	elif item == "tropicalfish":
+		Vente = r.randint(25, 36)
+	elif item == "blowfish":
+		Vente = r.randint(25, 36)
+	else:
+		Vente = 404
+	return Vente
 
-objetOutil = [Outil("pickaxe",5,20,15,150,608748195291594792,"")
-,Outil("iron_pickaxe",80,160,40,800,608748194775433256,"forge")
-,Outil("fishingrod",5,15,25,200,608748194318385173,"")
-,Outil("bank_upgrade",0,10000,10000,None,421465024201097237,"bank")]
+
+
+def loadItem():
+	class Item:
+
+		def __init__(self,nom,vente,achat,poids,idmoji,type):
+			self.nom = nom
+			self.vente = vente
+			self.achat = achat
+			self.poids = poids
+			self.idmoji = idmoji
+			self.type = type
+
+	global objetItem
+	objetItem = [Item("cobblestone",1,3,1,608748492181078131,"minerai")
+	,Item("iron",itemBourse("iron"),30,5,608748195685597235,"minerai")
+	,Item("gold",itemBourse("gold"),100,10,608748194754723863,"minerai")
+	,Item("diamond",itemBourse("diamond"),200,20,608748194750529548,"minerai")
+	,Item("emerald",itemBourse("emerald"),320,30,608748194653798431,"minerai")
+	,Item("ruby",2000,3000,50,608748194406465557,"minerai")
+	,Item("fish",2,5,1,608762539605753868,"poisson")
+	,Item("tropicalfish",itemBourse("tropicalfish"),60,4,608762539030872079,"poisson")
+	,Item("blowfish",itemBourse("blowfish"),60,4,618058831863218176,"poisson")
+	,Item("octopus",50,90,8,618058832790421504,"poisson")
+	,Item("cookie",30,40,1,"","consommable")
+	,Item("grapes",15,25,1,"","consommable")
+	,Item("wine_glass",120,210,3,"","consommable")
+	,Item("backpack",1,5000,-100,616205834451550208,"special")]
+
+
+	class Outil:
+
+		def __init__(self,nom,vente,achat,poids,durabilite,idmoji,type):
+			self.nom = nom
+			self.vente = vente
+			self.achat = achat
+			self.poids = poids
+			self.durabilite = durabilite
+			self.idmoji = idmoji
+			self.type = type
+
+	global objetOutil
+	objetOutil = [Outil("pickaxe",5,20,15,150,608748195291594792,"")
+	,Outil("iron_pickaxe",80,160,40,800,608748194775433256,"forge")
+	,Outil("fishingrod",5,15,25,200,608748194318385173,"")
+	,Outil("bank_upgrade",0,10000,10000,None,421465024201097237,"bank")]
+
+
+##############################################
 
 
 class Recette:
@@ -149,6 +187,25 @@ def get_idmogi(nameElem):
 		if c.nom == nameElem:
 			test = True
 			return c.idmoji
+	if test == False:
+		return 0
+
+
+
+def get_price(nameElem):
+	"""
+	Permet de connaitre l'idmoji de l'item
+	"""
+	test = False
+	for c in objetItem:
+		if c.nom == nameElem:
+			test = True
+			return c.vente
+
+	for c in objetOutil:
+		if c.nom == nameElem:
+			test = True
+			return c.vente
 	if test == False:
 		return 0
 
@@ -543,6 +600,31 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
+	async def bourse(self, ctx):
+		"""Affiche la bourse de Bastion"""
+		ID = ctx.author.id
+		if DB.spam(ID,couldown_c, "bourse"):
+			d_bourse="Bienvenue sur la bourse de Bastion!\n\n"
+			msg = discord.Embed(title = "La bourse",color= 2461129, description = d_bourse)
+			d_bourse=""
+			d_bourse+="<:gem_iron:{}>`iron: 9 ▶ 11`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("iron"),get_price("iron"))
+			d_bourse+="<:gem_gold:{}>`gold: 45 ▶ 56`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("gold"),get_price("gold"))
+			d_bourse+="<:gem_diamond:{}>`diamond: 98 ▶ 120`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("diamond"),get_price("diamond"))
+			d_bourse+="<:gem_emerald:{}>`emerald: 148 ▶ 175`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("emerald"),get_price("emerald"))
+			d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("tropicalfish"),get_price("tropicalfish"))
+			d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("blowfish"),get_price("blowfish"))
+			msg.add_field(name="Item", value=d_bourse, inline=False)
+			DB.updateComTime(ID, "bourse")
+			await ctx.channel.send(embed = msg)
+			# Message de réussite dans la console
+			print("Gems >> {} a afficher le marché".format(ctx.author.name))
+		else:
+			msg = "Il faut attendre "+str(couldown_c)+" secondes entre chaque commande !"
+			await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
 	async def pay (self, ctx, nom, gain):
 		"""**[nom] [gain]** | Donner de l'argent à vos amis !"""
 		ID = ctx.author.id
@@ -854,10 +936,10 @@ class Gems(commands.Cog):
 
 					msg += "Nouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde"))
 
-					if ctx.guild.id != idBASTION:
-						DB.addGems(idGetGems,int(soldeTaxe[0]))
-					elif ctx.guild.id == idBASTION:
-						DB.addGems(idBaBot,int(soldeTaxe[0]))
+					if ctx.guild.id != wel.idBASTION:
+						DB.addGems(wel.idGetGems,int(soldeTaxe[0]))
+					elif ctx.guild.id == wel.idBASTION:
+						DB.addGems(wel.idBaBot,int(soldeTaxe[0]))
 
 				DB.updateComTime(ID, "bank_saving")
 			else:
@@ -1329,8 +1411,21 @@ class Gems(commands.Cog):
 		await ctx.channel.send(msg)
 
 
+class GemsTest(commands.Cog):
+
+	def __init__(self,ctx):
+		return(None)
+
+
+	@commands.command(pass_context=True)
+	async def test(self, ctx):
+		await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
+
+
+
 def setup(bot):
 	bot.add_cog(GemsBase(bot))
 	bot.add_cog(Gems(bot))
+	bot.add_cog(GemsTest(bot))
 	open("fichier_txt/cogs.txt","a").write("GemsBase\n")
 	open("fichier_txt/cogs.txt","a").write("Gems\n")

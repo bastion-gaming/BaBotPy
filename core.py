@@ -11,6 +11,7 @@ import stats as stat
 import notification as notif
 import level as lvl
 import welcome as wel
+import gems
 
 import asyncio
 import aiohttp
@@ -75,6 +76,7 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
+	gems.loadItem()
 	activity = discord.Activity(type=discord.ActivityType.playing, name="bastion-gaming.fr")
 	await client.change_presence(status=discord.Status.online, activity=activity)
 
@@ -182,6 +184,7 @@ async def looped_task():
 
 	# Check response from fecth() and messages discord channels
 	while not client.is_closed():
+		gems.incrementebourse()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
 			await asyncio.sleep(2)
