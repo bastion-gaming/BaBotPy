@@ -113,7 +113,7 @@ async def on_member_remove(member):
 async def on_voice_state_update(member,before,after):
 	guild = client.get_guild(member.guild.id)
 	if guild.afk_channel != None:
-		afkchannel = guild.get_channel.id
+		afkchannel = guild.afk_channel.id
 	else:
 		afkchannel = 0
 	if after.channel != None and not (member.name in on_vocal) and after.channel.id != afkchannel:
