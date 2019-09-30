@@ -74,6 +74,37 @@ class Utils(commands.Cog):
 		else:
 			await ctx.channel.send("{} utilisateur inscrit".format(l))
 
+	@commands.command(pass_context=True)
+	async def changelog(self, ctx, version = None):
+		"""
+		Affiche le changelog
+		"""
+		changelog = open("fichier_txt/changelog.txt","r", encoding='utf8').read()
+		changelog = changelog.replace('\n', '#')
+		changelog = changelog.split('####')
+		taille = len(changelog)
+		i = 0
+		if version == None:
+			desc = ""
+			while i < taille:
+				versionChangelog = changelog[i].split('#')
+				desc += "\n• {}".format(versionChangelog[0])
+				i += 1
+			msg = discord.Embed(title = "Liste des versions",color= 12745742, description = desc)
+		else:
+			desc = ""
+			msg = discord.Embed(title = "Changelog",color= 12745742, description = desc)
+			while i < taille:
+				versionChangelog = changelog[i].split('#')
+				if versionChangelog[0] == version:
+					j = 1
+					while j < len(versionChangelog):
+						desc += "\n{}".format(versionChangelog[j])
+						j += 1
+					msg.add_field(name=versionChangelog[0], value=desc, inline=False)
+				i += 1
+		await ctx.channel.send(embed = msg, delete_after = 30)
+
 
 def setup(bot):
 	bot.add_cog(Utils(bot))
