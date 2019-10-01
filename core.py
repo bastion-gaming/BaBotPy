@@ -10,6 +10,8 @@ import roles
 import stats as stat
 import notification as notif
 import level as lvl
+import welcome as wel
+import gems
 
 import asyncio
 import aiohttp
@@ -19,12 +21,6 @@ import time
 
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
-
-idBaBot = 604776153458278415
-idBASTION = 417445502641111051
-idchannel_botplay = 533048015758426112
-idchannel_nsfw = 425391362737700894
-idcategory_admin = 417453424402235407
 
 VERSION = open("fichier_txt/version.txt").read().replace("\n","")
 TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
@@ -80,6 +76,9 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
+	gems.loadItem()
+	activity = discord.Activity(type=discord.ActivityType.playing, name="bastion-gaming.fr")
+	await client.change_presence(status=discord.Status.online, activity=activity)
 
 ####################### Commande help.py #######################
 
@@ -93,46 +92,35 @@ client.load_extension('utils')
 
 @client.event
 async def on_member_join(member):
-	if member.guild.id == idBASTION:
-		channel = client.get_channel(417445503110742048)
-		channel_regle = client.get_channel(417454223224209408)
-		channel_salon = client.get_channel(545204163341058058)
-		channel_presentation = client.get_channel(623077212798582808)
-		time = t.time()
-		id = member.id
-		if DB.newPlayer(id) == "Le joueur a été ajouté !":
-			await roles.addrole(member, "Nouveau")
-			DB.updateField(id, "arrival", str(t.datetime.now()))
-			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1} \n:arrow_right: Sur {2} \n:arrow_right: Sur {3}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention, channel_regle.mention, channel_pres.mention, channel_salon.mention)
-		else:
-			if DB.valueAt(id, "arrival") == "0":
-				DB.updateField(id, "arrival", str(t.datetime.now()))
-			await roles.addrole(member, "Nouveau")
-			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
-		stat.countCo()
-		await channel.send(msg)
+	guild = client.get_guild(member.guild.id)
+	if guild.system_channel != None:
+		systemchannel = guild.system_channel.id
+	else:
+		systemchannel = 0
+	channel = client.get_channel(systemchannel)
+	await wel.memberjoin(member, channel)
 
 @client.event
 async def on_member_remove(member):
-	ID = member.id
-	if member.guild.id == idBASTION:
-		stat.countDeco()
-		gems = DB.valueAt(ID, "gems")
-		BotGems = DB.valueAt(idBaBot, "gems")
-		pourcentage = 0.3
-		transfert = gems * pourcentage
-		DB.updateField(idBaBot, "gems", BotGems + int(transfert))
-		DB.updateField(ID, "gems", gems - int(transfert))
-		DB.updateField(ID, "lvl", 0)
-		DB.updateField(ID, "xp", 0)
-		channel = client.get_channel(417445503110742048)
-		await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
+	guild = client.get_guild(member.guild.id)
+	if guild.system_channel != None:
+		systemchannel = guild.system_channel.id
+	else:
+		systemchannel = 0
+	wel.memberremove(member)
+	channel = client.get_channel(systemchannel)
+	await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
 
 @client.event
 async def on_voice_state_update(member,before,after):
-	if after.channel != None and not (member.name in on_vocal) and after.channel.id != 417453006326464512:
+	guild = client.get_guild(member.guild.id)
+	if guild.afk_channel != None:
+		afkchannel = guild.afk_channel.id
+	else:
+		afkchannel = 0
+	if after.channel != None and not (member.name in on_vocal) and after.channel.id != afkchannel:
 		on_vocal[member.name] = time.time()
-	elif (after.channel == None or  after.channel.id == 417453006326464512) and  member.name in on_vocal :
+	elif (after.channel == None or  after.channel.id == afkchannel) and  member.name in on_vocal :
 		time_on_vocal = round((time.time() - on_vocal[member.name])/60)
 		print('{} as passé {} minutes en vocal !'.format(member.name,time_on_vocal))
 		XP = int(DB.valueAt(member.id, "xp")) + int(time_on_vocal)
@@ -144,8 +132,8 @@ async def on_voice_state_update(member,before,after):
 @client.event
 async def on_message(message):
 	if not (message.author.bot or message.content.startswith(PREFIX)) :
-		if message.guild.id == idBASTION:
-			if message.channel.id != idchannel_botplay and message.channel.id != idchannel_nsfw and message.channel.category_id != idcategory_admin:
+		if message.guild.id == wel.idBASTION:
+			if message.channel.id != wel.idchannel_botplay and message.channel.id != wel.idchannel_nsfw and message.channel.category_id != wel.idcategory_admin:
 				await stat.countMsg(message)
 				await lvl.checklevel(message)
 				await client.process_commands(message)
@@ -196,6 +184,7 @@ async def looped_task():
 
 	# Check response from fecth() and messages discord channels
 	while not client.is_closed():
+		gems.incrementebourse()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
 			await asyncio.sleep(2)
@@ -346,6 +335,10 @@ async def looped_task():
 ###################### Commande vocal.py ########################
 
 client.load_extension('vocal')
+
+##################### Commande images.py #####################
+
+client.load_extension('images')
 
 ###################### Commande parrain.py ########################
 
