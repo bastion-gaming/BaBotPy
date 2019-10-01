@@ -3,13 +3,17 @@
 - Ajout de la fonction "images_download"
 - Ajout de la fonction "images_download_nsfw"
 - Ajout de la commande "img"
-- Ajout de la commande "imgp"
+- Ajout de la commande "nsfw"
 
 • Mise à jour du module `Core`
 - Ajout d'un message d'activité sous le nom du bot
 
 • Mise à jour du module `Utils`
 - Ajout de la commande "changelog"
+
+• Mise à jour du module `Gestion`
+- Mise à jour de la commande "graphmembre"
+- Mise à jour de la commande "graphgems"
 
 • Mise à jour du module `Gems`
 - Ajout de la fonction "incrementebourse"

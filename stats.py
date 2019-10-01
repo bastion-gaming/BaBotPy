@@ -258,7 +258,7 @@ class Stats(commands.Cog):
 		plt.clf()
 
 	@commands.command(pass_context=True)
-	async def graphmembre(self, ctx):
+	async def graphmembre(self, ctx, r = 6):
 		if os.path.isfile("cache/piegraph.png"):
 			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
@@ -267,18 +267,25 @@ class Stats(commands.Cog):
 		for item in DB.db:
 			a.append([item["nbMsg"],item["ID"]])
 		a.sort(reverse = True)
-		richest = a[:6]
+		richest = a[:r]
 		sous_total = 0
-		for i in range (6):
+		for i in range (r):
 			sous_total += richest[i][0]
 		labels = []
 		sizes = []
-		for i in range (6):
+		for i in range (r):
 			labels.append(ctx.guild.get_member(richest[i][1]).name)
 			sizes.append(richest[i][0])
 		labels.append("autre")
 		sizes.append(total - sous_total)
-		explode = (0,0,0,0,0,0,0.2)
+		explode = ()
+		i = 0
+		while i <= r:
+			if i < r:
+				explode = explode + (0,)
+			else:
+				explode = explode + (0.2,)
+			i += 1
 		plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
 		plt.axis('equal')
 		plt.savefig('cache/piegraph.png')
@@ -286,7 +293,7 @@ class Stats(commands.Cog):
 		plt.clf()
 
 	@commands.command(pass_context=True)
-	async def graphgems(self, ctx):
+	async def graphgems(self, ctx, r = 6):
 		if os.path.isfile("cache/piegraph.png"):
 			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
@@ -295,19 +302,26 @@ class Stats(commands.Cog):
 		for item in DB.db:
 			a.append([item["gems"],item["ID"]])
 		a.sort(reverse = True)
-		richest = a[:6]
+		richest = a[:r]
 		sous_total = 0
-		for i in range (6):
+		for i in range (r):
 			sous_total += richest[i][0]
 		labels = []
 		sizes = []
-		for i in range (6):
+		for i in range (r):
 			nom = ctx.guild.get_member(richest[i][1])
 			labels.append(nom.name)
 			sizes.append(richest[i][0])
 		labels.append("autre")
 		sizes.append(total - sous_total)
-		explode = (0,0,0,0,0,0,0.2)
+		explode = ()
+		i = 0
+		while i <= r:
+			if i < r:
+				explode = explode + (0,)
+			else:
+				explode = explode + (0.2,)
+			i += 1
 		plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
 		plt.axis('equal')
 		plt.savefig('cache/piegraph.png')

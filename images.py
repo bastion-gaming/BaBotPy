@@ -63,19 +63,21 @@ class Counter(object):
 
 
 
-def images_download(k):
+def images_url(k, nb):
 	"""
 	Télécharge les images demandées dans le dossier downloads
 	"""
-	arguments = {"keywords":k,"limit":20,"print_urls":False,"size":"medium","silent_mode":True,"safe_search":True}   #creating list of arguments
+	arguments = {"keywords":k,"limit":nb,"print_urls":True,"size":"medium","silent_mode":True,"safe_search":True,"no_download":True}   #creating list of arguments
 	paths = response.download(arguments)
+	return paths
 
-def images_download_nsfw(k):
+def images_url_nsfw(k, nb):
 	"""
 	Télécharge les images demandées dans le dossier downloads
 	"""
-	arguments = {"keywords":k,"limit":20,"print_urls":False,"size":"medium","silent_mode":True}   #creating list of arguments
+	arguments = {"keywords":k,"limit":nb,"print_urls":True,"size":"medium","silent_mode":True,"no_download":True}   #creating list of arguments
 	paths = response.download(arguments)
+	return paths
 
 
 class Images(commands.Cog):
@@ -85,57 +87,42 @@ class Images(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def img(self, ctx, keyword):
+	async def img(self, ctx, keyword, nbfiles = 20, choise_nbfile = None):
 		"""
-		**[image]** | Affiche une image aléatoire
+		**[mots clés]** _{nb image max} {numéro image}_ | Affiche une image en fonction des mots clés
 		"""
-		nbfiles = 0
-		images_download(keyword)
-		counter = Counter("downloads/{}".format(keyword))
-		for cls in counter.work():
-			# Afficher seulement les dossiers non vides
-			if cls.files:
-				nbfiles = cls.files
-		if nbfiles != 0:
+		if nbfiles < 5:
+			nbfiles = 20
+		if choise_nbfile != None:
+			choise_nbfile = int(choise_nbfile)
+			if choise_nbfile > int(nbfiles) or choise_nbfile < 1:
+				choise_nbfile = None
+		else:
 			choise_nbfile=r.randint(1, nbfiles)
-			listfiles=os.listdir("downloads/{}".format(keyword))
-			await ctx.channel.send(file=discord.File("downloads/{0}/{1}".format(keyword, listfiles[choise_nbfile])))
-			print("Image >> image de {} numéro {} affichée".format(keyword, choise_nbfile))
-			contenu=os.listdir('downloads/{}'.format(keyword))
-			for x in contenu:
-			   os.remove('downloads/{0}/{1}'.format(keyword, x))	# on supprime tous les fichier dans le dossier
-			os.rmdir('downloads/{}'.format(keyword))				# puis on supprime le dossier
 
-
-
-class ImagesNSFW(commands.Cog):
-
-	def __init__(self,ctx):
-		return(None)
+		url = images_url(keyword, nbfiles)
+		url2 = url[0][keyword][choise_nbfile]
+		await ctx.channel.send(url2)
 
 
 	@commands.command(pass_context=True)
-	async def imgp(self, ctx, keyword):
+	async def nsfw(self, ctx, keyword):
 		"""
-		**[image]** | Affiche une image NSFW aléatoire
+		**[mots clés]** _{nb image max} {numéro image}_ | Affiche une image en fonction des mots clés
 		"""
-		if ctx.channel.id == wel.idchannel_nsfw :
-			nbfiles = 0
-			images_download_nsfw(keyword)
-			counter = Counter("downloads/{}".format(keyword))
-			for cls in counter.work():
-				# Afficher seulement les dossiers non vides
-				if cls.files:
-					nbfiles = cls.files
-			if nbfiles != 0:
+		if ctx.channel.id == wel.idchannel_nsfw or ctx.channel.id == 627968844274860073 :
+			if nbfiles < 5:
+				nbfiles = 20
+			if choise_nbfile != None:
+				choise_nbfile = int(choise_nbfile)
+				if choise_nbfile > int(nbfiles) or choise_nbfile < 1:
+					choise_nbfile = None
+			else:
 				choise_nbfile=r.randint(1, nbfiles)
-				listfiles=os.listdir("downloads/{}".format(keyword))
-				await ctx.channel.send(file=discord.File("downloads/{0}/{1}".format(keyword, listfiles[choise_nbfile])))
-				print("Image NSFW >> image de {} numéro {} affichée".format(keyword, choise_nbfile))
-				contenu=os.listdir('downloads/{}'.format(keyword))
-				for x in contenu:
-				   os.remove('downloads/{0}/{1}'.format(keyword, x))	# on supprime tous les fichier dans le dossier
-				os.rmdir('downloads/{}'.format(keyword))				# puis on supprime le dossier
+
+			url = images_url(keyword, nbfiles)
+			url2 = url[0][keyword][choise_nbfile]
+			await ctx.channel.send(url2)
 		else:
 			await ctx.channel.send("Tu ne peux pas utilisé cette commande dans ce salon")
 
@@ -143,5 +130,4 @@ class ImagesNSFW(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Images(bot))
-	bot.add_cog(ImagesNSFW(bot))
 	open("fichier_txt/cogs.txt","a").write("Images\n")

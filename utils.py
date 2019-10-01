@@ -103,7 +103,7 @@ class Utils(commands.Cog):
 						j += 1
 					msg.add_field(name=versionChangelog[0], value=desc, inline=False)
 				i += 1
-		await ctx.channel.send(embed = msg, delete_after = 30)
+		await ctx.channel.send(embed = msg, delete_after = 60)
 
 
 def setup(bot):

@@ -39,6 +39,8 @@ class Helpme(commands.Cog):
 			else:
 				for COG in COGS:
 					mCOG = COG.lower()
+					if nameElem == "img":
+						nameElem = "images"
 					if mCOG == nameElem:
 						cog = self.bot.get_cog(COG)
 						coms = cog.get_commands()
