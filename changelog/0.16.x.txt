@@ -1,11 +1,11 @@
-0.16.3
+**0.16.3**
 • Mise à jour du module `Welcome`
 - Ajout de la fonction "memberjoin"
 - Ajout de la fonction "memberremove"
 
 
 
-0.16.2
+**0.16.2**
 • Suppression du fichier requirement.txt
 
 • Création du module `Setup`
@@ -25,7 +25,7 @@
 
 
 
-0.16.1
+**0.16.1**
 • Mise à jour du module `Core`
 - Ajout de la fonction "xp on vocal"
 
@@ -34,7 +34,7 @@
 
 
 
-0.16.0
+**0.16.0**
 • Mise à jour du module `Gestion`
 - Ajout du role Joueurs dans la fonction "permission"
 

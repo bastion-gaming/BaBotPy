@@ -1,4 +1,4 @@
-0.17.0
+**0.17.0**
 • Création du module `Images`
 - Ajout de la fonction "images_download"
 - Ajout de la fonction "images_download_nsfw"

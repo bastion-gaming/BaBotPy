@@ -1,4 +1,4 @@
-0.13.1
+**0.13.1**
 • Création du module `Get Gems` (Lancemement standalone du module `Gems`)
 
 • Mise à jour du module `Help`
@@ -6,7 +6,7 @@
 
 
 
-0.13.0
+**0.13.0**
 • Mise à jour du module `DB`
 - Remplacement du champs daily_mult par le champ daily
 - Ajout du champs StatGems dans la DB

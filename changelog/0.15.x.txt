@@ -1,4 +1,4 @@
-0.15.0
+**0.15.0**
 • Mise à jour du module `DB`
 - Ajout du champs xp dans la DB
 

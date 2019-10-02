@@ -1,4 +1,4 @@
-0.6.2
+**0.6.2**
 • Mise à jour du module `Stats`
 - Ajout de la commande "msgBy"
 
@@ -9,7 +9,7 @@
 
 
 
-0.6.1
+**0.6.1**
 • Mise à jour du module `Help`
 
 • Mise à jour du module `Gestion`
@@ -18,7 +18,7 @@
 
 
 
-0.6.0
+**0.6.0**
 • Mise à jour du système de couldown
 
 • Création du module `Vocal`

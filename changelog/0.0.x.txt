@@ -1,4 +1,4 @@
-0.0.2
+**0.0.2**
 • Création du module `DB` pour connecter le bot à TinyDB
 - Ajout de la fonction "dbExist"
 - Ajout de la fonction "newPlayer"
@@ -11,7 +11,7 @@
 
 
 
-0.0.1
+**0.0.1**
 • Création du module `Welcome` pour gérer les messages de JOIN et de LEAVE
 
 • Création du module `Gems` (alias bot-play)

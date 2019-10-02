@@ -1,4 +1,4 @@
-0.10.0
+**0.10.0**
 • Bugfix
 
 • Mise à jour du module `Stats`

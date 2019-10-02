@@ -1,4 +1,4 @@
-0.7.1
+**0.7.1**
 • Création du module `Utils`
 - Déplacement de la commande "version"
 - Ajout de la commande "ping"
@@ -15,7 +15,7 @@
 
 
 
-0.7.0
+**0.7.0**
 • Mise à jour du module `Help`
 
 • Mise à jour du module `DB`

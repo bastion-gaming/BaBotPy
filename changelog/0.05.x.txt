@@ -1,18 +1,18 @@
-0.5.2
+**0.5.2**
 • Bugfix
 - vente négative d'item
 - pay > 0
 
 
 
-0.5.1
+**0.5.1**
 • Mise à jour de la commande "crime"
 
 • Ajout de phrases pour la commande "crime"
 
 
 
-0.5.0
+**0.5.0**
 • Prise en compte des permission dans la commande "creategame"
 
 • Mise à jour du module `DB`

@@ -1,4 +1,4 @@
-0.1.0
+**0.1.0**
 • Remplacement de la base de donnée SQLite3 par TinyDB
 
 • Ajout du fichier prefix.txt

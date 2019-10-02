@@ -1,4 +1,4 @@
-0.12.1
+**0.12.1**
 • Bugfix
 
 • Ajout d'un malus lors de l'utilisation de triche
@@ -7,7 +7,7 @@
 
 
 
-0.12.0
+**0.12.0**
 • Déplacement des fonctions générales du module `Gems` dans le module `DB`
 - Déplacement de la fonction "addGems"
 - Déplacement de la fonction "spam"

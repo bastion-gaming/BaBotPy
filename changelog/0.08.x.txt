@@ -1,4 +1,4 @@
-0.8.1
+**0.8.1**
 • Mise à jour du module `DB`
 - Ajout du champ "durabilite" dans la DB
 
@@ -10,7 +10,7 @@
 
 
 
-0.8.0
+**0.8.0**
 • Création du module `Notification`
 
 • Création du sous-module "Youtube" pour le module `Vocal`

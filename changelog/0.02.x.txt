@@ -1,4 +1,4 @@
-0.2.1
+**0.2.1**
 • Mise à jour du module `Gems`
 - Ajout de la pioche en fer permettant de miner l'or et le diamant
 - Ajout de la commande "fish"
@@ -8,7 +8,7 @@
 
 
 
-0.2.0
+**0.2.0**
 • Modification du fonctionnement du bot (utilisation des Cogs)
 
 • Ajout de plusieurs champs dans la DB
