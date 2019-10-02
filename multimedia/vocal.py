@@ -4,8 +4,7 @@ from DB import DB
 import youtube_dl
 import os
 import asyncio
-from multimedia import youtube
-from youtube import youtube_top_link, search_youtube, get_youtube_url
+from multimedia.youtube import youtube_top_link, search_youtube, get_youtube_url
 
 admin = 0
 Inquisiteur = 1

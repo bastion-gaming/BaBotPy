@@ -8,7 +8,7 @@ from datetime import datetime
 from DB import DB
 from core import roles, stats as stat, level as lvl, welcome as wel
 from multimedia import notification as notif
-from gems import gemsFonction as GF
+from gems import gemsFonctions as GF
 
 import asyncio
 import aiohttp
