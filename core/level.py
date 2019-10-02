@@ -1,7 +1,7 @@
 import random as r
 import datetime as dt
-import DB
-import roles
+from DB import DB
+from core import roles
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -183,4 +183,4 @@ class Level(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Level(bot))
-	open("fichier_txt/cogs.txt","a").write("Level\n")
+	open("help/cogs.txt","a").write("Level\n")

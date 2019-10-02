@@ -6,9 +6,9 @@ from discord.ext.commands import Bot
 from discord.utils import get
 import time
 import asyncio
-import DB
+from DB import DB
 
-PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
+PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 client = Bot(command_prefix = "{0}".format(PREFIX))
 
 admin = 0
@@ -164,4 +164,4 @@ class Gestion(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Gestion(bot))
-	open("fichier_txt/cogs.txt","a").write("Gestion\n")
+	open("help/cogs.txt","a").write("Gestion\n")

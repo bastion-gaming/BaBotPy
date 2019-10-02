@@ -1,6 +1,6 @@
 import random as r
 import datetime as dt
-import DB
+from DB import DB
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import os
 
 client = discord.Client()
-file="fichier_json/time.json"
-co="fichier_json/co.json"
+file="core/time.json"
+co="core/co.json"
 def fileExist():
 	try:
 		with open(file): pass
@@ -345,4 +345,4 @@ class Stats(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Stats(bot))
-	open("fichier_txt/cogs.txt","a").write("Stats\n")
+	open("help/cogs.txt","a").write("Stats\n")

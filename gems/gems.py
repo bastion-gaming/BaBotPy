@@ -2,8 +2,8 @@ import discord
 import random as r
 import time as t
 import datetime as dt
-import DB
-import welcome as wel
+from DB import DB
+from core import welcome as wel
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -1444,5 +1444,5 @@ def setup(bot):
 	bot.add_cog(GemsBase(bot))
 	bot.add_cog(Gems(bot))
 	bot.add_cog(GemsTest(bot))
-	open("fichier_txt/cogs.txt","a").write("GemsBase\n")
-	open("fichier_txt/cogs.txt","a").write("Gems\n")
+	open("help/cogs.txt","a").write("GemsBase\n")
+	open("help/cogs.txt","a").write("Gems\n")

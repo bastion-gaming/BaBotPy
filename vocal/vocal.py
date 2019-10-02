@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
-import DB
+from DB import DB
 import youtube_dl
 import os
 import asyncio
+from vocal import youtube
 from youtube import youtube_top_link, search_youtube, get_youtube_url
 
 admin = 0
@@ -248,4 +249,4 @@ class Music(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Music(bot))
-	open("fichier_txt/cogs.txt","a").write("Music\n")
+	open("help/cogs.txt","a").write("Music\n")

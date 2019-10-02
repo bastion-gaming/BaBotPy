@@ -1,7 +1,7 @@
 import random as r
 import datetime as dt
-import DB
-import gestion as ge
+from DB import DB
+from core import gestion as ge
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -9,7 +9,7 @@ import discord
 import json
 
 client = discord.Client()
-VERSION = open("fichier_txt/version.txt").read().replace("\n","")
+VERSION = open("core/version.txt").read().replace("\n","")
 
 class Utils(commands.Cog):
 
@@ -80,7 +80,7 @@ class Utils(commands.Cog):
 		"""
 		Affiche le changelog
 		"""
-		changelog = open("fichier_txt/changelog.txt","r", encoding='utf8').read()
+		changelog = open("changelog/changelog.txt","r", encoding='utf8').read()
 		changelog = changelog.replace('\n', '#')
 		changelog = changelog.split('####')
 		taille = len(changelog)
@@ -129,4 +129,4 @@ class UtilsSecret(commands.Cog):
 def setup(bot):
 	bot.add_cog(Utils(bot))
 	bot.add_cog(UtilsSecret(bot))
-	open("fichier_txt/cogs.txt","a").write("Utils\n")
+	open("help/cogs.txt","a").write("Utils\n")

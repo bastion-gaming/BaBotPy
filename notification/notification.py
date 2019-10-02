@@ -9,34 +9,34 @@ import json
 import re
 
 
-PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
+PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 client = Bot(command_prefix = "{0}".format(PREFIX))
 
 unresolved_ids = 0
 
 # Réinitialiser toutes les valeurs de clé envoyées sur false
-with open('fichier_json/local.json', 'r') as fp:
+with open('notification/local.json', 'r') as fp:
 	reset_values = json.load(fp)
 for streams_index in reset_values['streams']:
 	streams_index['sent'] = 'false'
-with open('fichier_json/local.json', 'w') as fp:
+with open('notification/local.json', 'w') as fp:
 	json.dump(reset_values, fp, indent=2)
 
 
-with open('fichier_json/local.json', 'r') as fp:
+with open('notification/local.json', 'r') as fp:
 	local = json.load(fp)
 
-with open('fichier_json/userlist.json', 'r') as fp:
+with open('notification/userlist.json', 'r') as fp:
 	user_list = json.load(fp)
 
 api = {}
 
 
 async def dump_json():
-	with open('fichier_json/local.json' , 'w') as fp:
+	with open('notification/local.json' , 'w') as fp:
 		json.dump(local, fp, indent=2)
 
-	with open('fichier_json/userlist.json' , 'w') as fp:
+	with open('notification/userlist.json' , 'w') as fp:
 		json.dump(user_list, fp, indent=2)
 
 # Retourne la réponse de twitch api
@@ -556,4 +556,4 @@ class Notification(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Notification(bot))
-	open("fichier_txt/cogs.txt","a").write("Notification\n")
+	open("help/cogs.txt","a").write("Notification\n")

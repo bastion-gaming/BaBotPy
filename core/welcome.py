@@ -6,9 +6,8 @@ import discord
 import datetime as t
 from datetime import datetime
 
-import DB
-import stats as stat
-import roles
+from DB import DB
+from core import roles, stats as stat
 
 client = discord.Client()
 
@@ -75,4 +74,4 @@ class Welcome(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Welcome(bot))
-	open("fichier_txt/cogs.txt","a").write("Welcome\n")
+	open("help/cogs.txt","a").write("Welcome\n")

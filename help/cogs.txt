@@ -1,10 +1,12 @@
-Helpme
 Utils
 Stats
 Roles
 Level
 Gestion
+GemsBase
 Gems
 Notification
 Music
+Images
+Parrain
 Kaamelott

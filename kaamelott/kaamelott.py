@@ -2,7 +2,7 @@ import discord
 import random as r
 from discord.ext import commands
 import asyncio
-import DB
+from DB import DB
 
 
 class Kaamelott(commands.Cog):
@@ -30,7 +30,7 @@ class Kaamelott(commands.Cog):
 	@commands.command(pass_context=True)
 	async def citation(self, ctx, *, personnage = None):
 		"""**[personnage]** | Donne une citation random ou d'un personnage en particulier"""
-		f = open("fichier_txt/citation.txt","r").read().split('\n')
+		f = open("kaamelott/citation.txt","r").read().split('\n')
 		if personnage == None :
 			quote = f[r.randint(0,len(f)-2)].split('//')
 			await ctx.send(quote[0]+"\n\n*"+quote[1]+"*")
@@ -45,4 +45,4 @@ class Kaamelott(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Kaamelott(bot))
-	open("fichier_txt/cogs.txt","a").write("Kaamelott\n")
+	open("help/cogs.txt","a").write("Kaamelott\n")

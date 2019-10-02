@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
 import random as r
-import welcome as wel
+from core import welcome as wel
 from google_images_download import google_images_download
 
 response = google_images_download.googleimagesdownload()
@@ -130,4 +130,4 @@ class Images(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Images(bot))
-	open("fichier_txt/cogs.txt","a").write("Images\n")
+	open("help/cogs.txt","a").write("Images\n")

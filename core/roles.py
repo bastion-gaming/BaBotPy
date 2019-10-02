@@ -2,8 +2,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
-import gestion as ge
-import DB
+from core import gestion as ge
+from DB import DB
 
 rolelist = ["BastioBot","Ingénieur du Bastion","Responsable Twitch","PEGI master","Pollmaster","Groovy","Bastion RPG","Ambassadeur","Candidat Ambassade","Twitcher","Joueurs"]
 
@@ -156,4 +156,4 @@ class Roles(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Roles(bot))
-	open("fichier_txt/cogs.txt","a").write("Roles\n")
+	open("help/cogs.txt","a").write("Roles\n")

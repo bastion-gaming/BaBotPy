@@ -5,13 +5,10 @@ from discord.utils import get
 import datetime as t
 from datetime import datetime
 
-import DB
-import roles
-import stats as stat
-import notification as notif
-import level as lvl
-import welcome as wel
-import gems
+from DB import DB
+from core import roles, stats as stat, level as lvl, welcome as wel
+from notification import notification as notif
+from gems import gems
 
 import asyncio
 import aiohttp
@@ -22,32 +19,32 @@ import time
 # initialisation des variables.
 DEFAUT_PREFIX = "!"
 
-VERSION = open("fichier_txt/version.txt").read().replace("\n","")
-TOKEN = open("fichier_txt/token.txt", "r").read().replace("\n","")
-PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
+VERSION = open("core/version.txt").read().replace("\n","")
+TOKEN = open("token/token.txt", "r").read().replace("\n","")
+PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
-NONE = open("fichier_txt/cogs.txt","w")
-NONE = open("fichier_txt/help.txt","w")
+NONE = open("help/cogs.txt","w")
+NONE = open("help/help.txt","w")
 
 ############# Notification variables ################
-TWITCH_CLIENT_ID = open("fichier_txt/twitch_client_id.txt", "r").read().replace("\n","")
-TWITCH_SECRET_ID = open("fichier_txt/twitch_secret_id.txt", "r").read().replace("\n","")
+TWITCH_CLIENT_ID = open("notification/twitch_client_id.txt", "r").read().replace("\n","")
+TWITCH_SECRET_ID = open("notification/twitch_secret_id.txt", "r").read().replace("\n","")
 unresolved_ids = 0
 on_vocal = {}
 
 # Reset all sent key values to false
-with open('fichier_json/local.json', 'r') as fp:
+with open('notification/local.json', 'r') as fp:
 	reset_values = json.load(fp)
 for streams_index in reset_values['streams']:
 	streams_index['sent'] = 'false'
-with open('fichier_json/local.json', 'w') as fp:
+with open('notification/local.json', 'w') as fp:
 	json.dump(reset_values, fp, indent=2)
 
 
-with open('fichier_json/local.json', 'r') as fp:
+with open('notification/local.json', 'r') as fp:
 	local = json.load(fp)
 
-with open('fichier_json/userlist.json', 'r') as fp:
+with open('notification/userlist.json', 'r') as fp:
 	user_list = json.load(fp)
 
 api = {}
@@ -82,11 +79,11 @@ async def on_ready():
 
 ####################### Commande help.py #######################
 
-client.load_extension('help')
+client.load_extension('help.help')
 
 ################### Core ############################
 
-client.load_extension('utils')
+client.load_extension('core.utils')
 
 ################### Welcome #################################
 
@@ -144,27 +141,27 @@ async def on_message(message):
 
 ####################### Commande stats.py #######################
 
-client.load_extension('stats')
+client.load_extension('core.stats')
 
 ####################### Commande roles.py #######################
 
-client.load_extension('roles')
+client.load_extension('core.roles')
 
 ####################### Commande level.py #######################
 
-client.load_extension('level')
+client.load_extension('core.level')
 
 ###################### Commande gestion.py #####################
 
-client.load_extension('gestion')
+client.load_extension('core.gestion')
 
 ####################### Commande gems.py #######################
 
-client.load_extension('gems')
+client.load_extension('gems.gems')
 
 ###################### Commande notification.py ################
 
-client.load_extension('notification')
+client.load_extension('notification.notification')
 
 #---------------------------------------------------------------
 #---------------------------------------------------------------
@@ -334,19 +331,19 @@ async def looped_task():
 
 ###################### Commande vocal.py ########################
 
-client.load_extension('vocal')
+client.load_extension('vocal.vocal')
 
 ##################### Commande images.py #####################
 
-client.load_extension('images')
+client.load_extension('core.images')
 
 ###################### Commande parrain.py ########################
 
-client.load_extension('parrain')
+client.load_extension('core.parrain')
 
 ##################### Commande kaamelott.py #####################
 
-client.load_extension('kaamelott')
+client.load_extension('kaamelott.kaamelott')
 
 ####################### Lancemement du bot ######################
 

@@ -8,7 +8,7 @@ from discord.utils import get
 class Helpme(commands.Cog):
 
 	def __init__(self,bot):
-		self.PREFIX = open("fichier_txt/prefix.txt","r").read().replace("\n","")
+		self.PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 		self.bot = bot
 
 	@commands.command(pass_context=True)
@@ -18,7 +18,7 @@ class Helpme(commands.Cog):
 		msg = discord.Embed(title = "Fonction disponible",color= 12745742, description = d_help)
 		arg = ""
 
-		COGS = open("fichier_txt/cogs.txt","r").read()
+		COGS = open("help/cogs.txt","r").read()
 		COGS = COGS.split('\n')
 		COGS.pop()
 

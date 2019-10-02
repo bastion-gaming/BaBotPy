@@ -1,4 +1,4 @@
-import DB
+from DB import DB
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -70,4 +70,4 @@ class Parrain(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Parrain(bot))
-	open("fichier_txt/cogs.txt","a").write("Parrain\n")
+	open("help/cogs.txt","a").write("Parrain\n")
