@@ -4,7 +4,7 @@ from DB import DB
 import youtube_dl
 import os
 import asyncio
-from vocal import youtube
+from multimedia import youtube
 from youtube import youtube_top_link, search_youtube, get_youtube_url
 
 admin = 0
@@ -69,7 +69,7 @@ class Queue(commands.Cog):
 			await ctx.send("{} se lance".format(self.info.title[0]))
 		else:
 			await ctx.send("{} ajouté à la queue".format(self.info.last_title()))
-			print("Vocal >> ajouté à la queue")
+			print("Multimedia >> ajouté à la queue")
 	def dl(self, url):
 		ydl_opts ={
 			'format':'bestaudio/best',
@@ -82,7 +82,7 @@ class Queue(commands.Cog):
 				}]
 		}
 		with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-			print('Vocal >> Downloading song now;\n')
+			print('Multimedia >> Downloading song now;\n')
 			ydl.download([url])
 
 
@@ -90,19 +90,19 @@ class Queue(commands.Cog):
 		try :
 			self.info.sup()
 		except ValueError:
-			print("Vocal >> liste vide")
+			print("Multimedia >> liste vide")
 			pass
 		if not self.info.url:
 			msg = 'la queue est vide'
-			print('Vocal >> la queue est vide')
+			print('Multimedia >> la queue est vide')
 		else:
 			song_there = os.path.isfile("cache/song.mp3")
 			try :
 				if song_there:
 					os.remove('cache/song.mp3')
-					print('Vocal >> removed old song file')
+					print('Multimedia >> removed old song file')
 			except PermissionError:
-				print('Vocal >> trying to delete the song file')
+				print('Multimedia >> trying to delete the song file')
 				ctx.send("ERROR music playing")
 				pass
 
@@ -143,10 +143,10 @@ class Music(commands.Cog):
 		try :
 			if song_there:
 				os.remove('cache/song.mp3')
-				print('Vocal >> removed old song file')
+				print('Multimedia >> removed old song file')
 
 		except PermissionError:
-			print('Vocal >> trying to delete the song file')
+			print('Multimedia >> trying to delete the song file')
 			ctx.send("ERROR music playing")
 			return
 		self.music.info.purge()
@@ -161,10 +161,10 @@ class Music(commands.Cog):
 		try :
 			if song_there:
 				os.remove('cache/song.mp3')
-				print('Vocal >> removed old song file')
+				print('Multimedia >> removed old song file')
 
 		except PermissionError:
-			print('Vocal >> trying to delete the song file')
+			print('Multimedia >> trying to delete the song file')
 			ctx.send("ERROR music playing")
 			return
 

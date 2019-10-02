@@ -8,7 +8,7 @@ from datetime import datetime
 from DB import DB
 from core import roles, stats as stat, level as lvl, welcome as wel
 from notification import notification as notif
-from gems import gems
+from gems import gemsFonction as GF
 
 import asyncio
 import aiohttp
@@ -73,7 +73,7 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
-	gems.loadItem()
+	GF.loadItem()
 	activity = discord.Activity(type=discord.ActivityType.playing, name="bastion-gaming.fr")
 	await client.change_presence(status=discord.Status.online, activity=activity)
 
@@ -181,7 +181,7 @@ async def looped_task():
 
 	# Check response from fecth() and messages discord channels
 	while not client.is_closed():
-		gems.incrementebourse()
+		GF.incrementebourse()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
 			await asyncio.sleep(2)
@@ -331,11 +331,11 @@ async def looped_task():
 
 ###################### Commande vocal.py ########################
 
-client.load_extension('vocal.vocal')
+client.load_extension('multimedia.vocal')
 
 ##################### Commande images.py #####################
 
-client.load_extension('core.images')
+client.load_extension('multimedia.images')
 
 ###################### Commande parrain.py ########################
 

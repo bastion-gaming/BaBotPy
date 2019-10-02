@@ -2,7 +2,10 @@ import subprocess
 import sys
 
 def install(package):
-    subprocess.call([sys.executable, "-m", "pip", "install", "-U", package])
+	try:
+		subprocess.call([sys.executable, "-m", "pip", "install", "-U", package])
+	except:
+		subprocess.call([sys.executable, "-m", "pip", "install", "-U", package, "--user"])
 
 install("pip")
 install("discord.py")
