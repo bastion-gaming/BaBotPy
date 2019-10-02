@@ -7,7 +7,7 @@ from datetime import datetime
 
 from DB import DB
 from core import roles, stats as stat, level as lvl, welcome as wel
-from notification import notification as notif
+from multimedia import notification as notif
 from gems import gemsFonction as GF
 
 import asyncio
@@ -27,24 +27,24 @@ NONE = open("help/cogs.txt","w")
 NONE = open("help/help.txt","w")
 
 ############# Notification variables ################
-TWITCH_CLIENT_ID = open("notification/twitch_client_id.txt", "r").read().replace("\n","")
-TWITCH_SECRET_ID = open("notification/twitch_secret_id.txt", "r").read().replace("\n","")
+TWITCH_CLIENT_ID = open("multimedia/twitch_client_id.txt", "r").read().replace("\n","")
+TWITCH_SECRET_ID = open("multimedia/twitch_secret_id.txt", "r").read().replace("\n","")
 unresolved_ids = 0
 on_vocal = {}
 
 # Reset all sent key values to false
-with open('notification/local.json', 'r') as fp:
+with open('multimedia/local.json', 'r') as fp:
 	reset_values = json.load(fp)
 for streams_index in reset_values['streams']:
 	streams_index['sent'] = 'false'
-with open('notification/local.json', 'w') as fp:
+with open('multimedia/local.json', 'w') as fp:
 	json.dump(reset_values, fp, indent=2)
 
 
-with open('notification/local.json', 'r') as fp:
+with open('multimedia/local.json', 'r') as fp:
 	local = json.load(fp)
 
-with open('notification/userlist.json', 'r') as fp:
+with open('multimedia/userlist.json', 'r') as fp:
 	user_list = json.load(fp)
 
 api = {}
@@ -161,7 +161,7 @@ client.load_extension('gems.gems')
 
 ###################### Commande notification.py ################
 
-client.load_extension('notification.notification')
+client.load_extension('multimedia.notification')
 
 #---------------------------------------------------------------
 #---------------------------------------------------------------
