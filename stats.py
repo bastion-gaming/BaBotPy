@@ -274,8 +274,12 @@ class Stats(commands.Cog):
 		labels = []
 		sizes = []
 		for i in range (r):
-			labels.append(ctx.guild.get_member(richest[i][1]).name)
-			sizes.append(richest[i][0])
+			try:
+				labels.append(ctx.guild.get_member(richest[i][1]).name)
+				sizes.append(richest[i][0])
+			except:
+				labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
+				sizes.append(richest[i][0])
 		labels.append("autre")
 		sizes.append(total - sous_total)
 		explode = ()
@@ -291,6 +295,9 @@ class Stats(commands.Cog):
 		plt.savefig('cache/piegraph.png')
 		await ctx.send(file=discord.File("cache/piegraph.png"))
 		plt.clf()
+		if os.path.isfile("cache/piegraph.png"):
+			os.remove('cache/piegraph.png')
+
 
 	@commands.command(pass_context=True)
 	async def graphgems(self, ctx, r = 6):
@@ -309,9 +316,13 @@ class Stats(commands.Cog):
 		labels = []
 		sizes = []
 		for i in range (r):
-			nom = ctx.guild.get_member(richest[i][1])
-			labels.append(nom.name)
-			sizes.append(richest[i][0])
+			try:
+				nom = ctx.guild.get_member(richest[i][1])
+				labels.append(nom.name)
+				sizes.append(richest[i][0])
+			except:
+				labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
+				sizes.append(richest[i][0])
 		labels.append("autre")
 		sizes.append(total - sous_total)
 		explode = ()
@@ -327,6 +338,8 @@ class Stats(commands.Cog):
 		plt.savefig('cache/piegraph.png')
 		await ctx.send(file=discord.File("cache/piegraph.png"))
 		plt.clf()
+		if os.path.isfile("cache/piegraph.png"):
+			os.remove('cache/piegraph.png')
 
 
 

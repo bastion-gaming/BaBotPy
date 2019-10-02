@@ -61,6 +61,7 @@ def memberremove(member):
 	transfert = gems * pourcentage
 	DB.updateField(idBot, "gems", BotGems + int(transfert))
 	DB.updateField(ID, "gems", gems - int(transfert))
+	# DB.removePlayer(member.id)
 	print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
 
 
