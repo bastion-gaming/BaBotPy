@@ -1,0 +1,22 @@
+0.8.1
+• Mise à jour du module `DB`
+- Ajout du champ "durabilite" dans la DB
+
+• Mise à jour du module `Gems`
+- Création de l'item backpack
+- Ajout d'une durabilité pour les outils
+- Ajout de la fonction "addDurabilité"
+- Ajout de la fonction "get_durabilite"
+
+
+
+0.8.0
+• Création du module `Notification`
+
+• Création du sous-module "Youtube" pour le module `Vocal`
+
+• Création du module `Kaamelott`
+
+• Correction orthographique de certain messages
+
+• Mise en place d'un système de logs

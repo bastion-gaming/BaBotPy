@@ -1,0 +1,45 @@
+0.16.3
+• Mise à jour du module `Welcome`
+- Ajout de la fonction "memberjoin"
+- Ajout de la fonction "memberremove"
+
+
+
+0.16.2
+• Suppression du fichier requirement.txt
+
+• Création du module `Setup`
+- À exécuter lors de la première installation ou pour effectuer une mise à jour des dépendances
+
+• Mise à jour du module `Utils`
+- Création de la commande "usercount"
+
+• Mise à jour du module `Core`
+- Ajout de la Taxe Bastion Leave (TBL) lorsqu'un utilisateur quitte le serveur (uniquement sur le discord Bastion)
+
+• Mise à jour du module `Get Gems`
+- Ajout de la Taxe Gems Leave (TGL) lorsqu'un utilisateur quitte le serveur (Sur les serveurs discord autre que Bastion)
+
+• Mise à jour du module `Gems`
+- Ajout de la Taxe Bank Saving (TBS)
+
+
+
+0.16.1
+• Mise à jour du module `Core`
+- Ajout de la fonction "xp on vocal"
+
+• Mise à jour du module `Roles`
+- Amélioration de la commande "gamelist"
+
+
+
+0.16.0
+• Mise à jour du module `Gestion`
+- Ajout du role Joueurs dans la fonction "permission"
+
+• Mise à jour du module `Roles`
+- La commande "creategame" devient "gamecreate"
+- Ajout de la commande "gameadd"
+- Ajout de la commande "gameremove"
+- Ajout de la commande "gamelist"

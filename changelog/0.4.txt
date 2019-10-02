@@ -1,0 +1,14 @@
+0.4.0
+• Rangement des fichier .txt dans le dossier /fichier_txt
+
+• Création du module `Stats`
+- Ajout de la fonction "countMsg"
+- Ajout de la fonction "countTotalMsg"
+- Ajout de la fonction "hourCount"
+- Ajout de la fonction "hourWrite"
+- Ajout de la commande "totalMsg"
+- Ajout de la commande "hourMsg"
+
+• Mise à jour du module `Gems`
+- Vérification du nombre de gems en banque sur la commande "buy"
+- Création d'une class pour les Items

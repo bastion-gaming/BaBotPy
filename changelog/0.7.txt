@@ -1,0 +1,29 @@
+0.7.1
+• Création du module `Utils`
+- Déplacement de la commande "version"
+- Ajout de la commande "ping"
+- Ajout de la commande "site"
+- Ajout de la commande "twitch"
+- Ajout de la commande "agenda"
+- Ajout de la commande "github"
+
+• mise à jour du module `Gestion`
+- Optimisation de la commande "vote"
+
+• Mise à jour du module `Gems`
+- Ajout d'item dans la machine à sous
+
+
+
+0.7.0
+• Mise à jour du module `Help`
+
+• Mise à jour du module `DB`
+- Ajout de la fonction "DBFieldList"
+- Mise à jour de la fonction "checkField"
+
+• Mise à jour du module `Vocal`
+- Ajout de la commande "search"
+
+• Mise à jour du module `Gems`
+- Ajout de la commande "slots"
