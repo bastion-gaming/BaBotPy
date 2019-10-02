@@ -1,6 +1,7 @@
 import random as r
 import datetime as dt
 import DB
+import gestion as ge
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -106,6 +107,26 @@ class Utils(commands.Cog):
 		await ctx.channel.send(embed = msg, delete_after = 60)
 
 
+class UtilsSecret(commands.Cog):
+
+	def __init__(self,ctx):
+		return(None)
+
+
+	@commands.command(pass_context=True)
+	async def test(self, ctx, ID = None):
+		if ID == "check":
+			if ge.permission(ctx,ge.Inquisiteur):
+				while DB.membercheck(ctx):
+					i = 0
+				await ctx.channel.send("Suppression terminer, la DB est à jour")
+			else:
+				ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
+		else:
+			await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
+
+
 def setup(bot):
 	bot.add_cog(Utils(bot))
+	bot.add_cog(UtilsSecret(bot))
 	open("fichier_txt/cogs.txt","a").write("Utils\n")

@@ -96,6 +96,31 @@ def newPlayer(ID):
 		return ("Le joueur existe déjà")
 
 
+def removePlayer(ID):
+	el = db.get(Query().ID == ID)
+	docID = el.doc_id
+	try:
+		db.remove(doc_ids=[docID])
+		print("DB >> docID {} | Le joueur {} a été supprimer de la DB".format(docID, ID))
+		return ("Le joueur a été supprimer !")
+	except:
+		return ("Le joueur n'existe pas")
+
+
+def DBmembercheck(ctx):
+	t = taille()
+	i = 1
+	while i < t:
+		try:
+			id = userID(i)
+			if ctx.guild.get_member(id) == None:
+				removePlayer(id)
+			i += 1
+		except:
+			return True
+	return False
+
+
 def updateField(ID, fieldName, fieldValue):
 	"""
 	Permet de mettre à jour la valeur fieldName par la fieldValue.

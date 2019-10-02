@@ -36,29 +36,37 @@ def incrementebourse():
 		loadItem()
 		globalvar += 1
 		print("\nGems >> Mise à jour de la bourse")
-	elif globalvar >= 60:
+	elif globalvar >= 120:
 		globalvar = 0
 	else:
 		globalvar += 1
 
 
 
-def itemBourse(item):
-	if item == "iron":
-		Vente = r.randint(9,11)
-	elif item == "gold":
-		Vente = r.randint(45, 56)
-	elif item == "diamond":
-		Vente = r.randint(98, 120)
-	elif item == "emerald":
-		Vente = r.randint(148, 175)
-	elif item == "tropicalfish":
-		Vente = r.randint(25, 36)
-	elif item == "blowfish":
-		Vente = r.randint(25, 36)
-	else:
-		Vente = 404
-	return Vente
+def itemBourse(item, type):
+	if type == "vente":
+		if item == "iron":
+			Prix = r.randint(9,11)
+		elif item == "gold":
+			Prix = r.randint(45, 56)
+		elif item == "diamond":
+			Prix = r.randint(98, 120)
+		elif item == "emerald":
+			Prix = r.randint(148, 175)
+		elif item == "ruby":
+			Prix = r.randint(1800, 2500)
+		elif item == "tropicalfish":
+			Prix = r.randint(25, 36)
+		elif item == "blowfish":
+			Prix = r.randint(25, 36)
+		elif item == "octopus":
+			Prix = r.randint(40,65)
+		else:
+			Prix = 404
+		return Prix
+
+	# elif type == "achat":
+	# 	return Prix
 
 
 
@@ -75,15 +83,15 @@ def loadItem():
 
 	global objetItem
 	objetItem = [Item("cobblestone",1,3,1,608748492181078131,"minerai")
-	,Item("iron",itemBourse("iron"),30,5,608748195685597235,"minerai")
-	,Item("gold",itemBourse("gold"),100,10,608748194754723863,"minerai")
-	,Item("diamond",itemBourse("diamond"),200,20,608748194750529548,"minerai")
-	,Item("emerald",itemBourse("emerald"),320,30,608748194653798431,"minerai")
-	,Item("ruby",2000,3000,50,608748194406465557,"minerai")
+	,Item("iron",itemBourse("iron", "vente"),30,5,608748195685597235,"minerai")
+	,Item("gold",itemBourse("gold", "vente"),100,10,608748194754723863,"minerai")
+	,Item("diamond",itemBourse("diamond", "vente"),200,20,608748194750529548,"minerai")
+	,Item("emerald",itemBourse("emerald", "vente"),320,30,608748194653798431,"minerai")
+	,Item("ruby",itemBourse("ruby", "vente"),3000,50,608748194406465557,"minerai")
 	,Item("fish",2,5,1,608762539605753868,"poisson")
-	,Item("tropicalfish",itemBourse("tropicalfish"),60,4,608762539030872079,"poisson")
-	,Item("blowfish",itemBourse("blowfish"),60,4,618058831863218176,"poisson")
-	,Item("octopus",50,90,8,618058832790421504,"poisson")
+	,Item("tropicalfish",itemBourse("tropicalfish", "vente"),60,4,608762539030872079,"poisson")
+	,Item("blowfish",itemBourse("blowfish", "vente"),60,4,618058831863218176,"poisson")
+	,Item("octopus",itemBourse("octopus", "vente"),90,8,618058832790421504,"poisson")
 	,Item("cookie",30,40,1,"","consommable")
 	,Item("grapes",15,25,1,"","consommable")
 	,Item("wine_glass",120,210,3,"","consommable")
@@ -194,7 +202,7 @@ def get_idmogi(nameElem):
 
 def get_price(nameElem):
 	"""
-	Permet de connaitre l'idmoji de l'item
+	Permet de connaitre le prix de l'item
 	"""
 	test = False
 	for c in objetItem:
@@ -604,15 +612,24 @@ class GemsBase(commands.Cog):
 		"""Affiche la bourse de Bastion"""
 		ID = ctx.author.id
 		if DB.spam(ID,couldown_c, "bourse"):
-			d_bourse="Bienvenue sur la bourse de Bastion!\n\n"
+			time = 120 - globalvar
+			timeM = time // 2
+			timeS = time % 2
+			d_bourse="Bienvenue sur la bourse de Bastion!\nActualisation de la bourse dans **{} minutes".format(timeM)
+			if timeS == 1:
+				d_bourse += " 30**"
+			else:
+				d_bourse += "**"
 			msg = discord.Embed(title = "La bourse",color= 2461129, description = d_bourse)
 			d_bourse=""
 			d_bourse+="<:gem_iron:{}>`iron: 9 ▶ 11`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("iron"),get_price("iron"))
 			d_bourse+="<:gem_gold:{}>`gold: 45 ▶ 56`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("gold"),get_price("gold"))
 			d_bourse+="<:gem_diamond:{}>`diamond: 98 ▶ 120`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("diamond"),get_price("diamond"))
 			d_bourse+="<:gem_emerald:{}>`emerald: 148 ▶ 175`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("emerald"),get_price("emerald"))
+			d_bourse+="<:gem_ruby:{}>`ruby: 1800 ▶ 2500`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("ruby"),get_price("ruby"))
 			d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("tropicalfish"),get_price("tropicalfish"))
 			d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("blowfish"),get_price("blowfish"))
+			d_bourse+="<:gem_octopus:{}>`octopus: 40 ▶ 65`:gem:` | Valeur actuel: {}`:gem:\n".format(get_idmogi("octopus"),get_price("octopus"))
 			msg.add_field(name="Item", value=d_bourse, inline=False)
 			DB.updateComTime(ID, "bourse")
 			await ctx.channel.send(embed = msg)
@@ -1418,7 +1435,7 @@ class GemsTest(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def test(self, ctx):
+	async def gemstest(self, ctx):
 		await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 
 
