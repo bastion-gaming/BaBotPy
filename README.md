@@ -31,20 +31,15 @@ parties du bot.
 nouveaux membres mais aussi pour pouvoir en une commande créer un nouveau rôle
 correspondant à un jeu puis l'associer à un salon  
 
-**Play-bot** (alias **Gems**): Partie déjà en cours à ce jour par Shell, ce module ce chargera de gérer le jeu. Il
-est semblable à celui qui existait avec Mewna. Donc toutes les commandes qui permettent
-d'acheter, vendre, braquer, parier etc... De toute façon Shell est en bonne voie.  
+**Get Gems**: Partie déjà en cours à ce jour par Shell, ce module ce chargera de gérer le jeu. Il est semblable à celui qui existait avec Mewna. Donc toutes les commandes qui permettent d'acheter, vendre, braquer, parier etc... De toute façon Shell est en bonne voie.  
 
-**Level** : Gestion des niveaux, genre tous les x mots on monte d'un niveaux, ça permet de
-quantifier la participation de chacun aux discussions. On doit se mettre d'accord sur les
-modalités de leveling.  
+**Level** : Gestion des niveaux, genre tous les x mots on monte d'un niveaux, ça permet de quantifier la participation de chacun aux discussions. On doit se mettre d'accord sur les modalités de leveling.  
 
-**DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des
-joueurs et leur quantité d'argent. On s'y connais un peu et la seule que j'ai utilisé en python
-et qui était simple c'était SQLite.
-Gestion de la musique: pour n'avoir qu'un seul bot qui fait tout.  
+**DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des joueurs et leur quantité d'argent. Onutilise TinyDB 
 
-**Vote** : faire comme celui étant déjà là.  
+**Gestion de la musique**: On propose que le bot puissent lancer des vidéos Youtube au format audio.
+
+**Vote** : Pouvoir créer un vote en configurant la *Question*, les *Réponses* et le *temps du vote*.
 
 **Stat**: Compter le nombre de message poster dans les salons en fonction du temps. C'est
 utile et là au moins on est sûr qu'il nous lis pas en même temps.  
@@ -67,7 +62,7 @@ Core
 
 Rôles
 
-Play-bot (alias Gems)
+Get Gems
 
 Level
 
@@ -75,11 +70,13 @@ DB
 
 Vote
 
+Stat
+
 Live Notification
 
 ## En cours/test
 
-Stat
+Musique
 
 ## Non commencé
 
