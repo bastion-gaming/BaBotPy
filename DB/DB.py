@@ -107,7 +107,7 @@ def removePlayer(ID):
 		return ("Le joueur n'existe pas")
 
 
-def DBmembercheck(ctx):
+def membercheck(ctx):
 	t = taille()
 	i = 1
 	while i < t:
