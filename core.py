@@ -157,7 +157,9 @@ client.load_extension('core.gestion')
 
 ####################### Commande gems.py #######################
 
-client.load_extension('gems.gems')
+client.load_extension('gems.gemsBase')
+
+client.load_extension('gems.gemsPlay')
 
 ###################### Commande notification.py ################
 

@@ -24,10 +24,10 @@ class Helpme(commands.Cog):
 
 		if nameElem != None:
 			nameElem = nameElem.lower()
-			if nameElem == "gems" or nameElem == "gemsbase":
+			if nameElem == "gems":
 				for COG in COGS:
 					mCOG = COG.lower()
-					if mCOG == "gems" or mCOG == "gemsbase":
+					if mCOG == "gems" or mCOG == "gemsbase" or mCOG == "gemsplay":
 						cog = self.bot.get_cog(COG)
 						coms = cog.get_commands()
 						for com in coms :

@@ -4,7 +4,7 @@ Roles
 Level
 Gestion
 GemsBase
-Gems
+GemsPlay
 Notification
 Music
 Images
