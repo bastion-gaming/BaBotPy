@@ -22,15 +22,15 @@ idcategory_admin = 417453424402235407
 
 async def memberjoin(member, channel):
 	if member.guild.id == idBASTION:
-		channel_regle = client.get_channel(417454223224209408)
-		channel_salon = client.get_channel(545204163341058058)
-		channel_presentation = client.get_channel(623077212798582808)
+		channel_regle = member.guild.get_channel(417454223224209408)
+		channel_salon = member.guild.get_channel(545204163341058058)
+		channel_presentation = member.guild.get_channel(623077212798582808)
 		time = t.time()
 		id = member.id
 		if DB.newPlayer(id) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
 			DB.updateField(id, "arrival", str(t.datetime.now()))
-			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur `# règles`\n:arrow_right: Sur `# présentation` \n:arrow_right: Sur `# liste-salon`\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention)
+			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\n:arrow_right: Sur {2} \n:arrow_right: Sur {3}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention,channel_presentation.mention,channel_salon.mention)
 		else:
 			if DB.valueAt(id, "arrival") == "0":
 				DB.updateField(id, "arrival", str(t.datetime.now()))
