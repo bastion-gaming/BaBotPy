@@ -32,6 +32,11 @@ async def on_member_remove(member):
 	wel.memberremove(member)
 
 
+async def looped_task():
+	while not client.is_closed():
+		GF.incrementebourse()
+		await asyncio.sleep(30)
+
 ####################### Commande help.py #######################
 
 client.load_extension('help.help')
@@ -48,5 +53,5 @@ client.load_extension('gems.gemsPlay')
 
 ####################### Lancemement du bot ######################
 
-
+client.loop.create_task(looped_task())
 client.run(TOKEN)
