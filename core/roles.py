@@ -11,6 +11,10 @@ async def addrole(member, role):
 	setrole = get(member.guild.roles, name=role)
 	await member.add_roles(setrole)
 
+async def removerole(member, role):
+	setrole = get(member.guild.roles, name=role)
+	await member.remove_roles(setrole)
+
 class Roles(commands.Cog):
 
 	def __init__(self,ctx):

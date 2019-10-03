@@ -71,6 +71,7 @@ async def checklevel(message):
 		lvl2 = DB.valueAt(ID, "lvl")
 		if lvl == 0 and lvl2 == 1:
 			roles.addrole(message.author, "Joueurs")
+			roles.removerole(message.author, "Nouveau")
 	except:
 		return print("Le joueur n'existe pas.")
 
@@ -173,7 +174,11 @@ class Level(commands.Cog):
 					if lvl == x.level:
 						if xp >= x.somMsg:
 							DB.updateField(ID, "lvl", lvl+1)
-							msg = ":data: {1} Levelup, tu as atteint le level **{0}**".format(lvl+1, Nom)
+							msg = ":tada: {1} Levelup, tu as atteint le level **{0}**".format(lvl+1, Nom)
+							lvl2 = DB.valueAt(ID, "lvl")
+							if lvl == 0 and lvl2 == 1:
+								roles.addrole(message.author, "Joueurs")
+								roles.removerole(message.author, "Nouveau")
 						else:
 							msg = "Nombre de message insuffisant pour levelup\nXP de {2}: `{0}/{1}`".format(xp, x.somMsg, Nom)
 				if lvl == lvlmax:
