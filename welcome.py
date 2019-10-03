@@ -31,7 +31,7 @@ async def memberjoin(member, channel):
 		if DB.newPlayer(id) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
 			DB.updateField(id, "arrival", str(t.datetime.now()))
-			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! ".format(member.mention) #\nTu es attendu : \n\n:arrow_right: Sur {1} \n:arrow_right: Sur {2} \n:arrow_right: Sur {3}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention, channel_regle.mention, channel_presentation.mention, channel_salon.mention)
+			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !\nTu es attendu : \n\n:arrow_right: Sur #regles \n:arrow_right: Sur #présentation \n:arrow_right: Sur #liste-salon\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention)
 		else:
 			if DB.valueAt(id, "arrival") == "0":
 				DB.updateField(id, "arrival", str(t.datetime.now()))
