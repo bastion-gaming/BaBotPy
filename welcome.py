@@ -39,7 +39,7 @@ async def memberjoin(member, channel):
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
 	else:
-		msg = "Bienvenue sur {}".format(member.guild.name)
+		msg = "Bienvenue {} sur {}".format(member.mention ,member.guild.name)
 	print("Welcome >> {} a rejoint le serveur {}".format(member.name, member.guild.name))
 	await channel.send(msg)
 
