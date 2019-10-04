@@ -57,6 +57,7 @@ objet = [XP(0,10)
 async def checklevel(message):
 	ID = message.author.id
 	Nom = message.author.name
+	author = message.guild.get_member(ID)
 	try:
 		lvl = DB.valueAt(ID, "lvl")
 		xp = DB.valueAt(ID, "xp")
@@ -70,8 +71,31 @@ async def checklevel(message):
 					check = False
 		lvl2 = DB.valueAt(ID, "lvl")
 		if lvl == 0 and lvl2 == 1:
-			roles.addrole(message.author, "Joueurs")
-			roles.removerole(message.author, "Nouveau")
+			roles.addrole(author, "Joueurs")
+			roles.removerole(author, "Nouveau")
+	except:
+		return print("Le joueur n'existe pas.")
+
+
+async def checklevelvocal(member):
+	ID = member.id
+	Nom = member.name
+	channel_vocal = member.guild.get_channel(507679074362064916)
+	try:
+		lvl = DB.valueAt(ID, "lvl")
+		xp = DB.valueAt(ID, "xp")
+		check = True
+		for x in objet:
+			if lvl == x.level and check:
+				if xp >= x.somMsg:
+					DB.updateField(ID, "lvl", lvl+1)
+					msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
+					await channel_vocal.send(msg)
+					check = False
+		lvl2 = DB.valueAt(ID, "lvl")
+		if lvl == 0 and lvl2 == 1:
+			roles.addrole(member, "Joueurs")
+			roles.removerole(member, "Nouveau")
 	except:
 		return print("Le joueur n'existe pas.")
 
@@ -147,43 +171,6 @@ class Level(commands.Cog):
 
 				emb = discord.Embed(title = "Informations :",color= 13752280, description = msg)
 				await ctx.channel.send(embed = emb)
-
-
-
-
-	@commands.command(pass_context=True)
-	async def forcelevel(self, ctx, Nom = None):
-			"""
-			Permet d'actualiser le level d'un utilisateur
-			"""
-			if Nom == None:
-				ID = ctx.author.id
-				Nom = ctx.author.name
-			elif len(Nom) == 21 :
-				ID = int(Nom[2:20])
-			elif len(Nom) == 22 :
-				ID = int(Nom[3:21])
-			else :
-				msg="Le nom que vous m'avez donné n'existe pas !"
-				ID = -1
-
-			if (ID != -1):
-				lvl = DB.valueAt(ID, "lvl")
-				xp = DB.valueAt(ID, "xp")
-				for x in objet:
-					if lvl == x.level:
-						if xp >= x.somMsg:
-							DB.updateField(ID, "lvl", lvl+1)
-							msg = ":tada: {1} Levelup, tu as atteint le level **{0}**".format(lvl+1, Nom)
-							lvl2 = DB.valueAt(ID, "lvl")
-							if lvl == 0 and lvl2 == 1:
-								roles.addrole(message.author, "Joueurs")
-								roles.removerole(message.author, "Nouveau")
-						else:
-							msg = "Nombre de message insuffisant pour levelup\nXP de {2}: `{0}/{1}`".format(xp, x.somMsg, Nom)
-				if lvl == lvlmax:
-					msg = "Level max atteint"
-			await ctx.channel.send(msg)
 
 
 def setup(bot):
