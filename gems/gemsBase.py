@@ -142,6 +142,18 @@ class GemsBase(commands.Cog):
 						else :
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 						break
+				for c in GF.objetBox :
+					if item == "lotbox_{}".format(c.nom) :
+						test = False
+						prix = 0 - (c.achat*nb)
+						if DB.addGems(ID, prix) >= "0":
+							DB.add(ID, "inventory", "lotbox_{}".format(c.nom), nb)
+							msg = "Tu viens d'acquérir {0} `{1}` !".format(nb, item)
+							# Message de réussite dans la console
+							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
+						else :
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
+						break
 				if test :
 					msg = "Cet item n'est pas vendu au marché !"
 

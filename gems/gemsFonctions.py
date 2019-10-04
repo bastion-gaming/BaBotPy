@@ -117,6 +117,19 @@ def loadItem():
 
 
 ##############################################
+class Box:
+
+	def __init__(self,nom, titre, achat , min, max):
+		self.nom = nom
+		self.titre = titre
+		self.achat = achat
+		self.min = min
+		self.max = max
+
+objetBox = [Box("gems","Gems",300, 100, 500)
+,Box("raregems","Gems Rare",3000, 1000, 5000)
+,Box("legendarygems","Gems Legendary",30000, 10000, 50000)]
+
 
 
 class Recette:

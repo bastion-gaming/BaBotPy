@@ -526,6 +526,8 @@ class GemsPlay(commands.Cog):
 				DB.add(ID, "trophy", "Mineur de Merveilles", 1)
 				gain = 42
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmogi("ruby"))
+				if r.randint(0,8) == 0:
+					DB.add(ID, "inventory", "lotbox_gems", 1)
 			#===================================================================
 			#Super gain, 3 chiffres identique
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
@@ -644,6 +646,43 @@ class GemsPlay(commands.Cog):
 			msg = "Il faut attendre "+str(GF.couldown_xl)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
+
+
+	@commands.command(pass_context=True)
+	async def boxes(self, ctx, type = None, name = None):
+		"""**open [nom]** | Ouverture de LotBox"""
+		ID = ctx.author.id
+
+		if DB.spam(ID,GF.couldown_l, "boxes"):
+			if type == "open":
+				if name != None:
+					if DB.nbElements(ID, "inventory", "lotbox_{}".format(name)) > 0:
+						for lotbox in GF.objetBox:
+							if name == lotbox.nom:
+								gain = r.randint(lotbox.min, lotbox.max)
+								titre = lotbox.titre
+
+								DB.addGems(ID, gain)
+								desc = "{}:gem:".format(gain)
+								msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
+								DB.updateComTime(ID, "boxes")
+								print("Gems >> {} a ouvert une lotbox".format(ctx.author.name))
+								await ctx.channel.send(embed = msg)
+								return True
+
+						await ctx.chennel.send("Cette box n'existe pas!")
+						return False
+					else:
+						msg = "Tu ne possèdes pas cette LotBox"
+				else:
+					msg = "Commande `boxes open` incomplète"
+			elif type == None:
+				msg = "Commande `boxes` incomplète"
+			else:
+				msg = "Commande `boxes` invalide"
+		else:
+			msg = "Il faut attendre "+str(GF.couldown_xl)+" secondes entre chaque commande !"
+		await ctx.channel.send(msg)
 
 
 def setup(bot):
