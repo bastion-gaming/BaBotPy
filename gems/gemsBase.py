@@ -231,6 +231,10 @@ class GemsBase(commands.Cog):
 			msg_inv = ""
 			msg_invOutils = ""
 			msg_invItems = ""
+			msg_invItemsMinerai = ""
+			msg_invItemsPoisson = ""
+			msg_invItemsPlante = ""
+			msg_invItemsConsommable = ""
 			msg_invBox = ""
 			inv = DB.valueAt(ID, "inventory")
 			tailletot = 0
@@ -245,10 +249,17 @@ class GemsBase(commands.Cog):
 				for x in inv:
 					if c.nom == str(x):
 						if inv[x] > 0:
-							if c.type != "consommable":
-								msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+							if c.type == "minerai":
+								msg_invItemsMinerai += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+							elif c.type == "poisson":
+								msg_invItemsPoisson += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+							elif c.type == "plante":
+								msg_invItemsPlante += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+							elif c.type == "consommable":
+								msg_invItemsConsommable += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 							else:
-								msg_invItems += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
+								msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+
 							tailletot += c.poids*int(inv[x])
 
 			for c in GF.objetBox :
@@ -265,6 +276,14 @@ class GemsBase(commands.Cog):
 				msg.add_field(name="Outils", value=msg_invOutils, inline=False)
 			if msg_invItems != "":
 				msg.add_field(name="Items", value=msg_invItems, inline=False)
+			if msg_invItemsMinerai != "":
+				msg.add_field(name="Minerais", value=msg_invItemsMinerai, inline=False)
+			if msg_invItemsPoisson != "":
+				msg.add_field(name="Poissons", value=msg_invItemsPoisson, inline=False)
+			if msg_invItemsPlante != "":
+				msg.add_field(name="Plantes", value=msg_invItemsPlante, inline=False)
+			if msg_invItemsConsommable != "":
+				msg.add_field(name="Consommables", value=msg_invItemsConsommable, inline=False)
 			if msg_invBox != "":
 				msg.add_field(name="Loot Box", value=msg_invBox, inline=False)
 			DB.updateComTime(ID, "inv")
@@ -320,9 +339,9 @@ class GemsBase(commands.Cog):
 			msg.add_field(name="Outils", value=d_marketOutils, inline=False)
 			if d_marketItems != "":
 				msg.add_field(name="Items", value=d_marketItems, inline=False)
-			msg.add_field(name="Minerai", value=d_marketItemsMinerai, inline=False)
-			msg.add_field(name="Poisson", value=d_marketItemsPoisson, inline=False)
-			msg.add_field(name="Plante", value=d_marketItemsPlante, inline=False)
+			msg.add_field(name="Minerais", value=d_marketItemsMinerai, inline=False)
+			msg.add_field(name="Poissons", value=d_marketItemsPoisson, inline=False)
+			msg.add_field(name="Plantes", value=d_marketItemsPlante, inline=False)
 			msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
 			msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
 			DB.updateComTime(ID, "market")
