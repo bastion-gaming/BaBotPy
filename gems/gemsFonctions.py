@@ -198,7 +198,7 @@ couldown_c = 6 # c pour court
 # nb de sec nécessaire entre 2 commandes
 
 
-def get_idmogi(nameElem):
+def get_idmoji(nameElem):
 	"""
 	Permet de connaitre l'idmoji de l'item
 	"""
@@ -320,13 +320,13 @@ def recette(ctx):
 				if c.nom == r.nom:
 					d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
 					if r.nb1 > 0:
-						d_recette += "{0} <:gem_{1}:{2}>`{1}` ".format(r.nb1, r.item1, get_idmogi(r.item1))
+						d_recette += "{0} <:gem_{1}:{2}>`{1}` ".format(r.nb1, r.item1, get_idmoji(r.item1))
 					if r.nb2 > 0:
-						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb2, r.item2, get_idmogi(r.item2))
+						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb2, r.item2, get_idmoji(r.item2))
 					if r.nb3 > 0:
-						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb3, r.item3, get_idmogi(r.item3))
+						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb3, r.item3, get_idmoji(r.item3))
 					if r.nb4 > 0:
-						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb4, r.item4, get_idmogi(r.item4))
+						d_recette += "et {0} <:gem_{1}:{2}>`{1}` ".format(r.nb4, r.item4, get_idmoji(r.item4))
 					d_recette += "\n"
 
 	msg = discord.Embed(title = "Recettes",color= 15778560, description = d_recette)

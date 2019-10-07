@@ -22,6 +22,7 @@
 
 • Mise à jour du module `Gems`
 - Séparation du fichier gems.py en 3 fichiers (gemsFonctions, gemsBase et gemsPlay)
+- Changement de l'emoji de la pioche
 - Affichage du temps restant avant l'actualisation de la bourse de Bastion
 - Actualisation de la bourse toutes les 60 minutes
 - Mise à jour de la commande "inv" (inventaire)

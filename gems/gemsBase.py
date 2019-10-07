@@ -369,14 +369,14 @@ class GemsBase(commands.Cog):
 				d_bourse += "**"
 			msg = discord.Embed(title = "La bourse",color= 2461129, description = d_bourse)
 			d_bourse=""
-			d_bourse+="<:gem_iron:{}>`iron: 9 ▶ 11`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("iron"),GF.get_price("iron"))
-			d_bourse+="<:gem_gold:{}>`gold: 45 ▶ 56`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("gold"),GF.get_price("gold"))
-			d_bourse+="<:gem_diamond:{}>`diamond: 98 ▶ 120`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("diamond"),GF.get_price("diamond"))
-			d_bourse+="<:gem_emerald:{}>`emerald: 148 ▶ 175`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("emerald"),GF.get_price("emerald"))
-			d_bourse+="<:gem_ruby:{}>`ruby: 1800 ▶ 2500`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("ruby"),GF.get_price("ruby"))
-			d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("tropicalfish"),GF.get_price("tropicalfish"))
-			d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("blowfish"),GF.get_price("blowfish"))
-			d_bourse+="<:gem_octopus:{}>`octopus: 40 ▶ 65`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmogi("octopus"),GF.get_price("octopus"))
+			d_bourse+="<:gem_iron:{}>`iron: 9 ▶ 11`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("iron"),GF.get_price("iron"))
+			d_bourse+="<:gem_gold:{}>`gold: 45 ▶ 56`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("gold"),GF.get_price("gold"))
+			d_bourse+="<:gem_diamond:{}>`diamond: 98 ▶ 120`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("diamond"),GF.get_price("diamond"))
+			d_bourse+="<:gem_emerald:{}>`emerald: 148 ▶ 175`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("emerald"),GF.get_price("emerald"))
+			d_bourse+="<:gem_ruby:{}>`ruby: 1800 ▶ 2500`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("ruby"),GF.get_price("ruby"))
+			d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("tropicalfish"),GF.get_price("tropicalfish"))
+			d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("blowfish"),GF.get_price("blowfish"))
+			d_bourse+="<:gem_octopus:{}>`octopus: 40 ▶ 65`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("octopus"),GF.get_price("octopus"))
 			msg.add_field(name="Item", value=d_bourse, inline=False)
 			DB.updateComTime(ID, "bourse")
 			await ctx.channel.send(embed = msg)
@@ -450,22 +450,22 @@ class GemsBase(commands.Cog):
 									DB.add(ID, "inventory", c.item2, -1*nb2)
 									DB.add(ID, "inventory", c.item3, -1*nb3)
 									DB.add(ID, "inventory", c.item4, -1*nb4)
-									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
 									if DB.nbElements(ID, "inventory", c.item1) < nb1:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
 									if DB.nbElements(ID, "inventory", c.item2) < nb2:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmogi(c.item2))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
 									if DB.nbElements(ID, "inventory", c.item3) < nb3:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item3) - nb3)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmogi(c.item3))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmoji(c.item3))
 									if DB.nbElements(ID, "inventory", c.item4) < nb4:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item4) - nb4)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item4, GF.get_idmogi(c.item4))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item4, GF.get_idmoji(c.item4))
 
 							elif c.item1 != "" and c.item2 != "" and c.item3 != "":
 								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2 and DB.nbElements(ID, "inventory", c.item3) >= nb3:
@@ -473,45 +473,45 @@ class GemsBase(commands.Cog):
 									DB.add(ID, "inventory", c.item1, -1*nb1)
 									DB.add(ID, "inventory", c.item2, -1*nb2)
 									DB.add(ID, "inventory", c.item3, -1*nb3)
-									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
 									if DB.nbElements(ID, "inventory", c.item1) < nb1:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
 									if DB.nbElements(ID, "inventory", c.item2) < nb2:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmogi(c.item2))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
 									if DB.nbElements(ID, "inventory", c.item3) < nb3:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item3) - nb3)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmogi(c.item3))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmoji(c.item3))
 
 							elif c.item1 != "" and c.item2 != "":
 								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2:
 									DB.add(ID, "inventory", c.nom, nb)
 									DB.add(ID, "inventory", c.item1, -1*nb1)
 									DB.add(ID, "inventory", c.item2, -1*nb2)
-									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
 									if DB.nbElements(ID, "inventory", c.item1) < nb1:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
 									if DB.nbElements(ID, "inventory", c.item2) < nb2:
 										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
-										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmogi(c.item2))
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
 
 							elif c.item1 != "":
 								if DB.nbElements(ID, "inventory", c.item1) >= nb1:
 									DB.add(ID, "inventory", c.nom, nb)
 									DB.add(ID, "inventory", c.item1, -1*nb1)
-									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
-									msg = "Il te manque {0} <:gem_{1}:{2}>`{1}`".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+									msg = "Il te manque {0} <:gem_{1}:{2}>`{1}`".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
 							await ctx.channel.send(msg)
 							return True
 						else:
