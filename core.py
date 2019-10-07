@@ -74,8 +74,6 @@ async def on_ready():
 
 	print('------\n')
 	GF.loadItem()
-	activity = discord.Activity(type=discord.ActivityType.playing, name="bastion-gaming.fr")
-	await client.change_presence(status=discord.Status.online, activity=activity)
 
 ####################### Commande help.py #######################
 
@@ -184,6 +182,12 @@ async def looped_task():
 
 	# Check response from fecth() and messages discord channels
 	while not client.is_closed():
+		if counter % 2 == 0 :
+			activity = discord.Activity(type=discord.ActivityType.playing, name="▶ bastion-gaming.fr ◀")
+			await client.change_presence(status=discord.Status.online, activity=activity)
+		else:
+			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(PREFIX))
+			await client.change_presence(status=discord.Status.online, activity=activity)
 		GF.incrementebourse()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()

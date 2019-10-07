@@ -33,8 +33,16 @@ async def on_member_remove(member):
 
 
 async def looped_task():
+	counter = 0
 	while not client.is_closed():
+		if counter % 2 == 0 :
+			activity = discord.Activity(type=discord.ActivityType.playing, name="▶ bastion-gaming.fr ◀")
+			await client.change_presence(status=discord.Status.online, activity=activity)
+		else:
+			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(DEFAUT_PREFIX))
+			await client.change_presence(status=discord.Status.online, activity=activity)
 		GF.incrementebourse()
+		counter += 1
 		await asyncio.sleep(30)
 
 ####################### Commande help.py #######################
