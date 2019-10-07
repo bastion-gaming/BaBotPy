@@ -32,3 +32,4 @@
 - Ajout de la commande "hothouse"
 - Ajout de la commande "boxes open"
 - Ajout des LotBox
+- Ajout de nouveaux trophées

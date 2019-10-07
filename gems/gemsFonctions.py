@@ -172,6 +172,9 @@ objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`
 ,Trophy("Gems 200k", "`Avoir 200k`:gem:", "unique", 200000)
 ,Trophy("Gems 500k", "`Avoir 500k`:gem:", "unique", 500000)
 ,Trophy("Gems 1M", "`Avoir 1 Million`:gem:", "unique", 1000000)
+,Trophy("Gems 10M", "`Avoir 10 Millions`:gem:", "unique", 10000000)
+,Trophy("Gems 100M", "`Avoir 100 Millions`:gem:", "unique", 100000000)
+,Trophy("Gems 500M", "`Avoir 500 Millions`:gem:", "unique", 500000000)
 ,Trophy("Le Milliard !!!", "`Avoir 1 Milliard`:gem:", "unique", 1000000000)]
 
 
