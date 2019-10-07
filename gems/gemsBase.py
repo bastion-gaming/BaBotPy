@@ -17,6 +17,16 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
+	async def tuto(self, ctx):
+		"""Affiche le tutoriel !"""
+		ID = ctx.author.id
+		link = "https://www.youtube.com/watch?v="
+		await ctx.channel.send(":tools: En travaux :pencil:\n{}".format(link))
+
+
+
+
+	@commands.command(pass_context=True)
 	async def begin(self, ctx):
 		"""Pour t'ajouter dans la base de données !"""
 		ID = ctx.author.id
