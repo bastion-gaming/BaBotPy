@@ -4,7 +4,6 @@ import time as t
 import datetime as dt
 from DB import DB
 from gems import gemsFonctions as GF
-from core import welcome as wel
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
