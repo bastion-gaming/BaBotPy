@@ -143,14 +143,14 @@ class GemsBase(commands.Cog):
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 						break
 				for c in GF.objetBox :
-					if item == "lotbox_{}".format(c.nom) :
+					if item == "lootbox_{}".format(c.nom) or item == c.nom :
 						test = False
 						prix = 0 - (c.achat*nb)
 						if DB.addGems(ID, prix) >= "0":
-							DB.add(ID, "inventory", "lotbox_{}".format(c.nom), nb)
-							msg = "Tu viens d'acquérir {0} `{1}` !".format(nb, item)
+							DB.add(ID, "inventory", "lootbox_{}".format(c.nom), nb)
+							msg = "Tu viens d'acquérir {0} <:gem_lootbox:630698430313922580>`{1}` !".format(nb, c.nom)
 							# Message de réussite dans la console
-							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
+							print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
 						else :
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 						break
@@ -214,7 +214,7 @@ class GemsBase(commands.Cog):
 					msg = "Cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Tu n'as pas assez de `{0}`. Il vous en reste : {1}".format(str(item),str(DB.nbElements(ID, "inventory", item)))
+				msg = "Tu n'as pas assez de `{0}`. Il t'en reste : {1}".format(str(item),str(DB.nbElements(ID, "inventory", item)))
 
 			DB.updateComTime(ID, "sell")
 		else:
@@ -230,35 +230,44 @@ class GemsBase(commands.Cog):
 		nom = ctx.author.name
 		if DB.spam(ID,GF.couldown_c, "inv"):
 			msg_inv = ""
+			msg_invOutils = ""
+			msg_invItems = ""
+			msg_invBox = ""
 			inv = DB.valueAt(ID, "inventory")
 			tailletot = 0
-			Titre = True
 			for c in GF.objetOutil:
-				if Titre:
-					msg_inv += "**Outils**\n"
-					Titre = False
 				for x in inv:
 					if c.nom == str(x):
 						if inv[x] > 0:
-							msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, GF.get_durabilite(ID, c.nom), c.durabilite)
+							msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, GF.get_durabilite(ID, c.nom), c.durabilite)
 							tailletot += c.poids*int(inv[x])
-			Titre = True
+
 			for c in GF.objetItem:
-				if Titre:
-					msg_inv += "\n**Items**\n"
-					Titre = False
 				for x in inv:
 					if c.nom == str(x):
 						if inv[x] > 0:
 							if c.type != "consommable":
-								msg_inv = msg_inv+"<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+								msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 							else:
-								msg_inv = msg_inv+":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
+								msg_invItems += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 							tailletot += c.poids*int(inv[x])
+
+			for c in GF.objetBox :
+				for x in inv:
+					name = "lootbox_{}".format(c.nom)
+					if name == str(x):
+						if inv[x] > 0:
+							msg_invBox += "<:gem_lootbox:630698430313922580>`{0}`: `x{1}`\n".format(c.nom, str(inv[x]))
 
 			msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),GF.invMax)
 			msg_titre = "Inventaire de {}\n\n".format(nom)
 			msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
+			if msg_invOutils != "":
+				msg.add_field(name="Outils", value=msg_invOutils, inline=False)
+			if msg_invItems != "":
+				msg.add_field(name="Items", value=msg_invItems, inline=False)
+			if msg_invBox != "":
+				msg.add_field(name="Loot Box", value=msg_invBox, inline=False)
 			DB.updateComTime(ID, "inv")
 			await ctx.channel.send(embed = msg)
 		else:
@@ -273,26 +282,37 @@ class GemsBase(commands.Cog):
 		ID = ctx.author.id
 		if DB.spam(ID,GF.couldown_c, "market"):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
-			Titre = True
+			d_marketOutils = ""
+			d_marketItems = ""
+			d_marketItemsC = ""
+			d_marketBox = ""
+
 			for c in GF.objetOutil:
-				if Titre:
-					d_market += "**Outils**\n"
-					Titre = False
-				d_market += "<:gem_{0}:{3}>`{0}`: Vente **{1}** | Achat **{2}** ".format(c.nom,c.vente,c.achat,c.idmoji)
-				if c.durabilite != None:
-					d_market += "| Durabilité: **{}** ".format(c.durabilite)
-				d_market += "| Poids **{}**\n".format(c.poids)
-			Titre = True
-			for c in GF.objetItem :
-				if Titre:
-					d_market += "\n**Items**\n"
-					Titre = False
-				if c.type != "consommable":
-					d_market += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
+				if c.vente != 0:
+					d_marketOutils += "Vente **{}** | ".format(c.vente)
+				if c.nom == "bank_upgrade":
+					d_marketOutils += "Achat **Le plafond du compte épargne** "
 				else:
-					d_market += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+					d_marketOutils += "Achat **{}** ".format(c.achat)
+				if c.durabilite != None:
+					d_marketOutils += "| Durabilité: **{}** ".format(c.durabilite)
+				d_marketOutils += "| Poids **{}**\n".format(c.poids)
+
+			for c in GF.objetItem :
+				if c.type != "consommable":
+					d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				else:
+					d_marketItemsC += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+
+			for c in GF.objetBox :
+				d_marketBox += "<:gem_lootbox:630698430313922580>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max)
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
+			msg.add_field(name="Outils", value=d_marketOutils, inline=False)
+			msg.add_field(name="Items", value=d_marketItems, inline=False)
+			msg.add_field(name="Consommables", value=d_marketItemsC, inline=False)
+			msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
 			DB.updateComTime(ID, "market")
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console

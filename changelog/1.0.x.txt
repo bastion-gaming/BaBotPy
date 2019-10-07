@@ -24,3 +24,7 @@
 - Séparation du fichier gems.py en 3 fichiers (gemsFonctions, gemsBase et gemsPlay)
 - Affichage du temps restant avant l'actualisation de la bourse de Bastion
 - Actualisation de la bourse toutes les 60 minutes
+- Mise à jour de la commande "inv" (inventaire)
+- Mise à jour de la commande "market" (marché)
+- Ajout de la commande "boxes open"
+- Ajout des LotBox

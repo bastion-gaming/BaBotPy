@@ -126,7 +126,7 @@ class Box:
 		self.min = min
 		self.max = max
 
-objetBox = [Box("gems","Gems",300, 100, 500)
+objetBox = [Box("commongems","Gems Common",300, 100, 500)
 ,Box("raregems","Gems Rare",3000, 1000, 5000)
 ,Box("legendarygems","Gems Legendary",30000, 10000, 50000)]
 

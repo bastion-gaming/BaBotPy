@@ -170,6 +170,14 @@ class GemsPlay(commands.Cog):
 
 					msg += "Nouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde"))
 
+					D = r.randint(0,20)
+					if D == 20 or D == 0:
+						DB.add(ID, "inventory", "lootbox_raregems", 1)
+						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+					elif D >= 9 and D <= 11:
+						DB.add(ID, "inventory", "lootbox_commongems", 1)
+						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
+
 					if ctx.guild.id != wel.idBASTION:
 						DB.addGems(wel.idGetGems,int(soldeTaxe[0]))
 					elif ctx.guild.id == wel.idBASTION:
@@ -245,6 +253,16 @@ class GemsPlay(commands.Cog):
 						DB.add(ID, "trophy", "Gamble Jackpot", 1)
 						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
 					DB.addGems(ID, gain)
+					D = r.randint(0,20)
+					if D == 0:
+						DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+						msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
+					elif D >= 19:
+						DB.add(ID, "inventory", "lootbox_raregems", 1)
+						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+					elif D >= 8 and D <= 12:
+						DB.add(ID, "inventory", "lootbox_commongems", 1)
+						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 				else:
 					val = 0-valeur
 					DB.addGems(ID,val)
@@ -288,6 +306,17 @@ class GemsPlay(commands.Cog):
 						if nbrand < 5:
 							DB.add(ID, "inventory", "emerald", 1)
 							msg = "Tu as obtenu 1 <:gem_emerald:{}>`émeraude`".format(GF.get_idmogi("emerald"))
+							D = r.randint(0,20)
+							if D == 0:
+								DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
+							elif D >= 19:
+								DB.add(ID, "inventory", "lootbox_raregems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+							elif D >= 8 and D <= 12:
+								DB.add(ID, "inventory", "lootbox_commongems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
+
 						elif nbrand > 5 and nbrand < 15:
 							DB.add(ID, "inventory", "diamond", 1)
 							msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(GF.get_idmogi("diamond"))
@@ -295,6 +324,7 @@ class GemsPlay(commands.Cog):
 							if nbcobble != 0 :
 								DB.add(ID, "inventory", "cobblestone", nbcobble)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmogi("cobblestone"))
+
 						elif nbrand > 15 and nbrand < 30:
 							DB.add(ID, "inventory", "gold", 1)
 							msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or`".format(GF.get_idmogi("gold"))
@@ -302,6 +332,7 @@ class GemsPlay(commands.Cog):
 							if nbcobble != 0 :
 								DB.add(ID, "inventory", "cobblestone", nbcobble)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmogi("cobblestone"))
+
 						elif nbrand > 30 and nbrand < 60:
 							DB.add(ID, "inventory", "iron", 1)
 							msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(GF.get_idmogi("iron"))
@@ -309,6 +340,7 @@ class GemsPlay(commands.Cog):
 							if nbcobble != 0 :
 								DB.add(ID, "inventory", "cobblestone", nbcobble)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmogi("cobblestone"))
+
 						elif nbrand >= 95:
 							if r.randint(0,10) == 10:
 								DB.add(ID, "inventory", "ruby", 1)
@@ -410,6 +442,16 @@ class GemsPlay(commands.Cog):
 						elif nbrand >= 30 and nbrand < 40:
 							DB.add(ID, "inventory", "octopus", 1)
 							msg = "Tu as obtenu 1 <:gem_octopus:{}>`octopus`".format(GF.get_idmogi("octopus"))
+							D = r.randint(0,20)
+							if D == 0:
+								DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
+							elif D >= 19:
+								DB.add(ID, "inventory", "lootbox_raregems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+							elif D >= 8 and D <= 12:
+								DB.add(ID, "inventory", "lootbox_commongems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 						elif nbrand >= 40 and nbrand < 95:
 							nbfish = r.randint(1,7)
@@ -526,8 +568,16 @@ class GemsPlay(commands.Cog):
 				DB.add(ID, "trophy", "Mineur de Merveilles", 1)
 				gain = 42
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmogi("ruby"))
-				if r.randint(0,8) == 0:
-					DB.add(ID, "inventory", "lotbox_gems", 1)
+				D = r.randint(0,20)
+				if D == 0:
+					DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+					msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
+				elif D >= 19:
+					DB.add(ID, "inventory", "lootbox_raregems", 1)
+					msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+				elif D >= 8 and D <= 12:
+					DB.add(ID, "inventory", "lootbox_commongems", 1)
+					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 			#===================================================================
 			#Super gain, 3 chiffres identique
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
@@ -602,6 +652,16 @@ class GemsPlay(commands.Cog):
 					DB.add(ID, "inventory", "cookie", nbCookie)
 				else:
 					msg += "\nTon inventaire est plein"
+				D = r.randint(0,20)
+				if D == 0:
+					DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+					msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
+				elif D >= 19:
+					DB.add(ID, "inventory", "lootbox_raregems", 1)
+					msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+				elif D >= 8 and D <= 12:
+					DB.add(ID, "inventory", "lootbox_commongems", 1)
+					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 			#===================================================================
 			#grappe
 			nbGrapes = 0
@@ -650,30 +710,34 @@ class GemsPlay(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def boxes(self, ctx, type = None, name = None):
-		"""**open [nom]** | Ouverture de LotBox"""
+		"""**open [nom]** | Ouverture de Loot Box"""
 		ID = ctx.author.id
 
 		if DB.spam(ID,GF.couldown_l, "boxes"):
 			if type == "open":
 				if name != None:
-					if DB.nbElements(ID, "inventory", "lotbox_{}".format(name)) > 0:
-						for lotbox in GF.objetBox:
-							if name == lotbox.nom:
-								gain = r.randint(lotbox.min, lotbox.max)
-								titre = lotbox.titre
+					for lootbox in GF.objetBox:
+						if name == "lootbox_{}".format(lootbox.nom):
+							name = lootbox.nom
+					if DB.nbElements(ID, "inventory", "lootbox_{}".format(name)) > 0:
+						for lootbox in GF.objetBox:
+							if name == lootbox.nom:
+								gain = r.randint(lootbox.min, lootbox.max)
+								titre = lootbox.titre
 
 								DB.addGems(ID, gain)
+								DB.add(ID, "inventory", "lootbox_{}".format(lootbox.nom), -1)
 								desc = "{}:gem:".format(gain)
 								msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
 								DB.updateComTime(ID, "boxes")
-								print("Gems >> {} a ouvert une lotbox".format(ctx.author.name))
+								print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))
 								await ctx.channel.send(embed = msg)
 								return True
 
 						await ctx.chennel.send("Cette box n'existe pas!")
 						return False
 					else:
-						msg = "Tu ne possèdes pas cette LotBox"
+						msg = "Tu ne possèdes pas cette Loot Box"
 				else:
 					msg = "Commande `boxes open` incomplète"
 			elif type == None:
