@@ -148,7 +148,7 @@ class GemsBase(commands.Cog):
 						prix = 0 - (c.achat*nb)
 						if DB.addGems(ID, prix) >= "0":
 							DB.add(ID, "inventory", "lootbox_{}".format(c.nom), nb)
-							msg = "Tu viens d'acquérir {0} <:gem_lootbox:630698430313922580>`{1}` !".format(nb, c.nom)
+							msg = "Tu viens d'acquérir {0} <:gem_lootbox:630698430313922580>`{1}` !".format(nb, c.titre)
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
 						else :
