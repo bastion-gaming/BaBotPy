@@ -283,7 +283,10 @@ class GemsBase(commands.Cog):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 			d_marketOutils = ""
 			d_marketItems = ""
-			d_marketItemsC = ""
+			d_marketItemsMinerai = ""
+			d_marketItemsPoisson = ""
+			d_marketItemsPlante = ""
+			d_marketItemsConsommable = ""
 			d_marketBox = ""
 
 			for c in GF.objetOutil:
@@ -299,18 +302,28 @@ class GemsBase(commands.Cog):
 				d_marketOutils += "| Poids **{}**\n".format(c.poids)
 
 			for c in GF.objetItem :
-				if c.type != "consommable":
-					d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				if c.type == "minerai":
+					d_marketItemsMinerai += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				elif c.type == "poisson":
+					d_marketItemsPoisson += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				elif c.type == "plante":
+					d_marketItemsPlante += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				elif c.type == "consommable":
+					d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
 				else:
-					d_marketItemsC += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+					d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
 
 			for c in GF.objetBox :
 				d_marketBox += "<:gem_lootbox:630698430313922580>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max)
 
 			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			msg.add_field(name="Outils", value=d_marketOutils, inline=False)
-			msg.add_field(name="Items", value=d_marketItems, inline=False)
-			msg.add_field(name="Consommables", value=d_marketItemsC, inline=False)
+			if d_marketItems != "":
+				msg.add_field(name="Items", value=d_marketItems, inline=False)
+			msg.add_field(name="Minerai", value=d_marketItemsMinerai, inline=False)
+			msg.add_field(name="Poisson", value=d_marketItemsPoisson, inline=False)
+			msg.add_field(name="Plante", value=d_marketItemsPlante, inline=False)
+			msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
 			msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
 			DB.updateComTime(ID, "market")
 			await ctx.channel.send(embed = msg)
@@ -403,29 +416,87 @@ class GemsBase(commands.Cog):
 					print("Gems >> {} a afficher les recettes".format(ctx.author.name))
 					return
 				#-------------------------------------
-				# Forgeage des items (pour l'instant uniquement la pioche en fer)
-				elif item == "iron_pickaxe":
-					nb = int(nb)
-					nbIron = 4*nb
-					nbPickaxe = 1*nb
-					if DB.nbElements(ID, "inventory", "iron") >= nbIron and DB.nbElements(ID, "inventory", "pickaxe") >= nbPickaxe:
-						DB.add(ID, "inventory", "iron_pickaxe", nb)
-						DB.add(ID, "inventory", "pickaxe", -nbPickaxe)
-						DB.add(ID, "inventory", "iron", -nbIron)
-						msg = "Bravo, tu as réussi à forger {0} <:gem_iron_pickaxe:608748194775433256>`iron_pickaxe` !".format(nb)
-						# Message de réussite dans la console
-						print("Gems >> {} a forgé une pioche en fer".format(ctx.author.name))
-					elif DB.nbElements(ID, "inventory", "iron") < nbIron and DB.nbElements(ID, "inventory", "pickaxe") < nbPickaxe:
-						msg = "tu n'as pas assez de <:gem_iron:{1}>`lingots de fer` et de <:gem_pickaxe:{2}>`pickaxe` pour forger {0} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nb,GF.get_idmogi("iron"), GF.get_idmogi("pickaxe"), GF.get_idmogi("iron_pickaxe"))
-					elif DB.nbElements(ID, "inventory", "iron") < nbIron:
-						nbmissing = (DB.nbElements(ID, "inventory", "iron") - nbIron)*-1
-						msg = "Il te manque {0} <:gem_iron:{2}>`lingots de fer` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb,GF.get_idmogi("iron"), GF.get_idmogi("iron_pickaxe"))
-					else:
-						nbmissing = (DB.nbElements(ID, "inventory", "pickaxe") - nbPickaxe)*-1
-						msg = "Il te manque {0} <:gem_pickaxe:{2}>`pickaxe` pour forger {1} <:gem_iron_pickaxe:{3}>`iron_pickaxe` !".format(nbmissing, nb, GF.get_idmogi("pickaxe"), GF.get_idmogi("iron_pickaxe"))
 				else:
-					msg = "Impossible d'exécuter de forger cet item !"
+					for c in GF.objetRecette:
+						if item == c.nom:
+							nb = int(nb)
+							nb1 = nb*c.nb1
+							nb2 = nb*c.nb2
+							nb3 = nb*c.nb3
+							nb4 = nb*c.nb4
+							if c.item1 != "" and c.item2 != "" and c.item3 != "" and c.item4 != "":
+								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2 and DB.nbElements(ID, "inventory", c.item3) >= nb3 and DB.nbElements(ID, "inventory", c.item4) >= nb4:
+									DB.add(ID, "inventory", c.nom, nb)
+									DB.add(ID, "inventory", c.item1, -1*nb1)
+									DB.add(ID, "inventory", c.item2, -1*nb2)
+									DB.add(ID, "inventory", c.item3, -1*nb3)
+									DB.add(ID, "inventory", c.item4, -1*nb4)
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+								else:
+									msg = ""
+									if DB.nbElements(ID, "inventory", c.item1) < nb1:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+									if DB.nbElements(ID, "inventory", c.item2) < nb2:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmogi(c.item2))
+									if DB.nbElements(ID, "inventory", c.item3) < nb3:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item3) - nb3)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmogi(c.item3))
+									if DB.nbElements(ID, "inventory", c.item4) < nb4:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item4) - nb4)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item4, GF.get_idmogi(c.item4))
 
+							elif c.item1 != "" and c.item2 != "" and c.item3 != "":
+								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2 and DB.nbElements(ID, "inventory", c.item3) >= nb3:
+									DB.add(ID, "inventory", c.nom, nb)
+									DB.add(ID, "inventory", c.item1, -1*nb1)
+									DB.add(ID, "inventory", c.item2, -1*nb2)
+									DB.add(ID, "inventory", c.item3, -1*nb3)
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+								else:
+									msg = ""
+									if DB.nbElements(ID, "inventory", c.item1) < nb1:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+									if DB.nbElements(ID, "inventory", c.item2) < nb2:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmogi(c.item2))
+									if DB.nbElements(ID, "inventory", c.item3) < nb3:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item3) - nb3)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmogi(c.item3))
+
+							elif c.item1 != "" and c.item2 != "":
+								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2:
+									DB.add(ID, "inventory", c.nom, nb)
+									DB.add(ID, "inventory", c.item1, -1*nb1)
+									DB.add(ID, "inventory", c.item2, -1*nb2)
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+								else:
+									msg = ""
+									if DB.nbElements(ID, "inventory", c.item1) < nb1:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+									if DB.nbElements(ID, "inventory", c.item2) < nb2:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
+										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmogi(c.item2))
+
+							elif c.item1 != "":
+								if DB.nbElements(ID, "inventory", c.item1) >= nb1:
+									DB.add(ID, "inventory", c.nom, nb)
+									DB.add(ID, "inventory", c.item1, -1*nb1)
+									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmogi(c.nom))
+									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+								else:
+									nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+									msg = "Il te manque {0} <:gem_{1}:{2}>`{1}`".format(nbmissing, c.item1, GF.get_idmogi(c.item1))
+							await ctx.channel.send(msg)
+							return True
+						else:
+							msg = "Aucun recette disponible pour forger cette item !"
 				DB.updateComTime(ID, "forge")
 			else:
 				msg = "Ton inventaire est plein"

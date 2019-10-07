@@ -81,20 +81,22 @@ def loadItem():
 			self.type = type
 
 	global objetItem
-	objetItem = [Item("cobblestone",1,3,1,608748492181078131,"minerai")
-	,Item("iron",itemBourse("iron", "vente"),30,5,608748195685597235,"minerai")
-	,Item("gold",itemBourse("gold", "vente"),100,10,608748194754723863,"minerai")
-	,Item("diamond",itemBourse("diamond", "vente"),200,20,608748194750529548,"minerai")
-	,Item("emerald",itemBourse("emerald", "vente"),320,30,608748194653798431,"minerai")
-	,Item("ruby",itemBourse("ruby", "vente"),3000,50,608748194406465557,"minerai")
-	,Item("fish",2,5,1,608762539605753868,"poisson")
-	,Item("tropicalfish",itemBourse("tropicalfish", "vente"),60,4,608762539030872079,"poisson")
-	,Item("blowfish",itemBourse("blowfish", "vente"),60,4,618058831863218176,"poisson")
-	,Item("octopus",itemBourse("octopus", "vente"),90,8,618058832790421504,"poisson")
-	,Item("cookie",30,40,1,"","consommable")
-	,Item("grapes",15,25,1,"","consommable")
-	,Item("wine_glass",120,210,3,"","consommable")
-	,Item("backpack",1,5000,-100,616205834451550208,"special")]
+	objetItem = [Item("cobblestone", 1, 3, 1, 608748492181078131, "minerai")
+	,Item("iron", itemBourse("iron", "vente"), 30, 5, 608748195685597235, "minerai")
+	,Item("gold", itemBourse("gold", "vente"), 100, 10, 608748194754723863, "minerai")
+	,Item("diamond", itemBourse("diamond", "vente"), 200, 20, 608748194750529548, "minerai")
+	,Item("emerald", itemBourse("emerald", "vente"), 320, 30, 608748194653798431, "minerai")
+	,Item("ruby", itemBourse("ruby", "vente"), 3000, 50, 608748194406465557, "minerai")
+	,Item("fish", 2, 5, 1, 608762539605753868, "poisson")
+	,Item("tropicalfish", itemBourse("tropicalfish", "vente"), 60, 4, 608762539030872079, "poisson")
+	,Item("blowfish", itemBourse("blowfish", "vente"), 60, 4, 618058831863218176, "poisson")
+	,Item("octopus", itemBourse("octopus", "vente"), 90, 8, 618058832790421504, "poisson")
+	,Item("seed", 1, 2, 0.5, 618058917930336266, "plante")
+	,Item("oak", 400, 500, 8, 625698779076755485, "plante")
+	,Item("cookie", 30, 40, 1, "", "consommable")
+	,Item("grapes", 15, 25, 1, "", "consommable")
+	,Item("wine_glass", 120, 210, 3, "", "consommable")
+	,Item("backpack", 1, 5000, -100, 616205834451550208, "special")]
 
 
 	class Outil:
@@ -109,10 +111,11 @@ def loadItem():
 			self.type = type
 
 	global objetOutil
-	objetOutil = [Outil("pickaxe",5,20,15,150,608748195291594792,"")
-	,Outil("iron_pickaxe",80,160,40,800,608748194775433256,"forge")
-	,Outil("fishingrod",5,15,25,200,608748194318385173,"")
-	,Outil("bank_upgrade",0,10000,10000,None,421465024201097237,"bank")]
+	objetOutil = [Outil("pickaxe", 5, 20, 15, 150, 625702466360574004, "")
+	,Outil("iron_pickaxe", 80, 300, 70, 600, 608748194775433256, "forge")
+	,Outil("fishingrod", 5, 15, 25, 250, 608748194318385173, "")
+	,Outil("sword", 50, 200, 55, 400, 625702555200258058, "forge")
+	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
 
 
 ##############################################
@@ -125,9 +128,9 @@ class Box:
 		self.min = min
 		self.max = max
 
-objetBox = [Box("commongems","Gems Common",300, 100, 500)
-,Box("raregems","Gems Rare",3000, 1000, 5000)
-,Box("legendarygems","Gems Legendary",30000, 10000, 50000)]
+objetBox = [Box("commongems", "Gems Common", 300, 100, 500)
+,Box("raregems", "Gems Rare", 3000, 1000, 5000)
+,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000)]
 
 
 
@@ -145,7 +148,8 @@ class Recette:
 		self.nb4 = nb4
 		self.item4 = item4
 
-objetRecette = [Recette("iron_pickaxe","forge",4,"iron",1,"pickaxe",0,"",0,"")]
+objetRecette = [Recette("iron_pickaxe", "forge", 5, "iron", 1, "pickaxe", 0, "", 0, "")
+,Recette("sword", "forge", 4, "iron", 1, "oak", 0, "", 0, "")]
 
 
 
@@ -157,18 +161,18 @@ class Trophy:
 		self.type = type
 		self.mingem = mingem #nombre de gems minimum necessaire
 
-objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`","special",10000)
+objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`", "special", 10000)
 ,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 ,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
 ,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
-,Trophy("Gems 500","`Avoir 500`:gem:","unique",500)
-,Trophy("Gems 1k","`Avoir 1k`:gem:","unique",1000)
-,Trophy("Gems 5k","`Avoir 5k`:gem:","unique",5000)
-,Trophy("Gems 50k","`Avoir 50k`:gem:","unique",50000)
-,Trophy("Gems 200k","`Avoir 200k`:gem:","unique",200000)
-,Trophy("Gems 500k","`Avoir 500k`:gem:","unique",500000)
-,Trophy("Gems 1M","`Avoir 1 Million`:gem:","unique",1000000)
-,Trophy("Le Milliard !!!","`Avoir 1 Milliard`:gem:","unique",1000000000)]
+,Trophy("Gems 500", "`Avoir 500`:gem:", "unique", 500)
+,Trophy("Gems 1k", "`Avoir 1k`:gem:", "unique", 1000)
+,Trophy("Gems 5k", "`Avoir 5k`:gem:", "unique", 5000)
+,Trophy("Gems 50k", "`Avoir 50k`:gem:", "unique", 50000)
+,Trophy("Gems 200k", "`Avoir 200k`:gem:", "unique", 200000)
+,Trophy("Gems 500k", "`Avoir 500k`:gem:", "unique", 500000)
+,Trophy("Gems 1M", "`Avoir 1 Million`:gem:", "unique", 1000000)
+,Trophy("Le Milliard !!!", "`Avoir 1 Milliard`:gem:", "unique", 1000000000)]
 
 
 
@@ -178,15 +182,16 @@ class StatGems:
 		self.nom = nom
 		self.desc = desc
 
-objetStat = [StatGems("DiscordCop Arrestation","`Nombre d'arrestation par la DiscordCop`")
-,StatGems("DiscordCop Amende","`Nombre d'ammende recue par la DiscordCop`")
+objetStat = [StatGems("DiscordCop Arrestation", "`Nombre d'arrestation par la DiscordCop`")
+,StatGems("DiscordCop Amende", "`Nombre d'ammende recue par la DiscordCop`")
 ,StatGems("Gamble Win", "`Nombre de gamble gagné`")
 ,StatGems("Super Jackpot :seven::seven::seven:", "`Nombre de super jackpot gagné sur la machine à sous`")
 ,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:608748194406465557>`ruby` trouvé")
 ,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
 #anti-DB.spam
-couldown_xxxl = 86400/6 # 4h
+couldown_6h = 86400/4 # 6h
+couldown_4h = 86400/6 # 4h
 couldown_xl = 10
 couldown_l = 8 # l pour long
 couldown_c = 6 # c pour court

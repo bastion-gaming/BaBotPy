@@ -145,7 +145,7 @@ class GemsPlay(commands.Cog):
 		# L'intéret est de 20% avec un bonus de 1% pour chanque bank_upgrade possédée
 		#=======================================================================
 		elif mARG == "saving":
-			if DB.spam(ID,GF.couldown_xxxl, "bank_saving"):
+			if DB.spam(ID,GF.couldown_4h, "bank_saving"):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
 				else:
@@ -188,12 +188,12 @@ class GemsPlay(commands.Cog):
 				ComTime = DB.valueAt(ID, "com_time")
 				if "bank_saving" in ComTime:
 					time = ComTime["bank_saving"]
-				time = time - (t.time()-GF.couldown_xxxl)
+				time = time - (t.time()-GF.couldown_4h)
 				timeH = int(time / 60 / 60)
 				time = time - timeH * 3600
 				timeM = int(time / 60)
 				timeS = int(time - timeM * 60)
-				msg = "Il te faut attendre `{}h {}m {}s` avant d'épargner à nouveau !".format(timeH,timeM,timeS)
+				msg = "Il te faut attendre :clock2:`{}h {}m {}s` avant d'épargner à nouveau !".format(timeH,timeM,timeS)
 			await ctx.channel.send(msg)
 			return
 
@@ -465,6 +465,46 @@ class GemsPlay(commands.Cog):
 				DB.updateComTime(ID, "fish")
 			else:
 				msg = "Ton inventaire est plein"
+		else:
+			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
+		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def hothouse(self, ctx):
+		"""Plantons compagnons !!"""
+		ID = ctx.author.id
+		if DB.spam(ID,GF.couldown_l, "hothouse"):
+			if DB.nbElements(ID, "hothouse", "planting_1") == 0:
+				if DB.nbElements(ID, "inventory", "seed") >= 1:
+					DB.add(ID, "hothouse", "planting_1", t.time())
+					DB.add(ID, "inventory", "seed", -1)
+					msg = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmogi("seed"))
+				else:
+					msg = "Tu n'as pas de <:gem_seed:{}> à planter dans ton inventaire".format(GF.get_idmogi("seed"))
+			else:
+				PlantingTime = DB.nbElements(ID, "hothouse", "planting_1")
+				InstantTime = t.time()
+				time = PlantingTime - (InstantTime-GF.couldown_xl)
+				if time <= 0:
+					DB.add(ID, "inventory", "oak", 1)
+					DB.add(ID, "hothouse", "planting_1", -1*PlantingTime)
+					msg = "Ta plantation à fini de pousser, en la coupant tu gagne 1 <:gem_oak:{}>`oak`".format(GF.get_idmogi("oak"))
+					D = r.randint(0,20)
+					if D == 20 or D == 0:
+						DB.add(ID, "inventory", "lootbox_raregems", 1)
+						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+					elif D >= 9 and D <= 11:
+						DB.add(ID, "inventory", "lootbox_commongems", 1)
+						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
+				else:
+					timeH = int(time / 60 / 60)
+					time = time - timeH * 3600
+					timeM = int(time / 60)
+					timeS = int(time - timeM * 60)
+					msg = "Ta plantation aura fini de pousser dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
+			DB.updateComTime(ID, "hothouse")
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)

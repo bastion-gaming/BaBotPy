@@ -26,5 +26,8 @@
 - Actualisation de la bourse toutes les 60 minutes
 - Mise à jour de la commande "inv" (inventaire)
 - Mise à jour de la commande "market" (marché)
+- Mise à jour de la commande "forge"
+- Ajout des Items "seed", "oak" et "sword"
+- Ajout de la commande "hothouse"
 - Ajout de la commande "boxes open"
 - Ajout des LotBox
