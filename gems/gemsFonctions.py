@@ -99,7 +99,7 @@ def loadItem():
 	,Item("cookie", 30, 40, 1, "", "consommable")
 	,Item("grapes", 15, 25, 1, "", "consommable")
 	,Item("wine_glass", 120, 210, 3, "", "consommable")
-	,Item("backpack", 1, 5000, -500, 616205834451550208, "special")]
+	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")]
 
 
 	class Outil:
@@ -116,6 +116,7 @@ def loadItem():
 	global objetOutil
 	objetOutil = [Outil("pickaxe", 5, 20, 15, 150, 625702466360574004, "")
 	,Outil("iron_pickaxe", 80, 300, 70, 600, 608748194775433256, "forge")
+	,Outil("diamond_pickaxe", 500, 1800, 150, 1600, 625702527135907851, "forge")
 	,Outil("fishingrod", 5, 15, 25, 250, 608748194318385173, "")
 	,Outil("sword", 50, 200, 55, 400, 625702555200258058, "forge")
 	,Outil("planting_plan", 100, 1000, 3, 3, 631038633398501376, "")
@@ -152,8 +153,9 @@ class Recette:
 		self.nb4 = nb4
 		self.item4 = item4
 
-objetRecette = [Recette("iron_pickaxe", "forge", 5, "iron", 1, "pickaxe", 0, "", 0, "")
-,Recette("sword", "forge", 4, "iron", 1, "oak", 0, "", 0, "")]
+objetRecette = [Recette("iron_pickaxe", "forge", 10, "iron", 1, "pickaxe", 0, "", 0, "")
+,Recette("diamond_pickaxe", "forge", 25, "diamond", 1, "iron_pickaxe", 0, "", 0, "")
+,Recette("sword", "forge", 6, "iron", 1, "oak", 0, "", 0, "")]
 
 
 

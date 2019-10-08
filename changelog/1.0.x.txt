@@ -24,13 +24,14 @@
 • Mise à jour du module `Gems`
 - Séparation du fichier gems.py en 3 fichiers (gemsFonctions, gemsBase et gemsPlay)
 - Changement de l'emoji de la pioche
+- Ajout des Items "seed", "oak", "sword" et "diamond_pickaxe"
+- Ajout de la commande "hothouse" et "hothouse plant"
+- Ajout de la commande "boxes open"
+- Ajout des LotBox
+- Ajout de nouveaux trophées
 - Affichage du temps restant avant l'actualisation de la bourse de Bastion
 - Actualisation de la bourse toutes les 60 minutes
 - Mise à jour de la commande "inv" (inventaire)
 - Mise à jour de la commande "market" (marché)
 - Mise à jour de la commande "forge"
-- Ajout des Items "seed", "oak" et "sword"
-- Ajout de la commande "hothouse" et "hothouse plant"
-- Ajout de la commande "boxes open"
-- Ajout des LotBox
-- Ajout de nouveaux trophées
+- Mise à jour de la commande "mine"

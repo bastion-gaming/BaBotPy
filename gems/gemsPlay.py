@@ -287,8 +287,87 @@ class GemsPlay(commands.Cog):
 			if GF.testInvTaille(ID):
 				#print(DB.nbElements(ID, "inventory", "pickaxe"))
 				nbrand = r.randint(0,99)
+				#----------------- Pioche en diamant -----------------
+				if DB.nbElements(ID, "inventory", "diamond_pickaxe") >= 1:
+					if GF.get_durabilite(ID, "diamond_pickaxe") == 0:
+						GF.addDurabilité(ID, "diamond_pickaxe", -1)
+						DB.add(ID, "inventory","diamond_pickaxe", -1)
+						if DB.nbElements(ID, "inventory", "diamond_pickaxe") > 0:
+							for c in GF.objetOutil:
+								if c.nom == "diamond_pickaxe":
+									GF.addDurabilité(ID, c.nom, c.durabilite)
+						msg = "Pas de chance tu as cassé ta <:gem_diamond_pickaxe:{}>`pioche en diamant` !".format(GF.get_idmoji("diamond_pickaxe"))
+					else :
+						if GF.get_durabilite(ID,"diamond_pickaxe") == None or GF.get_durabilite(ID,"diamond_pickaxe") < 0:
+							for c in GF.objetOutil:
+								if c.nom == "diamond_pickaxe":
+									GF.addDurabilité(ID, c.nom, c.durabilite)
+						GF.addDurabilité(ID, "diamond_pickaxe", -1)
+						if nbrand < 15:
+							nbrand = r.randint(1,2)
+							DB.add(ID, "inventory", "emerald", nbrand)
+							msg = "Tu as obtenu {} <:gem_emerald:{}>`émeraude`".format(nbrand, GF.get_idmoji("emerald"))
+							D = r.randint(0,20)
+							if D < 2:
+								DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
+							elif D >= 17:
+								DB.add(ID, "inventory", "lootbox_raregems", 1)
+								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+
+						elif nbrand > 15 and nbrand < 25:
+							nbrand = r.randint(1,4)
+							DB.add(ID, "inventory", "diamond", nbrand)
+							msg = "Tu as obtenu {} <:gem_diamond:{}>`diamant brut`".format(nbrand, GF.get_idmoji("diamond"))
+							nbcobble = r.randint(0,5)
+							if nbcobble != 0 :
+								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
+
+						elif nbrand > 25 and nbrand < 50:
+							nbrand = r.randint(1,6)
+							DB.add(ID, "inventory", "gold", nbrand)
+							msg = "Tu as obtenu {} <:gem_gold:{}>`lingot d'or`".format(nbrand, GF.get_idmoji("gold"))
+							nbcobble = r.randint(0,5)
+							if nbcobble != 0 :
+								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
+
+						elif nbrand > 50 and nbrand < 80:
+							nbrand = r.randint(1,10)
+							DB.add(ID, "inventory", "iron", nbrand)
+							msg = "Tu as obtenu {} <:gem_iron:{}>`lingot de fer`".format(nbrand, GF.get_idmoji("iron"))
+							nbcobble = r.randint(0,5)
+							if nbcobble != 0 :
+								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
+
+						elif nbrand >= 90:
+							nbrand =  r.randint(0,10)
+							if nbrand >= 7:
+								DB.add(ID, "inventory", "ruby", 1)
+								DB.add(ID, "StatGems", "Mineur de Merveilles", 1)
+								DB.add(ID, "trophy", "Mineur de Merveilles", 1)
+								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
+							elif nbrand < 2:
+								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
+							else:
+								nbcobble = r.randint(1,20)
+								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								if nbcobble == 1 :
+									msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
+								else :
+									msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
+						else:
+							nbcobble = r.randint(1,20)
+							DB.add(ID, "inventory", "cobblestone", nbcobble)
+							if nbcobble == 1 :
+								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
+							else :
+								msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
+
 				#----------------- Pioche en fer -----------------
-				if DB.nbElements(ID, "inventory", "iron_pickaxe") >= 1:
+				elif DB.nbElements(ID, "inventory", "iron_pickaxe") >= 1:
 					if GF.get_durabilite(ID, "iron_pickaxe") == 0:
 						GF.addDurabilité(ID, "iron_pickaxe", -1)
 						DB.add(ID, "inventory","iron_pickaxe", -1)
@@ -326,16 +405,18 @@ class GemsPlay(commands.Cog):
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 15 and nbrand < 30:
-							DB.add(ID, "inventory", "gold", 1)
-							msg = "Tu as obtenu 1 <:gem_gold:{}>`lingot d'or`".format(GF.get_idmoji("gold"))
+							nbrand = r.randint(1,2)
+							DB.add(ID, "inventory", "gold", nbrand)
+							msg = "Tu as obtenu {} <:gem_gold:{}>`lingot d'or`".format(nbrand, GF.get_idmoji("gold"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
 								DB.add(ID, "inventory", "cobblestone", nbcobble)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 30 and nbrand < 60:
-							DB.add(ID, "inventory", "iron", 1)
-							msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(GF.get_idmoji("iron"))
+							nbrand = r.randint(1,4)
+							DB.add(ID, "inventory", "iron", nbrand)
+							msg = "Tu as obtenu {} <:gem_iron:{}>`lingot de fer`".format(nbrand, GF.get_idmoji("iron"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
 								DB.add(ID, "inventory", "cobblestone", nbcobble)
