@@ -306,59 +306,70 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def market (self, ctx):
+	async def market (self, ctx, fct = None):
 		"""Permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
 		if DB.spam(ID,GF.couldown_c, "market"):
-			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
-			d_marketOutils = ""
-			d_marketItems = ""
-			d_marketItemsMinerai = ""
-			d_marketItemsPoisson = ""
-			d_marketItemsPlante = ""
-			d_marketItemsConsommable = ""
-			d_marketBox = ""
+			if fct == None:
+				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
+				d_marketOutils = ""
+				d_marketItems = ""
+				d_marketItemsMinerai = ""
+				d_marketItemsPoisson = ""
+				d_marketItemsPlante = ""
+				d_marketItemsConsommable = ""
+				d_marketBox = ""
 
-			for c in GF.objetOutil:
-				d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
-				if c.vente != 0:
-					d_marketOutils += "Vente **{}** | ".format(c.vente)
-				if c.nom == "bank_upgrade":
-					d_marketOutils += "Achat **Le plafond du compte épargne** "
-				else:
-					d_marketOutils += "Achat **{}** ".format(c.achat)
-				if c.durabilite != None:
-					d_marketOutils += "| Durabilité: **{}** ".format(c.durabilite)
-				d_marketOutils += "| Poids **{}**\n".format(c.poids)
+				for c in GF.objetOutil:
+					d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
+					if c.vente != 0:
+						d_marketOutils += "Vente **{}** | ".format(c.vente)
+					if c.nom == "bank_upgrade":
+						d_marketOutils += "Achat **Le plafond du compte épargne** "
+					else:
+						d_marketOutils += "Achat **{}** ".format(c.achat)
+					if c.durabilite != None:
+						d_marketOutils += "| Durabilité: **{}** ".format(c.durabilite)
+					d_marketOutils += "| Poids **{}**\n".format(c.poids)
 
-			for c in GF.objetItem :
-				if c.type == "minerai":
-					d_marketItemsMinerai += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
-				elif c.type == "poisson":
-					d_marketItemsPoisson += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
-				elif c.type == "plante":
-					d_marketItemsPlante += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
-				elif c.type == "consommable":
-					d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
-				else:
-					d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+				for c in GF.objetItem :
+					if c.type == "minerai":
+						d_marketItemsMinerai += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+					elif c.type == "poisson":
+						d_marketItemsPoisson += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+					elif c.type == "plante":
+						d_marketItemsPlante += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+					elif c.type == "consommable":
+						d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+					else:
+						d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
 
-			for c in GF.objetBox :
-				d_marketBox += "<:gem_lootbox:630698430313922580>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max)
+				for c in GF.objetBox :
+					d_marketBox += "<:gem_lootbox:630698430313922580>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max)
 
-			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
-			msg.add_field(name="Outils", value=d_marketOutils, inline=False)
-			if d_marketItems != "":
-				msg.add_field(name="Items", value=d_marketItems, inline=False)
-			msg.add_field(name="Minerais", value=d_marketItemsMinerai, inline=False)
-			msg.add_field(name="Poissons", value=d_marketItemsPoisson, inline=False)
-			msg.add_field(name="Plantes", value=d_marketItemsPlante, inline=False)
-			msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
-			msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
-			DB.updateComTime(ID, "market")
-			await ctx.channel.send(embed = msg)
-			# Message de réussite dans la console
-			print("Gems >> {} a afficher le marché".format(ctx.author.name))
+				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
+				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
+				if d_marketItems != "":
+					msg.add_field(name="Items", value=d_marketItems, inline=False)
+				msg.add_field(name="Minerais", value=d_marketItemsMinerai, inline=False)
+				msg.add_field(name="Poissons", value=d_marketItemsPoisson, inline=False)
+				msg.add_field(name="Plantes", value=d_marketItemsPlante, inline=False)
+				msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
+				msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
+				DB.updateComTime(ID, "market")
+				await ctx.channel.send(embed = msg)
+				# Message de réussite dans la console
+				print("Gems >> {} a afficher le marché".format(ctx.author.name))
+			elif fct == "capability" or fct == "capabilities" or fct == "capacité" or fct == "capacités" or fct == "aptitude" or fct == "aptitudes":
+				desc = ":tools: En travaux :pencil:"
+				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
+				DB.updateComTime(ID, "market")
+				await ctx.channel.send(embed = msg)
+				# Message de réussite dans la console
+				print("Gems >> {} a afficher le marché".format(ctx.author.name))
+			else:
+				msg = "Ce marché n'existe pas"
+				await ctx.channel.send(msg)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)

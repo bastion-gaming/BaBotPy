@@ -81,24 +81,24 @@ def loadItem():
 			self.type = type
 
 	global objetItem
-	objetItem = [Item("cobblestone", 1, 3, 1, 608748492181078131, "minerai")
-	,Item("iron", itemBourse("iron", "vente"), 30, 5, 608748195685597235, "minerai")
-	,Item("gold", itemBourse("gold", "vente"), 100, 10, 608748194754723863, "minerai")
-	,Item("diamond", itemBourse("diamond", "vente"), 200, 20, 608748194750529548, "minerai")
-	,Item("emerald", itemBourse("emerald", "vente"), 320, 30, 608748194653798431, "minerai")
-	,Item("ruby", itemBourse("ruby", "vente"), 3000, 50, 608748194406465557, "minerai")
-	,Item("fish", 2, 5, 1, 608762539605753868, "poisson")
-	,Item("tropicalfish", itemBourse("tropicalfish", "vente"), 60, 4, 608762539030872079, "poisson")
-	,Item("blowfish", itemBourse("blowfish", "vente"), 60, 4, 618058831863218176, "poisson")
-	,Item("octopus", itemBourse("octopus", "vente"), 90, 8, 618058832790421504, "poisson")
+	objetItem = [Item("cobblestone", 1, 3, 4, 608748492181078131, "minerai")
+	,Item("iron", itemBourse("iron", "vente"), 30, 10, 608748195685597235, "minerai")
+	,Item("gold", itemBourse("gold", "vente"), 100, 20, 608748194754723863, "minerai")
+	,Item("diamond", itemBourse("diamond", "vente"), 200, 40, 608748194750529548, "minerai")
+	,Item("emerald", itemBourse("emerald", "vente"), 320, 50, 608748194653798431, "minerai")
+	,Item("ruby", itemBourse("ruby", "vente"), 3000, 70, 608748194406465557, "minerai")
+	,Item("fish", 2, 5, 2, 608762539605753868, "poisson")
+	,Item("tropicalfish", itemBourse("tropicalfish", "vente"), 60, 8, 608762539030872079, "poisson")
+	,Item("blowfish", itemBourse("blowfish", "vente"), 60, 8, 618058831863218176, "poisson")
+	,Item("octopus", itemBourse("octopus", "vente"), 90, 16, 618058832790421504, "poisson")
 	,Item("seed", 1, 2, 0.5, 618058917930336266, "plante")
 	,Item("oak", 400, 500, 50, 625698779076755485, "plante")
 	,Item("spruce", 700, 800, 70, 625698795744657409, "plante")
 	,Item("palm", 1000, 1200, 60, 625698810773110785, "plante")
-	,Item("wheat", 1500, 2000, 4, 625701009586520064, "plante")
+	,Item("wheat", 1500, 2000, 3, 625701009586520064, "plante")
 	,Item("cookie", 30, 40, 1, "", "consommable")
 	,Item("grapes", 15, 25, 1, "", "consommable")
-	,Item("wine_glass", 120, 210, 3, "", "consommable")
+	,Item("wine_glass", 120, 210, 2, "", "consommable")
 	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")]
 
 
@@ -114,11 +114,11 @@ def loadItem():
 			self.type = type
 
 	global objetOutil
-	objetOutil = [Outil("pickaxe", 5, 20, 15, 150, 625702466360574004, "")
-	,Outil("iron_pickaxe", 80, 300, 70, 600, 608748194775433256, "forge")
-	,Outil("diamond_pickaxe", 500, 1800, 150, 1600, 625702527135907851, "forge")
-	,Outil("fishingrod", 5, 15, 25, 250, 608748194318385173, "")
-	,Outil("sword", 50, 200, 55, 400, 625702555200258058, "forge")
+	objetOutil = [Outil("pickaxe", 5, 20, 15, 75, 625702466360574004, "")
+	,Outil("iron_pickaxe", 80, 300, 70, 250, 608748194775433256, "forge")
+	,Outil("diamond_pickaxe", 500, 1800, 150, 600, 625702527135907851, "forge")
+	,Outil("fishingrod", 5, 15, 25, 150, 608748194318385173, "")
+	,Outil("sword", 50, 200, 55, 100, 625702555200258058, "forge")
 	,Outil("planting_plan", 100, 1000, 3, 3, 631038633398501376, "")
 	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
 

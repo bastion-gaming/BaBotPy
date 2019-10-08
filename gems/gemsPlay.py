@@ -580,7 +580,7 @@ class GemsPlay(commands.Cog):
 							elif D10 > 7 and D10 <= 9:
 								DB.add(ID, "inventory", "palm", 1)
 								item = "palm"
-							elif D10 > 10:
+							elif D10 >= 10:
 								DB.add(ID, "inventory", "wheat", 1)
 								item = "wheat"
 							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime)
@@ -609,7 +609,15 @@ class GemsPlay(commands.Cog):
 							timeM = int(time / 60)
 							timeS = int(time - timeM * 60)
 							desc = "Ta plantation aura fini de pousser dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
-					msg.add_field(name="Plntation numero {}".format(i), value=desc, inline=False)
+					if i % 10 == 0 and i != nbplanting:
+						if i // 10 == 1:
+							await ctx.channel.send(embed = msg)
+						else:
+							await ctx.channel.send(embed = msg, delete_after = 90)
+						msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici vos plantation.".format(GF.get_idmoji("seed")))
+						msg.add_field(name="Plntation numero {}".format(i), value=desc, inline=False)
+					else:
+						msg.add_field(name="Plntation numero {}".format(i), value=desc, inline=False)
 					i += 1
 			elif fct == "plant":
 				if arg != None:
@@ -637,7 +645,10 @@ class GemsPlay(commands.Cog):
 						msg.add_field(name="Plntation numero {}".format(i), value=desc, inline=False)
 						i += 1
 			DB.updateComTime(ID, "hothouse")
-			await ctx.channel.send(embed = msg)
+			if nbplanting // 10 == 0:
+				await ctx.channel.send(embed = msg)
+			else:
+				await ctx.channel.send(embed = msg, delete_after = 90)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
