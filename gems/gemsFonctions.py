@@ -92,11 +92,14 @@ def loadItem():
 	,Item("blowfish", itemBourse("blowfish", "vente"), 60, 4, 618058831863218176, "poisson")
 	,Item("octopus", itemBourse("octopus", "vente"), 90, 8, 618058832790421504, "poisson")
 	,Item("seed", 1, 2, 0.5, 618058917930336266, "plante")
-	,Item("oak", 400, 500, 8, 625698779076755485, "plante")
+	,Item("oak", 400, 500, 50, 625698779076755485, "plante")
+	,Item("spruce", 700, 800, 70, 625698795744657409, "plante")
+	,Item("palm", 1000, 1200, 60, 625698810773110785, "plante")
+	,Item("wheat", 1500, 2000, 4, 625701009586520064, "plante")
 	,Item("cookie", 30, 40, 1, "", "consommable")
 	,Item("grapes", 15, 25, 1, "", "consommable")
 	,Item("wine_glass", 120, 210, 3, "", "consommable")
-	,Item("backpack", 1, 5000, -100, 616205834451550208, "special")]
+	,Item("backpack", 1, 5000, -500, 616205834451550208, "special")]
 
 
 	class Outil:
@@ -115,6 +118,7 @@ def loadItem():
 	,Outil("iron_pickaxe", 80, 300, 70, 600, 608748194775433256, "forge")
 	,Outil("fishingrod", 5, 15, 25, 250, 608748194318385173, "")
 	,Outil("sword", 50, 200, 55, 400, 625702555200258058, "forge")
+	,Outil("planting_plan", 100, 1000, 3, 3, 631038633398501376, "")
 	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
 
 

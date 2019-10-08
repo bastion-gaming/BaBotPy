@@ -472,42 +472,94 @@ class GemsPlay(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def hothouse(self, ctx):
-		"""Plantons compagnons !!"""
+	async def hothouse(self, ctx, fct = None, arg = None):
+		"""**[fonction]** {_n° plantation_} | Plantons compagnons !!"""
 		ID = ctx.author.id
 		if DB.spam(ID,GF.couldown_l, "hothouse"):
-			if DB.nbElements(ID, "hothouse", "planting_1") == 0:
-				if DB.nbElements(ID, "inventory", "seed") >= 1:
-					DB.add(ID, "hothouse", "planting_1", t.time())
-					DB.add(ID, "inventory", "seed", -1)
-					msg = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
+			nbplanting = DB.nbElements(ID, "inventory", "planting_plan") + 1
+			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantation.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
+			desc = ""
+			i = 1
+			if fct == None:
+				while i <= nbplanting:
+					if DB.nbElements(ID, "hothouse", "planting_{}".format(i)) == 0:
+						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
+					else:
+						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i))
+						InstantTime = t.time()
+						time = PlantingTime - (InstantTime-GF.couldown_4h)
+						if time <= 0:
+							D10 = r.randint(1,10)
+							if D10 <= 4:
+								DB.add(ID, "inventory", "oak", 1)
+								item = "oak"
+							elif D10 > 4 and D10 <= 7:
+								DB.add(ID, "inventory", "spruce", 1)
+								item = "spruce"
+							elif D10 > 7 and D10 <= 9:
+								DB.add(ID, "inventory", "palm", 1)
+								item = "palm"
+							elif D10 > 10:
+								DB.add(ID, "inventory", "wheat", 1)
+								item = "wheat"
+							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime)
+							desc = "Ta plantation à fini de pousser, en la coupant tu gagne 1 <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item)
+							if i > 1:
+								if DB.nbElements(ID, "inventory", "planting_plan") > 0:
+									GF.addDurabilité(ID, "planting_plan", -1)
+									if GF.get_durabilite(ID, "planting_plan") <= 0:
+										for c in GF.objetOutil:
+											if c.nom == "planting_plan":
+												GF.addDurabilité(ID, c.nom, c.durabilite)
+										DB.add(ID, "inventory", "planting_plan", -1)
+
+							D = r.randint(0,20)
+							if D == 20 or D == 0:
+								DB.add(ID, "inventory", "lootbox_raregems", 1)
+								msgLB = "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+								await ctx.channel.send(msgLB)
+							elif D >= 9 and D <= 11:
+								DB.add(ID, "inventory", "lootbox_commongems", 1)
+								msgLB = "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
+								await ctx.channel.send(msgLB)
+						else:
+							timeH = int(time / 60 / 60)
+							time = time - timeH * 3600
+							timeM = int(time / 60)
+							timeS = int(time - timeM * 60)
+							desc = "Ta plantation aura fini de pousser dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
+					msg.add_field(name="Plntation numero {}".format(i), value=desc, inline=False)
+					i += 1
+			elif fct == "plant":
+				if arg != None:
+					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg))) == 0:
+						if DB.nbElements(ID, "inventory", "seed") >= 1:
+							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time())
+							DB.add(ID, "inventory", "seed", -1)
+							desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
+						else:
+							desc = "Tu n'as pas de <:gem_seed:{}>`seed` à planter dans ton inventaire".format(GF.get_idmoji("seed"))
+					else:
+						desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
+					msg.add_field(name="Plntation numero {}".format(int(arg)), value=desc, inline=False)
 				else:
-					msg = "Tu n'as pas de <:gem_seed:{}> à planter dans ton inventaire".format(GF.get_idmoji("seed"))
-			else:
-				PlantingTime = DB.nbElements(ID, "hothouse", "planting_1")
-				InstantTime = t.time()
-				time = PlantingTime - (InstantTime-GF.couldown_xl)
-				if time <= 0:
-					DB.add(ID, "inventory", "oak", 1)
-					DB.add(ID, "hothouse", "planting_1", -1*PlantingTime)
-					msg = "Ta plantation à fini de pousser, en la coupant tu gagne 1 <:gem_oak:{}>`oak`".format(GF.get_idmoji("oak"))
-					D = r.randint(0,20)
-					if D == 20 or D == 0:
-						DB.add(ID, "inventory", "lootbox_raregems", 1)
-						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
-					elif D >= 9 and D <= 11:
-						DB.add(ID, "inventory", "lootbox_commongems", 1)
-						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
-				else:
-					timeH = int(time / 60 / 60)
-					time = time - timeH * 3600
-					timeM = int(time / 60)
-					timeS = int(time - timeM * 60)
-					msg = "Ta plantation aura fini de pousser dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
+					while i <= nbplanting:
+						if DB.nbElements(ID, "hothouse", "planting_{}".format(i)) == 0:
+							if DB.nbElements(ID, "inventory", "seed") >= 1:
+								DB.add(ID, "hothouse", "planting_{}".format(i), t.time())
+								DB.add(ID, "inventory", "seed", -1)
+								desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
+							else:
+								desc = "Tu n'as pas de <:gem_seed:{}>`seed` à planter dans ton inventaire".format(GF.get_idmoji("seed"))
+						else:
+							desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
+						msg.add_field(name="Plntation numero {}".format(i), value=desc, inline=False)
+						i += 1
 			DB.updateComTime(ID, "hothouse")
+			await ctx.channel.send(embed = msg)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
-		await ctx.channel.send(msg)
+			await ctx.channel.send(msg)
 
 
 

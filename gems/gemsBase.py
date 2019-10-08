@@ -213,7 +213,8 @@ class GemsBase(commands.Cog):
 						DB.addGems(ID, gain)
 						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
 						if DB.nbElements(ID, "inventory", item) == 1:
-							GF.addDurabilité(ID, item, -1)
+							if DB.get_durabilite(ID, item) != None:
+								GF.addDurabilité(ID, item, -1)
 						# Message de réussite dans la console
 						print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 						break

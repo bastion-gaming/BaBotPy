@@ -29,7 +29,7 @@
 - Mise à jour de la commande "market" (marché)
 - Mise à jour de la commande "forge"
 - Ajout des Items "seed", "oak" et "sword"
-- Ajout de la commande "hothouse"
+- Ajout de la commande "hothouse" et "hothouse plant"
 - Ajout de la commande "boxes open"
 - Ajout des LotBox
 - Ajout de nouveaux trophées
