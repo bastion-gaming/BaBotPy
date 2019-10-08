@@ -1,5 +1,6 @@
 **1.0.0**
 • Restructuration des fichiers
+
 • Les modules `Notification`, `Images` et `Vocal` font maintenant partie du module `Multimédia`
 
 • Mise à jour du module `Utils`
