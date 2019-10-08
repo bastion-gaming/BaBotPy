@@ -6,19 +6,24 @@ import time as t
 import json
 
 
-DB_NOM = 'DB/bastionDB.json'
+DB_NOM = 'bastionDB'
 
-def dbExist():
+def dbExist(nameDB = None):
 	"""
 	Retourne True ou False en fonction de si la db existe.
 	"""
 	try:
-		with open(DB_NOM): pass
+		if nameDB != None:
+			with open("DB/{}.json".format(nameDB)): pass
+		else:
+			with open("DB/{}.json".format(DB_NOM)): pass
 	except IOError:
+		if nameDB != None:
+			db = TinyDB("DB/{}.json".format(nameDB))
 		return False
 	return True
 
-db = TinyDB(DB_NOM)
+db = TinyDB("DB/{}.json".format(DB_NOM))
 file = "DB/fieldTemplate.json"
 
 def fieldList():
