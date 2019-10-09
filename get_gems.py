@@ -4,6 +4,7 @@ from discord.ext.commands import Bot
 from discord.utils import get
 
 from DB import DB
+import gems
 from core import welcome as wel
 
 # initialisation des variables.
@@ -25,6 +26,7 @@ async def on_ready():
 	print('PREFIX = '+str(DEFAUT_PREFIX))
 	print('\nBastionBot '+VERSION)
 	print('------\n')
+	gems.loadItem()
 
 
 @client.event
