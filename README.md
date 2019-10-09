@@ -44,6 +44,8 @@ correspondant à un jeu puis l'associer à un salon.
 
 **Parrain**: Système de parrainnage offrant des gems au parrain.
 
+**Welcome**: Gère l'affiche des messages de bienvenue au nouveaux arrivant et des messages d'aurevoir.
+
 ### Module DB
 
 **DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des joueurs et leur quantité d'argent. Onutilise TinyDB 
@@ -119,6 +121,7 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 - Roles
 - Level
 - Parrain
+- Welcome
 
 **_DB_**
 
