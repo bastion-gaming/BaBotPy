@@ -7,7 +7,7 @@ aussi des nouveaux.
 
 ## Le nom
 
-Il se nomme Ba-Bot
+Il se nomme BaBot
 
 ## La participation
 
@@ -27,22 +27,77 @@ parties du bot.
 
 **Core**: Il va se charger de lancer les autres modules  
 
+### Module Core
+
+**Gestion**: Gestion des permissions.
+
+**Vote**: Pouvoir créer un vote en configurant la *Question*, les *Réponses* et le *temps du vote*. 
+
+**Stats**: Compter le nombre de message poster dans les salons en fonction du temps. C'est
+utile et là au moins on est sûr qu'il nous lis pas en même temps. 
+
 **Rôles**: Ce module va se charger de gérer les rôles. C'est a dire de mettre le rôle "Joueurs" aux
 nouveaux membres mais aussi pour pouvoir en une commande créer un nouveau rôle
-correspondant à un jeu puis l'associer à un salon  
+correspondant à un jeu puis l'associer à un salon.
 
-**Get Gems**: Partie déjà en cours à ce jour par Shell, ce module ce chargera de gérer le jeu. Il est semblable à celui qui existait avec Mewna. Donc toutes les commandes qui permettent d'acheter, vendre, braquer, parier etc... De toute façon Shell est en bonne voie.  
+**Level**: Gestion des niveaux, genre tous les x mots ou x minutes en vocal on monte d'un niveaux, ça permet de quantifier la participation de chacun aux discussions. On doit se mettre d'accord sur les modalités de leveling.
 
-**Level** : Gestion des niveaux, genre tous les x mots on monte d'un niveaux, ça permet de quantifier la participation de chacun aux discussions. On doit se mettre d'accord sur les modalités de leveling.  
+**Parrain**: Système de parrainnage offrant des gems au parrain.
+
+### Module DB
 
 **DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des joueurs et leur quantité d'argent. Onutilise TinyDB 
 
-**Gestion de la musique**: On propose que le bot puissent lancer des vidéos Youtube au format audio.
+### Module Multimédia
 
-**Vote** : Pouvoir créer un vote en configurant la *Question*, les *Réponses* et le *temps du vote*.
+**Musique**: On propose que le bot puissent lancer des vidéos Youtube au format audio.
 
-**Stat**: Compter le nombre de message poster dans les salons en fonction du temps. C'est
-utile et là au moins on est sûr qu'il nous lis pas en même temps.  
+**Images**: Fonction permettant de faire une recherche avec mots clés sur google images et de resortir une images aléatoire.
+
+**Live Notification**: Averti dans le salon #partage du début d'un live sur la chaine Twitch Bastion et celle des partenaires/kopains
+
+### Module Gems
+
+**Gems Fonctions**: Partie regroupant toutes les fonctions et les items nécessaire au fonctionnement du module.
+
+**Gems Base**: Commandes de base du module. Il permet d'afficher par exemple le marché, l'inventaire ou le système d'achat/vente.
+
+Liste des commandes:
+- begin
+- bal
+- baltop
+- pay
+- buy
+- sell
+- market
+- inv
+- forge
+- bourse
+- trophylist
+- trophy
+
+**Gems Play**: Commandes permettant de jouer et de gagner des GEMS (l'argent du jeu).
+
+Liste des commandes:
+- daily
+- bank
+- gamble
+- crime
+- mine
+- fish
+- slots
+- hothouse
+- boxes open 
+
+### Module Help
+
+**Help**: Génère un help personnalisé
+
+### Module Kaamelott
+
+**Citation**: Affiche des citations venant de la série Kaamelott. Ce module à été concu exclusivement par Shelll
+
+### Module Game Asker
 
 **Game-Asker**: l'idée serait que quand quelqu'un sur Bastion entrerait une commande en
 précisant le jeu auquel il veut jouer ça les mentionne (exactement comme on fait
@@ -50,34 +105,41 @@ aujourd'hui avec les mention de rôle) et c'est d'ailleurs ce que fera le bot MA
 parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur cette idée permettrait de poster un message sur les serveurs qui l'utilisent qui précise qui veut jouer et
 à quoi lorsque cette commande est entrée.
 
-**Live Notification**: Averti dans le salon #partage du début d'un live sur la chaine Twitch Bastion et celle des partenaires/kopains
-
 
 
 # État d'avancement du développement
 
 ## Terminés
 
-Core
+**_Core_**
+- Core
+- Gestion
+- Vote
+- Stats
+- Roles
+- Level
+- Parrain
 
-Rôles
+**_DB_**
 
-Get Gems
+**_Multimédia_**
+- Images
+- Live Notification
 
-Level
+**_Gems_**
+- Gems Fonction
+- Gems Base
+- Gems Play
 
-DB
+**_Help_**
 
-Vote
-
-Stat
-
-Live Notification
+**_Kaamelott_**
 
 ## En cours/test
 
-Musique
+**_Module Multimédia_**
+- Musique
 
 ## Non commencé
 
-Game-Asker
+**_Game-Asker_**
