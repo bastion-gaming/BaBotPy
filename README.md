@@ -1,4 +1,4 @@
-# Ba-Bot
+# BaBot
 Bot discord de bastion
 
 Suite au décès de mewna notre bot, aimée de tous sauf lorsqu'elle buggait, nous sommes dans
