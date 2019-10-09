@@ -1,0 +1,25 @@
+**0.12.1**
+• Bugfix
+
+• Ajout d'un malus lors de l'utilisation de triche
+
+• Ajout de la date dans le message de la commande "daily"
+
+
+
+**0.12.0**
+• Déplacement des fonctions générales du module `Gems` dans le module `DB`
+- Déplacement de la fonction "addGems"
+- Déplacement de la fonction "spam"
+- Déplacement de la fonction "nbElements"
+- Déplacement de la fonction "addInv"
+
+• Création du module `Parrain`
+- Ajout de la commande "parrain"
+- Ajout de la commande "filleul"
+
+• Mise à jour du module `DB`
+- Ajout des champs parrain et filleul
+
+• Mise à jour du module `Level`
+- Ajout d'information dans la commande "info"

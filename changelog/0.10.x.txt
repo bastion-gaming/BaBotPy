@@ -1,0 +1,6 @@
+**0.10.0**
+• Bugfix
+
+• Mise à jour du module `Stats`
+- Ajout de la commande "countTotalGems"
+- Ajout de la commande "graphgems"

@@ -1,0 +1,15 @@
+**0.11.1**
+• Comptage des messages uniquement sur le discord Bastion
+
+
+
+**0.11.0**
+• Création du module `Level`
+- Ajout de la commande "info"
+- Ajout de la commande "forcelevel"
+
+• Mise à jour du module `Gems`
+- Ajout du blowfish et de l'octopus
+
+• Mise à jour du module `Help`
+- Optimisation de l'affichage de la commande "help"

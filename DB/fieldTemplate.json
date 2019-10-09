@@ -1,0 +1,34 @@
+{
+	"ID":
+		0,
+	"arrival":
+		"0",
+	"com_time":
+		{},
+	"gems":
+		0,
+	"inventory":
+		{},
+	"durabilite":
+		{},
+	"trophy":
+		{},
+	"StatGems":
+		{},
+	"nbMsg":
+		0,
+	"lvl":
+		0,
+	"xp":
+		0,
+	"daily":
+		{},
+	"parrain":
+		0,
+	"filleul":
+		[],
+	"banque":
+		{},
+	"hothouse":
+		{}
+}

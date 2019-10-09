@@ -1,0 +1,24 @@
+**0.0.2**
+• Création du module `DB` pour connecter le bot à TinyDB
+- Ajout de la fonction "dbExist"
+- Ajout de la fonction "newPlayer"
+- Ajout de la fonction "updateField"
+- Ajout de la fonction "valueAt"
+
+• Mise à jour du module `Welcome`
+- Ajout de la fonction "autorole"
+- Déplacement de la gestion des message dans le module `Core`
+
+
+
+**0.0.1**
+• Création du module `Welcome` pour gérer les messages de JOIN et de LEAVE
+
+• Création du module `Gems` (alias bot-play)
+- Ajout de la commande "begin"
+- Ajout de la commande "crime"
+- Ajout de la commande "bal"
+- Ajout de la commande "gamble"
+- Ajout de la commande "sell"
+- Ajout de la commande "buy"
+- Ajout de la commande "pay"

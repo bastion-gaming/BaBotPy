@@ -1,0 +1,38 @@
+**1.0.0**
+• Restructuration des fichiers
+
+• Les modules `Notification`, `Images` et `Vocal` font maintenant partie du module `Multimédia`
+
+• Mise à jour du module `Utils`
+- Amélioration de la commande "changelog"
+
+• Mise à jour du module `DB`
+- Ajout de la fonction "removePlayer"
+- Ajout de la fonction "membercheck"
+
+• Mise à jour du module `Stats`
+- La commande "graphmembre" et "graphgems" affiche l'ID du joueurs quand son nom est introuvable (Invalid User)
+
+• Mise à jour du module `Roles`
+- Ajout de la fonction "removerole"
+
+• Mise à jour du module `Level`
+- Amélioration de la fonction "checklevel"
+- Ajout de la fonction "checklevelvocal"
+- Suppression de la commande "forcelevel"
+
+• Mise à jour du module `Gems`
+- Séparation du fichier gems.py en 3 fichiers (gemsFonctions, gemsBase et gemsPlay)
+- Changement de l'emoji de la pioche
+- Ajout des Items "planting_plan", "seed", "oak", "spruce", "palm", "wheat", "sword" et "diamond_pickaxe"
+- Ajout de la commande "hothouse" et "hothouse plant"
+- Ajout de la commande "boxes open"
+- Ajout des LotBox
+- Ajout de nouveaux trophées
+- Affichage du temps restant avant l'actualisation de la bourse de Bastion
+- Actualisation de la bourse toutes les 60 minutes
+- Mise à jour de la commande "inv" (inventaire)
+- Mise à jour de la commande "market" (marché)
+- Mise à jour de la commande "forge"
+- Mise à jour de la commande "mine"
+- Mise à jour de la durabilité des Outils

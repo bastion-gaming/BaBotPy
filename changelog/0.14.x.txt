@@ -1,0 +1,23 @@
+**0.14.1**
+• Mise à jour du module `DB`
+- Uniformisation des fonctions "addInv", "addTrophy", "addBank" et "addStatGems" dans la fonction "add"
+
+• Mise à jour du module `Gems`
+- Ajout d'une taille maximum pour l'inventaire
+- Ajout de la fonction "testInvTaille"
+
+
+
+**0.14.0**
+• Mise à jour du module `DB`
+- Amélioration de la fonction "nbElements"
+- Ajout du champs banque dans la DB
+- Ajout de la fonction "addBank"
+
+• Mise à jour du module `Gems`
+- Ajout de l'item bank_upgrade
+- Ajout des item grapes et wine_glass
+- Intégration de la commande "recette" dans la commande "forge"
+- Ajout de la commande "bank bal"
+- Ajout de la commande "bank add"
+- Ajout de la commande "bank saving"

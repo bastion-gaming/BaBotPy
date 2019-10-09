@@ -1,0 +1,20 @@
+**0.1.0**
+• Remplacement de la base de donnée SQLite3 par TinyDB
+
+• Ajout du fichier prefix.txt
+
+• Le module `Welcome` devient le module `Roles`
+- Ajout de la commande "create game"
+
+• Mise à jour du module `DB`
+- Ajout de la fonction "count" (permet de compter le nombre d'utilisateurs inscrit dans la DB)
+- Ajout de la date d'arriver dans la DB
+- Ajout de la fonction "updateComTime"
+
+• Mise à jour du module `Gems`
+- Ajout d'un couldown générale entre chaque commandes
+- Ajout de la fonction "addGems"
+- Ajout de la fonction "nbElements"
+- Ajout de la fonction "addInv"
+- Ajout de la commande "mine"
+- Ajout de la commande "inv"

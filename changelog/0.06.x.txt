@@ -1,0 +1,43 @@
+**0.6.2**
+• Mise à jour du module `Stats`
+- Ajout de la commande "msgBy"
+
+• Ajout de la commande "version"
+
+• Mise à jour du module `Gems`
+- Ajout de l'option -1 pour la commande "sell" (permet de vendre la totalité du stock d'un item)
+
+
+
+**0.6.1**
+• Mise à jour du module `Help`
+
+• Mise à jour du module `Gestion`
+- Ajout de la commande "getmember"
+- Ajout de la commande "vote"
+
+
+
+**0.6.0**
+• Mise à jour du système de couldown
+
+• Création du module `Vocal`
+- Ajout de la commande "join"
+- Ajout de la commande "leave"
+- Ajout de la commande "play"
+- Ajout de la commande "skip"
+
+• Mise à jour du module `DB`
+- Ajout du champs "trophy" dans la DB
+- Ajout du champ "daily_mult" dans la DB
+- Creation de la fonction "checkField"
+- Ajout du fichier /fieldTemplate.json
+
+• Mise à jour du module `Gems`
+- Création de la class Trophy
+- Création de la fonction "addTrophy"
+- Création de la fonction "testTrophy"
+- Ajout de la commande "trophy"
+- Ajout de la commande "trophylist"
+- Ajout de la commande "daily"
+- Ajout de la commande "recette"
