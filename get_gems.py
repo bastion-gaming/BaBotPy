@@ -4,7 +4,7 @@ from discord.ext.commands import Bot
 from discord.utils import get
 
 from DB import DB
-import gems
+from gems import gemsFonctions
 from core import welcome as wel
 
 # initialisation des variables.
