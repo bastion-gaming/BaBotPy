@@ -588,7 +588,11 @@ class GemsPlay(commands.Cog):
 							if i > 1:
 								if DB.nbElements(ID, "inventory", "planting_plan") > 0:
 									GF.addDurabilité(ID, "planting_plan", -1)
-									if GF.get_durabilite(ID, "planting_plan") <= 0:
+									if GF.get_durabilite(ID, "planting_plan") == None:
+										for c in GF.objetOutil:
+											if c.nom == "planting_plan":
+												GF.addDurabilité(ID, c.nom, c.durabilite)
+									elif GF.get_durabilite(ID, "planting_plan") <= 0:
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
 												GF.addDurabilité(ID, c.nom, c.durabilite)
