@@ -290,19 +290,19 @@ class GemsPlay(commands.Cog):
 				#----------------- Pioche en diamant -----------------
 				if DB.nbElements(ID, "inventory", "diamond_pickaxe") >= 1:
 					if GF.get_durabilite(ID, "diamond_pickaxe") == 0:
-						GF.addDurabilité(ID, "diamond_pickaxe", -1)
+						GF.addDurabilite(ID, "diamond_pickaxe", -1)
 						DB.add(ID, "inventory","diamond_pickaxe", -1)
 						if DB.nbElements(ID, "inventory", "diamond_pickaxe") > 0:
 							for c in GF.objetOutil:
 								if c.nom == "diamond_pickaxe":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
 						msg = "Pas de chance tu as cassé ta <:gem_diamond_pickaxe:{}>`pioche en diamant` !".format(GF.get_idmoji("diamond_pickaxe"))
 					else :
 						if GF.get_durabilite(ID,"diamond_pickaxe") == None or GF.get_durabilite(ID,"diamond_pickaxe") < 0:
 							for c in GF.objetOutil:
 								if c.nom == "diamond_pickaxe":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
-						GF.addDurabilité(ID, "diamond_pickaxe", -1)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
+						GF.addDurabilite(ID, "diamond_pickaxe", -1)
 						if nbrand < 15:
 							nbrand = r.randint(1,2)
 							DB.add(ID, "inventory", "emerald", nbrand)
@@ -369,19 +369,19 @@ class GemsPlay(commands.Cog):
 				#----------------- Pioche en fer -----------------
 				elif DB.nbElements(ID, "inventory", "iron_pickaxe") >= 1:
 					if GF.get_durabilite(ID, "iron_pickaxe") == 0:
-						GF.addDurabilité(ID, "iron_pickaxe", -1)
+						GF.addDurabilite(ID, "iron_pickaxe", -1)
 						DB.add(ID, "inventory","iron_pickaxe", -1)
 						if DB.nbElements(ID, "inventory", "iron_pickaxe") > 0:
 							for c in GF.objetOutil:
 								if c.nom == "iron_pickaxe":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
 						msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(GF.get_idmoji("iron_pickaxe"))
 					else :
 						if GF.get_durabilite(ID,"iron_pickaxe") == None or GF.get_durabilite(ID,"iron_pickaxe") < 0:
 							for c in GF.objetOutil:
 								if c.nom == "iron_pickaxe":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
-						GF.addDurabilité(ID, "iron_pickaxe", -1)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
+						GF.addDurabilite(ID, "iron_pickaxe", -1)
 						if nbrand < 5:
 							DB.add(ID, "inventory", "emerald", 1)
 							msg = "Tu as obtenu 1 <:gem_emerald:{}>`émeraude`".format(GF.get_idmoji("emerald"))
@@ -441,19 +441,19 @@ class GemsPlay(commands.Cog):
 				#----------------- Pioche normal -----------------
 				elif DB.nbElements(ID, "inventory", "pickaxe") >= 1:
 					if GF.get_durabilite(ID, "pickaxe") == 0:
-						GF.addDurabilité(ID, "pickaxe", -1)
+						GF.addDurabilite(ID, "pickaxe", -1)
 						DB.add(ID, "inventory", "pickaxe", -1)
 						if DB.nbElements(ID, "inventory","pickaxe") > 0:
 							for c in GF.objetOutil:
 								if c.nom == "pickaxe":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
 						msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(GF.get_idmoji("pickaxe"))
 					else :
 						if GF.get_durabilite(ID,"pickaxe") == None or GF.get_durabilite(ID,"pickaxe") < 0:
 							for c in GF.objetOutil:
 								if c.nom == "pickaxe":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
-						GF.addDurabilité(ID, "pickaxe", -1)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
+						GF.addDurabilite(ID, "pickaxe", -1)
 						if nbrand < 20:
 							DB.add(ID, "inventory", "iron", 1)
 							msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(GF.get_idmoji("iron"))
@@ -490,19 +490,19 @@ class GemsPlay(commands.Cog):
 				#print(DB.nbElements(ID, "inventory", "fishingrod"))
 				if DB.nbElements(ID, "inventory", "fishingrod") >= 1:
 					if GF.get_durabilite(ID, "fishingrod") == 0:
-						GF.addDurabilité(ID, "fishingrod", -1)
+						GF.addDurabilite(ID, "fishingrod", -1)
 						DB.add(ID, "inventory", "fishingrod", -1)
 						if DB.nbElements(ID, "inventory", "fishingrod") > 0:
 							for c in GF.objetOutil:
 								if c.nom == "fishingrod":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
 						msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(GF.get_idmoji("fishingrod"))
 					else :
 						if GF.get_durabilite(ID,"fishingrod") == None or GF.get_durabilite(ID,"fishingrod") < 0:
 							for c in GF.objetOutil:
 								if c.nom == "fishingrod":
-									GF.addDurabilité(ID, c.nom, c.durabilite)
-						GF.addDurabilité(ID, "fishingrod", -1)
+									GF.addDurabilite(ID, c.nom, c.durabilite)
+						GF.addDurabilite(ID, "fishingrod", -1)
 
 						if nbrand < 15:
 							DB.add(ID, "inventory", "tropicalfish", 1)
@@ -562,13 +562,14 @@ class GemsPlay(commands.Cog):
 			desc = ""
 			i = 1
 			if fct == None:
+				check = False
 				while i <= nbplanting:
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(i)) == 0:
 						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
 					else:
 						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i))
 						InstantTime = t.time()
-						time = PlantingTime - (InstantTime-GF.couldown_4h)
+						time = PlantingTime - (InstantTime-GF.couldown_xl)
 						if time <= 0:
 							D10 = r.randint(1,10)
 							if D10 <= 4:
@@ -584,29 +585,21 @@ class GemsPlay(commands.Cog):
 								DB.add(ID, "inventory", "wheat", 1)
 								item = "wheat"
 							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime)
+							check = True
 							desc = "Ta plantation à fini de pousser, en la coupant tu gagne 1 <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item)
 							if i > 1:
 								if DB.nbElements(ID, "inventory", "planting_plan") > 0:
-									GF.addDurabilité(ID, "planting_plan", -1)
+									GF.addDurabilite(ID, "planting_plan", -1)
 									if GF.get_durabilite(ID, "planting_plan") == None:
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
-												GF.addDurabilité(ID, c.nom, c.durabilite)
+												GF.addDurabilite(ID, c.nom, c.durabilite)
 									elif GF.get_durabilite(ID, "planting_plan") <= 0:
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
-												GF.addDurabilité(ID, c.nom, c.durabilite)
+												GF.addDurabilite(ID, c.nom, c.durabilite)
 										DB.add(ID, "inventory", "planting_plan", -1)
 
-							D = r.randint(0,20)
-							if D == 20 or D == 0:
-								DB.add(ID, "inventory", "lootbox_raregems", 1)
-								msgLB = "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
-								await ctx.channel.send(msgLB)
-							elif D >= 9 and D <= 11:
-								DB.add(ID, "inventory", "lootbox_commongems", 1)
-								msgLB = "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
-								await ctx.channel.send(msgLB)
 						else:
 							timeH = int(time / 60 / 60)
 							time = time - timeH * 3600
@@ -623,6 +616,16 @@ class GemsPlay(commands.Cog):
 					else:
 						msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
 					i += 1
+				if check == True:
+					D = r.randint(0,20)
+					if D == 20 or D == 0:
+						DB.add(ID, "inventory", "lootbox_raregems", 1)
+						msgLB = "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+						await ctx.channel.send(msgLB)
+					elif D >= 9 and D <= 11:
+						DB.add(ID, "inventory", "lootbox_commongems", 1)
+						msgLB = "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
+						await ctx.channel.send(msgLB)
 			elif fct == "plant":
 				if arg != None:
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg))) == 0:
@@ -644,9 +647,21 @@ class GemsPlay(commands.Cog):
 								desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
 							else:
 								desc = "Tu n'as pas de <:gem_seed:{}>`seed` à planter dans ton inventaire".format(GF.get_idmoji("seed"))
+								if i > 15:
+									await ctx.channel.send(embed = msg)
+									await ctx.channel.send(desc)
+									return 0
 						else:
 							desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
-						msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
+						if i % 10 == 0 and i != nbplanting:
+							if i // 10 == 1:
+								await ctx.channel.send(embed = msg)
+							else:
+								await ctx.channel.send(embed = msg, delete_after = 90)
+							msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici vos plantation.".format(GF.get_idmoji("seed")))
+							msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
+						else:
+							msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
 						i += 1
 			DB.updateComTime(ID, "hothouse")
 			if nbplanting // 10 == 0:

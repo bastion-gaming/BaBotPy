@@ -148,6 +148,9 @@ class GemsBase(commands.Cog):
 							else:
 								DB.add(ID, "inventory", c.nom, nb)
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+								if c.nom == "planting_plan":
+									if GF.get_durabilite(ID, "planting_plan") == None:
+										GF.addDurabilite(ID, "planting_plan", c.durabilite)
 						else :
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
 						break
@@ -214,7 +217,7 @@ class GemsBase(commands.Cog):
 						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
 						if DB.nbElements(ID, "inventory", item) == 1:
 							if DB.get_durabilite(ID, item) != None:
-								GF.addDurabilité(ID, item, -1)
+								GF.addDurabilite(ID, item, -1)
 						# Message de réussite dans la console
 						print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 						break

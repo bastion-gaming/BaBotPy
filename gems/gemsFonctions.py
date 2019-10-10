@@ -287,7 +287,7 @@ def testTrophy(ID, nameElem):
 
 
 
-def addDurabilité(ID, nameElem, nbElem):
+def addDurabilite(ID, nameElem, nbElem):
 	"""
 	Modifie la durabilité de l'outil nameElem
 	"""
