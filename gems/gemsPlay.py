@@ -569,7 +569,7 @@ class GemsPlay(commands.Cog):
 					else:
 						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i))
 						InstantTime = t.time()
-						time = PlantingTime - (InstantTime-GF.couldown_xl)
+						time = PlantingTime - (InstantTime-GF.couldown_4h)
 						if time <= 0:
 							D10 = r.randint(1,10)
 							if D10 <= 4:
