@@ -561,7 +561,7 @@ class GemsPlay(commands.Cog):
 			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantation.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
-			if fct == None:
+			if fct == None or fct == "harvest":
 				check = False
 				if  arg != None:
 					nbplanting = int(arg)
