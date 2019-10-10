@@ -563,6 +563,8 @@ class GemsPlay(commands.Cog):
 			i = 1
 			if fct == None:
 				check = False
+				if  arg != None:
+					nbplanting = int(arg)
 				while i <= nbplanting:
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(i)) == 0:
 						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
