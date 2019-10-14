@@ -99,7 +99,8 @@ def loadItem():
 	,Item("cookie", 30, 40, 1, "", "consommable")
 	,Item("grapes", 15, 25, 1, "", "consommable")
 	,Item("wine_glass", 120, 210, 2, "", "consommable")
-	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")]
+	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")
+	,Item("fish_hook", 50, 225, 1, 633207161241075743, "special")]
 
 
 	class Outil:

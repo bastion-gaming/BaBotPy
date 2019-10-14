@@ -504,24 +504,32 @@ class GemsPlay(commands.Cog):
 									GF.addDurabilite(ID, c.nom, c.durabilite)
 						GF.addDurabilite(ID, "fishingrod", -1)
 
+						if DB.nbElements(ID, "inventory", "fish_hook") >= 1:
+							mult = 3
+						else:
+							mult = 1
+
 						if nbrand < 15:
-							DB.add(ID, "inventory", "tropicalfish", 1)
+							nb = mult*1
+							DB.add(ID, "inventory", "tropicalfish", nb)
 							msg = "Tu as obtenu 1 <:gem_tropicalfish:{}>`tropicalfish`".format(GF.get_idmoji("tropicalfish"))
-							nbfish = r.randint(0,3)
+							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
 								DB.add(ID, "inventory", "fish", nbfish)
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 15 and nbrand < 30:
-							DB.add(ID, "inventory", "blowfish", 1)
+							nb = mult*1
+							DB.add(ID, "inventory", "blowfish", nb)
 							msg = "Tu as obtenu 1 <:gem_blowfish:{}>`blowfish`".format(GF.get_idmoji("blowfish"))
-							nbfish = r.randint(0,3)
+							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
 								DB.add(ID, "inventory", "fish", nbfish)
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 30 and nbrand < 40:
-							DB.add(ID, "inventory", "octopus", 1)
+							nb = mult*1
+							DB.add(ID, "inventory", "octopus", nb)
 							msg = "Tu as obtenu 1 <:gem_octopus:{}>`octopus`".format(GF.get_idmoji("octopus"))
 							D = r.randint(0,20)
 							if D == 0:
@@ -535,7 +543,7 @@ class GemsPlay(commands.Cog):
 								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 						elif nbrand >= 40 and nbrand < 95:
-							nbfish = r.randint(1,7)
+							nbfish = r.randint(1,7)*mult
 							DB.add(ID, "inventory", "fish", nbfish)
 							msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 						else:
