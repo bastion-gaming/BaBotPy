@@ -144,6 +144,16 @@ class ImagesSecret(commands.Cog):
 		await ctx.channel.send(url2)
 
 
+	@commands.command(pass_context=True)
+	async def fondue(self, ctx):
+		keyword = "fondue"
+		nbfiles = 20
+		choise_nbfile=r.randint(1, nbfiles)
+		url = images_url(keyword, nbfiles)
+		url2 = url[0][keyword][choise_nbfile]
+		await ctx.channel.send(url2)
+
+
 
 def setup(bot):
 	bot.add_cog(Images(bot))
