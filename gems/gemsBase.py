@@ -99,6 +99,7 @@ class GemsBase(commands.Cog):
 	async def buy (self, ctx,item,nb = 1):
 		"""**[item] [nombre]** | Permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
+		jour = dt.date.today()
 		if DB.spam(ID,GF.couldown_c, "buy"):
 			if GF.testInvTaille(ID):
 				test = True
@@ -108,10 +109,17 @@ class GemsBase(commands.Cog):
 						test = False
 						prix = 0 - (c.achat*nb)
 						if DB.addGems(ID, prix) >= "0":
-							DB.add(ID, "inventory", c.nom, nb)
-							if c.type != "consommable":
+							if c.type == "halloween":
+								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+									DB.add(ID, "inventory", c.nom, nb)
+									msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+								else:
+									msg = "Désolé, nous ne pouvons pas executer cet achat, cette item n'est pas vendu au marché"
+							elif c.type != "consommable":
+								DB.add(ID, "inventory", c.nom, nb)
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
 							else:
+								DB.add(ID, "inventory", c.nom, nb)
 								msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
@@ -249,6 +257,7 @@ class GemsBase(commands.Cog):
 			msg_invItemsPoisson = ""
 			msg_invItemsPlante = ""
 			msg_invItemsConsommable = ""
+			msg_invItemsHalloween = ""
 			msg_invBox = ""
 			inv = DB.valueAt(ID, "inventory")
 			tailletot = 0
@@ -271,6 +280,11 @@ class GemsBase(commands.Cog):
 								msg_invItemsPlante += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 							elif c.type == "consommable":
 								msg_invItemsConsommable += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
+							elif c.type == "halloween":
+								if c.nom == "pumpkin" or c.nom == "pumpkinpie":
+									msg_invItemsHalloween += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+								else:
+									msg_invItemsHalloween += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 							else:
 								msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 
@@ -298,6 +312,8 @@ class GemsBase(commands.Cog):
 				msg.add_field(name="Plantes", value=msg_invItemsPlante, inline=False)
 			if msg_invItemsConsommable != "":
 				msg.add_field(name="Consommables", value=msg_invItemsConsommable, inline=False)
+			if msg_invItemsHalloween != "":
+				msg.add_field(name="Halloween", value=msg_invItemsHalloween, inline=False)
 			if msg_invBox != "":
 				msg.add_field(name="Loot Box", value=msg_invBox, inline=False)
 			DB.updateComTime(ID, "inv")
@@ -312,6 +328,7 @@ class GemsBase(commands.Cog):
 	async def market (self, ctx, fct = None):
 		"""Permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
+		jour = dt.date.today()
 		if DB.spam(ID,GF.couldown_c, "market"):
 			if fct == None:
 				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
@@ -344,7 +361,7 @@ class GemsBase(commands.Cog):
 						d_marketItemsPlante += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
 					elif c.type == "consommable":
 						d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
-					else:
+					elif c.type != "halloween":
 						d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
 
 				for c in GF.objetBox :
@@ -358,6 +375,17 @@ class GemsBase(commands.Cog):
 				msg.add_field(name="Poissons", value=d_marketItemsPoisson, inline=False)
 				msg.add_field(name="Plantes", value=d_marketItemsPlante, inline=False)
 				msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
+
+				d_marketItems = ""
+				if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+					for c in GF.objetItem:
+						if c.type == "halloween":
+							if c.nom == "pumpkin" or c.nom == "pumpkinpie":
+								d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+							else:
+								d_marketItems += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+					msg.add_field(name="Halloween", value=d_marketItems, inline=False)
+
 				msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
 				DB.updateComTime(ID, "market")
 				await ctx.channel.send(embed = msg)
@@ -402,7 +430,12 @@ class GemsBase(commands.Cog):
 			d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("tropicalfish"),GF.get_price("tropicalfish"))
 			d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("blowfish"),GF.get_price("blowfish"))
 			d_bourse+="<:gem_octopus:{}>`octopus: 40 ▶ 65`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("octopus"),GF.get_price("octopus"))
-			msg.add_field(name="Item", value=d_bourse, inline=False)
+			d_bourse+=":grapes:`grapes: 10 ▶ 20`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes"))
+			msg.add_field(name="Vente", value=d_bourse, inline=False)
+
+			d_bourse="<:gem_planting_plan:{}>`planting_plan: 900 ▶ 1150`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("planting_plan"),GF.get_price("planting_plan", "achat"))
+			d_bourse+=":grapes:`grapes: 20 ▶ 30`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes", "achat"))
+			msg.add_field(name="Achat", value=d_bourse, inline=False)
 			DB.updateComTime(ID, "bourse")
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console

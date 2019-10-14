@@ -2,10 +2,18 @@ import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from discord.utils import get
+import datetime as t
+from datetime import datetime
 
 from DB import DB
 from gems import gemsFonctions as GF
 from core import welcome as wel
+
+import asyncio
+import aiohttp
+import json
+import re
+import time
 
 # initialisation des variables.
 DEFAUT_PREFIX = "*"
@@ -16,6 +24,8 @@ TOKEN = open("token/token_getgems.txt", "r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(DEFAUT_PREFIX))
 NONE = open("help/cogs.txt","w")
 NONE = open("help/help.txt","w")
+
+jour = t.date.today()
 
 client.remove_command("help")
 
@@ -37,15 +47,17 @@ async def on_member_remove(member):
 async def looped_task():
 	counter = 0
 	while not client.is_closed():
-		if counter % 2 == 0 :
-			activity = discord.Activity(type=discord.ActivityType.playing, name="▶ bastion-gaming.fr ◀")
-			await client.change_presence(status=discord.Status.online, activity=activity)
-		else:
-			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(DEFAUT_PREFIX))
-			await client.change_presence(status=discord.Status.online, activity=activity)
+		# if counter % 2 == 0 :
+		# 	activity = discord.Activity(type=discord.ActivityType.playing, name="▶ bastion-gaming.fr ◀")
+		# 	await client.change_presence(status=discord.Status.online, activity=activity)
+		# else:
+		# 	activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(DEFAUT_PREFIX))
+		# 	await client.change_presence(status=discord.Status.online, activity=activity)
 		GF.incrementebourse()
 		counter += 1
 		await asyncio.sleep(30)
+#---------------------------------------------------------------
+#---------------------------------------------------------------
 
 ####################### Commande help.py #######################
 
@@ -60,6 +72,9 @@ client.load_extension('core.utils')
 client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
+
+if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
+	client.load_extension('gems.gemsEvent')
 
 ####################### Lancemement du bot ######################
 
