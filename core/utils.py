@@ -132,6 +132,12 @@ class UtilsSecret(commands.Cog):
 			await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 
 
+	@commands.command(pass_context=True)
+	async def bot(self, ctx, ID = None):
+		if ID == "revive":
+			await ctx.channel.send("Comme un phénix, <@604776153458278415> renait de ses cendres")
+
+
 def setup(bot):
 	bot.add_cog(Utils(bot))
 	bot.add_cog(UtilsSecret(bot))

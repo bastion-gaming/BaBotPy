@@ -214,9 +214,19 @@ class GemsPlay(commands.Cog):
 					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem: pour payer une amende"
 			else :
 				gain = r.randint(2,8)
-				msg = GF.message_crime[r.randint(0,3)]+" "+str(gain)+":gem:"
-				DB.addGems(ID, gain)
-
+				jour = dt.date.today()
+				if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+					msg = "**Halloween** | Des bonbons ou la vie ?\n"
+					msg += GF.message_crime[r.randint(0,3)]+" "+str(gain)
+					if r.randint(0,1) == 0:
+						msg += " :candy:`candy`"
+						DB.add(ID, "inventory", "candy", gain)
+					else:
+						msg += " :lollipop:`lollipop`"
+						DB.add(ID, "inventory", "lollipop", gain)
+				else:
+					msg = GF.message_crime[r.randint(0,3)]+" "+str(gain)+" :gem:"
+					DB.addGems(ID, gain)
 			DB.updateComTime(ID, "crime")
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
@@ -504,25 +514,36 @@ class GemsPlay(commands.Cog):
 									GF.addDurabilite(ID, c.nom, c.durabilite)
 						GF.addDurabilite(ID, "fishingrod", -1)
 
+						if DB.nbElements(ID, "inventory", "fishhook") >= 1:
+							mult = r.randint(-1, 5)
+							if mult < 2:
+								mult = 2
+							DB.add(ID, "inventory", "fishhook", -1)
+						else:
+							mult = 1
+
 						if nbrand < 15:
-							DB.add(ID, "inventory", "tropicalfish", 1)
-							msg = "Tu as obtenu 1 <:gem_tropicalfish:{}>`tropicalfish`".format(GF.get_idmoji("tropicalfish"))
-							nbfish = r.randint(0,3)
+							nb = mult*1
+							DB.add(ID, "inventory", "tropicalfish", nb)
+							msg = "Tu as obtenu {} <:gem_tropicalfish:{}>`tropicalfish`".format(nb, GF.get_idmoji("tropicalfish"))
+							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
 								DB.add(ID, "inventory", "fish", nbfish)
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 15 and nbrand < 30:
-							DB.add(ID, "inventory", "blowfish", 1)
-							msg = "Tu as obtenu 1 <:gem_blowfish:{}>`blowfish`".format(GF.get_idmoji("blowfish"))
-							nbfish = r.randint(0,3)
+							nb = mult*1
+							DB.add(ID, "inventory", "blowfish", nb)
+							msg = "Tu as obtenu {} <:gem_blowfish:{}>`blowfish`".format(nb, GF.get_idmoji("blowfish"))
+							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
 								DB.add(ID, "inventory", "fish", nbfish)
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 30 and nbrand < 40:
-							DB.add(ID, "inventory", "octopus", 1)
-							msg = "Tu as obtenu 1 <:gem_octopus:{}>`octopus`".format(GF.get_idmoji("octopus"))
+							nb = mult*1
+							DB.add(ID, "inventory", "octopus", nb)
+							msg = "Tu as obtenu {} <:gem_octopus:{}>`octopus`".format(nb, GF.get_idmoji("octopus"))
 							D = r.randint(0,20)
 							if D == 0:
 								DB.add(ID, "inventory", "lootbox_legendarygems", 1)
@@ -535,11 +556,13 @@ class GemsPlay(commands.Cog):
 								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 						elif nbrand >= 40 and nbrand < 95:
-							nbfish = r.randint(1,7)
+							nbfish = r.randint(1,7)*mult
 							DB.add(ID, "inventory", "fish", nbfish)
 							msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 						else:
 							msg = "Pas de poisson pour toi aujourd'hui :cry: "
+							if mult >= 2:
+								DB.add(ID, "inventory", "fishhook", 1)
 				else:
 					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(GF.get_idmoji("fishingrod"))
 
@@ -571,24 +594,47 @@ class GemsPlay(commands.Cog):
 					else:
 						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i))
 						InstantTime = t.time()
-						time = PlantingTime - (InstantTime-GF.couldown_4h)
+						time = PlantingTime - (InstantTime-GF.couldown_6h)
 						if time <= 0:
 							D10 = r.randint(1,10)
-							if D10 <= 4:
-								DB.add(ID, "inventory", "oak", 1)
-								item = "oak"
-							elif D10 > 4 and D10 <= 7:
-								DB.add(ID, "inventory", "spruce", 1)
-								item = "spruce"
-							elif D10 > 7 and D10 <= 9:
-								DB.add(ID, "inventory", "palm", 1)
-								item = "palm"
-							elif D10 >= 10:
-								DB.add(ID, "inventory", "wheat", 1)
-								item = "wheat"
+							jour = dt.date.today()
+							if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+								if D10 <= 3:
+									nbHarvest = 1
+									DB.add(ID, "inventory", "oak", nbHarvest)
+									item = "oak"
+								elif D10 > 3 and D10 <= 7:
+									nbHarvest = r.randint(1, 2)
+									DB.add(ID, "inventory", "pumpkin", nbHarvest)
+									item = "pumpkin"
+								elif D10 > 7 and D10 <= 9:
+									nbHarvest = r.randint(3, 5)
+									DB.add(ID, "inventory", "pumpkin", nbHarvest)
+									item = "pumpkin"
+								elif D10 >= 10:
+									nbHarvest = r.randint(1,2)
+									DB.add(ID, "inventory", "wheat", nbHarvest)
+									item = "wheat"
+							else:
+								if D10 <= 4:
+									nbHarvest = 1
+									DB.add(ID, "inventory", "oak", nbHarvest)
+									item = "oak"
+								elif D10 > 4 and D10 <= 7:
+									nbHarvest = 1
+									DB.add(ID, "inventory", "spruce", nbHarvest)
+									item = "spruce"
+								elif D10 > 7 and D10 <= 9:
+									nbHarvest = 1
+									DB.add(ID, "inventory", "palm", nbHarvest)
+									item = "palm"
+								elif D10 >= 10:
+									nbHarvest = r.randint(1,3)
+									DB.add(ID, "inventory", "wheat", nbHarvest)
+									item = "wheat"
 							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime)
 							check = True
-							desc = "Ta plantation à fini de pousser, en la coupant tu gagne 1 <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item)
+							desc = "Ta plantation à fini de pousser, en la coupant tu gagne {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
 							if i > 1:
 								if DB.nbElements(ID, "inventory", "planting_plan") > 0:
 									GF.addDurabilite(ID, "planting_plan", -1)

@@ -26,6 +26,8 @@ client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("help/cogs.txt","w")
 NONE = open("help/help.txt","w")
 
+jour = t.date.today()
+
 ############# Notification variables ################
 TWITCH_CLIENT_ID = open("multimedia/twitch_client_id.txt", "r").read().replace("\n","")
 TWITCH_SECRET_ID = open("multimedia/twitch_secret_id.txt", "r").read().replace("\n","")
@@ -159,6 +161,9 @@ client.load_extension('core.gestion')
 client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
+
+if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
+	client.load_extension('gems.gemsEvent')
 
 ###################### Commande notification.py ################
 

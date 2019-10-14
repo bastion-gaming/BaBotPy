@@ -1,3 +1,17 @@
+**1.0.1**
+• Bug fix
+
+• Ajout des emoji custom au format png dans le dossier icons
+
+• Cangement de la couleur de la commande "help"
+
+• Mise à jour du module `Gems`
+- Préparation de Halloween 2019 (disponible du 23/10 ou 10/11)
+    > Ajout des items "pumpkin", "pumpkinpie", "candy" et "lollipop"
+    > Ajout de la commande "cooked"
+
+
+
 **1.0.0**
 • Restructuration des fichiers
 

@@ -60,12 +60,20 @@ def itemBourse(item, type):
 			Prix = r.randint(25, 36)
 		elif item == "octopus":
 			Prix = r.randint(40,65)
+		elif item == "grapes":
+			Prix = r.randint(10,20)
 		else:
 			Prix = 404
 		return Prix
 
-	# elif type == "achat":
-	# 	return Prix
+	elif type == "achat":
+		if item == "grapes":
+			Prix = r.randint(20,30)
+		elif item == "planting_plan":
+			Prix = r.randint(900, 1150)
+		else:
+			Prix = 404
+		return Prix
 
 
 
@@ -93,13 +101,18 @@ def loadItem():
 	,Item("octopus", itemBourse("octopus", "vente"), 90, 16, 618058832790421504, "poisson")
 	,Item("seed", 1, 2, 0.5, 618058917930336266, "plante")
 	,Item("oak", 400, 500, 50, 625698779076755485, "plante")
-	,Item("spruce", 700, 800, 70, 625698795744657409, "plante")
-	,Item("palm", 1000, 1200, 60, 625698810773110785, "plante")
-	,Item("wheat", 1500, 2000, 3, 625701009586520064, "plante")
+	,Item("spruce", 600, 800, 70, 625698795744657409, "plante")
+	,Item("palm", 850, 1200, 60, 625698810773110785, "plante")
+	,Item("wheat", 1100, 2000, 3, 625701009586520064, "plante")
 	,Item("cookie", 30, 40, 1, "", "consommable")
-	,Item("grapes", 15, 25, 1, "", "consommable")
+	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "", "consommable")
 	,Item("wine_glass", 120, 210, 2, "", "consommable")
-	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")]
+	,Item("pumpkin", 50, 125, 5, 633219431107133450, "halloween")
+	,Item("pumpkinpie", 1000, 1200, 5, 633261963467685888, "halloween")
+	,Item("candy", 1, 2, 1, "", "halloween")
+	,Item("lollipop", 5, 12, 2, "", "halloween")
+	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")
+	,Item("fishhook", 50, 225, 1, 633207161241075743, "special")]
 
 
 	class Outil:
@@ -119,7 +132,7 @@ def loadItem():
 	,Outil("diamond_pickaxe", 500, 1800, 150, 600, 625702527135907851, "forge")
 	,Outil("fishingrod", 5, 15, 25, 150, 608748194318385173, "")
 	,Outil("sword", 50, 200, 55, 100, 625702555200258058, "forge")
-	,Outil("planting_plan", 100, 1000, 3, 3, 631038633398501376, "")
+	,Outil("planting_plan", 100, itemBourse("planting_plan", "achat"), 3, 3, 631038633398501376, "")
 	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
 
 
@@ -199,8 +212,16 @@ objetStat = [StatGems("DiscordCop Arrestation", "`Nombre d'arrestation par la Di
 ,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
 #anti-DB.spam
+couldown_12h = 86400/2 # 12h
+couldown_8h = 86400/3 # 8h
 couldown_6h = 86400/4 # 6h
 couldown_4h = 86400/6 # 4h
+couldown_3h = 86400/8 # 3h
+couldown_2h = 86400/12 # 2h
+couldown_1h = 86400/24 # 1h
+couldown_30 = 86400/48 # 30 min
+couldown_xxxl = 30
+couldown_xxl = 15
 couldown_xl = 10
 couldown_l = 8 # l pour long
 couldown_c = 6 # c pour court
@@ -226,20 +247,31 @@ def get_idmoji(nameElem):
 
 
 
-def get_price(nameElem):
+def get_price(nameElem, type = None):
 	"""
 	Permet de connaitre le prix de l'item
 	"""
 	test = False
-	for c in objetItem:
-		if c.nom == nameElem:
-			test = True
-			return c.vente
+	if type == None or type == "vente":
+		for c in objetItem:
+			if c.nom == nameElem:
+				test = True
+				return c.vente
 
-	for c in objetOutil:
-		if c.nom == nameElem:
-			test = True
-			return c.vente
+		for c in objetOutil:
+			if c.nom == nameElem:
+				test = True
+				return c.vente
+	elif type == "achat":
+		for c in objetItem:
+			if c.nom == nameElem:
+				test = True
+				return c.achat
+
+		for c in objetOutil:
+			if c.nom == nameElem:
+				test = True
+				return c.achat
 	if test == False:
 		return 0
 

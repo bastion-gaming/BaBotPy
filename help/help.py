@@ -15,7 +15,7 @@ class Helpme(commands.Cog):
 	async def help(self, ctx, nameElem = None):
 		"""Affiche ce message !"""
 		d_help = "Liste de toutes les fonctions utilisable avec le prefix {}".format(self.PREFIX)
-		msg = discord.Embed(title = "Fonction disponible",color= 12745742, description = d_help)
+		msg = discord.Embed(title = "Fonction disponible",color= 9576994, description = d_help)
 		arg = ""
 
 		COGS = open("help/cogs.txt","r").read()
@@ -27,7 +27,7 @@ class Helpme(commands.Cog):
 			if nameElem == "gems":
 				for COG in COGS:
 					mCOG = COG.lower()
-					if mCOG == "gems" or mCOG == "gemsbase" or mCOG == "gemsplay" or mCOG == "gemsfight":
+					if mCOG == "gems" or mCOG == "gemsbase" or mCOG == "gemsplay" or mCOG == "gemsevent" or mCOG == "gemsfight":
 						cog = self.bot.get_cog(COG)
 						coms = cog.get_commands()
 						for com in coms :
