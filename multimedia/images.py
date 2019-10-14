@@ -147,5 +147,5 @@ class ImagesSecret(commands.Cog):
 
 def setup(bot):
 	bot.add_cog(Images(bot))
-		bot.add_cog(ImagesSecret(bot))
+	bot.add_cog(ImagesSecret(bot))
 	open("help/cogs.txt","a").write("Images\n")
