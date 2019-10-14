@@ -128,6 +128,24 @@ class Images(commands.Cog):
 
 
 
+class ImagesSecret(commands.Cog):
+
+	def __init__(self,ctx):
+		return(None)
+
+
+	@commands.command(pass_context=True)
+	async def raclette(self, ctx):
+		keyword = "raclette"
+		nbfiles = 20
+		choise_nbfile=r.randint(1, nbfiles)
+		url = images_url(keyword, nbfiles)
+		url2 = url[0][keyword][choise_nbfile]
+		await ctx.channel.send(url2)
+
+
+
 def setup(bot):
 	bot.add_cog(Images(bot))
+		bot.add_cog(ImagesSecret(bot))
 	open("help/cogs.txt","a").write("Images\n")
