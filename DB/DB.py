@@ -8,22 +8,23 @@ import json
 
 DB_NOM = 'bastionDB'
 
-def dbExist(nameDB = None):
+def dbExist(linkDB = None):
 	"""
 	Retourne True ou False en fonction de si la db existe.
 	"""
 	try:
-		if nameDB != None:
-			with open("DB/{}.json".format(nameDB)): pass
+		if linkDB != None:
+			with open("DB/{}.json".format(linkDB)): pass
 		else:
 			with open("DB/{}.json".format(DB_NOM)): pass
 	except IOError:
-		if nameDB != None:
-			db = TinyDB("DB/{}.json".format(nameDB))
+		if linkDB != None:
+			db = TinyDB("{}.json".format(linkDB))
+			db.close()
 		return False
 	return True
 
-db = TinyDB("DB/{}.json".format(DB_NOM))
+
 file = "DB/fieldTemplate.json"
 
 def fieldList():
@@ -31,7 +32,11 @@ def fieldList():
 		t = json.load(f)
 	return t
 
-def DBFieldList():
+def DBFieldList(linkDB = None):
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
 	D = db
 	L=dict()
 	E=dict()
@@ -39,23 +44,18 @@ def DBFieldList():
 		for y in x:
 			E={y:x[y]}
 			L.update(E)
+	db.close()
 	return L
 
-def nom_ID(nom):
-	if len(nom) == 21 :
-		ID = int(nom[2:20])
-	elif len(nom) == 22 :
-		ID = int(nom[3:21])
-	else :
-		print("DB >> mauvais nom")
-		ID = "prout"
-	return(ID)
-
-def checkField():
+def checkField(linkDB = None):
 	"""
 	Va vérifier que la base de donnée est à jour par rapport au fichier fieldTemplate.
 	Si il découvre un champ qui n'exsite pas, alors il met à jour.
 	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
 	flag = 0
 	FL = fieldList() #Liste du template
 	DBFL = DBFieldList() #Liste des champs actuellement dans la DB
@@ -81,34 +81,48 @@ def checkField():
 			db.update({str(x):FL[x]})
 			flag = "type"+str(flag)
 
+	db.close()
 	return flag
 
-def newPlayer(ID):
+def newPlayer(ID, linkDB = None):
 	"""
 	Permet d'ajouter un nouveau joueur à la base de donnée en fonction de son ID.
 
 	ID: int de l'ID du joueur
 	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
 	FieldsL = fieldList()
 	if db.search(Query().ID == ID) == []:
 		#Init du joueur avec les champs de base
 		db.insert(fieldList())
 		updateField(FieldsL["ID"], "ID", ID)
+		db.close()
 		return ("Le joueur a été ajouté !")
 	elif valueAt(ID, "arrival") == "0":
+		db.close()
 		return ("Le joueur a été ajouté !")
 	else:
+		db.close()
 		return ("Le joueur existe déjà")
 
 
-def removePlayer(ID):
+def removePlayer(ID, linkDB = None):
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
 	el = db.get(Query().ID == ID)
 	docID = el.doc_id
 	try:
 		db.remove(doc_ids=[docID])
 		print("DB >> docID {} | Le joueur {} a été supprimer de la DB".format(docID, ID))
+		db.close()
 		return ("Le joueur a été supprimer !")
 	except:
+		db.close()
 		return ("Le joueur n'existe pas")
 
 
@@ -126,7 +140,7 @@ def membercheck(ctx):
 	return False
 
 
-def updateField(ID, fieldName, fieldValue):
+def updateField(ID, fieldName, fieldValue, linkDB = None):
 	"""
 	Permet de mettre à jour la valeur fieldName par la fieldValue.
 
@@ -134,46 +148,87 @@ def updateField(ID, fieldName, fieldValue):
 	fieldName: string du nom du champ à changer
 	fieldValue: string qui va remplacer l'ancienne valeur
 	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
 	if db.search(getattr(Query(),fieldName)) == []:
 		print("DB >> Le champ n'existe pas")
+		db.close()
 		return "201"
 	else:
 		db.update({fieldName: fieldValue}, Query().ID == ID)
 		print("DB >> Le champ a été mis à jour")
+		db.close()
 		return "200"
 
 
-def valueAt(ID, fieldName):
+def valueAt(ID, fieldName, linkDB = None):
 	"""
 	Permet de récupérer la valeur contenue dans le champ fieldName de ID
 
 	ID: int de l'ID du joueur
 	fieldName: string du nom du champ à chercher
 	"""
-	return db.search(Query().ID == ID)[0][fieldName]
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
+	value = db.search(Query().ID == ID)[0][fieldName]
+	db.close()
+	return value
 
-def taille():
-	return len(db)
+def taille(linkDB = None):
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
+	t = len(db)
+	db.close()
+	return t
 
-def userID(i):
-	return db.search(Query().ID)[i]["ID"]
+def userID(i, linkDB = None):
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
+	ID = db.search(Query().ID)[i]["ID"]
+	db.close()
+	return ID
 
-def userExist(id):
+def userExist(id, linkDB = None):
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
 	if db.search(Query().ID == id) == []:
+		db.close()
 		return False
 	else :
+		db.close()
 		return True
 
-def userGems(i):
-	return db.search(Query().gems)[i]["gems"]
+def userGems(i, linkDB = None):
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
+	gems = db.search(Query().gems)[i]["gems"]
+	db.close()
+	return gems
 
-def updateComTime(ID, nameElem):
+def updateComTime(ID, nameElem, linkDB = None):
 	"""
 	Met à jour la date du dernier appel à une fonction
 	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
 	ComTime = db.search(Query().ID == ID)[0]["com_time"]
 	ComTime[nameElem] = t.time()
 	updateField(ID, "com_time", ComTime)
+	db.close()
 
 def addGems(ID, nbGems):
 	"""
