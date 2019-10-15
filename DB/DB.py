@@ -14,7 +14,7 @@ def dbExist(linkDB = None):
 	"""
 	try:
 		if linkDB != None:
-			with open("DB/{}.json".format(linkDB)): pass
+			with open("{}.json".format(linkDB)): pass
 		else:
 			with open("DB/{}.json".format(DB_NOM)): pass
 	except IOError:
@@ -25,10 +25,8 @@ def dbExist(linkDB = None):
 	return True
 
 
-file = "DB/fieldTemplate.json"
-
-def fieldList():
-	with open(file, "r") as f:
+def fieldList(file):
+	with open("{}.json".format(file), "r") as f:
 		t = json.load(f)
 	return t
 
@@ -47,24 +45,21 @@ def DBFieldList(linkDB = None):
 	db.close()
 	return L
 
-def checkField(linkDB = None):
+def checkField(linkDB, linkfield):
 	"""
 	Va vérifier que la base de donnée est à jour par rapport au fichier fieldTemplate.
 	Si il découvre un champ qui n'exsite pas, alors il met à jour.
 	"""
-	if linkDB != None:
-		db = TinyDB("{}.json".format(linkDB))
-	else:
-		db = TinyDB("DB/{}.json".format(DB_NOM))
+	db = TinyDB("{}.json".format(linkDB))
 	flag = 0
-	FL = fieldList() #Liste du template
-	DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+	FL = fieldList(linkfield) #Liste du template
+	DBFL = DBFieldList(linkDB) #Liste des champs actuellement dans la DB
 	#Ajout
 	for x in FL:
 		if db.search(Query()[x]) == []:
 			db.update({str(x):FL[x]})
 			DBFL.clear()
-			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+			DBFL = DBFieldList(linkDB) #Liste des champs actuellement dans la DB
 			flag = "add"+str(flag)
 
 	#Supression
@@ -72,7 +67,7 @@ def checkField(linkDB = None):
 		if x not in FL:
 			db.update(delete(x))
 			DBFL.clear()
-			DBFL = DBFieldList() #Liste des champs actuellement dans la DB
+			DBFL = DBFieldList(linkDB) #Liste des champs actuellement dans la DB
 			flag = "sup"+str(flag)
 
 	#Type
@@ -84,7 +79,7 @@ def checkField(linkDB = None):
 	db.close()
 	return flag
 
-def newPlayer(ID, linkDB = None):
+def newPlayer(ID, linkDB = None, linkfield = None):
 	"""
 	Permet d'ajouter un nouveau joueur à la base de donnée en fonction de son ID.
 
@@ -94,16 +89,18 @@ def newPlayer(ID, linkDB = None):
 		db = TinyDB("{}.json".format(linkDB))
 	else:
 		db = TinyDB("DB/{}.json".format(DB_NOM))
-	FieldsL = fieldList()
+	if linkfield == None:
+		linkfield = "DB/fieldTemplate"
+	FieldsL = fieldList(linkfield)
 	if db.search(Query().ID == ID) == []:
 		#Init du joueur avec les champs de base
-		db.insert(fieldList())
-		updateField(FieldsL["ID"], "ID", ID)
+		db.insert(fieldList(linkfield))
+		updateField(FieldsL["ID"], "ID", ID, linkDB)
 		db.close()
 		return ("Le joueur a été ajouté !")
-	elif valueAt(ID, "arrival") == "0":
-		db.close()
-		return ("Le joueur a été ajouté !")
+	# elif valueAt(ID, "arrival", linkDB) == "0":
+	# 	db.close()
+	# 	return ("Le joueur a été ajouté !")
 	else:
 		db.close()
 		return ("Le joueur existe déjà")

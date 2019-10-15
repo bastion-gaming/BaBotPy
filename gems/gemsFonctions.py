@@ -382,6 +382,27 @@ def taxe(solde, pourcentage):
 	return taxe
 
 
+dbSession = "gems/session"
+dbSessionTemplate = "gems/SessionTemplate"
+
+def checkDB_Session():
+	if DB.dbExist(dbSession):
+		print("La DB Gems Session existe, poursuite sans soucis.")
+	else :
+		print("La DB Gems Session n'existait pas. Elle a été (re)créée.")
+	flag = DB.checkField(dbSession, dbSessionTemplate)
+	if flag == 0:
+		print("DB Gems Session >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("DB Gems Session >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "sup" in flag:
+		print("DB Gems Session >> Un ou plusieurs champs ont été supprimés de la DB.")
+	elif "type" in flag:
+		print("DB Gems Session >> Un ou plusieurs type ont été modifié sur la DB.")
+	print('------\n')
+
+
+
 class GemsTest(commands.Cog):
 
 	def __init__(self,ctx):

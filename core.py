@@ -64,9 +64,9 @@ async def on_ready():
 		print("La DB "+ DB.DB_NOM +" existe, poursuite sans soucis.")
 	else :
 		print("La DB n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField()
+	flag = DB.checkField("DB/bastionDB", "DB/fieldTemplate")
 	if flag == 0:
-		print("Aucun champ n'a été ajouté ni supprimé no modifié.")
+		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
 	elif "add" in flag:
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
 	elif "sup" in flag:
@@ -75,6 +75,7 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
+	GF.checkDB_Session()
 	GF.loadItem()
 
 ####################### Commande help.py #######################
@@ -161,6 +162,8 @@ client.load_extension('core.gestion')
 client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
+
+client.load_extension('gems.gemsFight')
 
 if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
 	client.load_extension('gems.gemsEvent')
