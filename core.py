@@ -76,6 +76,7 @@ async def on_ready():
 
 	print('------\n')
 	GF.checkDB_Session()
+	GF.setglobalguild(client.get_guild(wel.idBASTION))
 	GF.loadItem()
 
 ####################### Commande help.py #######################
@@ -158,6 +159,8 @@ client.load_extension('core.level')
 client.load_extension('core.gestion')
 
 ####################### Commande gems.py #######################
+
+client.load_extension('gems.gemsFonctions')
 
 client.load_extension('gems.gemsBase')
 

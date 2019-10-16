@@ -21,6 +21,7 @@ class GemsFight(commands.Cog):
 	@commands.command(pass_context=True)
 	async def defis(self, ctx, opt, arg1):
 		"""
+		**duel [nom]** | Gestion des sessions de duel
 		"""
 		ID = ctx.author.id
 		if opt == "duel":

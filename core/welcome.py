@@ -7,9 +7,8 @@ import datetime as t
 from datetime import datetime
 
 from DB import DB
+from gems import gemsFonctions as GF
 from core import roles, stats as stat
-
-client = discord.Client()
 
 idBaBot = 604776153458278415
 idGetGems = 620558080551157770
@@ -30,6 +29,11 @@ async def memberjoin(member, channel):
 		if DB.newPlayer(id) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
 			DB.updateField(id, "arrival", str(t.datetime.now()))
+			cap = DB.valueAt(id, "capability")
+			for c in GF.objetCapability:
+				if c.defaut == True:
+					cap.append(c.nom)
+			DB.updateField(id, "capability", cap)
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\n:arrow_right: Sur {2} \n:arrow_right: Sur {3}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention,channel_presentation.mention,channel_salon.mention)
 		else:
 			if DB.valueAt(id, "arrival") == "0":

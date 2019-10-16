@@ -245,79 +245,111 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def inv (self, ctx):
+	async def inv (self, ctx, fct = None):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
 		nom = ctx.author.name
 		if DB.spam(ID,GF.couldown_c, "inv"):
-			msg_inv = ""
-			msg_invOutils = ""
-			msg_invItems = ""
-			msg_invItemsMinerai = ""
-			msg_invItemsPoisson = ""
-			msg_invItemsPlante = ""
-			msg_invItemsConsommable = ""
-			msg_invItemsHalloween = ""
-			msg_invBox = ""
-			inv = DB.valueAt(ID, "inventory")
-			tailletot = 0
-			for c in GF.objetOutil:
-				for x in inv:
-					if c.nom == str(x):
-						if inv[x] > 0:
-							msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, GF.get_durabilite(ID, c.nom), c.durabilite)
-							tailletot += c.poids*int(inv[x])
+			if fct == None:
+				msg_inv = ""
+				msg_invOutils = ""
+				msg_invItems = ""
+				msg_invItemsMinerai = ""
+				msg_invItemsPoisson = ""
+				msg_invItemsPlante = ""
+				msg_invItemsConsommable = ""
+				msg_invItemsHalloween = ""
+				msg_invBox = ""
+				inv = DB.valueAt(ID, "inventory")
+				tailletot = 0
+				for c in GF.objetOutil:
+					for x in inv:
+						if c.nom == str(x):
+							if inv[x] > 0:
+								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, GF.get_durabilite(ID, c.nom), c.durabilite)
+								tailletot += c.poids*int(inv[x])
 
-			for c in GF.objetItem:
-				for x in inv:
-					if c.nom == str(x):
-						if inv[x] > 0:
-							if c.type == "minerai":
-								msg_invItemsMinerai += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
-							elif c.type == "poisson":
-								msg_invItemsPoisson += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
-							elif c.type == "plante":
-								msg_invItemsPlante += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
-							elif c.type == "consommable":
-								msg_invItemsConsommable += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
-							elif c.type == "halloween":
-								if c.nom == "pumpkin" or c.nom == "pumpkinpie":
-									msg_invItemsHalloween += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+				for c in GF.objetItem:
+					for x in inv:
+						if c.nom == str(x):
+							if inv[x] > 0:
+								if c.type == "minerai":
+									msg_invItemsMinerai += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+								elif c.type == "poisson":
+									msg_invItemsPoisson += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+								elif c.type == "plante":
+									msg_invItemsPlante += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+								elif c.type == "consommable":
+									msg_invItemsConsommable += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
+								elif c.type == "halloween":
+									if c.nom == "pumpkin" or c.nom == "pumpkinpie":
+										msg_invItemsHalloween += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+									else:
+										msg_invItemsHalloween += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 								else:
-									msg_invItemsHalloween += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
-							else:
-								msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+									msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
 
-							tailletot += c.poids*int(inv[x])
+								tailletot += c.poids*int(inv[x])
 
-			for c in GF.objetBox :
-				for x in inv:
-					name = "lootbox_{}".format(c.nom)
-					if name == str(x):
-						if inv[x] > 0:
-							msg_invBox += "<:gem_lootbox:630698430313922580>`{0}`: `x{1}`\n".format(c.nom, str(inv[x]))
+				for c in GF.objetBox :
+					for x in inv:
+						name = "lootbox_{}".format(c.nom)
+						if name == str(x):
+							if inv[x] > 0:
+								msg_invBox += "<:gem_lootbox:630698430313922580>`{0}`: `x{1}`\n".format(c.nom, str(inv[x]))
 
-			msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),GF.invMax)
-			msg_titre = "Inventaire de {}\n\n".format(nom)
-			msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
-			if msg_invOutils != "":
-				msg.add_field(name="Outils", value=msg_invOutils, inline=False)
-			if msg_invItems != "":
-				msg.add_field(name="Items", value=msg_invItems, inline=False)
-			if msg_invItemsMinerai != "":
-				msg.add_field(name="Minerais", value=msg_invItemsMinerai, inline=False)
-			if msg_invItemsPoisson != "":
-				msg.add_field(name="Poissons", value=msg_invItemsPoisson, inline=False)
-			if msg_invItemsPlante != "":
-				msg.add_field(name="Plantes", value=msg_invItemsPlante, inline=False)
-			if msg_invItemsConsommable != "":
-				msg.add_field(name="Consommables", value=msg_invItemsConsommable, inline=False)
-			if msg_invItemsHalloween != "":
-				msg.add_field(name="Halloween", value=msg_invItemsHalloween, inline=False)
-			if msg_invBox != "":
-				msg.add_field(name="Loot Box", value=msg_invBox, inline=False)
-			DB.updateComTime(ID, "inv")
-			await ctx.channel.send(embed = msg)
+				msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),GF.invMax)
+				msg_titre = "Inventaire de {} | Poche principale".format(nom)
+				msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
+				if msg_invOutils != "":
+					msg.add_field(name="Outils", value=msg_invOutils, inline=False)
+				if msg_invItems != "":
+					msg.add_field(name="Items", value=msg_invItems, inline=False)
+				if msg_invItemsMinerai != "":
+					msg.add_field(name="Minerais", value=msg_invItemsMinerai, inline=False)
+				if msg_invItemsPoisson != "":
+					msg.add_field(name="Poissons", value=msg_invItemsPoisson, inline=False)
+				if msg_invItemsPlante != "":
+					msg.add_field(name="Plantes", value=msg_invItemsPlante, inline=False)
+				if msg_invItemsConsommable != "":
+					msg.add_field(name="Consommables", value=msg_invItemsConsommable, inline=False)
+				if msg_invItemsHalloween != "":
+					msg.add_field(name="Halloween", value=msg_invItemsHalloween, inline=False)
+				if msg_invBox != "":
+					msg.add_field(name="Loot Box", value=msg_invBox, inline=False)
+				DB.updateComTime(ID, "inv")
+				await ctx.channel.send(embed = msg)
+				# Message de réussite dans la console
+				print("Gems >> {} a afficher son inventaire".format(nom))
+			elif fct == "capability" or fct == "capabilities" or fct == "capacité" or fct == "capacités" or fct == "aptitude" or fct == "aptitudes":
+				cap = GF.checkCapability(ID)
+				msg_invCapAtt = ""
+				msg_invCapDef = ""
+				for c in GF.objetCapability:
+					for x in cap:
+						if c.nom == str(x):
+							if c.type == "attaque":
+								msg_invCapAtt += "• {0}\n__Utilisation__: {1}\n\n".format(c.nom, c.desc)
+							elif c.type == "defense":
+								msg_invCapDef += "• {0}\n__Utilisation__: {1}\n\n".format(c.nom, c.desc)
+
+				desc = ":tools: En travaux :pencil:"
+				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)
+				if msg_invCapAtt != "":
+					msg.add_field(name="Attaque", value=msg_invCapAtt, inline=False)
+				if msg_invCapDef != "":
+					msg.add_field(name="Défense", value=msg_invCapDef, inline=False)
+				DB.updateComTime(ID, "inv")
+				await ctx.channel.send(embed = msg)
+				# Message de réussite dans la console
+				print("Gems >> {} a afficher la poche `capabilities` de son inventaire".format(nom))
+			elif fct == "pockets" or fct == "poches":
+				desc = "• Principale >> `!inv`\n• Aptitudes >> `!inv capabilities`"
+				msg = discord.Embed(title = "Liste des poches de l'inventaire".format(nom),color= 6466585, description = desc)
+				await ctx.channel.send(embed = msg)
+			else:
+				msg = "Cette poche n'existe pas"
+				await ctx.channel.send(msg)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)

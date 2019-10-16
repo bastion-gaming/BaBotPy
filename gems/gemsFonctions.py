@@ -3,8 +3,9 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
+from core import welcome as wel
 from discord.ext import commands
-from discord.ext.commands import bot
+from discord.ext.commands import Bot
 from discord.utils import get
 from operator import itemgetter
 
@@ -25,6 +26,12 @@ message_gamble = ["Tu as remporté le pari ! Tu obtiens"
 
 # Taille max de l'Inventaire
 invMax = 10000
+
+global globalguild
+
+def setglobalguild(guild):
+	global globalguild
+	globalguild = guild
 
 global globalvar
 globalvar = -1
@@ -136,6 +143,20 @@ def loadItem():
 	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
 
 
+
+	class Capability:
+
+		def __init__(self, nom, defaut, type, desc):
+			self.nom = nom
+			self.defaut = defaut
+			self.type = type
+			self.desc = desc
+
+	global objetCapability
+	objetCapability = [Capability("Coup d'épée", True, "attaque", "Utilisé votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme 1 de durabilité à chaque attaque".format(get_idmoji("sword")))
+	,Capability("Mur de pières", True, "defense", "")]
+
+
 ##############################################
 class Box:
 
@@ -211,6 +232,9 @@ objetStat = [StatGems("DiscordCop Arrestation", "`Nombre d'arrestation par la Di
 ,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:608748194406465557>`ruby` trouvé")
 ,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
+
+
+
 #anti-DB.spam
 couldown_12h = 86400/2 # 12h
 couldown_8h = 86400/3 # 8h
@@ -228,23 +252,32 @@ couldown_c = 6 # c pour court
 # nb de sec nécessaire entre 2 commandes
 
 
+# def get_idmogi(nameElem):
+# 	"""
+# 	Permet de connaitre l'idmoji de l'item
+# 	"""
+# 	test = False
+# 	for c in objetItem:
+# 		if c.nom == nameElem:
+# 			test = True
+# 			return c.idmoji
+#
+# 	for c in objetOutil:
+# 		if c.nom == nameElem:
+# 			test = True
+# 			return c.idmoji
+# 	if test == False:
+# 		return 0
+
+
 def get_idmoji(nameElem):
 	"""
 	Permet de connaitre l'idmoji de l'item
 	"""
-	test = False
-	for c in objetItem:
-		if c.nom == nameElem:
-			test = True
-			return c.idmoji
-
-	for c in objetOutil:
-		if c.nom == nameElem:
-			test = True
-			return c.idmoji
-	if test == False:
-		return 0
-
+	TupleIdmoji = globalguild.emojis
+	for x in TupleIdmoji:
+		if x.name == "gem_{}".format(nameElem):
+			return x.id
 
 
 def get_price(nameElem, type = None):
@@ -382,6 +415,10 @@ def taxe(solde, pourcentage):
 	return taxe
 
 
+#===============================================================================
+#========================== Fonctions Gems Fight ===============================
+#===============================================================================
+
 dbSession = "gems/session"
 dbSessionTemplate = "gems/SessionTemplate"
 
@@ -407,6 +444,26 @@ def gen_code():
 	for i in range(1,8):
 		code += "{}".format(r.randint(0,9))
 	return code
+
+
+def checkCapability(ID):
+	supercheck = False
+	cap = DB.valueAt(ID, "capability")
+	captemp = cap
+	for c in objetCapability:
+		if c.defaut == True:
+			check = False
+			for x in cap:
+				if c.nom == str(x):
+					check = True
+			if check == False:
+				captemp.append(c.nom)
+				supercheck = True
+			else:
+				check == False
+	if supercheck:
+		DB.updateField(ID, "capability", captemp)
+	return DB.valueAt(ID, "capability")
 
 
 
