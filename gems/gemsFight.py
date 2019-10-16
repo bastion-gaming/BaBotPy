@@ -11,13 +11,6 @@ from discord.utils import get
 from operator import itemgetter
 
 
-def gen_code():
-	code = ""
-	for i in range(1,8):
-		code += "{}".format(r.randint(0,9))
-	return code
-
-
 class GemsFight(commands.Cog):
 
 	def __init__(self,ctx):
@@ -32,30 +25,33 @@ class GemsFight(commands.Cog):
 		ID = ctx.author.id
 		if opt == "duel":
 			# arg1 >> utilisateur à défier
-			check = True
-			while check:
-				try:
-					code = gen_code()
-					DB.valueAt(code, "ID", GF.dbSession)
-				except:
-					check = False
-			if DB.newPlayer(code, GF.dbSession, GF.dbSessionTemplate) == "Le joueur a été ajouté !":
-				DB.updateField(code, "owner", ID, GF.dbSession)
-				DB.updateField(code, "type", "duel", GF.dbSession)
-				DB.updateField(code, "sync", "NOK", GF.dbSession)
-				member = DB.valueAt(code, "member", GF.dbSession)
-				member.append(DB.nom_ID(arg1))
-				DB.updateField(code, "member", member, GF.dbSession)
-				msg = "Défis `{}` créée".format(code)
-				msg += "\n Message envoyer à {}\n••••\nEn attende de synchronisation".format(arg1)
-				user = ctx.guild.get_member(DB.nom_ID(arg1))
-				mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n".format(ctx.author.name, code, GF.get_idmoji("sword"))
-				try:
-					await user.send(mpuser)
-					await ctx.channel.send(msg)
-				except:
-					DB.removePlayer(code, GF.dbSession)
-					await ctx.channel.send("Défis impossible! tu ne peux pas défier un bot")
+			if DB.OwnerSessionExist(ctx.author.id, GF.dbSession) == False:
+				check = True
+				while check:
+					try:
+						code = GF.gen_code()
+						DB.valueAt(code, "ID", GF.dbSession)
+					except:
+						check = False
+				if DB.newPlayer(code, GF.dbSession, GF.dbSessionTemplate) == "Le joueur a été ajouté !":
+					DB.updateField(code, "owner", ID, GF.dbSession)
+					DB.updateField(code, "type", "duel", GF.dbSession)
+					DB.updateField(code, "sync", "NOK", GF.dbSession)
+					member = DB.valueAt(code, "member", GF.dbSession)
+					member.append(DB.nom_ID(arg1))
+					DB.updateField(code, "member", member, GF.dbSession)
+					msg = "Défis `{}` créée".format(code)
+					msg += "\n Message envoyer à {}\n••••\nEn attende de synchronisation".format(arg1)
+					user = ctx.guild.get_member(DB.nom_ID(arg1))
+					mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n".format(ctx.author.name, code, GF.get_idmoji("sword"))
+					try:
+						await user.send(mpuser)
+						await ctx.channel.send(msg)
+					except:
+						DB.removePlayer(code, GF.dbSession)
+						await ctx.channel.send("Défis impossible! tu ne peux pas défier un bot")
+			else:
+				await ctx.channel.send("Tu as déjà créé une session de duel. Pour y mettre fin et en créé une nouvelle utilise la commande `!defis end {0}`".format(DB.OwnerSessionAt(ctx.author.id, "ID", GF.dbSession)))
 		elif opt == "end":
 			# arg1 >> code d'identification de la session
 			try:

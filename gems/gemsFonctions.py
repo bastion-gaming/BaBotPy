@@ -402,6 +402,13 @@ def checkDB_Session():
 	print('------\n')
 
 
+def gen_code():
+	code = ""
+	for i in range(1,8):
+		code += "{}".format(r.randint(0,9))
+	return code
+
+
 
 class GemsTest(commands.Cog):
 

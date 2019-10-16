@@ -205,6 +205,35 @@ def userExist(id, linkDB = None):
 		db.close()
 		return True
 
+def OwnerSessionExist(value, linkDB = None):
+	"""
+	Vérifie l'existance d'une session créée par Owner
+	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		return 404
+	if db.search(Query().owner == value) == []:
+		db.close()
+		return False
+	else :
+		db.close()
+		return True
+
+
+def OwnerSessionAt(owner, fieldName, linkDB = None):
+	"""
+	Retourne le code session (ID) créé par Owner
+	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		return 404
+	value = db.search(Query().owner == owner)[0][fieldName]
+	db.close()
+	return value
+
+
 def userGems(i, linkDB = None):
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
