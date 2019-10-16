@@ -282,11 +282,14 @@ def nom_ID(nom):
 		ID = -1
 	return(ID)
 
-def nbElements(ID, stockeur, nameElem):
+def nbElements(ID, stockeur, nameElem, linkDB = None):
 	"""
 	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
 	"""
-	Stockeur = valueAt(ID, stockeur)
+	if linkDB != None:
+		Stockeur = valueAt(ID, stockeur, linkDB)
+	else:
+		Stockeur = valueAt(ID, stockeur)
 	if nameElem in Stockeur:
 		return Stockeur[nameElem]
 	else:
