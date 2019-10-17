@@ -453,7 +453,7 @@ def checkCapability(ID):
 		if c.defaut == True:
 			check = False
 			for x in cap:
-				if c.ID == str(x):
+				if "{}".format(c.ID) == str(x):
 					check = True
 			if check == False:
 				captemp.append("{}".format(c.ID))
