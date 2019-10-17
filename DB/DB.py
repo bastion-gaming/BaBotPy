@@ -144,6 +144,32 @@ def membercheck(ctx):
 	else:
 		return 404
 
+def countTotalMsg(linkDB = None):
+	#Init a
+	a=0
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
+	for item in db:
+#On additionne le nombre de message posté en tout
+		a = a + int(item["nbMsg"])
+	db.close()
+	return a
+
+def countTotalGems(linkDB = None):
+	#Init a
+	a=0
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
+	for item in db:
+#On additionne le nombre de message posté en tout
+		a = a + int(item["gems"])
+	db.close()
+	return a
+
 
 def updateField(ID, fieldName, fieldValue, linkDB = None):
 	"""

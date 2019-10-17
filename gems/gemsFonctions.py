@@ -121,7 +121,7 @@ def loadItem():
 	,Item("candy", 1, 2, 1, "halloween")
 	,Item("lollipop", 5, 12, 2, "halloween")
 	,Item("backpack", 1, 5000, -200, "special")
-	,Item("fishhook", 50, 225, 1, "special")]
+	,Item("fishhook", 22, 46, 1, "special")]
 
 	#========== Outils ==========
 	class Outil:
@@ -147,15 +147,18 @@ def loadItem():
 	#========== Aptitudes ==========
 	class Capability:
 
-		def __init__(self, nom, defaut, type, desc):
+		def __init__(self, ID, nom, defaut, achat, type, puissancemax, desc):
+			self.ID = ID
 			self.nom = nom
 			self.defaut = defaut
+			self.achat = achat
 			self.type = type
+			self.puissancemax = puissancemax
 			self.desc = desc
 
 	global objetCapability
-	objetCapability = [Capability("Coup d'épée", True, "attaque", "Utilisé votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme 1 de durabilité à chaque attaque".format(get_idmoji("sword")))
-	,Capability("Mur de pières", True, "defense", "")]
+	objetCapability = [Capability(100, "Coup d'épée", True, 0, "attaque", 10, "Utilisez votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme la puissance de l'attaque en durabilité à chaque attaque".format(get_idmoji("sword")))
+	,Capability(200, "Mur de pières", True, 0, "defense", 10, "Construisez un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 1 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")))]
 
 
 	#========== Trophées ==========
@@ -450,10 +453,10 @@ def checkCapability(ID):
 		if c.defaut == True:
 			check = False
 			for x in cap:
-				if c.nom == str(x):
+				if c.ID == str(x):
 					check = True
 			if check == False:
-				captemp.append(c.nom)
+				captemp.append("{}".format(c.ID))
 				supercheck = True
 			else:
 				check == False

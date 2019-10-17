@@ -327,17 +327,19 @@ class GemsBase(commands.Cog):
 				msg_invCapDef = ""
 				for c in GF.objetCapability:
 					for x in cap:
-						if c.nom == str(x):
+						if "{}".format(c.ID) == str(x):
 							if c.type == "attaque":
-								msg_invCapAtt += "• {0}\n__Utilisation__: {1}\n\n".format(c.nom, c.desc)
+								msg_invCapAtt += "• **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax)
 							elif c.type == "defense":
-								msg_invCapDef += "• {0}\n__Utilisation__: {1}\n\n".format(c.nom, c.desc)
+								msg_invCapDef += "• **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax)
 
 				desc = ":tools: En travaux :pencil:"
 				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)
 				if msg_invCapAtt != "":
+					msg_invCapAtt += "••••••••••"
 					msg.add_field(name="Attaque", value=msg_invCapAtt, inline=False)
 				if msg_invCapDef != "":
+					msg_invCapDef += "••••••••••"
 					msg.add_field(name="Défense", value=msg_invCapDef, inline=False)
 				DB.updateComTime(ID, "inv")
 				await ctx.channel.send(embed = msg)
@@ -425,7 +427,21 @@ class GemsBase(commands.Cog):
 				print("Gems >> {} a afficher le marché".format(ctx.author.name))
 			elif fct == "capability" or fct == "capabilities" or fct == "capacité" or fct == "capacités" or fct == "aptitude" or fct == "aptitudes":
 				desc = ":tools: En travaux :pencil:"
+				descCapAtt = ""
+				descCapDef = ""
+				for c in GF.objetCapability:
+					if c.defaut != True:
+						if c.type == "attaque":
+							descCapAtt += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
+						elif c.type == "defense":
+							descCapDef += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
 				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
+				if descCapAtt != "":
+					descCapAtt += "••••••••••"
+					msg.add_field(name="Attaque", value=descCapAtt, inline=False)
+				if descCapDef != "":
+					descCapDef += "••••••••••"
+					msg.add_field(name="Défense", value=descCapDef, inline=False)
 				DB.updateComTime(ID, "market")
 				await ctx.channel.send(embed = msg)
 				# Message de réussite dans la console
