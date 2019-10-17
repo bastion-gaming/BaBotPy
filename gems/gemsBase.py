@@ -440,7 +440,6 @@ class GemsBase(commands.Cog):
 					descCapAtt += "••••••••••"
 					msg.add_field(name="Attaque", value=descCapAtt, inline=False)
 				if descCapDef != "":
-					descCapDef += "••••••••••"
 					msg.add_field(name="Défense", value=descCapDef, inline=False)
 				DB.updateComTime(ID, "market")
 				await ctx.channel.send(embed = msg)
