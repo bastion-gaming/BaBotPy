@@ -76,7 +76,7 @@ async def on_ready():
 
 	print('------\n')
 	GF.checkDB_Session()
-	GF.setglobalguild(client.get_guild(wel.idBASTION))
+	GF.setglobalguild(client.get_guild(wel.idServBot))
 	GF.loadItem()
 
 ####################### Commande help.py #######################

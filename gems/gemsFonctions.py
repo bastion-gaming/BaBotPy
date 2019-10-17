@@ -90,60 +90,58 @@ def loadItem():
 	#========== Items ==========
 	class Item:
 
-		def __init__(self,nom,vente,achat,poids,idmoji,type):
+		def __init__(self,nom,vente,achat,poids,type):
 			self.nom = nom
 			self.vente = vente
 			self.achat = achat
 			self.poids = poids
-			self.idmoji = idmoji
 			self.type = type
 
 	global objetItem
-	objetItem = [Item("cobblestone", 1, 3, 4, 608748492181078131, "minerai")
-	,Item("iron", itemBourse("iron", "vente"), 30, 10, 608748195685597235, "minerai")
-	,Item("gold", itemBourse("gold", "vente"), 100, 20, 608748194754723863, "minerai")
-	,Item("diamond", itemBourse("diamond", "vente"), 200, 40, 608748194750529548, "minerai")
-	,Item("emerald", itemBourse("emerald", "vente"), 320, 50, 608748194653798431, "minerai")
-	,Item("ruby", itemBourse("ruby", "vente"), 3000, 70, 608748194406465557, "minerai")
-	,Item("fish", 2, 5, 2, 608762539605753868, "poisson")
-	,Item("tropicalfish", itemBourse("tropicalfish", "vente"), 60, 8, 608762539030872079, "poisson")
-	,Item("blowfish", itemBourse("blowfish", "vente"), 60, 8, 618058831863218176, "poisson")
-	,Item("octopus", itemBourse("octopus", "vente"), 90, 16, 618058832790421504, "poisson")
-	,Item("seed", 1, 2, 0.5, 618058917930336266, "plante")
-	,Item("oak", 400, 500, 50, 625698779076755485, "plante")
-	,Item("spruce", 600, 800, 70, 625698795744657409, "plante")
-	,Item("palm", 850, 1200, 60, 625698810773110785, "plante")
-	,Item("wheat", 1100, 2000, 3, 625701009586520064, "plante")
-	,Item("cookie", 30, 40, 1, "", "consommable")
-	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "", "consommable")
-	,Item("wine_glass", 120, 210, 2, "", "consommable")
-	,Item("pumpkin", 50, 125, 5, 633219431107133450, "halloween")
-	,Item("pumpkinpie", 1000, 1200, 5, 633261963467685888, "halloween")
-	,Item("candy", 1, 2, 1, "", "halloween")
-	,Item("lollipop", 5, 12, 2, "", "halloween")
-	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")
-	,Item("fishhook", 50, 225, 1, 633207161241075743, "special")]
+	objetItem = [Item("cobblestone", 1, 3, 4, "minerai")
+	,Item("iron", itemBourse("iron", "vente"), 30, 10, "minerai")
+	,Item("gold", itemBourse("gold", "vente"), 100, 20, "minerai")
+	,Item("diamond", itemBourse("diamond", "vente"), 200, 40, "minerai")
+	,Item("emerald", itemBourse("emerald", "vente"), 320, 50, "minerai")
+	,Item("ruby", itemBourse("ruby", "vente"), 3000, 70, "minerai")
+	,Item("fish", 2, 5, 2, "poisson")
+	,Item("tropicalfish", itemBourse("tropicalfish", "vente"), 60, 8, "poisson")
+	,Item("blowfish", itemBourse("blowfish", "vente"), 60, 8, "poisson")
+	,Item("octopus", itemBourse("octopus", "vente"), 90, 16, "poisson")
+	,Item("seed", 1, 2, 0.5, "plante")
+	,Item("oak", 400, 500, 50, "plante")
+	,Item("spruce", 600, 800, 70, "plante")
+	,Item("palm", 850, 1200, 60, "plante")
+	,Item("wheat", 1100, 2000, 3, "plante")
+	,Item("cookie", 30, 40, 1, "consommable")
+	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "consommable")
+	,Item("wine_glass", 120, 210, 2, "consommable")
+	,Item("pumpkin", 50, 125, 5, "halloween")
+	,Item("pumpkinpie", 1000, 1200, 5, "halloween")
+	,Item("candy", 1, 2, 1, "halloween")
+	,Item("lollipop", 5, 12, 2, "halloween")
+	,Item("backpack", 1, 5000, -200, "special")
+	,Item("fishhook", 50, 225, 1, "special")]
 
 	#========== Outils ==========
 	class Outil:
 
-		def __init__(self,nom,vente,achat,poids,durabilite,idmoji,type):
+		def __init__(self,nom,vente,achat,poids,durabilite,type):
 			self.nom = nom
 			self.vente = vente
 			self.achat = achat
 			self.poids = poids
 			self.durabilite = durabilite
-			self.idmoji = idmoji
 			self.type = type
 
 	global objetOutil
-	objetOutil = [Outil("pickaxe", 5, 20, 15, 75, 625702466360574004, "")
-	,Outil("iron_pickaxe", 80, 300, 70, 250, 608748194775433256, "forge")
-	,Outil("diamond_pickaxe", 500, 1800, 150, 600, 625702527135907851, "forge")
-	,Outil("fishingrod", 5, 15, 25, 150, 608748194318385173, "")
-	,Outil("sword", 50, 200, 55, 100, 625702555200258058, "forge")
-	,Outil("planting_plan", 100, itemBourse("planting_plan", "achat"), 3, 3, 631038633398501376, "")
-	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
+	objetOutil = [Outil("pickaxe", 5, 20, 15, 75, "")
+	,Outil("iron_pickaxe", 80, 300, 70, 200, "forge")
+	,Outil("diamond_pickaxe", 500, 1800, 150, 450, "forge")
+	,Outil("fishingrod", 5, 15, 25, 100, "")
+	,Outil("sword", 50, 200, 55, 25, "forge")
+	,Outil("planting_plan", 100, itemBourse("planting_plan", "achat"), 3, 3, "")
+	,Outil("bank_upgrade", 0, 10000, 10000, None, "bank")]
 
 
 	#========== Aptitudes ==========
@@ -158,6 +156,49 @@ def loadItem():
 	global objetCapability
 	objetCapability = [Capability("Coup d'épée", True, "attaque", "Utilisé votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme 1 de durabilité à chaque attaque".format(get_idmoji("sword")))
 	,Capability("Mur de pières", True, "defense", "")]
+
+
+	#========== Trophées ==========
+	class Trophy:
+
+		def __init__(self,nom,desc,type,mingem):
+			self.nom = nom
+			self.desc = desc
+			self.type = type
+			self.mingem = mingem #nombre de gems minimum necessaire
+
+	global objetTrophy
+	objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`", "special", 10000)
+	,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
+	,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:{}>`ruby`".format(get_idmoji("ruby")), "special", 0)
+	,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
+	,Trophy("Gems 500", "`Avoir 500`:gem:", "unique", 500)
+	,Trophy("Gems 1k", "`Avoir 1k`:gem:", "unique", 1000)
+	,Trophy("Gems 5k", "`Avoir 5k`:gem:", "unique", 5000)
+	,Trophy("Gems 50k", "`Avoir 50k`:gem:", "unique", 50000)
+	,Trophy("Gems 200k", "`Avoir 200k`:gem:", "unique", 200000)
+	,Trophy("Gems 500k", "`Avoir 500k`:gem:", "unique", 500000)
+	,Trophy("Gems 1M", "`Avoir 1 Million`:gem:", "unique", 1000000)
+	,Trophy("Gems 10M", "`Avoir 10 Millions`:gem:", "unique", 10000000)
+	,Trophy("Gems 100M", "`Avoir 100 Millions`:gem:", "unique", 100000000)
+	,Trophy("Gems 500M", "`Avoir 500 Millions`:gem:", "unique", 500000000)
+	,Trophy("Le Milliard !!!", "`Avoir 1 Milliard`:gem:", "unique", 1000000000)]
+
+
+	#========== Statistiques affiché dans info ==========
+	class StatGems:
+
+		def __init__(self,nom,desc):
+			self.nom = nom
+			self.desc = desc
+
+	global objetStat
+	objetStat = [StatGems("DiscordCop Arrestation", "`Nombre d'arrestation par la DiscordCop`")
+	,StatGems("DiscordCop Amende", "`Nombre d'ammende recue par la DiscordCop`")
+	,StatGems("Gamble Win", "`Nombre de gamble gagné`")
+	,StatGems("Super Jackpot :seven::seven::seven:", "`Nombre de super jackpot gagné sur la machine à sous`")
+	,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:{}>`ruby` trouvé".format(get_idmoji("ruby")))
+	,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
 
 ##############################################
@@ -194,47 +235,6 @@ class Recette:
 objetRecette = [Recette("iron_pickaxe", "forge", 10, "iron", 1, "pickaxe", 0, "", 0, "")
 ,Recette("diamond_pickaxe", "forge", 25, "diamond", 1, "iron_pickaxe", 0, "", 0, "")
 ,Recette("sword", "forge", 6, "iron", 1, "oak", 0, "", 0, "")]
-
-
-#========== Trophées ==========
-class Trophy:
-
-	def __init__(self,nom,desc,type,mingem):
-		self.nom = nom
-		self.desc = desc
-		self.type = type
-		self.mingem = mingem #nombre de gems minimum necessaire
-
-objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`", "special", 10000)
-,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
-,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:608748194406465557>`ruby`", "special", 0)
-,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
-,Trophy("Gems 500", "`Avoir 500`:gem:", "unique", 500)
-,Trophy("Gems 1k", "`Avoir 1k`:gem:", "unique", 1000)
-,Trophy("Gems 5k", "`Avoir 5k`:gem:", "unique", 5000)
-,Trophy("Gems 50k", "`Avoir 50k`:gem:", "unique", 50000)
-,Trophy("Gems 200k", "`Avoir 200k`:gem:", "unique", 200000)
-,Trophy("Gems 500k", "`Avoir 500k`:gem:", "unique", 500000)
-,Trophy("Gems 1M", "`Avoir 1 Million`:gem:", "unique", 1000000)
-,Trophy("Gems 10M", "`Avoir 10 Millions`:gem:", "unique", 10000000)
-,Trophy("Gems 100M", "`Avoir 100 Millions`:gem:", "unique", 100000000)
-,Trophy("Gems 500M", "`Avoir 500 Millions`:gem:", "unique", 500000000)
-,Trophy("Le Milliard !!!", "`Avoir 1 Milliard`:gem:", "unique", 1000000000)]
-
-
-#========== Statistiques affiché dans info ==========
-class StatGems:
-
-	def __init__(self,nom,desc):
-		self.nom = nom
-		self.desc = desc
-
-objetStat = [StatGems("DiscordCop Arrestation", "`Nombre d'arrestation par la DiscordCop`")
-,StatGems("DiscordCop Amende", "`Nombre d'ammende recue par la DiscordCop`")
-,StatGems("Gamble Win", "`Nombre de gamble gagné`")
-,StatGems("Super Jackpot :seven::seven::seven:", "`Nombre de super jackpot gagné sur la machine à sous`")
-,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:608748194406465557>`ruby` trouvé")
-,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
 
 
@@ -385,7 +385,7 @@ def recette(ctx):
 		for r in objetRecette :
 			if c.type == "forge":
 				if c.nom == r.nom:
-					d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
+					d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,GF.get_idmoji(c.nom))
 					if r.nb1 > 0:
 						d_recette += "{0} <:gem_{1}:{2}>`{1}` ".format(r.nb1, r.item1, get_idmoji(r.item1))
 					if r.nb2 > 0:

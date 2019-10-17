@@ -112,12 +112,12 @@ class GemsBase(commands.Cog):
 							if c.type == "halloween":
 								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
 									DB.add(ID, "inventory", c.nom, nb)
-									msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+									msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								else:
 									msg = "Désolé, nous ne pouvons pas executer cet achat, cette item n'est pas vendu au marché"
 							elif c.type != "consommable":
 								DB.add(ID, "inventory", c.nom, nb)
-								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 							else:
 								DB.add(ID, "inventory", c.nom, nb)
 								msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
@@ -148,14 +148,14 @@ class GemsBase(commands.Cog):
 						if DB.addGems(ID, prix) >= "0":
 							if c.type == "bank":
 								DB.add(ID, "banque", "soldeMax", nb*c.poids)
-								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								# Message de réussite dans la console
 								print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
 								await ctx.channel.send(msg)
 								return
 							else:
 								DB.add(ID, "inventory", c.nom, nb)
-								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, c.idmoji)
+								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								if c.nom == "planting_plan":
 									if GF.get_durabilite(ID, "planting_plan") == None:
 										GF.addDurabilite(ID, "planting_plan", c.durabilite)
@@ -205,7 +205,7 @@ class GemsBase(commands.Cog):
 						gain = c.vente*nb
 						DB.addGems(ID, gain)
 						if c.type != "consommable":
-							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
+							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,GF.get_idmoji(c.nom))
 							# Message de réussite dans la console
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 						else:
@@ -222,9 +222,9 @@ class GemsBase(commands.Cog):
 						test = False
 						gain = c.vente*nb
 						DB.addGems(ID, gain)
-						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,c.idmoji)
+						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,GF.get_idmoji(c.nom))
 						if DB.nbElements(ID, "inventory", item) == 1:
-							if DB.get_durabilite(ID, item) != None:
+							if GF.get_durabilite(ID, item) != None:
 								GF.addDurabilite(ID, item, -1)
 						# Message de réussite dans la console
 						print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
@@ -266,7 +266,7 @@ class GemsBase(commands.Cog):
 					for x in inv:
 						if c.nom == str(x):
 							if inv[x] > 0:
-								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), c.idmoji, GF.get_durabilite(ID, c.nom), c.durabilite)
+								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom), GF.get_durabilite(ID, c.nom), c.durabilite)
 								tailletot += c.poids*int(inv[x])
 
 				for c in GF.objetItem:
@@ -274,20 +274,20 @@ class GemsBase(commands.Cog):
 						if c.nom == str(x):
 							if inv[x] > 0:
 								if c.type == "minerai":
-									msg_invItemsMinerai += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+									msg_invItemsMinerai += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 								elif c.type == "poisson":
-									msg_invItemsPoisson += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+									msg_invItemsPoisson += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 								elif c.type == "plante":
-									msg_invItemsPlante += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+									msg_invItemsPlante += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 								elif c.type == "consommable":
 									msg_invItemsConsommable += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 								elif c.type == "halloween":
 									if c.nom == "pumpkin" or c.nom == "pumpkinpie":
-										msg_invItemsHalloween += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+										msg_invItemsHalloween += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 									else:
 										msg_invItemsHalloween += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 								else:
-									msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), c.idmoji)
+									msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 
 								tailletot += c.poids*int(inv[x])
 
@@ -373,7 +373,7 @@ class GemsBase(commands.Cog):
 				d_marketBox = ""
 
 				for c in GF.objetOutil:
-					d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,c.idmoji)
+					d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,GF.get_idmoji(c.nom))
 					if c.vente != 0:
 						d_marketOutils += "Vente **{}** | ".format(c.vente)
 					if c.nom == "bank_upgrade":
@@ -386,15 +386,15 @@ class GemsBase(commands.Cog):
 
 				for c in GF.objetItem :
 					if c.type == "minerai":
-						d_marketItemsMinerai += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+						d_marketItemsMinerai += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
 					elif c.type == "poisson":
-						d_marketItemsPoisson += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+						d_marketItemsPoisson += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
 					elif c.type == "plante":
-						d_marketItemsPlante += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+						d_marketItemsPlante += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
 					elif c.type == "consommable":
 						d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
 					elif c.type != "halloween":
-						d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+						d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
 
 				for c in GF.objetBox :
 					d_marketBox += "<:gem_lootbox:630698430313922580>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max)
@@ -413,7 +413,7 @@ class GemsBase(commands.Cog):
 					for c in GF.objetItem:
 						if c.type == "halloween":
 							if c.nom == "pumpkin" or c.nom == "pumpkinpie":
-								d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,c.idmoji)
+								d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
 							else:
 								d_marketItems += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
 					msg.add_field(name="Halloween", value=d_marketItems, inline=False)
