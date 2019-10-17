@@ -37,6 +37,7 @@ global globalvar
 globalvar = -1
 
 def incrementebourse():
+	"""Increment de compteur horaire de la bourse """
 	global globalvar
 	if globalvar == 0:
 		loadItem()
@@ -50,6 +51,7 @@ def incrementebourse():
 
 
 def itemBourse(item, type):
+	"""Attribue les prix de la bourse """
 	if type == "vente":
 		if item == "iron":
 			Prix = r.randint(9,11)
@@ -83,8 +85,9 @@ def itemBourse(item, type):
 		return Prix
 
 
-
+#Fonction d'actualisation/initialisation des items
 def loadItem():
+	#========== Items ==========
 	class Item:
 
 		def __init__(self,nom,vente,achat,poids,idmoji,type):
@@ -121,7 +124,7 @@ def loadItem():
 	,Item("backpack", 1, 5000, -200, 616205834451550208, "special")
 	,Item("fishhook", 50, 225, 1, 633207161241075743, "special")]
 
-
+	#========== Outils ==========
 	class Outil:
 
 		def __init__(self,nom,vente,achat,poids,durabilite,idmoji,type):
@@ -143,7 +146,7 @@ def loadItem():
 	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
 
 
-
+	#========== Aptitudes ==========
 	class Capability:
 
 		def __init__(self, nom, defaut, type, desc):
@@ -158,6 +161,7 @@ def loadItem():
 
 
 ##############################################
+#========== Loot Box ==========
 class Box:
 
 	def __init__(self,nom, titre, achat , min, max):
@@ -172,7 +176,7 @@ objetBox = [Box("commongems", "Gems Common", 300, 100, 500)
 ,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000)]
 
 
-
+#========== Recettes ==========
 class Recette:
 
 	def __init__(self,nom,type, nb1,item1, nb2,item2, nb3,item3, nb4,item4):
@@ -192,7 +196,7 @@ objetRecette = [Recette("iron_pickaxe", "forge", 10, "iron", 1, "pickaxe", 0, ""
 ,Recette("sword", "forge", 6, "iron", 1, "oak", 0, "", 0, "")]
 
 
-
+#========== Trophées ==========
 class Trophy:
 
 	def __init__(self,nom,desc,type,mingem):
@@ -218,7 +222,7 @@ objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`
 ,Trophy("Le Milliard !!!", "`Avoir 1 Milliard`:gem:", "unique", 1000000000)]
 
 
-
+#========== Statistiques affiché dans info ==========
 class StatGems:
 
 	def __init__(self,nom,desc):
@@ -235,7 +239,7 @@ objetStat = [StatGems("DiscordCop Arrestation", "`Nombre d'arrestation par la Di
 
 
 
-#anti-DB.spam
+#========== Couldown pour la fonction antispam ==========
 couldown_12h = 86400/2 # 12h
 couldown_8h = 86400/3 # 8h
 couldown_6h = 86400/4 # 6h
@@ -252,38 +256,30 @@ couldown_c = 6 # c pour court
 # nb de sec nécessaire entre 2 commandes
 
 
-# def get_idmogi(nameElem):
-# 	"""
-# 	Permet de connaitre l'idmoji de l'item
-# 	"""
-# 	test = False
-# 	for c in objetItem:
-# 		if c.nom == nameElem:
-# 			test = True
-# 			return c.idmoji
-#
-# 	for c in objetOutil:
-# 		if c.nom == nameElem:
-# 			test = True
-# 			return c.idmoji
-# 	if test == False:
-# 		return 0
-
-
 def get_idmoji(nameElem):
-	"""
-	Permet de connaitre l'idmoji de l'item
-	"""
+	"""Version 2.0 | Permet de connaitre l'idmoji de l'item"""
 	TupleIdmoji = globalguild.emojis
 	for x in TupleIdmoji:
 		if x.name == "gem_{}".format(nameElem):
 			return x.id
 
+	# """Version 1.0 | Permet de connaitre l'idmoji de l'item"""
+	# test = False
+	# for c in objetItem:
+	# 	if c.nom == nameElem:
+	# 		test = True
+	# 		return c.idmoji
+	#
+	# for c in objetOutil:
+	# 	if c.nom == nameElem:
+	# 		test = True
+	# 		return c.idmoji
+	# if test == False:
+	# 	return 0
+
 
 def get_price(nameElem, type = None):
-	"""
-	Permet de connaitre le prix de l'item
-	"""
+	"""Permet de connaitre le prix de l'item"""
 	test = False
 	if type == None or type == "vente":
 		for c in objetItem:
@@ -311,6 +307,7 @@ def get_price(nameElem, type = None):
 
 
 def testInvTaille(ID):
+	"""Verifie si l'inventaire est plein """
 	inv = DB.valueAt(ID, "inventory")
 	tailletot = 0
 	for c in objetOutil:
@@ -353,9 +350,7 @@ def testTrophy(ID, nameElem):
 
 
 def addDurabilite(ID, nameElem, nbElem):
-	"""
-	Modifie la durabilité de l'outil nameElem
-	"""
+	"""Modifie la durabilité de l'outil nameElem"""
 	durabilite = DB.valueAt(ID, "durabilite")
 	if DB.nbElements(ID, "inventory", nameElem) > 0 and nbElem < 0:
 		durabilite[nameElem] += nbElem
@@ -369,9 +364,7 @@ def addDurabilite(ID, nameElem, nbElem):
 
 
 def get_durabilite(ID, nameElem):
-	"""
-	Permet de savoir la durabilite de nameElem dans l'inventaire de ID
-	"""
+	"""Permet de savoir la durabilite de nameElem dans l'inventaire de ID"""
 	nb = DB.nbElements(ID, "inventory", nameElem)
 	if nb > 0:
 		durabilite = DB.valueAt(ID, "durabilite")
@@ -409,10 +402,10 @@ def recette(ctx):
 
 
 def taxe(solde, pourcentage):
+	"""Affiche la somme de la taxe en fonction du pourcentage """
 	soldeTaxe = solde * pourcentage
 	soldeNew = solde - soldeTaxe
-	taxe = (soldeTaxe, soldeNew)
-	return taxe
+	return (soldeTaxe, soldeNew)
 
 
 #===============================================================================
@@ -423,6 +416,7 @@ dbSession = "gems/session"
 dbSessionTemplate = "gems/SessionTemplate"
 
 def checkDB_Session():
+	"""Check l'existance et la conformité de la DB Session """
 	if DB.dbExist(dbSession):
 		print("La DB Gems Session existe, poursuite sans soucis.")
 	else :
@@ -440,13 +434,15 @@ def checkDB_Session():
 
 
 def gen_code():
+	"""Générateur de code aléatoire à 8 chiffres """
 	code = ""
-	for i in range(1,8):
+	for i in range(0,8):
 		code += "{}".format(r.randint(0,9))
 	return code
 
 
 def checkCapability(ID):
+	"""Vérifie si ID à les aptitudes par defaut dans la poche Aptitudes de son inventaire """
 	supercheck = False
 	cap = DB.valueAt(ID, "capability")
 	captemp = cap
@@ -475,6 +471,7 @@ class GemsTest(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def gemstest(self, ctx):
+		"""Commande de test """
 		await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 
 

@@ -52,9 +52,7 @@ class GemsPlay(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def bank(self, ctx, ARG = None, ARG2 = None):
-		"""
-		Compte épargne
-		"""
+		"""Compte épargne"""
 		#=======================================================================
 		# Initialistation des variables générales de la fonction
 		#=======================================================================

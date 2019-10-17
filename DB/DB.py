@@ -4,6 +4,7 @@ from tinydb.operations import delete
 import datetime as dt
 import time as t
 import json
+from core import welcome as wel
 
 
 DB_NOM = 'bastionDB'
@@ -124,17 +125,24 @@ def removePlayer(ID, linkDB = None):
 
 
 def membercheck(ctx):
+	"""
+	Pour chaque joueur de la DB, vérifie si il est présent sur le serveur Bastion.
+	Si il ne l'es plus, la fonction supprime le joueur de la DB.
+	"""
 	t = taille()
 	i = 1
-	while i < t:
-		try:
-			id = userID(i)
-			if ctx.guild.get_member(id) == None:
-				removePlayer(id)
-			i += 1
-		except:
-			return True
-	return False
+	if ctx.guild == wel.idBASTION:
+		while i < t:
+			try:
+				ID = userID(i)
+				if ctx.guild.get_member(ID) == None:
+					removePlayer(ID)
+				i += 1
+			except:
+				return True
+		return False
+	else:
+		return 404
 
 
 def updateField(ID, fieldName, fieldValue, linkDB = None):
@@ -176,6 +184,7 @@ def valueAt(ID, fieldName, linkDB = None):
 	return value
 
 def taille(linkDB = None):
+	"""Retourne la taille de la DB"""
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
 	else:
@@ -193,12 +202,12 @@ def userID(i, linkDB = None):
 	db.close()
 	return ID
 
-def userExist(id, linkDB = None):
+def userExist(ID, linkDB = None):
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
 	else:
 		db = TinyDB("DB/{}.json".format(DB_NOM))
-	if db.search(Query().ID == id) == []:
+	if db.search(Query().ID == ID) == []:
 		db.close()
 		return False
 	else :
@@ -235,6 +244,7 @@ def OwnerSessionAt(owner, fieldName, linkDB = None):
 
 
 def userGems(i, linkDB = None):
+	"""Retourne le nombre de gems du joueur i"""
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
 	else:
@@ -273,6 +283,7 @@ def addGems(ID, nbGems):
 	return str(new_value)
 
 def daily_data(ID, nameElem):
+	"""Retourne les info sur le Daily de ID"""
 	DailyData = valueAt(ID, "daily")
 	if nameElem in DailyData:
 		data = DailyData[nameElem]
@@ -292,16 +303,18 @@ def updateDaily(ID, nameElem, value):
 	updateField(ID, "daily", DailyData)
 
 def spam(ID,couldown, nameElem):
+	"""Antispam """
 	ComTime = valueAt(ID, "com_time")
 	if nameElem in ComTime:
 		time = ComTime[nameElem]
 	else:
 		return True
 
-	# on récupère le la date de la dernière commande
+	# on récupère la date de la dernière commande
 	return(time < t.time()-couldown)
 
 def nom_ID(nom):
+	"""Convertis un nom en ID """
 	if len(nom) == 21 :
 		ID = int(nom[2:20])
 	elif len(nom) == 22 :

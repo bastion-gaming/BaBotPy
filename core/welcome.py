@@ -22,22 +22,20 @@ idcategory_admin = 417453424402235407
 async def memberjoin(member, channel):
 	if member.guild.id == idBASTION:
 		channel_regle = member.guild.get_channel(417454223224209408)
-		channel_salon = member.guild.get_channel(545204163341058058)
-		channel_presentation = member.guild.get_channel(623077212798582808)
 		time = t.time()
-		id = member.id
-		if DB.newPlayer(id) == "Le joueur a été ajouté !":
+		ID = member.id
+		if DB.newPlayer(ID) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			DB.updateField(id, "arrival", str(t.datetime.now()))
-			cap = DB.valueAt(id, "capability")
+			DB.updateField(ID, "arrival", str(t.datetime.now()))
+			cap = DB.valueAt(ID, "capability")
 			for c in GF.objetCapability:
 				if c.defaut == True:
 					cap.append(c.nom)
-			DB.updateField(id, "capability", cap)
-			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\n:arrow_right: Sur {2} \n:arrow_right: Sur {3}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention,channel_presentation.mention,channel_salon.mention)
+			DB.updateField(ID, "capability", cap)
+			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
 		else:
-			if DB.valueAt(id, "arrival") == "0":
-				DB.updateField(id, "arrival", str(t.datetime.now()))
+			if DB.valueAt(ID, "arrival") == "0":
+				DB.updateField(ID, "arrival", str(t.datetime.now()))
 			await roles.addrole(member, "Nouveau")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
@@ -64,7 +62,7 @@ def memberremove(member):
 	transfert = gems * pourcentage
 	DB.updateField(idBot, "gems", BotGems + int(transfert))
 	DB.updateField(ID, "gems", gems - int(transfert))
-	# DB.removePlayer(member.id)
+	# DB.removePlayer(ID)
 	print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
 
 

@@ -34,13 +34,13 @@ def countDeco():
 		f.write(json.dumps(t, indent=4))
 
 async def countMsg(message):
-	id = message.author.id
+	ID = message.author.id
 	try:
-		DB.updateField(id, "nbMsg", int(DB.valueAt(id, "nbMsg")+1))
-		DB.updateField(id, "xp", int(DB.valueAt(id, "xp")+1))
+		DB.updateField(ID, "nbMsg", int(DB.valueAt(ID, "nbMsg")+1))
+		DB.updateField(ID, "xp", int(DB.valueAt(ID, "xp")+1))
 	except:
 		return print("Le joueur n'existe pas.")
-	# return print(DB.valueAt(id, "nbMsg"))
+	# return print(DB.valueAt(ID, "nbMsg"))
 
 def countTotalMsg():
 	#Init a
