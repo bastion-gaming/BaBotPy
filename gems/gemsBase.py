@@ -329,9 +329,9 @@ class GemsBase(commands.Cog):
 					for x in cap:
 						if "{}".format(c.ID) == str(x):
 							if c.type == "attaque":
-								msg_invCapAtt += "• **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax)
+								msg_invCapAtt += "• **{0}** | ID: {3}\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
 							elif c.type == "defense":
-								msg_invCapDef += "• **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax)
+								msg_invCapDef += "• **{0}** | ID: {3}\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
 
 				desc = ":tools: En travaux :pencil:"
 				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)

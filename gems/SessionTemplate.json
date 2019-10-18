@@ -8,5 +8,15 @@
 	"member":
 		[],
 	"sync":
-		""
+		"",
+	"round":
+		1,
+	"lifeOwner":
+		20,
+	"lifeMember":
+		20,
+	"actionOwner":
+		[],
+	"actionMember":
+		[]
 }

@@ -255,6 +255,23 @@ def OwnerSessionExist(value, linkDB = None):
 		db.close()
 		return True
 
+def MemberSessionExist(value, linkDB = None):
+	"""
+	Vérifie l'existance d'une session créée par Owner
+	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		return 404
+	temp = []
+	temp.append(value)
+	if db.search(Query().member == temp) == []:
+		db.close()
+		return False
+	else :
+		db.close()
+		return True
+
 
 def OwnerSessionAt(owner, fieldName, linkDB = None):
 	"""
@@ -268,6 +285,19 @@ def OwnerSessionAt(owner, fieldName, linkDB = None):
 	db.close()
 	return value
 
+def MemberSessionAt(member, fieldName, linkDB = None):
+	"""
+	Retourne le code session (ID) créé par Owner
+	"""
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		return 404
+	temp = []
+	temp.append(member)
+	value = db.search(Query().member == temp)[0][fieldName]
+	db.close()
+	return value
 
 def userGems(i, linkDB = None):
 	"""Retourne le nombre de gems du joueur i"""

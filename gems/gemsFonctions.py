@@ -147,18 +147,19 @@ def loadItem():
 	#========== Aptitudes ==========
 	class Capability:
 
-		def __init__(self, ID, nom, defaut, achat, type, puissancemax, desc):
+		def __init__(self, ID, nom, defaut, achat, type, puissancemax, item, desc):
 			self.ID = ID
 			self.nom = nom
 			self.defaut = defaut
 			self.achat = achat
 			self.type = type
 			self.puissancemax = puissancemax
+			self.item = item
 			self.desc = desc
 
 	global objetCapability
-	objetCapability = [Capability(100, "Coup d'épée", True, 0, "attaque", 10, "Utilisez votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme la puissance de l'attaque en durabilité à chaque attaque".format(get_idmoji("sword")))
-	,Capability(200, "Mur de pières", True, 0, "defense", 10, "Construisez un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 1 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")))]
+	objetCapability = [Capability(100, "Coup de <:gem_sword:{0}>`sword`".format(get_idmoji("sword")), True, 0, "attaque", 10, "sword", "Utilisez votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme la puissance de l'attaque en durabilité à chaque attaque".format(get_idmoji("sword")))
+	,Capability(200, "Mur de <:gem_cobblestone:{0}>`cobblestone`".format(get_idmoji("cobblestone")), True, 0, "defense", 10, "cobblestone", "Construisez un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 1 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")))]
 
 
 	#========== Trophées ==========
@@ -439,7 +440,7 @@ def checkDB_Session():
 def gen_code():
 	"""Générateur de code aléatoire à 8 chiffres """
 	code = ""
-	for i in range(0,8):
+	for i in range(0,6):
 		code += "{}".format(r.randint(0,9))
 	return code
 
