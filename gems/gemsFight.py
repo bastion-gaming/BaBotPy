@@ -111,6 +111,8 @@ def round(ctx, IDSession):
 		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance)
 		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance)
 		result = "Personne n'as perdu de point de vie.\n"
+		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem))
+		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem))
 
 	elif OwnerType == "attaque" and MemberType == "attaque":
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
@@ -151,15 +153,71 @@ def round(ctx, IDSession):
 					if c.nom == MemberItem:
 						GF.addDurabilite(userMember.id, c.nom, c.durabilite-MemberDurabilite-temp)
 
-		result = ":tools: En travaux :pencil:"
+		DB.updateField(IDSession, "lifeOwner", OwnerLife-MemberPuissance, GF.dbSession)
+		DB.updateField(IDSession, "lifeOwner", MemberLife-OwnerPuissance, GF.dbSession)
+
+		result = "{0} à perdu {1} point de vie\n".format(userOwner.name, MemberPuissance)
+		result += "{0} à perdu {1} point de vie\n".format(userMember.name, OwnerPuissance)
 
 	elif OwnerType == "defense" and MemberType == "attaque":
 		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance)
-		result = ":tools: En travaux :pencil:"
+
+		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
+		if MemberDurabilite > MemberPuissance:
+			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
+			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
+		elif MemberDurabilite == None:
+			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
+			for c in GF.objetOutil:
+				if c.nom == MemberItem:
+					GF.addDurabilite(userMember.id, c.nom, c.durabilite)
+			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
+		else:
+			MemberDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
+			temp = MemberPuissance - MemberDurabilite
+			DB.add(userMember.id, "inventory", MemberItem, -1)
+			if DB.nbElements(userMember.id, "inventory", MemberItem) > 0:
+				for c in GF.objetOutil:
+					if c.nom == MemberItem:
+						GF.addDurabilite(userMember.id, c.nom, c.durabilite-MemberDurabilite-temp)
+		temp = MemberPuissance - OwnerPuissance
+		if temp > 0:
+			DB.updateField(IDSession, "lifeOwner", OwnerLife-temp, GF.dbSession)
+			result = "{0} à perdu {1} point de vie\n".format(userOwner.name, temp)
+		else:
+			result = "{0} à perdu 0 point de vie\n".format(userOwner.name)
+		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem))
+
 
 	elif OwnerType == "attaque" and MemberType == "defense":
 		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance)
-		result = ":tools: En travaux :pencil:"
+
+		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
+		if OwnerDurabilite > OwnerPuissance:
+			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
+		elif OwnerDurabilite == None:
+			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			for c in GF.objetOutil:
+				if c.nom == OwnerItem:
+					GF.addDurabilite(userOwner.id, c.nom, c.durabilite)
+			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
+		else:
+			OwnerDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
+			temp = OwnerPuissance - OwnerDurabilite
+			DB.add(userOwner.id, "inventory", OwnerItem, -1)
+			if DB.nbElements(userOwner.id, "inventory", OwnerItem) > 0:
+				for c in GF.objetOutil:
+					if c.nom == OwnerItem:
+						GF.addDurabilite(userOwner.id, c.nom, c.durabilite-OwnerDurabilite-temp)
+
+		temp = OwnerPuissance - MemberPuissance
+		if temp > 0:
+			DB.updateField(IDSession, "lifeOwner", MemberLife-temp, GF.dbSession)
+			result = "{0} à perdu {1} point de vie\n".format(userMember.name, temp)
+		else:
+			result = "{0} à perdu 0 point de vie\n".format(userMember.name)
+		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem))
 
 	msg = discord.Embed(title = "Round {}".format(DB.valueAt(IDSession, "round", GF.dbSession)),color= 13752280, description = "")
 	msg.add_field(name="{}".format(userOwner.name), value=desc, inline=False)
