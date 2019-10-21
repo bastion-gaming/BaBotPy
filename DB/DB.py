@@ -5,6 +5,7 @@ import datetime as dt
 import time as t
 import json
 from core import welcome as wel
+from gems import gemsFonctions as GF
 
 
 DB_NOM = 'bastionDB'
@@ -80,6 +81,9 @@ def checkField(linkDB, linkfield):
 	db.close()
 	return flag
 
+#===============================================================================
+# Gestion des utilisateurs
+#===============================================================================
 def newPlayer(ID, linkDB = None, linkfield = None):
 	"""
 	Permet d'ajouter un nouveau joueur à la base de donnée en fonction de son ID.
@@ -144,6 +148,9 @@ def membercheck(ctx):
 	else:
 		return 404
 
+#===============================================================================
+# Compteur
+#===============================================================================
 def countTotalMsg(linkDB = None):
 	#Init a
 	a=0
@@ -170,6 +177,10 @@ def countTotalGems(linkDB = None):
 	db.close()
 	return a
 
+
+#===============================================================================
+# Fonctions
+#===============================================================================
 
 def updateField(ID, fieldName, fieldValue, linkDB = None):
 	"""
@@ -317,9 +328,10 @@ def updateComTime(ID, nameElem, linkDB = None):
 		db = TinyDB("{}.json".format(linkDB))
 	else:
 		db = TinyDB("DB/{}.json".format(DB_NOM))
+		linkDB = "DB/{}".format(DB_NOM)
 	ComTime = db.search(Query().ID == ID)[0]["com_time"]
 	ComTime[nameElem] = t.time()
-	updateField(ID, "com_time", ComTime)
+	updateField(ID, "com_time", ComTime, linkDB)
 	db.close()
 
 def addGems(ID, nbGems):
@@ -329,10 +341,10 @@ def addGems(ID, nbGems):
 	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
 	strictement inférieur à 0.
 	"""
-	old_value = valueAt(ID, "gems")
+	old_value = valueAt(ID, "gems", GF.dbGems)
 	new_value = int(old_value) + nbGems
 	if new_value >= 0:
-		updateField(ID, "gems", new_value)
+		updateField(ID, "gems", new_value, GF.dbGems)
 		print("DB >> Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
 	else:
 	 	print("DB >> Il n'y a pas assez sur ce compte !")
@@ -340,7 +352,7 @@ def addGems(ID, nbGems):
 
 def daily_data(ID, nameElem):
 	"""Retourne les info sur le Daily de ID"""
-	DailyData = valueAt(ID, "daily")
+	DailyData = valueAt(ID, "daily", GF.dbGems)
 	if nameElem in DailyData:
 		data = DailyData[nameElem]
 	else:
@@ -351,16 +363,18 @@ def updateDaily(ID, nameElem, value):
 	"""
 	Met à jour les info du daily
 	"""
-	DailyData = valueAt(ID, "daily")
+	DailyData = valueAt(ID, "daily", GF.dbGems)
 	if nameElem == "dailymult":
 		DailyData[nameElem] = value
 	else:
 		DailyData[nameElem] = str(value)
-	updateField(ID, "daily", DailyData)
+	updateField(ID, "daily", DailyData, GF.dbGems)
 
-def spam(ID,couldown, nameElem):
+def spam(ID,couldown, nameElem, linkDB = None):
 	"""Antispam """
-	ComTime = valueAt(ID, "com_time")
+	if linkDB == None:
+		linkDB = "DB/{}".format(DB_NOM)
+	ComTime = valueAt(ID, "com_time", linkDB)
 	if nameElem in ComTime:
 		time = ComTime[nameElem]
 	else:
@@ -394,20 +408,22 @@ def nbElements(ID, stockeur, nameElem, linkDB = None):
 		return 0
 
 
-def add(ID, stockeur, nameElem, nbElem):
+def add(ID, stockeur, nameElem, nbElem, linkDB = None):
 	"""
 	Permet de modifier le nombre de nameElem pour ID dans le stockeur (inventory | StatGems | Trophy | banque)
 	Pour en retirer mettez nbElemn en négatif
 	"""
-	Stockeur = valueAt(ID, stockeur)
-	if nbElements(ID, stockeur, nameElem) > 0 and nbElem < 0:
+	if linkDB == None:
+		linkDB = "DB/bastionDB"
+	Stockeur = valueAt(ID, stockeur, linkDB)
+	if nbElements(ID, stockeur, nameElem, linkDB) > 0 and nbElem < 0:
 		Stockeur[nameElem] += nbElem
 	elif nbElem >= 0:
-		if nbElements(ID, stockeur, nameElem) == 0:
+		if nbElements(ID, stockeur, nameElem, linkDB) == 0:
 			Stockeur[nameElem] = nbElem
 		else :
 			Stockeur[nameElem] += nbElem
 	else:
 		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
-	updateField(ID, stockeur, Stockeur)
+	updateField(ID, stockeur, Stockeur, linkDB)

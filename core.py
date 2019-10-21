@@ -60,6 +60,7 @@ async def on_ready():
 	print('Connecté avec le nom : {0.user}'.format(client))
 	print('PREFIX = '+str(PREFIX))
 	print('\nBastionBot '+VERSION)
+	GF.setglobalguild(client.get_guild(wel.idServBot))
 	if DB.dbExist():
 		print("La DB "+ DB.DB_NOM +" existe, poursuite sans soucis.")
 	else :
@@ -75,8 +76,8 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
-	GF.checkDB_Session()
-	GF.setglobalguild(client.get_guild(wel.idServBot))
+	# GF.checkDB_Session()
+	GF.checkDB_Gems()
 	GF.loadItem()
 
 ####################### Commande help.py #######################
@@ -166,7 +167,7 @@ client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
 
-client.load_extension('gems.gemsFight')
+# client.load_extension('gems.gemsFight')
 
 if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
 	client.load_extension('gems.gemsEvent')

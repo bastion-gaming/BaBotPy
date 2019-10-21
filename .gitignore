@@ -31,4 +31,5 @@ app/js/main.js
 package.json.backup
 .python-version
 babot/
-gems/session.json
+gems/dbGems.json
+gems/dbSession.json

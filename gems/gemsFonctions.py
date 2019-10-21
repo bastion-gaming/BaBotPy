@@ -9,6 +9,51 @@ from discord.ext.commands import Bot
 from discord.utils import get
 from operator import itemgetter
 
+# Variables DBs
+dbGems = "gems/dbGems"
+dbGemsTemplate = "gems/gemsTemplate"
+
+dbSession = "gems/dbSession"
+dbSessionTemplate = "gems/SessionTemplate"
+
+
+def checkDB_Session():
+	"""Check l'existance et la conformité de la DB Session """
+	if DB.dbExist(dbSession):
+		print("La DB Gems Session existe, poursuite sans soucis.")
+	else :
+		print("La DB Gems Session n'existait pas. Elle a été (re)créée.")
+	flag = DB.checkField(dbSession, dbSessionTemplate)
+	if flag == 0:
+		print("DB Gems Session >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("DB Gems Session >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "sup" in flag:
+		print("DB Gems Session >> Un ou plusieurs champs ont été supprimés de la DB.")
+	elif "type" in flag:
+		print("DB Gems Session >> Un ou plusieurs type ont été modifié sur la DB.")
+	print('------\n')
+
+
+def checkDB_Gems():
+	"""Check l'existance et la conformité de la DB Session """
+	if DB.dbExist(dbGems):
+		print("La DB Gems existe, poursuite sans soucis.")
+	else :
+		print("La DB Gems n'existait pas. Elle a été (re)créée.")
+	flag = DB.checkField(dbGems, dbGemsTemplate)
+	if flag == 0:
+		print("DB Gems >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("DB Gems >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "sup" in flag:
+		print("DB Gems >> Un ou plusieurs champs ont été supprimés de la DB.")
+	elif "type" in flag:
+		print("DB Gems >> Un ou plusieurs type ont été modifié sur la DB.")
+	print('------\n')
+
+
+
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
 ,"Tu as volé une carotte ! Prend tes"
@@ -312,7 +357,7 @@ def get_price(nameElem, type = None):
 
 def testInvTaille(ID):
 	"""Verifie si l'inventaire est plein """
-	inv = DB.valueAt(ID, "inventory")
+	inv = DB.valueAt(ID, "inventory", dbGems)
 	tailletot = 0
 	for c in objetOutil:
 		for x in inv:
@@ -338,8 +383,8 @@ def testTrophy(ID, nameElem):
 	Permet de modifier le nombre de nameElem pour ID dans les trophées
 	Pour en retirer mettez nbElemn en négatif
 	"""
-	trophy = DB.valueAt(ID, "trophy")
-	gems = DB.valueAt(ID, "gems")
+	trophy = DB.valueAt(ID, "trophy", dbGems)
+	gems = DB.valueAt(ID, "gems", dbGems)
 	i = 2
 	for c in objetTrophy:
 		nbGemsNecessaire = c.mingem
@@ -348,30 +393,30 @@ def testTrophy(ID, nameElem):
 				i = 0
 			elif gems >= nbGemsNecessaire:
 				i = 1
-				DB.add(ID, "trophy", c.nom, 1)
+				DB.add(ID, "trophy", c.nom, 1, dbGems)
 	return i
 
 
 
 def addDurabilite(ID, nameElem, nbElem):
 	"""Modifie la durabilité de l'outil nameElem"""
-	durabilite = DB.valueAt(ID, "durabilite")
-	if DB.nbElements(ID, "inventory", nameElem) > 0 and nbElem < 0:
+	durabilite = DB.valueAt(ID, "durabilite", dbGems)
+	if DB.nbElements(ID, "inventory", nameElem, dbGems) > 0 and nbElem < 0:
 		durabilite[nameElem] += nbElem
 	elif nbElem >= 0:
 		durabilite[nameElem] = nbElem
 	else:
 		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
 		return 404
-	DB.updateField(ID, "durabilite", durabilite)
+	DB.updateField(ID, "durabilite", durabilite, dbGems)
 
 
 
 def get_durabilite(ID, nameElem):
 	"""Permet de savoir la durabilite de nameElem dans l'inventaire de ID"""
-	nb = DB.nbElements(ID, "inventory", nameElem)
+	nb = DB.nbElements(ID, "inventory", nameElem, dbGems)
 	if nb > 0:
-		durabilite = DB.valueAt(ID, "durabilite")
+		durabilite = DB.valueAt(ID, "durabilite", dbGems)
 		for c in objetOutil:
 			if nameElem == c.nom:
 				if nameElem in durabilite:
@@ -416,27 +461,6 @@ def taxe(solde, pourcentage):
 #========================== Fonctions Gems Fight ===============================
 #===============================================================================
 
-dbSession = "gems/session"
-dbSessionTemplate = "gems/SessionTemplate"
-
-def checkDB_Session():
-	"""Check l'existance et la conformité de la DB Session """
-	if DB.dbExist(dbSession):
-		print("La DB Gems Session existe, poursuite sans soucis.")
-	else :
-		print("La DB Gems Session n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField(dbSession, dbSessionTemplate)
-	if flag == 0:
-		print("DB Gems Session >> Aucun champ n'a été ajouté, supprimé ou modifié.")
-	elif "add" in flag:
-		print("DB Gems Session >> Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "sup" in flag:
-		print("DB Gems Session >> Un ou plusieurs champs ont été supprimés de la DB.")
-	elif "type" in flag:
-		print("DB Gems Session >> Un ou plusieurs type ont été modifié sur la DB.")
-	print('------\n')
-
-
 def gen_code():
 	"""Générateur de code aléatoire à 8 chiffres """
 	code = ""
@@ -448,7 +472,7 @@ def gen_code():
 def checkCapability(ID):
 	"""Vérifie si ID à les aptitudes par defaut dans la poche Aptitudes de son inventaire """
 	supercheck = False
-	cap = DB.valueAt(ID, "capability")
+	cap = DB.valueAt(ID, "capability", dbGems)
 	captemp = cap
 	for c in objetCapability:
 		if c.defaut == True:
@@ -462,8 +486,8 @@ def checkCapability(ID):
 			else:
 				check == False
 	if supercheck:
-		DB.updateField(ID, "capability", captemp)
-	return DB.valueAt(ID, "capability")
+		DB.updateField(ID, "capability", captemp, dbGems)
+	return DB.valueAt(ID, "capability", dbGems)
 
 
 

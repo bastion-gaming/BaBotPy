@@ -30,7 +30,7 @@ class GemsBase(commands.Cog):
 	async def begin(self, ctx):
 		"""Pour t'ajouter dans la base de données !"""
 		ID = ctx.author.id
-		await ctx.channel.send(DB.newPlayer(ID))
+		await ctx.channel.send(DB.newPlayer(ID, GF.dbGems, GF.dbGemsTemplate))
 
 
 
@@ -39,7 +39,7 @@ class GemsBase(commands.Cog):
 	async def bal(self, ctx, nom = None):
 		"""**[nom]** | Êtes vous riche ou pauvre ?"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "bal"):
+		if DB.spam(ID,GF.couldown_c, "bal", GF.dbGems):
 			#print(nom)
 			if nom != None:
 				ID = DB.nom_ID(nom)
@@ -47,13 +47,13 @@ class GemsBase(commands.Cog):
 				nom = nom.name
 			else:
 				nom = ctx.author.name
-			solde = DB.valueAt(ID, "gems")
+			solde = DB.valueAt(ID, "gems", GF.dbGems)
 			title = "Compte principal de {}".format(nom)
 			msg = discord.Embed(title = title,color= 13752280, description = "")
 			desc = "{} :gem:\n".format(solde)
 			msg.add_field(name="Balance", value=desc, inline=False)
 
-			DB.updateComTime(ID, "bal")
+			DB.updateComTime(ID, "bal", GF.dbGems)
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console
 			print("Gems >> Balance de {} affichée".format(nom))
@@ -68,23 +68,23 @@ class GemsBase(commands.Cog):
 	async def baltop(self, ctx, n = 10):
 		"""**[nombre]** | Classement des joueurs (10 premiers par défaut)"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "baltop"):
+		if DB.spam(ID,GF.couldown_c, "baltop", GF.dbGems):
 			UserList = []
 			baltop = ""
 			i = 0
-			while i < DB.taille():
-				user = DB.userID(i)
-				gems = DB.userGems(i)
+			while i < DB.taille(GF.dbGems):
+				user = DB.userID(i, GF.dbGems)
+				gems = DB.userGems(i, GF.dbGems)
 				UserList.append((user, gems))
 				i = i + 1
 			UserList = sorted(UserList, key=itemgetter(1),reverse=False)
-			i = DB.taille() - 1
+			i = DB.taille(GF.dbGems) - 1
 			j = 0
 			while i >= 0 and j != n : # affichage des données trié
 				baltop += "{2} | <@{0}> {1}:gem:\n".format(UserList[i][0], UserList[i][1], j+1)
 				i = i - 1
 				j = j + 1
-			DB.updateComTime(ID, "baltop")
+			DB.updateComTime(ID, "baltop", GF.dbGems)
 			msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console
@@ -100,7 +100,7 @@ class GemsBase(commands.Cog):
 		"""**[item] [nombre]** | Permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
 		jour = dt.date.today()
-		if DB.spam(ID,GF.couldown_c, "buy"):
+		if DB.spam(ID,GF.couldown_c, "buy", GF.dbGems):
 			if GF.testInvTaille(ID):
 				test = True
 				nb = int(nb)
@@ -111,15 +111,15 @@ class GemsBase(commands.Cog):
 						if DB.addGems(ID, prix) >= "0":
 							if c.type == "halloween":
 								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
-									DB.add(ID, "inventory", c.nom, nb)
+									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
 									msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								else:
 									msg = "Désolé, nous ne pouvons pas executer cet achat, cette item n'est pas vendu au marché"
 							elif c.type != "consommable":
-								DB.add(ID, "inventory", c.nom, nb)
+								DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 							else:
-								DB.add(ID, "inventory", c.nom, nb)
+								DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
 								msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
@@ -130,10 +130,10 @@ class GemsBase(commands.Cog):
 					if item == c.nom :
 						test = False
 						if c.type == "bank":
-							soldeMax = DB.nbElements(ID, "banque", "soldeMax")
+							soldeMax = DB.nbElements(ID, "banque", "soldeMax", GF.dbGems)
 							if soldeMax == 0:
 								soldeMax = c.poids
-								DB.add(ID, "banque", "soldeMax", c.poids)
+								DB.add(ID, "banque", "soldeMax", c.poids, GF.dbGems)
 							soldeMult = soldeMax/c.poids
 							prix = 0
 							i = 1
@@ -147,14 +147,14 @@ class GemsBase(commands.Cog):
 							prix = -1 * (c.achat*nb)
 						if DB.addGems(ID, prix) >= "0":
 							if c.type == "bank":
-								DB.add(ID, "banque", "soldeMax", nb*c.poids)
+								DB.add(ID, "banque", "soldeMax", nb*c.poids, GF.dbGems)
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								# Message de réussite dans la console
 								print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
 								await ctx.channel.send(msg)
 								return
 							else:
-								DB.add(ID, "inventory", c.nom, nb)
+								DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								if c.nom == "planting_plan":
 									if GF.get_durabilite(ID, "planting_plan") == None:
@@ -167,7 +167,7 @@ class GemsBase(commands.Cog):
 						test = False
 						prix = 0 - (c.achat*nb)
 						if DB.addGems(ID, prix) >= "0":
-							DB.add(ID, "inventory", "lootbox_{}".format(c.nom), nb)
+							DB.add(ID, "inventory", "lootbox_{}".format(c.nom), nb, GF.dbGems)
 							msg = "Tu viens d'acquérir {0} <:gem_lootbox:630698430313922580>`{1}` !".format(nb, c.titre)
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
@@ -177,7 +177,7 @@ class GemsBase(commands.Cog):
 				if test :
 					msg = "Cet item n'est pas vendu au marché !"
 
-				DB.updateComTime(ID, "buy")
+				DB.updateComTime(ID, "buy", GF.dbGems)
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -193,11 +193,11 @@ class GemsBase(commands.Cog):
 		ID = ctx.author.id
 		# print(nb)
 		# print(type(nb))
-		if DB.spam(ID,GF.couldown_c, "sell"):
+		if DB.spam(ID,GF.couldown_c, "sell", GF.dbGems):
 			if int(nb) == -1:
-				nb = DB.nbElements(ID, "inventory", item)
+				nb = DB.nbElements(ID, "inventory", item, GF.dbGems)
 			nb = int(nb)
-			if DB.nbElements(ID, "inventory", item) >= nb and nb > 0:
+			if DB.nbElements(ID, "inventory", item, GF.dbGems) >= nb and nb > 0:
 				test = True
 				for c in GF.objetItem:
 					if item == c.nom:
@@ -214,7 +214,7 @@ class GemsBase(commands.Cog):
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 							if c.nom == "grapes" and int (nb/10) >= 1:
 								nbwine = int(nb/10)
-								DB.add(ID, "inventory", "wine_glass", nbwine)
+								DB.add(ID, "inventory", "wine_glass", nbwine, GF.dbGems)
 								msg+="\nTu gagne {}:wine_glass:`verre de vin`".format(nbwine)
 						break
 				for c in GF.objetOutil:
@@ -223,21 +223,21 @@ class GemsBase(commands.Cog):
 						gain = c.vente*nb
 						DB.addGems(ID, gain)
 						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,GF.get_idmoji(c.nom))
-						if DB.nbElements(ID, "inventory", item) == 1:
+						if DB.nbElements(ID, "inventory", item, GF.dbGems) == 1:
 							if GF.get_durabilite(ID, item) != None:
 								GF.addDurabilite(ID, item, -1)
 						# Message de réussite dans la console
 						print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 						break
 
-				DB.add(ID, "inventory", item, -nb)
+				DB.add(ID, "inventory", item, -nb, GF.dbGems)
 				if test:
 					msg = "Cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Tu n'as pas assez de `{0}`. Il t'en reste : {1}".format(str(item),str(DB.nbElements(ID, "inventory", item)))
+				msg = "Tu n'as pas assez de `{0}`. Il t'en reste : {1}".format(str(item),str(DB.nbElements(ID, "inventory", item, GF.dbGems)))
 
-			DB.updateComTime(ID, "sell")
+			DB.updateComTime(ID, "sell", GF.dbGems)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -249,7 +249,7 @@ class GemsBase(commands.Cog):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
 		nom = ctx.author.name
-		if DB.spam(ID,GF.couldown_c, "inv"):
+		if DB.spam(ID,GF.couldown_c, "inv", GF.dbGems):
 			if fct == None:
 				msg_inv = ""
 				msg_invOutils = ""
@@ -260,7 +260,7 @@ class GemsBase(commands.Cog):
 				msg_invItemsConsommable = ""
 				msg_invItemsHalloween = ""
 				msg_invBox = ""
-				inv = DB.valueAt(ID, "inventory")
+				inv = DB.valueAt(ID, "inventory", GF.dbGems)
 				tailletot = 0
 				for c in GF.objetOutil:
 					for x in inv:
@@ -317,7 +317,7 @@ class GemsBase(commands.Cog):
 					msg.add_field(name="Halloween", value=msg_invItemsHalloween, inline=False)
 				if msg_invBox != "":
 					msg.add_field(name="Loot Box", value=msg_invBox, inline=False)
-				DB.updateComTime(ID, "inv")
+				DB.updateComTime(ID, "inv", GF.dbGems)
 				await ctx.channel.send(embed = msg)
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher son inventaire".format(nom))
@@ -341,7 +341,7 @@ class GemsBase(commands.Cog):
 				if msg_invCapDef != "":
 					msg_invCapDef += "••••••••••"
 					msg.add_field(name="Défense", value=msg_invCapDef, inline=False)
-				DB.updateComTime(ID, "inv")
+				DB.updateComTime(ID, "inv", GF.dbGems)
 				await ctx.channel.send(embed = msg)
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher la poche `capabilities` de son inventaire".format(nom))
@@ -363,7 +363,7 @@ class GemsBase(commands.Cog):
 		"""Permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
 		jour = dt.date.today()
-		if DB.spam(ID,GF.couldown_c, "market"):
+		if DB.spam(ID,GF.couldown_c, "market", GF.dbGems):
 			if fct == None:
 				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 				d_marketOutils = ""
@@ -421,7 +421,7 @@ class GemsBase(commands.Cog):
 					msg.add_field(name="Halloween", value=d_marketItems, inline=False)
 
 				msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
-				DB.updateComTime(ID, "market")
+				DB.updateComTime(ID, "market", GF.dbGems)
 				await ctx.channel.send(embed = msg)
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher le marché".format(ctx.author.name))
@@ -441,7 +441,7 @@ class GemsBase(commands.Cog):
 					msg.add_field(name="Attaque", value=descCapAtt, inline=False)
 				if descCapDef != "":
 					msg.add_field(name="Défense", value=descCapDef, inline=False)
-				DB.updateComTime(ID, "market")
+				DB.updateComTime(ID, "market", GF.dbGems)
 				await ctx.channel.send(embed = msg)
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher le marché".format(ctx.author.name))
@@ -458,7 +458,7 @@ class GemsBase(commands.Cog):
 	async def bourse(self, ctx):
 		"""Affiche la bourse de Bastion"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "bourse"):
+		if DB.spam(ID,GF.couldown_c, "bourse", GF.dbGems):
 			time = 120 - GF.globalvar
 			timeM = time // 2
 			timeS = time % 2
@@ -483,7 +483,7 @@ class GemsBase(commands.Cog):
 			d_bourse="<:gem_planting_plan:{}>`planting_plan: 900 ▶ 1150`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("planting_plan"),GF.get_price("planting_plan", "achat"))
 			d_bourse+=":grapes:`grapes: 20 ▶ 30`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes", "achat"))
 			msg.add_field(name="Achat", value=d_bourse, inline=False)
-			DB.updateComTime(ID, "bourse")
+			DB.updateComTime(ID, "bourse", GF.dbGems)
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console
 			print("Gems >> {} a afficher le marché".format(ctx.author.name))
@@ -497,13 +497,13 @@ class GemsBase(commands.Cog):
 	async def pay (self, ctx, nom, gain):
 		"""**[nom] [gain]** | Donner de l'argent à vos amis !"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "pay"):
+		if DB.spam(ID,GF.couldown_c, "pay", GF.dbGems):
 			try:
 				if int(gain) > 0:
 					gain = int(gain)
 					don = -gain
 					ID_recu = DB.nom_ID(nom)
-					if int(DB.valueAt(ID, "gems")) >= 0:
+					if int(DB.valueAt(ID, "gems", GF.dbGems)) >= 0:
 						# print(ID_recu)
 						DB.addGems(ID_recu, gain)
 						DB.addGems(ID,don)
@@ -513,7 +513,7 @@ class GemsBase(commands.Cog):
 					else:
 						msg = "<@{0}> n'a pas assez pour donner à <@{2}> !".format(ID,gain,ID_recu)
 
-					DB.updateComTime(ID, "pay")
+					DB.updateComTime(ID, "pay", GF.dbGems)
 				else :
 					msg = "Tu ne peux pas donner une somme négative ! N'importe quoi enfin !"
 			except ValueError:
@@ -529,7 +529,7 @@ class GemsBase(commands.Cog):
 	async def forge(self, ctx, item = None, nb = 1):
 		"""**[item] [nombre]** | Permet de concevoir des items spécifiques"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "forge"):
+		if DB.spam(ID,GF.couldown_c, "forge", GF.dbGems):
 			if GF.testInvTaille(ID):
 				#-------------------------------------
 				# Affichage des recettes disponible
@@ -549,79 +549,79 @@ class GemsBase(commands.Cog):
 							nb3 = nb*c.nb3
 							nb4 = nb*c.nb4
 							if c.item1 != "" and c.item2 != "" and c.item3 != "" and c.item4 != "":
-								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2 and DB.nbElements(ID, "inventory", c.item3) >= nb3 and DB.nbElements(ID, "inventory", c.item4) >= nb4:
-									DB.add(ID, "inventory", c.nom, nb)
-									DB.add(ID, "inventory", c.item1, -1*nb1)
-									DB.add(ID, "inventory", c.item2, -1*nb2)
-									DB.add(ID, "inventory", c.item3, -1*nb3)
-									DB.add(ID, "inventory", c.item4, -1*nb4)
+								if DB.nbElements(ID, "inventory", c.item1, GF.dbGems) >= nb1 and DB.nbElements(ID, "inventory", c.item2, GF.dbGems) >= nb2 and DB.nbElements(ID, "inventory", c.item3, GF.dbGems) >= nb3 and DB.nbElements(ID, "inventory", c.item4, GF.dbGems) >= nb4:
+									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
+									DB.add(ID, "inventory", c.item1, -1*nb1, GF.dbGems)
+									DB.add(ID, "inventory", c.item2, -1*nb2, GF.dbGems)
+									DB.add(ID, "inventory", c.item3, -1*nb3, GF.dbGems)
+									DB.add(ID, "inventory", c.item4, -1*nb4, GF.dbGems)
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
-									if DB.nbElements(ID, "inventory", c.item1) < nb1:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+									if DB.nbElements(ID, "inventory", c.item1, GF.dbGems) < nb1:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item1, GF.dbGems) - nb1)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
-									if DB.nbElements(ID, "inventory", c.item2) < nb2:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
+									if DB.nbElements(ID, "inventory", c.item2, GF.dbGems) < nb2:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item2, GF.dbGems) - nb2)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
-									if DB.nbElements(ID, "inventory", c.item3) < nb3:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item3) - nb3)*-1
+									if DB.nbElements(ID, "inventory", c.item3, GF.dbGems) < nb3:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item3, GF.dbGems) - nb3)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmoji(c.item3))
-									if DB.nbElements(ID, "inventory", c.item4) < nb4:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item4) - nb4)*-1
+									if DB.nbElements(ID, "inventory", c.item4, GF.dbGems) < nb4:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item4, GF.dbGems) - nb4)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item4, GF.get_idmoji(c.item4))
 
 							elif c.item1 != "" and c.item2 != "" and c.item3 != "":
-								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2 and DB.nbElements(ID, "inventory", c.item3) >= nb3:
-									DB.add(ID, "inventory", c.nom, nb)
-									DB.add(ID, "inventory", c.item1, -1*nb1)
-									DB.add(ID, "inventory", c.item2, -1*nb2)
-									DB.add(ID, "inventory", c.item3, -1*nb3)
+								if DB.nbElements(ID, "inventory", c.item1, GF.dbGems) >= nb1 and DB.nbElements(ID, "inventory", c.item2, GF.dbGems) >= nb2 and DB.nbElements(ID, "inventory", c.item3, GF.dbGems) >= nb3:
+									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
+									DB.add(ID, "inventory", c.item1, -1*nb1, GF.dbGems)
+									DB.add(ID, "inventory", c.item2, -1*nb2, GF.dbGems)
+									DB.add(ID, "inventory", c.item3, -1*nb3, GF.dbGems)
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
-									if DB.nbElements(ID, "inventory", c.item1) < nb1:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+									if DB.nbElements(ID, "inventory", c.item1, GF.dbGems) < nb1:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item1, GF.dbGems) - nb1)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
-									if DB.nbElements(ID, "inventory", c.item2) < nb2:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
+									if DB.nbElements(ID, "inventory", c.item2, GF.dbGems) < nb2:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item2, GF.dbGems) - nb2)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
-									if DB.nbElements(ID, "inventory", c.item3) < nb3:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item3) - nb3)*-1
+									if DB.nbElements(ID, "inventory", c.item3, GF.dbGems) < nb3:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item3, GF.dbGems) - nb3)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmoji(c.item3))
 
 							elif c.item1 != "" and c.item2 != "":
-								if DB.nbElements(ID, "inventory", c.item1) >= nb1 and DB.nbElements(ID, "inventory", c.item2) >= nb2:
-									DB.add(ID, "inventory", c.nom, nb)
-									DB.add(ID, "inventory", c.item1, -1*nb1)
-									DB.add(ID, "inventory", c.item2, -1*nb2)
+								if DB.nbElements(ID, "inventory", c.item1, GF.dbGems) >= nb1 and DB.nbElements(ID, "inventory", c.item2, GF.dbGems) >= nb2:
+									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
+									DB.add(ID, "inventory", c.item1, -1*nb1, GF.dbGems)
+									DB.add(ID, "inventory", c.item2, -1*nb2, GF.dbGems)
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
-									if DB.nbElements(ID, "inventory", c.item1) < nb1:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+									if DB.nbElements(ID, "inventory", c.item1, GF.dbGems) < nb1:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item1, GF.dbGems) - nb1)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
-									if DB.nbElements(ID, "inventory", c.item2) < nb2:
-										nbmissing = (DB.nbElements(ID, "inventory", c.item2) - nb2)*-1
+									if DB.nbElements(ID, "inventory", c.item2, GF.dbGems) < nb2:
+										nbmissing = (DB.nbElements(ID, "inventory", c.item2, GF.dbGems) - nb2)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
 
 							elif c.item1 != "":
-								if DB.nbElements(ID, "inventory", c.item1) >= nb1:
-									DB.add(ID, "inventory", c.nom, nb)
-									DB.add(ID, "inventory", c.item1, -1*nb1)
+								if DB.nbElements(ID, "inventory", c.item1, GF.dbGems) >= nb1:
+									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
+									DB.add(ID, "inventory", c.item1, -1*nb1, GF.dbGems)
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
-									nbmissing = (DB.nbElements(ID, "inventory", c.item1) - nb1)*-1
+									nbmissing = (DB.nbElements(ID, "inventory", c.item1, GF.dbGems) - nb1)*-1
 									msg = "Il te manque {0} <:gem_{1}:{2}>`{1}`".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
 							await ctx.channel.send(msg)
 							return True
 						else:
 							msg = "Aucun recette disponible pour forger cette item !"
-				DB.updateComTime(ID, "forge")
+				DB.updateComTime(ID, "forge", GF.dbGems)
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -634,7 +634,7 @@ class GemsBase(commands.Cog):
 	async def trophy(self, ctx, nom = None):
 		"""**[nom]** | Liste de vos trophées !"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "trophy"):
+		if DB.spam(ID,GF.couldown_c, "trophy", GF.dbGems):
 			if nom != None:
 				ID = DB.nom_ID(nom)
 				nom = ctx.guild.get_member(ID)
@@ -645,20 +645,20 @@ class GemsBase(commands.Cog):
 			#-------------------------------------
 			# Récupération de la liste des trophées de ID
 			# et attribution de nouveau trophée si les conditions sont rempli
-			trophy = DB.valueAt(ID, "trophy")
+			trophy = DB.valueAt(ID, "trophy", GF.dbGems)
 			for c in GF.objetTrophy:
 				GF.testTrophy(ID, c.nom)
 
 			#-------------------------------------
 			# Affichage des trophées possédés par ID
-			trophy = DB.valueAt(ID, "trophy")
+			trophy = DB.valueAt(ID, "trophy", GF.dbGems)
 			for c in GF.objetTrophy:
 				for x in trophy:
 					if c.nom == str(x):
 						if trophy[x] > 0:
 							d_trophy += "•**{}**\n".format(c.nom)
 
-			DB.updateComTime(ID, "trophy")
+			DB.updateComTime(ID, "trophy", GF.dbGems)
 			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
 			# Message de réussite dans la console
 			print("Gems >> {} a affiché les trophées de {}".format(ctx.author.name,nom))
@@ -674,7 +674,7 @@ class GemsBase(commands.Cog):
 		"""Liste de tout les trophées disponibles !"""
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
-		if DB.spam(ID,GF.couldown_c, "trophylist"):
+		if DB.spam(ID,GF.couldown_c, "trophylist", GF.dbGems):
 			#-------------------------------------
 			# Affichage des trophées standard
 			for c in GF.objetTrophy:
@@ -693,7 +693,7 @@ class GemsBase(commands.Cog):
 				if c.type == "unique" and c.type != "special":
 					d_trophy += "**{}**: {}\n".format(c.nom, c.desc)
 
-			DB.updateComTime(ID, "trophylist")
+			DB.updateComTime(ID, "trophylist", GF.dbGems)
 			msg = discord.Embed(title = "Trophées",color= 6824352, description = d_trophy)
 			# Message de réussite dans la console
 			print("Gems >> {} a affiché la liste des trophées".format(ctx.author.name))

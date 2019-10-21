@@ -1,6 +1,7 @@
 import random as r
 import datetime as dt
 from DB import DB
+from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -288,7 +289,7 @@ class Stats(commands.Cog):
 		if os.path.isfile("cache/piegraph.png"):
 			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
-		total = DB.countTotalGems()
+		total = DB.countTotalGems(GF.dbGems)
 		a = []
 		for item in DB.db:
 			a.append([item["gems"],item["ID"]])

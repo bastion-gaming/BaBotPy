@@ -41,7 +41,7 @@ async def action(ctx, IDaction, P, type):
 				P = Pmax
 			elif int(P) <= 0:
 				P = 0
-			if DB.spam(ID,GF.couldown_l, type):
+			if DB.spam(ID,GF.couldown_l, type, GF.dbGems):
 				action = []
 				action.append(IDaction)
 				action.append(P)
@@ -50,7 +50,7 @@ async def action(ctx, IDaction, P, type):
 				elif check == "member":
 					DB.updateField(IDSession, "actionMember", action, GF.dbSession)
 				msg = "_Action de **{}** prise en compte_".format(ctx.author.name)
-				DB.updateComTime(ID, type)
+				DB.updateComTime(ID, type, GF.dbGems)
 				await ctx.message.delete(delay=1)
 				await ctx.channel.send(msg)
 				if checkround(IDSession):
@@ -108,8 +108,8 @@ def round(ctx, IDSession):
 	MemberDesc = "Action: {0} | {1} \nPuissance: {2}".format(MemberType, MemberActionName, MemberPuissance)
 
 	if OwnerType == "defense" and MemberType == "defense":
-		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance)
-		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance)
+		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
+		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
 		result = "Personne n'as perdu de point de vie.\n"
 		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem))
 		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem))
@@ -128,8 +128,8 @@ def round(ctx, IDSession):
 		else:
 			OwnerDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
-			DB.add(userOwner.id, "inventory", OwnerItem, -1)
-			if DB.nbElements(userOwner.id, "inventory", OwnerItem) > 0:
+			DB.add(userOwner.id, "inventory", OwnerItem, -1, GF.dbGems)
+			if DB.nbElements(userOwner.id, "inventory", OwnerItem, GF.dbGems) > 0:
 				for c in GF.objetOutil:
 					if c.nom == OwnerItem:
 						GF.addDurabilite(userOwner.id, c.nom, c.durabilite-OwnerDurabilite-temp)
@@ -147,8 +147,8 @@ def round(ctx, IDSession):
 		else:
 			MemberDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
 			temp = MemberPuissance - MemberDurabilite
-			DB.add(userMember.id, "inventory", MemberItem, -1)
-			if DB.nbElements(userMember.id, "inventory", MemberItem) > 0:
+			DB.add(userMember.id, "inventory", MemberItem, -1, GF.dbGems)
+			if DB.nbElements(userMember.id, "inventory", MemberItem, GF.dbGems) > 0:
 				for c in GF.objetOutil:
 					if c.nom == MemberItem:
 						GF.addDurabilite(userMember.id, c.nom, c.durabilite-MemberDurabilite-temp)
@@ -160,7 +160,7 @@ def round(ctx, IDSession):
 		result += "{0} à perdu {1} point de vie\n".format(userMember.name, OwnerPuissance)
 
 	elif OwnerType == "defense" and MemberType == "attaque":
-		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance)
+		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
 
 		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
 		if MemberDurabilite > MemberPuissance:
@@ -175,8 +175,8 @@ def round(ctx, IDSession):
 		else:
 			MemberDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
 			temp = MemberPuissance - MemberDurabilite
-			DB.add(userMember.id, "inventory", MemberItem, -1)
-			if DB.nbElements(userMember.id, "inventory", MemberItem) > 0:
+			DB.add(userMember.id, "inventory", MemberItem, -1, GF.dbGems)
+			if DB.nbElements(userMember.id, "inventory", MemberItem, GF.dbGems) > 0:
 				for c in GF.objetOutil:
 					if c.nom == MemberItem:
 						GF.addDurabilite(userMember.id, c.nom, c.durabilite-MemberDurabilite-temp)
@@ -190,7 +190,7 @@ def round(ctx, IDSession):
 
 
 	elif OwnerType == "attaque" and MemberType == "defense":
-		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance)
+		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
 
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
 		if OwnerDurabilite > OwnerPuissance:
@@ -205,8 +205,8 @@ def round(ctx, IDSession):
 		else:
 			OwnerDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
-			DB.add(userOwner.id, "inventory", OwnerItem, -1)
-			if DB.nbElements(userOwner.id, "inventory", OwnerItem) > 0:
+			DB.add(userOwner.id, "inventory", OwnerItem, -1, GF.dbGems)
+			if DB.nbElements(userOwner.id, "inventory", OwnerItem, GF.dbGems) > 0:
 				for c in GF.objetOutil:
 					if c.nom == OwnerItem:
 						GF.addDurabilite(userOwner.id, c.nom, c.durabilite-OwnerDurabilite-temp)

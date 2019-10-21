@@ -2,6 +2,7 @@ import random as r
 import datetime as dt
 from DB import DB
 from core import roles
+from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -133,15 +134,15 @@ class Level(commands.Cog):
 				msg+= "\n\n**Niveau :**\n"
 				for x in objet:
 					if lvl == x.level:
-						msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(DB.valueAt(ID, "lvl"),xp,x.somMsg)
+						msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(lvl,xp,x.somMsg)
 				if lvl == lvlmax:
-					msg += "Actuel **{0}** \nLevel max atteint".format(DB.valueAt(ID, "lvl"))
+					msg += "Actuel **{0}** \nLevel max atteint".format(lvl)
 
 				# Gems
-				msg+="\n\n**Balance:** *{0}* :gem:".format(DB.valueAt(ID,"gems"))
+				msg+="\n\n**Balance:** *{0}* :gem:".format(DB.valueAt(ID,"gems", GF.dbGems))
 
 				# Statistique de l'utilisateur pour le module Gems
-				statgems = DB.valueAt(ID, "StatGems")
+				statgems = DB.valueAt(ID, "StatGems", GF.dbGems)
 				Titre = True
 				for x in statgems:
 					if statgems[x] > 0:
