@@ -100,7 +100,7 @@ def itemBourse(item, type, first = None):
 	if type == "vente":
 		for x in GI.PrixItem:
 			if item == x.nom:
-				if first == True:
+				if first == True or x.type == "special":
 					Prix = x.vente
 					return Prix
 				else:
@@ -109,9 +109,8 @@ def itemBourse(item, type, first = None):
 							pnow = c.vente
 		for x in GI.PrixOutil:
 			if item == x.nom:
-				if first == True:
-					Prix = x.vente
-					return Prix
+				if first == True or x.type == "bank" or x.type == "special":
+					return x.vente
 				else:
 					for c in objetOutil:
 						if c.nom == x.nom:
@@ -119,18 +118,16 @@ def itemBourse(item, type, first = None):
 	elif type == "achat":
 		for x in GI.PrixItem:
 			if item == x.nom:
-				if first == True:
-					Prix = x.achat
-					return Prix
+				if first == True or x.type == "special":
+					return x.achat
 				else:
 					for c in objetItem:
 						if c.nom == x.nom:
 							pnow = c.achat
 		for x in GI.PrixOutil:
 			if item == x.nom:
-				if first == True:
-					Prix = x.achat
-					return Prix
+				if first == True or x.type == "bank" or x.type == "special":
+					return x.achat
 				else:
 					for c in objetOutil:
 						if c.nom == x.nom:
@@ -153,7 +150,7 @@ def itemBourse(item, type, first = None):
 			Prix = pnow + ((pnow*pourcentage)//100)
 		else:
 			Prix = pnow
-		if Prix < 1:
+		if Prix <= 1:
 			Prix = 1
 	return Prix
 
@@ -172,30 +169,30 @@ def loadItem(F = None):
 			self.type = type
 
 	global objetItem
-	objetItem = [Item("cobblestone", 1, 3, 4, "minerai")
-	,Item("iron", itemBourse("iron", "vente", F), 30, 10, "minerai")
-	,Item("gold", itemBourse("gold", "vente", F), 100, 20, "minerai")
-	,Item("diamond", itemBourse("diamond", "vente", F), 200, 40, "minerai")
-	,Item("emerald", itemBourse("emerald", "vente", F), 320, 50, "minerai")
-	,Item("ruby", itemBourse("ruby", "vente", F), 3000, 70, "minerai")
-	,Item("fish", 2, 5, 2, "poisson")
-	,Item("tropicalfish", itemBourse("tropicalfish", "vente", F), 60, 8, "poisson")
-	,Item("blowfish", itemBourse("blowfish", "vente", F), 60, 8, "poisson")
-	,Item("octopus", itemBourse("octopus", "vente", F), 90, 16, "poisson")
-	,Item("seed", 1, 2, 0.5, "plante")
-	,Item("oak", 400, 500, 50, "plante")
-	,Item("spruce", 600, 800, 70, "plante")
-	,Item("palm", 850, 1200, 60, "plante")
-	,Item("wheat", 1100, 2000, 3, "plante")
-	,Item("cookie", 30, 40, 1, "consommable")
+	objetItem = [Item("cobblestone", itemBourse("cobblestone", "vente", F), itemBourse("cobblestone", "achat", F), 4, "minerai")
+	,Item("iron", itemBourse("iron", "vente", F), itemBourse("iron", "achat", F), 10, "minerai")
+	,Item("gold", itemBourse("gold", "vente", F), itemBourse("gold", "achat", F), 20, "minerai")
+	,Item("diamond", itemBourse("diamond", "vente", F), itemBourse("diamond", "achat", F), 40, "minerai")
+	,Item("emerald", itemBourse("emerald", "vente", F), itemBourse("emerald", "achat", F), 50, "minerai")
+	,Item("ruby", itemBourse("ruby", "vente", F), itemBourse("ruby", "achat", F), 70, "minerai")
+	,Item("fish", itemBourse("fish", "vente", F), itemBourse("fish", "achat", F), 2, "poisson")
+	,Item("tropicalfish", itemBourse("tropicalfish", "vente", F), itemBourse("tropicalfish", "achat", F), 8, "poisson")
+	,Item("blowfish", itemBourse("blowfish", "vente", F), itemBourse("blowfish", "achat", F), 8, "poisson")
+	,Item("octopus", itemBourse("octopus", "vente", F), itemBourse("octopus", "achat", F), 16, "poisson")
+	,Item("seed", itemBourse("seed", "vente", F), itemBourse("seed", "achat", F), 0.5, "plante")
+	,Item("oak", itemBourse("oak", "vente", F), itemBourse("oak", "achat", F), 50, "plante")
+	,Item("spruce", itemBourse("spruce", "vente", F), itemBourse("spruce", "achat", F), 70, "plante")
+	,Item("palm", itemBourse("palm", "vente", F), itemBourse("palm", "achat", F), 60, "plante")
+	,Item("wheat", itemBourse("wheat", "vente", F), itemBourse("wheat", "achat", F), 3, "plante")
+	,Item("cookie", itemBourse("cookie", "vente", F), itemBourse("cookie", "achat", F), 1, "consommable")
 	,Item("grapes", itemBourse("grapes", "vente", F), itemBourse("grapes", "achat", F), 1, "consommable")
-	,Item("wine_glass", 120, 210, 2, "consommable")
-	,Item("pumpkin", 50, 125, 5, "halloween")
-	,Item("pumpkinpie", 1000, 1200, 5, "halloween")
-	,Item("candy", 1, 2, 1, "halloween")
-	,Item("lollipop", 5, 12, 2, "halloween")
-	,Item("backpack", 1, 5000, -200, "special")
-	,Item("fishhook", 22, 46, 1, "special")]
+	,Item("wine_glass", itemBourse("wine_glass", "vente", F), itemBourse("wine_glass", "achat", F), 2, "consommable")
+	,Item("pumpkin", itemBourse("pumpkin", "vente", F), itemBourse("pumpkin", "achat", F), 5, "halloween")
+	,Item("pumpkinpie", itemBourse("pumpkinpie", "vente", F), itemBourse("pumpkinpie", "achat", F), 5, "halloween")
+	,Item("candy", itemBourse("candy", "vente", F), itemBourse("candy", "achat", F), 1, "halloween")
+	,Item("lollipop", itemBourse("lollipop", "vente", F), itemBourse("lollipop", "achat", F), 2, "halloween")
+	,Item("backpack", itemBourse("backpack", "vente", F), itemBourse("backpack", "achat", F), -200, "special")
+	,Item("fishhook", itemBourse("fishhook", "vente", F), itemBourse("fishhook", "achat", F), 1, "special")]
 
 	#========== Outils ==========
 	class Outil:
@@ -209,13 +206,13 @@ def loadItem(F = None):
 			self.type = type
 
 	global objetOutil
-	objetOutil = [Outil("pickaxe", 5, 20, 15, 75, "")
-	,Outil("iron_pickaxe", 80, 300, 70, 200, "forge")
-	,Outil("diamond_pickaxe", 500, 1800, 150, 450, "forge")
-	,Outil("fishingrod", 5, 15, 25, 100, "")
-	,Outil("sword", 50, 200, 55, 25, "forge")
-	,Outil("planting_plan", 200, itemBourse("planting_plan", "achat", F), 3, 3, "")
-	,Outil("bank_upgrade", 0, 10000, 10000, None, "bank")]
+	objetOutil = [Outil("pickaxe", itemBourse("pickaxe", "vente", F), itemBourse("pickaxe", "achat", F), 15, 75, "")
+	,Outil("iron_pickaxe", itemBourse("iron_pickaxe", "vente", F), itemBourse("iron_pickaxe", "achat", F), 70, 200, "forge")
+	,Outil("diamond_pickaxe", itemBourse("diamond_pickaxe", "vente", F), itemBourse("diamond_pickaxe", "achat", F), 150, 450, "forge")
+	,Outil("fishingrod", itemBourse("fishingrod", "vente", F), itemBourse("fishingrod", "achat", F), 25, 100, "")
+	,Outil("sword", itemBourse("sword", "vente", F), itemBourse("sword", "achat", F), 55, 25, "forge")
+	,Outil("planting_plan", itemBourse("planting_plan", "vente", F), itemBourse("planting_plan", "achat", F), 3, 3, "")
+	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente", F), itemBourse("bank_upgrade", "achat", F), 10000, None, "bank")]
 
 
 	#========== Aptitudes ==========

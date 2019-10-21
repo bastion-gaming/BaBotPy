@@ -466,7 +466,7 @@ class GemsBase(commands.Cog):
 						d_marketItems += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
-					d_marketBox += "<:gem_lootbox:630698430313922580>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max)
+					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji(c.nom))
 
 				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
@@ -482,9 +482,21 @@ class GemsBase(commands.Cog):
 					for c in GF.objetItem:
 						if c.type == "halloween":
 							if c.nom == "pumpkin" or c.nom == "pumpkinpie":
-								d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
+								d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+								if pourcentageV != 0:
+									d_marketItems += "_{}%_ ".format(pourcentageV)
+								d_marketItems += "| Achat **{}** ".format(c.achat)
+								if pourcentageA != 0:
+									d_marketItems += "_{}%_ ".format(pourcentageA)
+								d_marketItems += "| Poids **{}**\n".format(c.poids)
 							else:
-								d_marketItems += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+								d_marketItems += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
+								if pourcentageV != 0:
+									d_marketItems += "_{}%_ ".format(pourcentageV)
+								d_marketItems += "| Achat **{}** ".format(c.achat)
+								if pourcentageA != 0:
+									d_marketItems += "_{}%_ ".format(pourcentageA)
+								d_marketItems += "| Poids **{}**\n".format(c.poids)
 					msg.add_field(name="Halloween", value=d_marketItems, inline=False)
 
 				msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
@@ -515,74 +527,6 @@ class GemsBase(commands.Cog):
 			else:
 				msg = "Ce marché n'existe pas"
 				await ctx.channel.send(msg)
-		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
-			await ctx.channel.send(msg)
-
-
-
-	@commands.command(pass_context=True)
-	async def bourse(self, ctx):
-		"""Affiche la bourse de Bastion"""
-		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "bourse", GF.dbGems):
-			ComTime = DB.valueAt(wel.idGetGems, "com_time", "DB/bastionDB")
-			if "bourse" in ComTime:
-				time = ComTime["bourse"]
-			time = time - (t.time()-GF.couldown_1h)
-			timeH = int(time / 60 / 60)
-			time = time - timeH * 3600
-			timeM = int(time / 60)
-			timeS = int(time - timeM * 60)
-			d_bourse="Bienvenue sur la bourse de Bastion!\nActualisation de la bourse dans `{}h {}m {}s`".format(timeH,timeM,timeS)
-
-			msg = discord.Embed(title = "La bourse",color= 2461129, description = d_bourse)
-			d_bourse=""
-			d_bourseItems = ""
-			d_bourseItemsMinerai = ""
-			d_bourseItemsPoisson = ""
-			d_bourseItemsPlante = ""
-			d_bourseItemsConsommable = ""
-
-			for x in GF.objetItem:
-				prix = GF.get_price(x.nom)
-				for y in GI.PrixItem:
-					if y.nom == x.nom:
-						prixbase = y.vente
-				pourcentage = ((prix*100)/prixbase)-100
-				if x.type == "minerai":
-					d_bourseItemsMinerai += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
-				elif x.type == "poisson":
-					d_bourseItemsPoisson += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
-				elif x.type == "plante":
-					d_bourseItemsPlante += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
-				elif x.type == "consommable":
-					d_bourseItemsConsommable += "<:{0}:`{0}: Valeur actuel: {1}`:gem: | {2}%\n".format(x.nom, prix, pourcentage)
-				elif x.type != "halloween":
-					d_bourseItems += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
-
-			# d_bourse+="<:gem_iron:{}>`iron: 9 ▶ 11`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("iron"),GF.get_price("iron"))
-			# d_bourse+="<:gem_gold:{}>`gold: 45 ▶ 56`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("gold"),GF.get_price("gold"))
-			# d_bourse+="<:gem_diamond:{}>`diamond: 98 ▶ 120`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("diamond"),GF.get_price("diamond"))
-			# d_bourse+="<:gem_emerald:{}>`emerald: 148 ▶ 175`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("emerald"),GF.get_price("emerald"))
-			# d_bourse+="<:gem_ruby:{}>`ruby: 1800 ▶ 2500`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("ruby"),GF.get_price("ruby"))
-			# d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("tropicalfish"),GF.get_price("tropicalfish"))
-			# d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("blowfish"),GF.get_price("blowfish"))
-			# d_bourse+="<:gem_octopus:{}>`octopus: 40 ▶ 65`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("octopus"),GF.get_price("octopus"))
-			# d_bourse+=":grapes:`grapes: 10 ▶ 20`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes"))
-			msg.add_field(name="Items", value=d_bourseItems, inline=False)
-			msg.add_field(name="Minerais", value=d_bourseItemsMinerai, inline=False)
-			msg.add_field(name="Poissons", value=d_bourseItemsPoisson, inline=False)
-			msg.add_field(name="Plantes", value=d_bourseItemsPlante, inline=False)
-			msg.add_field(name="Consommables", value=d_bourseItemsConsommable, inline=False)
-
-			d_bourse="<:gem_planting_plan:{}>`planting_plan: 900 ▶ 1150`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("planting_plan"),GF.get_price("planting_plan", "achat"))
-			d_bourse+=":grapes:`grapes: 20 ▶ 30`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes", "achat"))
-			msg.add_field(name="Achat", value=d_bourse, inline=False)
-			DB.updateComTime(ID, "bourse", GF.dbGems)
-			await ctx.channel.send(embed = msg)
-			# Message de réussite dans la console
-			print("Gems >> {} a afficher le marché".format(ctx.author.name))
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
