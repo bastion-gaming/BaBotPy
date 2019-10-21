@@ -54,24 +54,25 @@ def checkDB_Gems():
 	print('------\n')
 
 
-# variables
+# Array
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
 ,"Tu as volé une carotte ! Prend tes"
 , "Tu voles un bonbon ! Prend tes"
 , "Tu as gangé au loto ! Prends tes"
 , "J'ai plus d'idée prends ça:"]
-# 4 phrases
+
 message_gamble = ["Tu as remporté le pari ! Tu obtiens"
 ,"Une grande victoire pour toi ! Tu gagnes"
 ,"Bravo prends"
 , "Heu...."
 ,"Pourquoi jouer à Fortnite quand tu peux gamble! Prends tes"]
-# 4 phrases
+
 # se sont les phrases prononcé par le bot pour plus de diversité
 
 # Taille max de l'Inventaire
-invMax = 10000
+invMax = 15000
+
 
 global globalguild
 
@@ -79,37 +80,27 @@ def setglobalguild(guild):
 	global globalguild
 	globalguild = guild
 
-# global globalvar
-# globalvar = -1
-#
-# def incrementebourse():
-# 	"""Increment de compteur horaire de la bourse """
-# 	global globalvar
-# 	if globalvar == 0:
-# 		loadItem()
-# 		globalvar += 1
-# 		print("\nGems >> Mise à jour de la bourse")
-# 	elif globalvar >= 120:
-# 		globalvar = 0
-# 	else:
-# 		globalvar += 1
-
 
 def itemBourse(item, type, first = None):
 	"""Version 2.0 | Attribue les prix de la bourse """
 	if type == "vente":
 		for x in GI.PrixItem:
+			for y in GI.exception:
+				if item == y:
+					return x.vente
 			if item == x.nom:
-				if first == True or x.type == "special":
-					Prix = x.vente
-					return Prix
+				if first == True:
+					return x.vente
 				else:
 					for c in objetItem:
 						if c.nom == x.nom:
 							pnow = c.vente
 		for x in GI.PrixOutil:
+			for y in GI.exception:
+				if item == y:
+					return x.vente
 			if item == x.nom:
-				if first == True or x.type == "bank" or x.type == "special":
+				if first == True:
 					return x.vente
 				else:
 					for c in objetOutil:
@@ -117,21 +108,28 @@ def itemBourse(item, type, first = None):
 							pnow = c.vente
 	elif type == "achat":
 		for x in GI.PrixItem:
+			for y in GI.exception:
+				if item == y:
+					return x.achat
 			if item == x.nom:
-				if first == True or x.type == "special":
+				if first == True:
 					return x.achat
 				else:
 					for c in objetItem:
 						if c.nom == x.nom:
 							pnow = c.achat
 		for x in GI.PrixOutil:
+			for y in GI.exception:
+				if item == y:
+					return x.achat
 			if item == x.nom:
-				if first == True or x.type == "bank" or x.type == "special":
+				if first == True or x.nom == "bank_upgrade":
 					return x.achat
 				else:
 					for c in objetOutil:
 						if c.nom == x.nom:
 							pnow = c.achat
+							
 	DcrackB = r.randint(1, 1000)
 	if DcrackB == 1:
 		if pnow > 1000:
@@ -150,8 +148,8 @@ def itemBourse(item, type, first = None):
 			Prix = pnow + ((pnow*pourcentage)//100)
 		else:
 			Prix = pnow
-		if Prix <= 1:
-			Prix = 1
+		if Prix <= 10:
+			Prix = 10
 	return Prix
 
 

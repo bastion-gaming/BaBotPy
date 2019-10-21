@@ -76,9 +76,6 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
-	# GF.checkDB_Session()
-	# GF.checkDB_Gems()
-	# GF.loadItem(True)
 
 ####################### Commande help.py #######################
 
@@ -159,19 +156,6 @@ client.load_extension('core.level')
 
 client.load_extension('core.gestion')
 
-####################### Commande gems.py #######################
-
-# client.load_extension('gems.gemsFonctions')
-#
-# client.load_extension('gems.gemsBase')
-#
-# client.load_extension('gems.gemsPlay')
-
-# client.load_extension('gems.gemsFight')
-
-# if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
-# 	client.load_extension('gems.gemsEvent')
-
 ###################### Commande notification.py ################
 
 client.load_extension('multimedia.notification')
@@ -200,7 +184,6 @@ async def looped_task():
 		else:
 			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(PREFIX))
 			await client.change_presence(status=discord.Status.online, activity=activity)
-		# GF.incrementebourse()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
 			await asyncio.sleep(2)

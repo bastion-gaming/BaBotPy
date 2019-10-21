@@ -370,7 +370,7 @@ class GemsBase(commands.Cog):
 				ComTime = DB.valueAt(wel.idGetGems, "com_time", "DB/bastionDB")
 				if "bourse" in ComTime:
 					time = ComTime["bourse"]
-				time = time - (t.time()-GF.couldown_1h)
+				time = time - (t.time()-GF.couldown_12h)
 				timeH = int(time / 60 / 60)
 				time = time - timeH * 3600
 				timeM = int(time / 60)
@@ -466,7 +466,7 @@ class GemsBase(commands.Cog):
 						d_marketItems += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
-					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji(c.nom))
+					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
 
 				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
