@@ -3,7 +3,8 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
-from gems import gemsFonctions as GF
+from core import welcome as wel
+from gems import gemsFonctions as GF, gemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -366,6 +367,15 @@ class GemsBase(commands.Cog):
 		if DB.spam(ID,GF.couldown_c, "market", GF.dbGems):
 			if fct == None:
 				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
+				ComTime = DB.valueAt(wel.idGetGems, "com_time", "DB/bastionDB")
+				if "bourse" in ComTime:
+					time = ComTime["bourse"]
+				time = time - (t.time()-GF.couldown_1h)
+				timeH = int(time / 60 / 60)
+				time = time - timeH * 3600
+				timeM = int(time / 60)
+				timeS = int(time - timeM * 60)
+				d_market+="Actualisation de la bourse dans `{}h {}m {}s`\n".format(timeH,timeM,timeS)
 				d_marketOutils = ""
 				d_marketItems = ""
 				d_marketItemsMinerai = ""
@@ -375,28 +385,85 @@ class GemsBase(commands.Cog):
 				d_marketBox = ""
 
 				for c in GF.objetOutil:
+					for y in GI.PrixOutil:
+						if y.nom == c.nom:
+							if y.vente != 0:
+								pourcentageV = ((c.vente*100)//y.vente)-100
+							else:
+								pourcentageV = 0
+							if y.achat != 0:
+								pourcentageA = ((c.achat*100)//y.achat)-100
+							else:
+								pourcentageA = 0
+
 					d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,GF.get_idmoji(c.nom))
 					if c.vente != 0:
-						d_marketOutils += "Vente **{}** | ".format(c.vente)
+						d_marketOutils += "Vente **{}** ".format(c.vente)
+						if pourcentageV != 0:
+							d_marketOutils += "_{}%_ | ".format(pourcentageV)
+						else:
+							d_marketOutils += "| "
 					if c.nom == "bank_upgrade":
 						d_marketOutils += "Achat **Le plafond du compte épargne** "
 					else:
 						d_marketOutils += "Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketOutils += "_{}%_ ".format(pourcentageA)
 					if c.durabilite != None:
 						d_marketOutils += "| Durabilité: **{}** ".format(c.durabilite)
 					d_marketOutils += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetItem :
+					for y in GI.PrixItem:
+						if y.nom == c.nom:
+							if y.vente != 0:
+								pourcentageV = ((c.vente*100)//y.vente)-100
+							else:
+								pourcentageV = 0
+							if y.achat != 0:
+								pourcentageA = ((c.achat*100)//y.achat)-100
+							else:
+								pourcentageA = 0
 					if c.type == "minerai":
-						d_marketItemsMinerai += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
+						d_marketItemsMinerai += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+						if pourcentageV != 0:
+							d_marketItemsMinerai += "_{}%_ ".format(pourcentageV)
+						d_marketItemsMinerai += "| Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketItemsMinerai += "_{}%_ ".format(pourcentageA)
+						d_marketItemsMinerai += "| Poids **{}**\n".format(c.poids)
 					elif c.type == "poisson":
-						d_marketItemsPoisson += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
+						d_marketItemsPoisson += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+						if pourcentageV != 0:
+							d_marketItemsPoisson += "_{}%_ ".format(pourcentageV)
+						d_marketItemsPoisson += "| Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketItemsPoisson += "_{}%_ ".format(pourcentageA)
+						d_marketItemsPoisson += "| Poids **{}**\n".format(c.poids)
 					elif c.type == "plante":
-						d_marketItemsPlante += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
+						d_marketItemsPlante += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+						if pourcentageV != 0:
+							d_marketItemsPlante += "_{}%_ ".format(pourcentageV)
+						d_marketItemsPlante += "| Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketItemsPlante += "_{}%_ ".format(pourcentageA)
+						d_marketItemsPlante += "| Poids **{}**\n".format(c.poids)
 					elif c.type == "consommable":
-						d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids)
+						d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
+						if pourcentageV != 0:
+							d_marketItemsConsommable += "_{}%_ ".format(pourcentageV)
+						d_marketItemsConsommable += "| Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketItemsConsommable += "_{}%_ ".format(pourcentageA)
+						d_marketItemsConsommable += "| Poids **{}**\n".format(c.poids)
 					elif c.type != "halloween":
-						d_marketItems += "<:gem_{0}:{4}>`{0}`: Vente **{1}** | Achat **{2}** | Poids **{3}**\n".format(c.nom,c.vente,c.achat,c.poids,GF.get_idmoji(c.nom))
+						d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+						if pourcentageV != 0:
+							d_marketItems += "_{}%_ ".format(pourcentageV)
+						d_marketItems += "| Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketItems += "_{}%_ ".format(pourcentageA)
+						d_marketItems += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
 					d_marketBox += "<:gem_lootbox:630698430313922580>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max)
@@ -459,26 +526,55 @@ class GemsBase(commands.Cog):
 		"""Affiche la bourse de Bastion"""
 		ID = ctx.author.id
 		if DB.spam(ID,GF.couldown_c, "bourse", GF.dbGems):
-			time = 120 - GF.globalvar
-			timeM = time // 2
-			timeS = time % 2
-			d_bourse="Bienvenue sur la bourse de Bastion!\nActualisation de la bourse dans **{} minutes".format(timeM)
-			if timeS == 1:
-				d_bourse += " 30**"
-			else:
-				d_bourse += "**"
+			ComTime = DB.valueAt(wel.idGetGems, "com_time", "DB/bastionDB")
+			if "bourse" in ComTime:
+				time = ComTime["bourse"]
+			time = time - (t.time()-GF.couldown_1h)
+			timeH = int(time / 60 / 60)
+			time = time - timeH * 3600
+			timeM = int(time / 60)
+			timeS = int(time - timeM * 60)
+			d_bourse="Bienvenue sur la bourse de Bastion!\nActualisation de la bourse dans `{}h {}m {}s`".format(timeH,timeM,timeS)
+
 			msg = discord.Embed(title = "La bourse",color= 2461129, description = d_bourse)
 			d_bourse=""
-			d_bourse+="<:gem_iron:{}>`iron: 9 ▶ 11`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("iron"),GF.get_price("iron"))
-			d_bourse+="<:gem_gold:{}>`gold: 45 ▶ 56`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("gold"),GF.get_price("gold"))
-			d_bourse+="<:gem_diamond:{}>`diamond: 98 ▶ 120`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("diamond"),GF.get_price("diamond"))
-			d_bourse+="<:gem_emerald:{}>`emerald: 148 ▶ 175`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("emerald"),GF.get_price("emerald"))
-			d_bourse+="<:gem_ruby:{}>`ruby: 1800 ▶ 2500`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("ruby"),GF.get_price("ruby"))
-			d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("tropicalfish"),GF.get_price("tropicalfish"))
-			d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("blowfish"),GF.get_price("blowfish"))
-			d_bourse+="<:gem_octopus:{}>`octopus: 40 ▶ 65`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("octopus"),GF.get_price("octopus"))
-			d_bourse+=":grapes:`grapes: 10 ▶ 20`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes"))
-			msg.add_field(name="Vente", value=d_bourse, inline=False)
+			d_bourseItems = ""
+			d_bourseItemsMinerai = ""
+			d_bourseItemsPoisson = ""
+			d_bourseItemsPlante = ""
+			d_bourseItemsConsommable = ""
+
+			for x in GF.objetItem:
+				prix = GF.get_price(x.nom)
+				for y in GI.PrixItem:
+					if y.nom == x.nom:
+						prixbase = y.vente
+				pourcentage = ((prix*100)/prixbase)-100
+				if x.type == "minerai":
+					d_bourseItemsMinerai += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
+				elif x.type == "poisson":
+					d_bourseItemsPoisson += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
+				elif x.type == "plante":
+					d_bourseItemsPlante += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
+				elif x.type == "consommable":
+					d_bourseItemsConsommable += "<:{0}:`{0}: Valeur actuel: {1}`:gem: | {2}%\n".format(x.nom, prix, pourcentage)
+				elif x.type != "halloween":
+					d_bourseItems += "<:gem_{0}:{1}>`{0}: Valeur actuel: {2}`:gem: | {3}%\n".format(x.nom, GF.get_idmoji(x.nom), prix, pourcentage)
+
+			# d_bourse+="<:gem_iron:{}>`iron: 9 ▶ 11`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("iron"),GF.get_price("iron"))
+			# d_bourse+="<:gem_gold:{}>`gold: 45 ▶ 56`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("gold"),GF.get_price("gold"))
+			# d_bourse+="<:gem_diamond:{}>`diamond: 98 ▶ 120`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("diamond"),GF.get_price("diamond"))
+			# d_bourse+="<:gem_emerald:{}>`emerald: 148 ▶ 175`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("emerald"),GF.get_price("emerald"))
+			# d_bourse+="<:gem_ruby:{}>`ruby: 1800 ▶ 2500`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("ruby"),GF.get_price("ruby"))
+			# d_bourse+="<:gem_tropicalfish:{}>`tropicalfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("tropicalfish"),GF.get_price("tropicalfish"))
+			# d_bourse+="<:gem_blowfish:{}>`blowfish: 25 ▶ 36`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("blowfish"),GF.get_price("blowfish"))
+			# d_bourse+="<:gem_octopus:{}>`octopus: 40 ▶ 65`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("octopus"),GF.get_price("octopus"))
+			# d_bourse+=":grapes:`grapes: 10 ▶ 20`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes"))
+			msg.add_field(name="Items", value=d_bourseItems, inline=False)
+			msg.add_field(name="Minerais", value=d_bourseItemsMinerai, inline=False)
+			msg.add_field(name="Poissons", value=d_bourseItemsPoisson, inline=False)
+			msg.add_field(name="Plantes", value=d_bourseItemsPlante, inline=False)
+			msg.add_field(name="Consommables", value=d_bourseItemsConsommable, inline=False)
 
 			d_bourse="<:gem_planting_plan:{}>`planting_plan: 900 ▶ 1150`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_idmoji("planting_plan"),GF.get_price("planting_plan", "achat"))
 			d_bourse+=":grapes:`grapes: 20 ▶ 30`:gem:` | Valeur actuel: {}`:gem:\n".format(GF.get_price("grapes", "achat"))

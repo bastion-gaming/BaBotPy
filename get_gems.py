@@ -34,11 +34,12 @@ client.remove_command("help")
 async def on_ready():
 	print('Connecté avec le nom : {0.user}'.format(client))
 	print('PREFIX = '+str(DEFAUT_PREFIX))
+	GF.setglobalguild(client.get_guild(wel.idServBot))
 	print('\nBastionBot '+VERSION)
 	print('------\n')
-	GF.checkDB_Session()
-	GF.setglobalguild(client.get_guild(wel.idServBot))
-	GF.loadItem()
+	GF.checkDB_Gems()
+	# GF.checkDB_Session()
+	GF.loadItem(True)
 
 
 @client.event
@@ -62,7 +63,7 @@ client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
 
-client.load_extension('gems.gemsFight')
+# client.load_extension('gems.gemsFight')
 
 if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
 	client.load_extension('gems.gemsEvent')
@@ -79,7 +80,14 @@ async def looped_task():
 		else:
 			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(DEFAUT_PREFIX))
 			await client.change_presence(status=discord.Status.online, activity=activity)
-		GF.incrementebourse()
+		# GF.incrementebourse()
+		if counter == 0:
+			GF.setglobalguild(client.get_guild(wel.idServBot))
+			GF.loadItem(True)
+		else:
+			if DB.spam(wel.idGetGems,GF.couldown_c, "bourse", "DB/bastionDB"):
+				GF.loadItem()
+		print(counter)
 		counter += 1
 		await asyncio.sleep(30)
 #---------------------------------------------------------------

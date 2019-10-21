@@ -4,6 +4,7 @@ import time as t
 import datetime as dt
 from DB import DB
 from core import welcome as wel
+from gems import gemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
@@ -53,7 +54,7 @@ def checkDB_Gems():
 	print('------\n')
 
 
-
+# variables
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
 ,"Tu as volé une carotte ! Prend tes"
@@ -78,60 +79,88 @@ def setglobalguild(guild):
 	global globalguild
 	globalguild = guild
 
-global globalvar
-globalvar = -1
+# global globalvar
+# globalvar = -1
+#
+# def incrementebourse():
+# 	"""Increment de compteur horaire de la bourse """
+# 	global globalvar
+# 	if globalvar == 0:
+# 		loadItem()
+# 		globalvar += 1
+# 		print("\nGems >> Mise à jour de la bourse")
+# 	elif globalvar >= 120:
+# 		globalvar = 0
+# 	else:
+# 		globalvar += 1
 
-def incrementebourse():
-	"""Increment de compteur horaire de la bourse """
-	global globalvar
-	if globalvar == 0:
-		loadItem()
-		globalvar += 1
-		print("\nGems >> Mise à jour de la bourse")
-	elif globalvar >= 120:
-		globalvar = 0
-	else:
-		globalvar += 1
 
-
-
-def itemBourse(item, type):
-	"""Attribue les prix de la bourse """
+def itemBourse(item, type, first = None):
+	"""Version 2.0 | Attribue les prix de la bourse """
 	if type == "vente":
-		if item == "iron":
-			Prix = r.randint(9,11)
-		elif item == "gold":
-			Prix = r.randint(45, 56)
-		elif item == "diamond":
-			Prix = r.randint(98, 120)
-		elif item == "emerald":
-			Prix = r.randint(148, 175)
-		elif item == "ruby":
-			Prix = r.randint(1800, 2500)
-		elif item == "tropicalfish":
-			Prix = r.randint(25, 36)
-		elif item == "blowfish":
-			Prix = r.randint(25, 36)
-		elif item == "octopus":
-			Prix = r.randint(40,65)
-		elif item == "grapes":
-			Prix = r.randint(10,20)
-		else:
-			Prix = 404
-		return Prix
-
+		for x in GI.PrixItem:
+			if item == x.nom:
+				if first == True:
+					Prix = x.vente
+					return Prix
+				else:
+					for c in objetItem:
+						if c.nom == x.nom:
+							pnow = c.vente
+		for x in GI.PrixOutil:
+			if item == x.nom:
+				if first == True:
+					Prix = x.vente
+					return Prix
+				else:
+					for c in objetOutil:
+						if c.nom == x.nom:
+							pnow = c.vente
 	elif type == "achat":
-		if item == "grapes":
-			Prix = r.randint(20,30)
-		elif item == "planting_plan":
-			Prix = r.randint(900, 1150)
+		for x in GI.PrixItem:
+			if item == x.nom:
+				if first == True:
+					Prix = x.achat
+					return Prix
+				else:
+					for c in objetItem:
+						if c.nom == x.nom:
+							pnow = c.achat
+		for x in GI.PrixOutil:
+			if item == x.nom:
+				if first == True:
+					Prix = x.achat
+					return Prix
+				else:
+					for c in objetOutil:
+						if c.nom == x.nom:
+							pnow = c.achat
+	DcrackB = r.randint(1, 1000)
+	if DcrackB == 1:
+		if pnow > 1000:
+			Prix = pnow - 1000
 		else:
-			Prix = 404
-		return Prix
+			Prix = 1
+	elif DcrackB == 1000:
+		Prix = pnow + 1000
+	else:
+		D21 = r.randint(0,20)
+		if D21 > 10:
+			pourcentage = D21 - 10
+			Prix = pnow + ((pnow*pourcentage)//100)
+		elif D21 < 10:
+			pourcentage = -1*(D21 + 1)
+			Prix = pnow + ((pnow*pourcentage)//100)
+		else:
+			Prix = pnow
+		if Prix < 1:
+			Prix = 1
+	return Prix
 
 
 #Fonction d'actualisation/initialisation des items
-def loadItem():
+def loadItem(F = None):
+	DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
 	#========== Items ==========
 	class Item:
 
@@ -144,22 +173,22 @@ def loadItem():
 
 	global objetItem
 	objetItem = [Item("cobblestone", 1, 3, 4, "minerai")
-	,Item("iron", itemBourse("iron", "vente"), 30, 10, "minerai")
-	,Item("gold", itemBourse("gold", "vente"), 100, 20, "minerai")
-	,Item("diamond", itemBourse("diamond", "vente"), 200, 40, "minerai")
-	,Item("emerald", itemBourse("emerald", "vente"), 320, 50, "minerai")
-	,Item("ruby", itemBourse("ruby", "vente"), 3000, 70, "minerai")
+	,Item("iron", itemBourse("iron", "vente", F), 30, 10, "minerai")
+	,Item("gold", itemBourse("gold", "vente", F), 100, 20, "minerai")
+	,Item("diamond", itemBourse("diamond", "vente", F), 200, 40, "minerai")
+	,Item("emerald", itemBourse("emerald", "vente", F), 320, 50, "minerai")
+	,Item("ruby", itemBourse("ruby", "vente", F), 3000, 70, "minerai")
 	,Item("fish", 2, 5, 2, "poisson")
-	,Item("tropicalfish", itemBourse("tropicalfish", "vente"), 60, 8, "poisson")
-	,Item("blowfish", itemBourse("blowfish", "vente"), 60, 8, "poisson")
-	,Item("octopus", itemBourse("octopus", "vente"), 90, 16, "poisson")
+	,Item("tropicalfish", itemBourse("tropicalfish", "vente", F), 60, 8, "poisson")
+	,Item("blowfish", itemBourse("blowfish", "vente", F), 60, 8, "poisson")
+	,Item("octopus", itemBourse("octopus", "vente", F), 90, 16, "poisson")
 	,Item("seed", 1, 2, 0.5, "plante")
 	,Item("oak", 400, 500, 50, "plante")
 	,Item("spruce", 600, 800, 70, "plante")
 	,Item("palm", 850, 1200, 60, "plante")
 	,Item("wheat", 1100, 2000, 3, "plante")
 	,Item("cookie", 30, 40, 1, "consommable")
-	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "consommable")
+	,Item("grapes", itemBourse("grapes", "vente", F), itemBourse("grapes", "achat", F), 1, "consommable")
 	,Item("wine_glass", 120, 210, 2, "consommable")
 	,Item("pumpkin", 50, 125, 5, "halloween")
 	,Item("pumpkinpie", 1000, 1200, 5, "halloween")
@@ -185,7 +214,7 @@ def loadItem():
 	,Outil("diamond_pickaxe", 500, 1800, 150, 450, "forge")
 	,Outil("fishingrod", 5, 15, 25, 100, "")
 	,Outil("sword", 50, 200, 55, 25, "forge")
-	,Outil("planting_plan", 100, itemBourse("planting_plan", "achat"), 3, 3, "")
+	,Outil("planting_plan", 200, itemBourse("planting_plan", "achat", F), 3, 3, "")
 	,Outil("bank_upgrade", 0, 10000, 10000, None, "bank")]
 
 
