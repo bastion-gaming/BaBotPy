@@ -1,6 +1,7 @@
 import random as r
 import datetime as dt
 from DB import DB
+from tinydb import TinyDB
 from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
@@ -249,6 +250,7 @@ class Stats(commands.Cog):
 			print('removed old graphe file')
 		total = DB.countTotalMsg()
 		a = []
+		db = TinyDB("DB/{}.json".format(DB.DB_NOM))
 		for item in DB.db:
 			a.append([item["nbMsg"],item["ID"]])
 		a.sort(reverse = True)
@@ -291,6 +293,7 @@ class Stats(commands.Cog):
 			print('removed old graphe file')
 		total = DB.countTotalGems(GF.dbGems)
 		a = []
+		db = TinyDB("gems/dbGems.json")
 		for item in DB.db:
 			a.append([item["gems"],item["ID"]])
 		a.sort(reverse = True)
