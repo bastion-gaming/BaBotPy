@@ -8,17 +8,17 @@ class Item:
 		self.vente = vente
 		self.achat = achat
 
-PrixItem = [Item("cobblestone", 10, 30)
-,Item("iron", 50, 100)
-,Item("gold", 80, 200)
-,Item("diamond", 150, 350)
+PrixItem = [Item("cobblestone", 30, 50)
+,Item("iron", 70, 100)
+,Item("gold", 110, 200)
+,Item("diamond", 190, 350)
 ,Item("emerald", 320, 555)
 ,Item("ruby", 2000, 3000)
 ,Item("fish", 20, 50)
 ,Item("tropicalfish", 55, 120)
 ,Item("blowfish", 65, 140)
 ,Item("octopus", 135, 222)
-,Item("seed", 10, 20)
+,Item("seed", 20, 30)
 ,Item("oak", 500, 600)
 ,Item("spruce", 700, 900)
 ,Item("palm", 1050, 1300)

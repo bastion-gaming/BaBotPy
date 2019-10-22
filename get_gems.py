@@ -85,7 +85,7 @@ async def looped_task():
 			GF.setglobalguild(client.get_guild(wel.idServBot))
 			GF.loadItem(True)
 		else:
-			if DB.spam(wel.idGetGems,GF.couldown_c, "bourse", "DB/bastionDB"):
+			if DB.spam(wel.idGetGems,GF.couldown_12h, "bourse", "DB/bastionDB"):
 				GF.loadItem()
 		print(counter)
 		counter += 1
