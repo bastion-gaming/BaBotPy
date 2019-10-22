@@ -57,7 +57,7 @@ def memberremove(member):
 		DB.updateField(ID, "lvl", 0)
 		DB.updateField(ID, "xp", 0)
 	else:
-		BotGems = DB.valueAt(idGetGems, "gems")
+		BotGems = DB.valueAt(idGetGems, "gems", GF.dbGems)
 		idBot = idGetGems
 		pourcentage = 0.02
 	transfert = gems * pourcentage
