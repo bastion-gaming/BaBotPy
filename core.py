@@ -173,6 +173,8 @@ client.load_extension('gems.gemsPlay')
 
 # client.load_extension('gems.gemsFight')
 
+client.load_extension('gems.gemsEvent')
+
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 # Task runs all the time, important to keep the asyncio.sleep at the end to avoid
@@ -203,9 +205,6 @@ async def looped_task():
 		else:
 			if DB.spam(wel.idBaBot,GF.couldown_12h, "bourse", "DB/bastionDB"):
 				GF.loadItem()
-		
-		if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
-			client.load_extension('gems.gemsEvent')
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
 			await asyncio.sleep(2)
