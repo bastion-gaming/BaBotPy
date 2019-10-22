@@ -40,7 +40,7 @@ def splitDB(source, destination):
 			DB.updateField(ID, "banque", DB.valueAt(ID, "banque", source), destination)
 			DB.updateField(ID, "hothouse", DB.valueAt(ID, "hothouse", source), destination)
 			DB.updateField(ID, "cooked", DB.valueAt(ID, "cooked", source), destination)
-			DB.updateField(ID, "capability", DB.valueAt(ID, "capability", source), destination)
+			#DB.updateField(ID, "capability", DB.valueAt(ID, "capability", source), destination)
 
 		i += 1
 	return True
