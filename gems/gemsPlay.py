@@ -162,7 +162,7 @@ class GemsPlay(commands.Cog):
 					if soldeNew > soldeMax:
 						soldeMove = soldeNew - soldeMax
 						nbgm = -1 * soldeMove
-						DB.addGems(ID, int(soldeMove), GF.dbGems)
+						DB.addGems(ID, int(soldeMove))
 						DB.add(ID, "banque", "solde", int(nbgm), GF.dbGems)
 						msg += "Plafond de {} :gem: du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
 
