@@ -677,7 +677,7 @@ class GemsPlay(commands.Cog):
 						msgLB = "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 						await ctx.channel.send(msgLB)
 			elif fct == "plant":
-				await ctx.chennel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
+				await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
 				return 404
 				if arg != None:
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg))) == 0:
