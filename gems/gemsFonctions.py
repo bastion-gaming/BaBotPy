@@ -85,10 +85,10 @@ def itemBourse(item, type, first = None):
 	"""Version 2.0 | Attribue les prix de la bourse """
 	if type == "vente":
 		for x in GI.PrixItem:
-			for y in GI.exception:
-				if item == y:
-					return x.vente
 			if item == x.nom:
+				for y in GI.exception:
+					if item == y:
+						return x.vente
 				if first == True:
 					return x.vente
 				else:
@@ -96,10 +96,10 @@ def itemBourse(item, type, first = None):
 						if c.nom == x.nom:
 							pnow = c.vente
 		for x in GI.PrixOutil:
-			for y in GI.exception:
-				if item == y:
-					return x.vente
 			if item == x.nom:
+				for y in GI.exception:
+					if item == y:
+						return x.vente
 				if first == True:
 					return x.vente
 				else:
@@ -108,10 +108,10 @@ def itemBourse(item, type, first = None):
 							pnow = c.vente
 	elif type == "achat":
 		for x in GI.PrixItem:
-			for y in GI.exception:
-				if item == y:
-					return x.achat
 			if item == x.nom:
+				for y in GI.exception:
+					if item == y:
+						return x.achat
 				if first == True:
 					return x.achat
 				else:
@@ -119,17 +119,17 @@ def itemBourse(item, type, first = None):
 						if c.nom == x.nom:
 							pnow = c.achat
 		for x in GI.PrixOutil:
-			for y in GI.exception:
-				if item == y:
-					return x.achat
 			if item == x.nom:
-				if first == True or x.nom == "bank_upgrade":
+				for y in GI.exception:
+					if item == y:
+						return x.achat
+				if first == True:
 					return x.achat
 				else:
 					for c in objetOutil:
 						if c.nom == x.nom:
 							pnow = c.achat
-							
+
 	DcrackB = r.randint(1, 1000)
 	if DcrackB == 1:
 		if pnow > 1000:

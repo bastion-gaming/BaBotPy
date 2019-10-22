@@ -676,7 +676,7 @@ class GemsPlay(commands.Cog):
 			elif fct == "plant":
 				if arg != None:
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg)), GF.dbGems) == 0:
-						if DB.nbElements(ID, "inventory", "seed") >= 1:
+						if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
 							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time(), GF.dbGems)
 							DB.add(ID, "inventory", "seed", -1, GF.dbGems)
 							desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
@@ -688,7 +688,7 @@ class GemsPlay(commands.Cog):
 				else:
 					while i <= nbplanting:
 						if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems) == 0:
-							if DB.nbElements(ID, "inventory", "seed") >= 1:
+							if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
 								DB.add(ID, "hothouse", "planting_{}".format(i), t.time(), GF.dbGems)
 								DB.add(ID, "inventory", "seed", -1, GF.dbGems)
 								desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
