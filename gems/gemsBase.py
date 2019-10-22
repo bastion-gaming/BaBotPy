@@ -367,7 +367,14 @@ class GemsBase(commands.Cog):
 		if DB.spam(ID,GF.couldown_c, "market", GF.dbGems):
 			if fct == None:
 				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
-				ComTime = DB.valueAt(wel.idGetGems, "com_time", "DB/bastionDB")
+				if ctx.guild.id != wel.idBASTION:
+					if DB.spam(wel.idGetGems, GF.couldown_12h, "bourse", "DB/bastionDB"):
+						GF.loadItem()
+					ComTime = DB.valueAt(wel.idGetGems, "com_time", "DB/bastionDB")
+				elif ctx.guild.id == wel.idBASTION:
+					if DB.spam(wel.idBaBot, GF.couldown_12h, "bourse", "DB/bastionDB"):
+						GF.loadItem()
+					ComTime = DB.valueAt(wel.idBaBot, "com_time", "DB/bastionDB")
 				if "bourse" in ComTime:
 					time = ComTime["bourse"]
 				time = time - (t.time()-GF.couldown_12h)
@@ -375,7 +382,7 @@ class GemsBase(commands.Cog):
 				time = time - timeH * 3600
 				timeM = int(time / 60)
 				timeS = int(time - timeM * 60)
-				d_market+="Actualisation de la bourse dans `{}h {}m {}s`\n".format(timeH,timeM,timeS)
+				d_market+="Actualisation de la bourse dans :clock2:`{}h {}m {}s`\n".format(timeH,timeM,timeS)
 				d_marketOutils = ""
 				d_marketItems = ""
 				d_marketItemsMinerai = ""

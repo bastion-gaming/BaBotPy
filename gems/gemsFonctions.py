@@ -182,6 +182,7 @@ def itemBourse(item, type, first = None):
 
 #Fonction d'actualisation/initialisation des items
 def loadItem(F = None):
+	DB.updateComTime(wel.idBaBot, "bourse", "DB/bastionDB")
 	DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
 	#========== Items ==========
 	class Item:
