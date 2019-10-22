@@ -133,23 +133,50 @@ def itemBourse(item, type, first = None):
 	DcrackB = r.randint(1, 1000)
 	if DcrackB == 1:
 		if pnow > 1000:
-			Prix = pnow - 1000
+			Prix = pnow - 500
 		else:
-			Prix = 1
+			Prix = 10
 	elif DcrackB == 1000:
-		Prix = pnow + 1000
+		Prix = pnow + 500
 	else:
 		D21 = r.randint(0,20)
-		if D21 > 10:
-			pourcentage = D21 - 10
-			Prix = pnow + ((pnow*pourcentage)//100)
-		elif D21 < 10:
-			pourcentage = -1*(D21 + 1)
-			Prix = pnow + ((pnow*pourcentage)//100)
+		if (pnow < 30 and type == "vente") or (pnow < 50 and type == "achat"):
+			if D21 >= 5:
+				pourcentage = D21 + 5
+				Prix = pnow + ((pnow*pourcentage)//100)
+			elif D21 < 5:
+				pourcentage = -1*(D21 + 5)
+				Prix = pnow + ((pnow*pourcentage)//100)
 		else:
-			Prix = pnow
-		if Prix <= 10:
-			Prix = 10
+			if D21 > 10:
+				pourcentage = D21 - 10
+				Prix = pnow + ((pnow*pourcentage)//100)
+			elif D21 < 10:
+				pourcentage = -1*(D21 + 1)
+				Prix = pnow + ((pnow*pourcentage)//100)
+			else:
+				Prix = pnow
+			if Prix <= 10:
+				Prix = 10
+
+	if type == "vente":
+		for x in GI.PrixItem:
+			if item == x.nom:
+				if Prix > x.achat:
+					Prix = x.achat
+		for x in GI.PrixOutil:
+			if item == x.nom:
+				if Prix > x.achat:
+					Prix = x.achat
+	elif type == "achat":
+		for x in GI.PrixItem:
+			if item == x.nom:
+				if Prix < x.vente:
+					Prix = x.vente
+		for x in GI.PrixOutil:
+			if item == x.nom:
+				if Prix < x.vente:
+					Prix = x.vente
 	return Prix
 
 

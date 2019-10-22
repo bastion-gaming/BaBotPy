@@ -30,7 +30,7 @@ PrixItem = [Item("cobblestone", 10, 30)
 ,Item("pumpkinpie", 1000, 1200)
 ,Item("candy", 1, 2)
 ,Item("lollipop", 5, 12)
-,Item("backpack", 1, 5000)
+,Item("backpack", 1, 3000)
 ,Item("fishhook", 22, 46)]
 
 #========== Outils ==========

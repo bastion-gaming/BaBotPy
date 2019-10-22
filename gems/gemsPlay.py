@@ -578,8 +578,8 @@ class GemsPlay(commands.Cog):
 		ID = ctx.author.id
 		if DB.spam(ID,GF.couldown_l, "hothouse", GF.dbGems):
 			nbplanting = DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) + 1
-			if nbplanting >= 100:
-				nbplanting = 100
+			if nbplanting >= 200:
+				nbplanting = 200
 			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantation.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
