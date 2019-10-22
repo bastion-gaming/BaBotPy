@@ -70,7 +70,7 @@ def itemBourse(item, type):
 		if item == "grapes":
 			Prix = r.randint(20,30)
 		elif item == "planting_plan":
-			Prix = r.randint(900, 1150)
+			Prix = 1000
 		else:
 			Prix = 404
 		return Prix
@@ -132,7 +132,7 @@ def loadItem():
 	,Outil("diamond_pickaxe", 500, 1800, 150, 600, 625702527135907851, "forge")
 	,Outil("fishingrod", 5, 15, 25, 150, 608748194318385173, "")
 	,Outil("sword", 50, 200, 55, 100, 625702555200258058, "forge")
-	,Outil("planting_plan", 100, itemBourse("planting_plan", "achat"), 3, 3, 631038633398501376, "")
+	,Outil("planting_plan", 1000, itemBourse("planting_plan", "achat"), 3, 3, 631038633398501376, "")
 	,Outil("bank_upgrade", 0, 10000, 10000, None ,421465024201097237, "bank")]
 
 
