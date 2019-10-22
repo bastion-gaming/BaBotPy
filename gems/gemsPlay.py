@@ -52,9 +52,7 @@ class GemsPlay(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def bank(self, ctx, ARG = None, ARG2 = None):
-		"""
-		Compte épargne
-		"""
+		"""Compte épargne"""
 		#=======================================================================
 		# Initialistation des variables générales de la fonction
 		#=======================================================================
@@ -73,7 +71,7 @@ class GemsPlay(commands.Cog):
 		# !bank bal <nom d'un joueur> permet de visualiser l'état de la banque de ce joueur
 		#=======================================================================
 		if mARG == "bal":
-			if DB.spam(ID,GF.couldown_c, "bank_bal"):
+			if DB.spam(ID,GF.couldown_c, "bank_bal", GF.dbGems):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
 					nom = ctx.guild.get_member(ID)
@@ -81,8 +79,8 @@ class GemsPlay(commands.Cog):
 					title = "Compte épargne de {}".format(ARG2)
 				else:
 					title = "Compte épargne de {}".format(ctx.author.name)
-				solde = DB.nbElements(ID, "banque", "solde")
-				soldeMax = DB.nbElements(ID, "banque", "soldeMax")
+				solde = DB.nbElements(ID, "banque", "solde", GF.dbGems)
+				soldeMax = DB.nbElements(ID, "banque", "soldeMax", GF.dbGems)
 				if soldeMax == 0:
 					soldeMax = Taille
 				msg = discord.Embed(title = title,color= 13752280, description = "")
@@ -96,7 +94,7 @@ class GemsPlay(commands.Cog):
 
 				msg.add_field(name="Commandes", value=desc, inline=False)
 				await ctx.channel.send(embed = msg)
-				DB.updateComTime(ID, "bank_bal")
+				DB.updateComTime(ID, "bank_bal", GF.dbGems)
 				return
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
@@ -108,12 +106,12 @@ class GemsPlay(commands.Cog):
 		# un nombre négatif enlève des Gems
 		#=======================================================================
 		elif mARG == "add":
-			if DB.spam(ID,GF.couldown_c, "bank_add"):
+			if DB.spam(ID,GF.couldown_c, "bank_add", GF.dbGems):
 				if ARG2 != None:
 					ARG2 = int(ARG2)
-					gems = DB.valueAt(ID, "gems")
-					solde = DB.nbElements(ID, "banque", "solde")
-					soldeMax = DB.nbElements(ID, "banque", "soldeMax")
+					gems = DB.valueAt(ID, "gems", GF.dbGems)
+					solde = DB.nbElements(ID, "banque", "solde", GF.dbGems)
+					soldeMax = DB.nbElements(ID, "banque", "soldeMax", GF.dbGems)
 					if soldeMax == 0:
 						soldeMax = Taille
 
@@ -128,10 +126,10 @@ class GemsPlay(commands.Cog):
 							return
 						nbgm = -1*ARG2
 						DB.addGems(ID, nbgm)
-						DB.add(ID, "banque", "solde", ARG2)
+						DB.add(ID, "banque", "solde", ARG2, GF.dbGems)
 						msg += "Ton compte épargne a été crédité de {} :gem:".format(ARG2)
-						msg += "\nNouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde"))
-						DB.updateComTime(ID, "bank_add")
+						msg += "\nNouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
+						DB.updateComTime(ID, "bank_add", GF.dbGems)
 					else:
 						msg = "Tu n'as pas assez de :gem:`gems` pour épargner cette somme"
 				else:
@@ -145,12 +143,12 @@ class GemsPlay(commands.Cog):
 		# L'intéret est de 20% avec un bonus de 1% pour chanque bank_upgrade possédée
 		#=======================================================================
 		elif mARG == "saving":
-			if DB.spam(ID,GF.couldown_4h, "bank_saving"):
+			if DB.spam(ID,GF.couldown_4h, "bank_saving", GF.dbGems):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
 				else:
-					solde = DB.nbElements(ID, "banque", "solde")
-					soldeMax = DB.nbElements(ID, "banque", "soldeMax")
+					solde = DB.nbElements(ID, "banque", "solde", GF.dbGems)
+					soldeMax = DB.nbElements(ID, "banque", "soldeMax", GF.dbGems)
 					if soldeMax == 0:
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
@@ -158,24 +156,24 @@ class GemsPlay(commands.Cog):
 					soldeAdd = pourcentage*solde
 					soldeTaxe = GF.taxe(soldeAdd, 0.1)
 					soldeAdd = soldeTaxe[1]
-					DB.add(ID, "banque", "solde", int(soldeAdd))
+					DB.add(ID, "banque", "solde", int(soldeAdd), GF.dbGems)
 					msg = "Tu as épargné {} :gem:\n".format(int(soldeAdd))
 					soldeNew = solde + soldeAdd
 					if soldeNew > soldeMax:
 						soldeMove = soldeNew - soldeMax
 						nbgm = -1 * soldeMove
-						DB.addGems(ID, int(soldeMove))
-						DB.add(ID, "banque", "solde", int(nbgm))
+						DB.addGems(ID, int(soldeMove), GF.dbGems)
+						DB.add(ID, "banque", "solde", int(nbgm), GF.dbGems)
 						msg += "Plafond de {} :gem: du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
 
-					msg += "Nouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde"))
+					msg += "Nouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
 
 					D = r.randint(0,20)
 					if D == 20 or D == 0:
-						DB.add(ID, "inventory", "lootbox_raregems", 1)
+						DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 					elif D >= 9 and D <= 11:
-						DB.add(ID, "inventory", "lootbox_commongems", 1)
+						DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
 						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 					if ctx.guild.id != wel.idBASTION:
@@ -183,9 +181,9 @@ class GemsPlay(commands.Cog):
 					elif ctx.guild.id == wel.idBASTION:
 						DB.addGems(wel.idBaBot,int(soldeTaxe[0]))
 
-				DB.updateComTime(ID, "bank_saving")
+				DB.updateComTime(ID, "bank_saving", GF.dbGems)
 			else:
-				ComTime = DB.valueAt(ID, "com_time")
+				ComTime = DB.valueAt(ID, "com_time", GF.dbGems)
 				if "bank_saving" in ComTime:
 					time = ComTime["bank_saving"]
 				time = time - (t.time()-GF.couldown_4h)
@@ -204,10 +202,10 @@ class GemsPlay(commands.Cog):
 	async def crime(self, ctx):
 		"""Commets un crime et gagne des :gem: Attention au DiscordCop!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "crime"):
+		if DB.spam(ID,GF.couldown_l, "crime", GF.dbGems):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
-				DB.add(ID, "StatGems", "DiscordCop Arrestation", 1)
+				DB.add(ID, "StatGems", "DiscordCop Arrestation", 1, GF.dbGems)
 				if int(DB.addGems(ID, -10)) >= 0:
 					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
 				else:
@@ -220,14 +218,14 @@ class GemsPlay(commands.Cog):
 					msg += GF.message_crime[r.randint(0,3)]+" "+str(gain)
 					if r.randint(0,1) == 0:
 						msg += " :candy:`candy`"
-						DB.add(ID, "inventory", "candy", gain)
+						DB.add(ID, "inventory", "candy", gain, GF.dbGems)
 					else:
 						msg += " :lollipop:`lollipop`"
-						DB.add(ID, "inventory", "lollipop", gain)
+						DB.add(ID, "inventory", "lollipop", gain, GF.dbGems)
 				else:
 					msg = GF.message_crime[r.randint(0,3)]+" "+str(gain)+" :gem:"
 					DB.addGems(ID, gain)
-			DB.updateComTime(ID, "crime")
+			DB.updateComTime(ID, "crime", GF.dbGems)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -239,46 +237,46 @@ class GemsPlay(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
-		gems = DB.valueAt(ID, "gems")
+		gems = DB.valueAt(ID, "gems", GF.dbGems)
 		if valeur < 0:
 			msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
-			DB.add(ID, "StatGems", "DiscordCop Amende", 1)
+			DB.add(ID, "StatGems", "DiscordCop Amende", 1, GF.dbGems)
 			if gems > 100 :
 				DB.addGems(ID, -100)
 			else :
-				DB.addGems(ID, 0-DB.valueAt(ID, "gems"))
+				DB.addGems(ID, 0-DB.valueAt(ID, "gems", GF.dbGems))
 			await ctx.channel.send(msg)
 			return
 		elif valeur > 0 and gems >= valeur:
-			if DB.spam(ID,GF.couldown_xl, "gamble"):
+			if DB.spam(ID,GF.couldown_xl, "gamble", GF.dbGems):
 				if r.randint(0,3) == 0:
 					gain = valeur*3
 					# l'espérence est de 0 sur la gamble
 					msg = GF.message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
-					DB.add(ID, "StatGems", "Gamble Win", 1)
+					DB.add(ID, "StatGems", "Gamble Win", 1, GF.dbGems)
 					for x in GF.objetTrophy:
 						if x.nom == "Gamble Jackpot":
 							jackpot = x.mingem
 					if gain >= jackpot:
-						DB.add(ID, "trophy", "Gamble Jackpot", 1)
+						DB.add(ID, "trophy", "Gamble Jackpot", 1, GF.dbGems)
 						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
 					DB.addGems(ID, gain)
 					D = r.randint(0,20)
 					if D == 0:
-						DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+						DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
 						msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 					elif D >= 19:
-						DB.add(ID, "inventory", "lootbox_raregems", 1)
+						DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 					elif D >= 8 and D <= 12:
-						DB.add(ID, "inventory", "lootbox_commongems", 1)
+						DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
 						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 				else:
 					val = 0-valeur
 					DB.addGems(ID,val)
 					msg = "Dommage tu as perdu "+str(valeur)+":gem:"
 
-				DB.updateComTime(ID, "gamble")
+				DB.updateComTime(ID, "gamble", GF.dbGems)
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_xl)+" secondes entre chaque commande !"
 		elif gems < valeur:
@@ -293,16 +291,16 @@ class GemsPlay(commands.Cog):
 	async def mine(self, ctx):
 		"""Minez compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "mine"):
+		if DB.spam(ID,GF.couldown_l, "mine", GF.dbGems):
 			if GF.testInvTaille(ID):
 				#print(DB.nbElements(ID, "inventory", "pickaxe"))
 				nbrand = r.randint(0,99)
 				#----------------- Pioche en diamant -----------------
-				if DB.nbElements(ID, "inventory", "diamond_pickaxe") >= 1:
+				if DB.nbElements(ID, "inventory", "diamond_pickaxe", GF.dbGems) >= 1:
 					if GF.get_durabilite(ID, "diamond_pickaxe") == 0:
 						GF.addDurabilite(ID, "diamond_pickaxe", -1)
-						DB.add(ID, "inventory","diamond_pickaxe", -1)
-						if DB.nbElements(ID, "inventory", "diamond_pickaxe") > 0:
+						DB.add(ID, "inventory","diamond_pickaxe", -1, GF.dbGems)
+						if DB.nbElements(ID, "inventory", "diamond_pickaxe", GF.dbGems) > 0:
 							for c in GF.objetOutil:
 								if c.nom == "diamond_pickaxe":
 									GF.addDurabilite(ID, c.nom, c.durabilite)
@@ -315,73 +313,73 @@ class GemsPlay(commands.Cog):
 						GF.addDurabilite(ID, "diamond_pickaxe", -1)
 						if nbrand < 15:
 							nbrand = r.randint(1,2)
-							DB.add(ID, "inventory", "emerald", nbrand)
+							DB.add(ID, "inventory", "emerald", nbrand, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_emerald:{}>`émeraude`".format(nbrand, GF.get_idmoji("emerald"))
 							D = r.randint(0,20)
 							if D < 2:
-								DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+								DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 							elif D >= 17:
-								DB.add(ID, "inventory", "lootbox_raregems", 1)
+								DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 
 						elif nbrand > 15 and nbrand < 25:
 							nbrand = r.randint(1,4)
-							DB.add(ID, "inventory", "diamond", nbrand)
+							DB.add(ID, "inventory", "diamond", nbrand, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_diamond:{}>`diamant brut`".format(nbrand, GF.get_idmoji("diamond"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 25 and nbrand < 50:
 							nbrand = r.randint(1,6)
-							DB.add(ID, "inventory", "gold", nbrand)
+							DB.add(ID, "inventory", "gold", nbrand, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_gold:{}>`lingot d'or`".format(nbrand, GF.get_idmoji("gold"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 50 and nbrand < 80:
 							nbrand = r.randint(1,10)
-							DB.add(ID, "inventory", "iron", nbrand)
+							DB.add(ID, "inventory", "iron", nbrand, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_iron:{}>`lingot de fer`".format(nbrand, GF.get_idmoji("iron"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand >= 90:
 							nbrand =  r.randint(0,10)
 							if nbrand >= 7:
-								DB.add(ID, "inventory", "ruby", 1)
-								DB.add(ID, "StatGems", "Mineur de Merveilles", 1)
-								DB.add(ID, "trophy", "Mineur de Merveilles", 1)
+								DB.add(ID, "inventory", "ruby", 1, GF.dbGems)
+								DB.add(ID, "StatGems", "Mineur de Merveilles", 1, GF.dbGems)
+								DB.add(ID, "trophy", "Mineur de Merveilles", 1, GF.dbGems)
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							elif nbrand < 2:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 							else:
 								nbcobble = r.randint(1,20)
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								if nbcobble == 1 :
 									msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 								else :
 									msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
 						else:
 							nbcobble = r.randint(1,20)
-							DB.add(ID, "inventory", "cobblestone", nbcobble)
+							DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 							if nbcobble == 1 :
 								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 							else :
 								msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
 
 				#----------------- Pioche en fer -----------------
-				elif DB.nbElements(ID, "inventory", "iron_pickaxe") >= 1:
+				elif DB.nbElements(ID, "inventory", "iron_pickaxe", GF.dbGems) >= 1:
 					if GF.get_durabilite(ID, "iron_pickaxe") == 0:
 						GF.addDurabilite(ID, "iron_pickaxe", -1)
-						DB.add(ID, "inventory","iron_pickaxe", -1)
-						if DB.nbElements(ID, "inventory", "iron_pickaxe") > 0:
+						DB.add(ID, "inventory","iron_pickaxe", -1, GF.dbGems)
+						if DB.nbElements(ID, "inventory", "iron_pickaxe", GF.dbGems) > 0:
 							for c in GF.objetOutil:
 								if c.nom == "iron_pickaxe":
 									GF.addDurabilite(ID, c.nom, c.durabilite)
@@ -393,67 +391,67 @@ class GemsPlay(commands.Cog):
 									GF.addDurabilite(ID, c.nom, c.durabilite)
 						GF.addDurabilite(ID, "iron_pickaxe", -1)
 						if nbrand < 5:
-							DB.add(ID, "inventory", "emerald", 1)
+							DB.add(ID, "inventory", "emerald", 1, GF.dbGems)
 							msg = "Tu as obtenu 1 <:gem_emerald:{}>`émeraude`".format(GF.get_idmoji("emerald"))
 							D = r.randint(0,20)
 							if D == 0:
-								DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+								DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 							elif D >= 19:
-								DB.add(ID, "inventory", "lootbox_raregems", 1)
+								DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 							elif D >= 8 and D <= 12:
-								DB.add(ID, "inventory", "lootbox_commongems", 1)
+								DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 						elif nbrand > 5 and nbrand < 15:
-							DB.add(ID, "inventory", "diamond", 1)
+							DB.add(ID, "inventory", "diamond", 1, GF.dbGems)
 							msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(GF.get_idmoji("diamond"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 15 and nbrand < 30:
 							nbrand = r.randint(1,2)
-							DB.add(ID, "inventory", "gold", nbrand)
+							DB.add(ID, "inventory", "gold", nbrand, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_gold:{}>`lingot d'or`".format(nbrand, GF.get_idmoji("gold"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 30 and nbrand < 60:
 							nbrand = r.randint(1,4)
-							DB.add(ID, "inventory", "iron", nbrand)
+							DB.add(ID, "inventory", "iron", nbrand, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_iron:{}>`lingot de fer`".format(nbrand, GF.get_idmoji("iron"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand >= 95:
 							if r.randint(0,10) == 10:
-								DB.add(ID, "inventory", "ruby", 1)
-								DB.add(ID, "StatGems", "Mineur de Merveilles", 1)
-								DB.add(ID, "trophy", "Mineur de Merveilles", 1)
+								DB.add(ID, "inventory", "ruby", 1, GF.dbGems)
+								DB.add(ID, "StatGems", "Mineur de Merveilles", 1, GF.dbGems)
+								DB.add(ID, "trophy", "Mineur de Merveilles", 1, GF.dbGems)
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							else:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 						else:
 							nbcobble = r.randint(1,10)
-							DB.add(ID, "inventory", "cobblestone", nbcobble)
+							DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 							if nbcobble == 1 :
 								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 							else :
 								msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
 
 				#----------------- Pioche normal -----------------
-				elif DB.nbElements(ID, "inventory", "pickaxe") >= 1:
+				elif DB.nbElements(ID, "inventory", "pickaxe", GF.dbGems) >= 1:
 					if GF.get_durabilite(ID, "pickaxe") == 0:
 						GF.addDurabilite(ID, "pickaxe", -1)
-						DB.add(ID, "inventory", "pickaxe", -1)
-						if DB.nbElements(ID, "inventory","pickaxe") > 0:
+						DB.add(ID, "inventory", "pickaxe", -1, GF.dbGems)
+						if DB.nbElements(ID, "inventory","pickaxe", GF.dbGems) > 0:
 							for c in GF.objetOutil:
 								if c.nom == "pickaxe":
 									GF.addDurabilite(ID, c.nom, c.durabilite)
@@ -465,15 +463,15 @@ class GemsPlay(commands.Cog):
 									GF.addDurabilite(ID, c.nom, c.durabilite)
 						GF.addDurabilite(ID, "pickaxe", -1)
 						if nbrand < 20:
-							DB.add(ID, "inventory", "iron", 1)
+							DB.add(ID, "inventory", "iron", 1, GF.dbGems)
 							msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(GF.get_idmoji("iron"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble)
+								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 						else:
 							nbcobble = r.randint(1,10)
-							DB.add(ID, "inventory", "cobblestone", nbcobble)
+							DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
 							if nbcobble == 1 :
 								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 							else :
@@ -481,7 +479,7 @@ class GemsPlay(commands.Cog):
 				else:
 					msg = "Il faut acheter ou forger une pioche pour miner!"
 
-				DB.updateComTime(ID, "mine")
+				DB.updateComTime(ID, "mine", GF.dbGems)
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -494,15 +492,14 @@ class GemsPlay(commands.Cog):
 	async def fish(self, ctx):
 		"""Péchons compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "fish"):
+		if DB.spam(ID,GF.couldown_l, "fish", GF.dbGems):
 			if GF.testInvTaille(ID):
 				nbrand = r.randint(0,99)
-				#print(DB.nbElements(ID, "inventory", "fishingrod"))
-				if DB.nbElements(ID, "inventory", "fishingrod") >= 1:
+				if DB.nbElements(ID, "inventory", "fishingrod", GF.dbGems) >= 1:
 					if GF.get_durabilite(ID, "fishingrod") == 0:
 						GF.addDurabilite(ID, "fishingrod", -1)
-						DB.add(ID, "inventory", "fishingrod", -1)
-						if DB.nbElements(ID, "inventory", "fishingrod") > 0:
+						DB.add(ID, "inventory", "fishingrod", -1, GF.dbGems)
+						if DB.nbElements(ID, "inventory", "fishingrod", GF.dbGems) > 0:
 							for c in GF.objetOutil:
 								if c.nom == "fishingrod":
 									GF.addDurabilite(ID, c.nom, c.durabilite)
@@ -514,59 +511,59 @@ class GemsPlay(commands.Cog):
 									GF.addDurabilite(ID, c.nom, c.durabilite)
 						GF.addDurabilite(ID, "fishingrod", -1)
 
-						if DB.nbElements(ID, "inventory", "fishhook") >= 1:
+						if DB.nbElements(ID, "inventory", "fishhook", GF.dbGems) >= 1:
 							mult = r.randint(-1, 5)
 							if mult < 2:
 								mult = 2
-							DB.add(ID, "inventory", "fishhook", -1)
+							DB.add(ID, "inventory", "fishhook", -1, GF.dbGems)
 						else:
 							mult = 1
 
 						if nbrand < 15:
 							nb = mult*1
-							DB.add(ID, "inventory", "tropicalfish", nb)
+							DB.add(ID, "inventory", "tropicalfish", nb, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_tropicalfish:{}>`tropicalfish`".format(nb, GF.get_idmoji("tropicalfish"))
 							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
-								DB.add(ID, "inventory", "fish", nbfish)
+								DB.add(ID, "inventory", "fish", nbfish, GF.dbGems)
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 15 and nbrand < 30:
 							nb = mult*1
-							DB.add(ID, "inventory", "blowfish", nb)
+							DB.add(ID, "inventory", "blowfish", nb, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_blowfish:{}>`blowfish`".format(nb, GF.get_idmoji("blowfish"))
 							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
-								DB.add(ID, "inventory", "fish", nbfish)
+								DB.add(ID, "inventory", "fish", nbfish, GF.dbGems)
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 30 and nbrand < 40:
 							nb = mult*1
-							DB.add(ID, "inventory", "octopus", nb)
+							DB.add(ID, "inventory", "octopus", nb, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_octopus:{}>`octopus`".format(nb, GF.get_idmoji("octopus"))
 							D = r.randint(0,20)
 							if D == 0:
-								DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+								DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 							elif D >= 19:
-								DB.add(ID, "inventory", "lootbox_raregems", 1)
+								DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 							elif D >= 8 and D <= 12:
-								DB.add(ID, "inventory", "lootbox_commongems", 1)
+								DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
 								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 						elif nbrand >= 40 and nbrand < 95:
 							nbfish = r.randint(1,7)*mult
-							DB.add(ID, "inventory", "fish", nbfish)
+							DB.add(ID, "inventory", "fish", nbfish, GF.dbGems)
 							msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 						else:
 							msg = "Pas de poisson pour toi aujourd'hui :cry: "
 							if mult >= 2:
-								DB.add(ID, "inventory", "fishhook", 1)
+								DB.add(ID, "inventory", "fishhook", 1, GF.dbGems)
 				else:
 					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(GF.get_idmoji("fishingrod"))
 
-				DB.updateComTime(ID, "fish")
+				DB.updateComTime(ID, "fish", GF.dbGems)
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -579,10 +576,10 @@ class GemsPlay(commands.Cog):
 	async def hothouse(self, ctx, fct = None, arg = None):
 		"""**[fonction]** {_n° plantation_} | Plantons compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "hothouse"):
-			nbplanting = DB.nbElements(ID, "inventory", "planting_plan") + 1
-			# if nbplanting >= 200:
-			# 	nbplanting = 200
+		if DB.spam(ID,GF.couldown_l, "hothouse", GF.dbGems):
+			nbplanting = DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) + 1
+			if nbplanting >= 200:
+				nbplanting = 200
 			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantation.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
@@ -591,10 +588,10 @@ class GemsPlay(commands.Cog):
 				if  arg != None:
 					nbplanting = int(arg)
 				while i <= nbplanting:
-					if DB.nbElements(ID, "hothouse", "planting_{}".format(i)) == 0:
+					if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems) == 0:
 						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
 					else:
-						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i))
+						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems)
 						InstantTime = t.time()
 						time = PlantingTime - (InstantTime-GF.couldown_6h)
 						if time <= 0:
@@ -603,42 +600,42 @@ class GemsPlay(commands.Cog):
 							if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
 								if D10 <= 3:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "oak", nbHarvest)
+									DB.add(ID, "inventory", "oak", nbHarvest, GF.dbGems)
 									item = "oak"
 								elif D10 > 3 and D10 <= 7:
 									nbHarvest = r.randint(1, 2)
-									DB.add(ID, "inventory", "pumpkin", nbHarvest)
+									DB.add(ID, "inventory", "pumpkin", nbHarvest, GF.dbGems)
 									item = "pumpkin"
 								elif D10 > 7 and D10 <= 9:
 									nbHarvest = r.randint(3, 5)
-									DB.add(ID, "inventory", "pumpkin", nbHarvest)
+									DB.add(ID, "inventory", "pumpkin", nbHarvest, GF.dbGems)
 									item = "pumpkin"
 								elif D10 >= 10:
 									nbHarvest = r.randint(1,2)
-									DB.add(ID, "inventory", "wheat", nbHarvest)
+									DB.add(ID, "inventory", "wheat", nbHarvest, GF.dbGems)
 									item = "wheat"
 							else:
 								if D10 <= 4:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "oak", nbHarvest)
+									DB.add(ID, "inventory", "oak", nbHarvest, GF.dbGems)
 									item = "oak"
 								elif D10 > 4 and D10 <= 7:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "spruce", nbHarvest)
+									DB.add(ID, "inventory", "spruce", nbHarvest, GF.dbGems)
 									item = "spruce"
 								elif D10 > 7 and D10 <= 9:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "palm", nbHarvest)
+									DB.add(ID, "inventory", "palm", nbHarvest, GF.dbGems)
 									item = "palm"
 								elif D10 >= 10:
 									nbHarvest = r.randint(1,3)
-									DB.add(ID, "inventory", "wheat", nbHarvest)
+									DB.add(ID, "inventory", "wheat", nbHarvest, GF.dbGems)
 									item = "wheat"
-							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime)
+							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime, GF.dbGems)
 							check = True
 							desc = "Ta plantation à fini de pousser, en la coupant tu gagne {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
 							if i > 1:
-								if DB.nbElements(ID, "inventory", "planting_plan") > 0:
+								if DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) > 0:
 									GF.addDurabilite(ID, "planting_plan", -1)
 									if GF.get_durabilite(ID, "planting_plan") == None:
 										for c in GF.objetOutil:
@@ -648,7 +645,7 @@ class GemsPlay(commands.Cog):
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
 												GF.addDurabilite(ID, c.nom, c.durabilite)
-										DB.add(ID, "inventory", "planting_plan", -1)
+										DB.add(ID, "inventory", "planting_plan", -1, GF.dbGems)
 
 						else:
 							timeH = int(time / 60 / 60)
@@ -669,21 +666,21 @@ class GemsPlay(commands.Cog):
 				if check == True:
 					D = r.randint(0,20)
 					if D == 20 or D == 0:
-						DB.add(ID, "inventory", "lootbox_raregems", 1)
+						DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 						msgLB = "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 						await ctx.channel.send(msgLB)
 					elif D >= 9 and D <= 11:
-						DB.add(ID, "inventory", "lootbox_commongems", 1)
+						DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
 						msgLB = "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 						await ctx.channel.send(msgLB)
 			elif fct == "plant":
 				await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
 				return 404
 				if arg != None:
-					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg))) == 0:
-						if DB.nbElements(ID, "inventory", "seed") >= 1:
-							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time())
-							DB.add(ID, "inventory", "seed", -1)
+					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg)), GF.dbGems) == 0:
+						if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
+							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time(), GF.dbGems)
+							DB.add(ID, "inventory", "seed", -1, GF.dbGems)
 							desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
 						else:
 							desc = "Tu n'as pas de <:gem_seed:{}>`seed` à planter dans ton inventaire".format(GF.get_idmoji("seed"))
@@ -692,10 +689,10 @@ class GemsPlay(commands.Cog):
 					msg.add_field(name="Plntation numero {}".format(int(arg)), value=desc, inline=False)
 				else:
 					while i <= nbplanting:
-						if DB.nbElements(ID, "hothouse", "planting_{}".format(i)) == 0:
-							if DB.nbElements(ID, "inventory", "seed") >= 1:
-								DB.add(ID, "hothouse", "planting_{}".format(i), t.time())
-								DB.add(ID, "inventory", "seed", -1)
+						if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems) == 0:
+							if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
+								DB.add(ID, "hothouse", "planting_{}".format(i), t.time(), GF.dbGems)
+								DB.add(ID, "inventory", "seed", -1, GF.dbGems)
 								desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
 							else:
 								desc = "Tu n'as pas de <:gem_seed:{}>`seed` à planter dans ton inventaire".format(GF.get_idmoji("seed"))
@@ -715,7 +712,7 @@ class GemsPlay(commands.Cog):
 						else:
 							msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
 						i += 1
-			DB.updateComTime(ID, "hothouse")
+			DB.updateComTime(ID, "hothouse", GF.dbGems)
 			if nbplanting // 10 == 0:
 				await ctx.channel.send(embed = msg)
 			else:
@@ -734,8 +731,8 @@ class GemsPlay(commands.Cog):
 		if imise != None:
 			if int(imise) < 0:
 				msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
-				DB.add(ID, "StatGems", "DiscordCop Amende", 1)
-				if DB.valueAt(ID, "gems") > 100 :
+				DB.add(ID, "StatGems", "DiscordCop Amende", 1, GF.dbGems)
+				if DB.valueAt(ID, "gems", GF.dbGems) > 100 :
 					DB.addGems(ID, -100)
 				else :
 					DB.addGems(ID, 0-DB.valueAt(ID, "gems"))
@@ -750,7 +747,7 @@ class GemsPlay(commands.Cog):
 		else:
 			mise = 10
 
-		if DB.spam(ID,GF.couldown_xl, "slots"):
+		if DB.spam(ID,GF.couldown_xl, "slots", GF.dbGems):
 			tab = []
 			result = []
 			msg = "Votre mise: {} :gem:\n\n".format(mise)
@@ -818,27 +815,27 @@ class GemsPlay(commands.Cog):
 			#===================================================================
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
-				DB.add(ID, "inventory", "ruby", 1)
-				DB.add(ID, "StatGems", "Mineur de Merveilles", 1)
-				DB.add(ID, "trophy", "Mineur de Merveilles", 1)
+				DB.add(ID, "inventory", "ruby", 1, GF.dbGems)
+				DB.add(ID, "StatGems", "Mineur de Merveilles", 1, GF.dbGems)
+				DB.add(ID, "trophy", "Mineur de Merveilles", 1, GF.dbGems)
 				gain = 42
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 				D = r.randint(0,20)
 				if D == 0:
-					DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+					DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
 					msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 				elif D >= 19:
-					DB.add(ID, "inventory", "lootbox_raregems", 1)
+					DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 					msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 				elif D >= 8 and D <= 12:
-					DB.add(ID, "inventory", "lootbox_commongems", 1)
+					DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
 					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 			#===================================================================
 			#Super gain, 3 chiffres identique
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
 				gain = 1000
-				DB.add(ID, "StatGems", "Super Jackpot :seven::seven::seven:", 1)
-				DB.add(ID, "trophy", "Super Jackpot :seven::seven::seven:", 1)
+				DB.add(ID, "StatGems", "Super Jackpot :seven::seven::seven:", 1, GF.dbGems)
+				DB.add(ID, "trophy", "Super Jackpot :seven::seven::seven:", 1, GF.dbGems)
 				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
 				msg += "\n{} Bravo <@{}>! Le Super Jackpot :seven::seven::seven: est tombé :tada: ".format(botplayer.mention,ID)
 			elif result[3] == "one" and result[4] == "one" and result[5] == "one":
@@ -862,8 +859,8 @@ class GemsPlay(commands.Cog):
 			#===================================================================
 			#Beer
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
-				DB.add(ID, "StatGems", "La Squelatitude", 1)
-				DB.add(ID, "trophy", "La Squelatitude", 1)
+				DB.add(ID, "StatGems", "La Squelatitude", 1, GF.dbGems)
+				DB.add(ID, "trophy", "La Squelatitude", 1, GF.dbGems)
 				gain = 4
 				msg += "\n<@{}> paye sa tournée :beer:".format(ID)
 			#===================================================================
@@ -904,18 +901,18 @@ class GemsPlay(commands.Cog):
 			if nbCookie != 0:
 				if GF.testInvTaille(ID):
 					msg += "\nTu a trouvé {} :cookie:`cookie`".format(nbCookie)
-					DB.add(ID, "inventory", "cookie", nbCookie)
+					DB.add(ID, "inventory", "cookie", nbCookie, GF.dbGems)
 				else:
 					msg += "\nTon inventaire est plein"
 				D = r.randint(0,20)
 				if D == 0:
-					DB.add(ID, "inventory", "lootbox_legendarygems", 1)
+					DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
 					msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 				elif D >= 19:
-					DB.add(ID, "inventory", "lootbox_raregems", 1)
+					DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
 					msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 				elif D >= 8 and D <= 12:
-					DB.add(ID, "inventory", "lootbox_commongems", 1)
+					DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
 					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 			#===================================================================
 			#grappe
@@ -929,13 +926,13 @@ class GemsPlay(commands.Cog):
 			if nbGrapes != 0:
 				if GF.testInvTaille(ID):
 					msg += "\nTu a trouvé {} :grapes:`grapes`".format(nbGrapes)
-					DB.add(ID, "inventory", "grapes", nbGrapes)
+					DB.add(ID, "inventory", "grapes", nbGrapes, GF.dbGems)
 				else:
 					msg += "\nTon inventaire est plein"
 			#===================================================================
 			#Backpack (hyper rare)
 			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
-				DB.add(ID, "inventory", "backpack", 1)
+				DB.add(ID, "inventory", "backpack", 1, GF.dbGems)
 				p = 0
 				for c in GF.objetItem:
 					if c.nom == "backpack":
@@ -956,7 +953,7 @@ class GemsPlay(commands.Cog):
 			else:
 				msg += "\nLa machine à sous ne paya rien ..."
 				DB.addGems(ID, val)
-			DB.updateComTime(ID, "slots")
+			DB.updateComTime(ID, "slots", GF.dbGems)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_xl)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -968,23 +965,23 @@ class GemsPlay(commands.Cog):
 		"""**open [nom]** | Ouverture de Loot Box"""
 		ID = ctx.author.id
 
-		if DB.spam(ID,GF.couldown_l, "boxes"):
+		if DB.spam(ID,GF.couldown_l, "boxes", GF.dbGems):
 			if type == "open":
 				if name != None:
 					for lootbox in GF.objetBox:
 						if name == "lootbox_{}".format(lootbox.nom):
 							name = lootbox.nom
-					if DB.nbElements(ID, "inventory", "lootbox_{}".format(name)) > 0:
+					if DB.nbElements(ID, "inventory", "lootbox_{}".format(name), GF.dbGems) > 0:
 						for lootbox in GF.objetBox:
 							if name == lootbox.nom:
 								gain = r.randint(lootbox.min, lootbox.max)
 								titre = lootbox.titre
 
 								DB.addGems(ID, gain)
-								DB.add(ID, "inventory", "lootbox_{}".format(lootbox.nom), -1)
+								DB.add(ID, "inventory", "lootbox_{}".format(lootbox.nom), -1, GF.dbGems)
 								desc = "{}:gem:".format(gain)
 								msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
-								DB.updateComTime(ID, "boxes")
+								DB.updateComTime(ID, "boxes", GF.dbGems)
 								print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))
 								await ctx.channel.send(embed = msg)
 								return True

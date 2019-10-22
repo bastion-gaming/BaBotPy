@@ -1,6 +1,7 @@
 import random as r
 import datetime as dt
 from DB import DB
+from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -34,42 +35,26 @@ def countDeco():
 		f.write(json.dumps(t, indent=4))
 
 async def countMsg(message):
-	id = message.author.id
+	ID = message.author.id
 	try:
-		DB.updateField(id, "nbMsg", int(DB.valueAt(id, "nbMsg")+1))
-		DB.updateField(id, "xp", int(DB.valueAt(id, "xp")+1))
+		DB.updateField(ID, "nbMsg", int(DB.valueAt(ID, "nbMsg")+1))
+		DB.updateField(ID, "xp", int(DB.valueAt(ID, "xp")+1))
 	except:
 		return print("Le joueur n'existe pas.")
-	# return print(DB.valueAt(id, "nbMsg"))
-
-def countTotalMsg():
-	#Init a
-	a=0
-	for item in DB.db:
-#On additionne le nombre de message posté en tout
-		a = a + int(item["nbMsg"])
-	return a
-
-def countTotalGems():
-	#Init a
-	a=0
-	for item in DB.db:
-#On additionne le nombre de message posté en tout
-		a = a + int(item["gems"])
-	return a
+	# return print(DB.valueAt(ID, "nbMsg"))
 
 def hourCount():
 	d=dt.datetime.now().hour
 	if fileExist() == False:
 		t = {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6": 0,"7": 0,"8": 0,"9": 0,"10": 0,"11": 0,"12": 0,"13": 0,"14": 0,"15": 0,"16": 0,"17": 0,"18": 0,"19": 0,"20": 0,"21": 0,"22": 0,"23":0}
-		t[str(d)]=int(countTotalMsg())
+		t[str(d)]=int(DB.countTotalMsg())
 		with open(file, 'w') as f:
 			f.write(json.dumps(t, indent=4))
 		return d
 	else:
 		with open(file, "r") as f:
 			t = json.load(f)
-			t[str(d)]=int(countTotalMsg())
+			t[str(d)]=int(DB.countTotalMsg())
 		with open(file, 'w') as f:
 			f.write(json.dumps(t, indent=4))
 	print("time.json modifié")
@@ -96,7 +81,7 @@ class Stats(commands.Cog):
 		"""
 		if self.hour != dt.datetime.now().hour :
 			if self.day != dt.date.today():
-				msg_total = countTotalMsg()
+				msg_total = DB.countTotalMsg()
 				local_heure={}
 				f = open(file, "r")
 				connexion = json.load(open(co, "r"))
@@ -136,7 +121,7 @@ class Stats(commands.Cog):
 		"""
 		Permet de savoir combien i y'a eu de message posté depuis que le bot est sur le serveur
 		"""
-		msg = "Depuis que je suis sur ce serveur il y'a eu : "+str(countTotalMsg())+" messages."
+		msg = "Depuis que je suis sur ce serveur il y'a eu : "+str(DB.countTotalMsg())+" messages."
 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
@@ -262,7 +247,7 @@ class Stats(commands.Cog):
 		if os.path.isfile("cache/piegraph.png"):
 			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
-		total = countTotalMsg()
+		total = DB.countTotalMsg()
 		a = []
 		for item in DB.db:
 			a.append([item["nbMsg"],item["ID"]])
@@ -304,7 +289,7 @@ class Stats(commands.Cog):
 		if os.path.isfile("cache/piegraph.png"):
 			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
-		total = countTotalGems()
+		total = DB.countTotalGems(GF.dbGems)
 		a = []
 		for item in DB.db:
 			a.append([item["gems"],item["ID"]])

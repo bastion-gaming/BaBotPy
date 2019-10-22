@@ -34,30 +34,18 @@ client.remove_command("help")
 async def on_ready():
 	print('Connecté avec le nom : {0.user}'.format(client))
 	print('PREFIX = '+str(DEFAUT_PREFIX))
+	GF.setglobalguild(client.get_guild(wel.idServBot))
 	print('\nBastionBot '+VERSION)
 	print('------\n')
-	GF.loadItem()
+	GF.checkDB_Gems()
+	# GF.checkDB_Session()
+	GF.loadItem(True)
 
 
 @client.event
 async def on_member_remove(member):
 	wel.memberremove(member)
 
-
-async def looped_task():
-	counter = 0
-	while not client.is_closed():
-		# if counter % 2 == 0 :
-		# 	activity = discord.Activity(type=discord.ActivityType.playing, name="▶ bastion-gaming.fr ◀")
-		# 	await client.change_presence(status=discord.Status.online, activity=activity)
-		# else:
-		# 	activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(DEFAUT_PREFIX))
-		# 	await client.change_presence(status=discord.Status.online, activity=activity)
-		GF.incrementebourse()
-		counter += 1
-		await asyncio.sleep(30)
-#---------------------------------------------------------------
-#---------------------------------------------------------------
 
 ####################### Commande help.py #######################
 
@@ -69,12 +57,41 @@ client.load_extension('core.utils')
 
 ####################### Commande gems.py #######################
 
+client.load_extension('gems.gemsFonctions')
+
 client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
 
+# client.load_extension('gems.gemsFight')
+
 if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
 	client.load_extension('gems.gemsEvent')
+
+#---------------------------------------------------------------
+#---------------------------------------------------------------
+async def looped_task():
+	await client.wait_until_ready()
+	counter = 0
+	while not client.is_closed():
+		if counter % 2 == 0 :
+			activity = discord.Activity(type=discord.ActivityType.playing, name="▶ bastion-gaming.fr ◀")
+			await client.change_presence(status=discord.Status.online, activity=activity)
+		else:
+			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(DEFAUT_PREFIX))
+			await client.change_presence(status=discord.Status.online, activity=activity)
+		# GF.incrementebourse()
+		if counter == 0:
+			GF.setglobalguild(client.get_guild(wel.idServBot))
+			GF.loadItem(True)
+		else:
+			if DB.spam(wel.idGetGems,GF.couldown_12h, "bourse", "DB/bastionDB"):
+				GF.loadItem()
+		print(counter)
+		counter += 1
+		await asyncio.sleep(30)
+#---------------------------------------------------------------
+#---------------------------------------------------------------
 
 ####################### Lancemement du bot ######################
 

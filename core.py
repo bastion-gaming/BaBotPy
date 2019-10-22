@@ -60,13 +60,14 @@ async def on_ready():
 	print('Connecté avec le nom : {0.user}'.format(client))
 	print('PREFIX = '+str(PREFIX))
 	print('\nBastionBot '+VERSION)
+	GF.setglobalguild(client.get_guild(wel.idServBot))
 	if DB.dbExist():
 		print("La DB "+ DB.DB_NOM +" existe, poursuite sans soucis.")
 	else :
 		print("La DB n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField()
+	flag = DB.checkField("DB/bastionDB", "DB/fieldTemplate")
 	if flag == 0:
-		print("Aucun champ n'a été ajouté ni supprimé no modifié.")
+		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
 	elif "add" in flag:
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
 	elif "sup" in flag:
@@ -75,7 +76,9 @@ async def on_ready():
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
 	print('------\n')
-	GF.loadItem()
+	GF.checkDB_Gems()
+	# GF.checkDB_Session()
+	GF.loadItem(True)
 
 ####################### Commande help.py #######################
 
@@ -156,18 +159,22 @@ client.load_extension('core.level')
 
 client.load_extension('core.gestion')
 
+###################### Commande notification.py ################
+
+client.load_extension('multimedia.notification')
+
 ####################### Commande gems.py #######################
+
+client.load_extension('gems.gemsFonctions')
 
 client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
 
+# client.load_extension('gems.gemsFight')
+
 if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
 	client.load_extension('gems.gemsEvent')
-
-###################### Commande notification.py ################
-
-client.load_extension('multimedia.notification')
 
 #---------------------------------------------------------------
 #---------------------------------------------------------------
@@ -193,7 +200,12 @@ async def looped_task():
 		else:
 			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(PREFIX))
 			await client.change_presence(status=discord.Status.online, activity=activity)
-		GF.incrementebourse()
+		if counter == 0:
+			GF.setglobalguild(client.get_guild(wel.idServBot))
+			GF.loadItem(True)
+		else:
+			if DB.spam(wel.idBaBot,GF.couldown_12h, "bourse", "DB/bastionDB"):
+				GF.loadItem()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
 			await asyncio.sleep(2)

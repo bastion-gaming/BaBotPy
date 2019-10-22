@@ -31,3 +31,6 @@ app/js/main.js
 package.json.backup
 .python-version
 babot/
+env/
+gems/dbGems.json
+gems/dbSession.json
