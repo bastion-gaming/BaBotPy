@@ -20,7 +20,7 @@ class GemsEvent(commands.Cog):
 	async def cooked(self, ctx):
 		"""**Halloween** | Cuisinons compagnons !!"""
 		ID = ctx.author.id
-		jour = t.date.today()
+		jour = dt.date.today()
 		if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
 			if DB.spam(ID,GF.couldown_l, "cooked", GF.dbGems):
 				if DB.nbElements(ID, "cooked", "furnace_1", GF.dbGems) == 0:
