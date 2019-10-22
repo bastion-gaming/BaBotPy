@@ -51,7 +51,7 @@ def memberremove(member):
 	gems = DB.valueAt(ID, "gems")
 	if member.guild.id == idBASTION:
 		stat.countDeco()
-		BotGems = DB.valueAt(idBaBot, "gems")
+		BotGems = DB.valueAt(idBaBot, "gems", GF.dbGems)
 		idBot = idBaBot
 		pourcentage = 0.3
 		DB.updateField(ID, "lvl", 0)
@@ -61,8 +61,8 @@ def memberremove(member):
 		idBot = idGetGems
 		pourcentage = 0.02
 	transfert = gems * pourcentage
-	DB.updateField(idBot, "gems", BotGems + int(transfert))
-	DB.updateField(ID, "gems", gems - int(transfert))
+	DB.updateField(idBot, "gems", BotGems + int(transfert), GF.dbGems)
+	DB.updateField(ID, "gems", gems - int(transfert), GF.dbGems)
 	# DB.removePlayer(ID)
 	print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
 
