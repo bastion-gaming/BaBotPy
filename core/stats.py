@@ -251,7 +251,7 @@ class Stats(commands.Cog):
 		total = DB.countTotalMsg()
 		a = []
 		db = TinyDB("DB/{}.json".format(DB.DB_NOM))
-		for item in DB.db:
+		for item in db:
 			a.append([item["nbMsg"],item["ID"]])
 		a.sort(reverse = True)
 		richest = a[:r]
@@ -294,7 +294,7 @@ class Stats(commands.Cog):
 		total = DB.countTotalGems(GF.dbGems)
 		a = []
 		db = TinyDB("gems/dbGems.json")
-		for item in DB.db:
+		for item in db:
 			a.append([item["gems"],item["ID"]])
 		a.sort(reverse = True)
 		richest = a[:r]
