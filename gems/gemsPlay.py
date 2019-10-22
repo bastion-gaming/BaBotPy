@@ -576,7 +576,7 @@ class GemsPlay(commands.Cog):
 	async def hothouse(self, ctx, fct = None, arg = None):
 		"""**[fonction]** {_n° plantation_} | Plantons compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "hothouse", GF.dbGems):
+		if DB.spam(ID,GF.couldown_c, "hothouse", GF.dbGems):
 			nbplanting = DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) + 1
 			if nbplanting >= 200:
 				nbplanting = 200
@@ -718,7 +718,7 @@ class GemsPlay(commands.Cog):
 			else:
 				await ctx.channel.send(embed = msg, delete_after = 90)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 
