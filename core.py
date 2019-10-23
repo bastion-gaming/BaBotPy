@@ -200,7 +200,7 @@ async def looped_task():
 		else:
 			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(PREFIX))
 			await client.change_presence(status=discord.Status.online, activity=activity)
-		if counter <= 1:
+		if counter == 0:
 			GF.setglobalguild(client.get_guild(wel.idServBot))
 			GF.loadItem(True)
 		else:
