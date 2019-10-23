@@ -465,7 +465,7 @@ def recette(ctx):
 		for r in objetRecette :
 			if c.type == "forge":
 				if c.nom == r.nom:
-					d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,GF.get_idmoji(c.nom))
+					d_recette += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,get_idmoji(c.nom))
 					if r.nb1 > 0:
 						d_recette += "{0} <:gem_{1}:{2}>`{1}` ".format(r.nb1, r.item1, get_idmoji(r.item1))
 					if r.nb2 > 0:
