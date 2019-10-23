@@ -221,7 +221,7 @@ class GemsBase(commands.Cog):
 						test = False
 						gain = c.vente*nb
 						DB.addGems(ID, gain)
-						if c.type != "consommable" or c.nom != "candy" or c.nom != "lollipop":
+						if c.type != "consommable" and c.nom != "candy" and c.nom != "lollipop":
 							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,GF.get_idmoji(c.nom))
 							# Message de réussite dans la console
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
