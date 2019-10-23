@@ -680,6 +680,11 @@ class GemsPlay(commands.Cog):
 						msg = "Tu n'as pas assez de plantations ou cette plantation n'est pas disponible!"
 						await ctx.channel.send(msg)
 						return 404
+					elif int(arg) < 0:
+						DB.addGems(ID, -100)
+						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:"
+						await ctx.channel.send(msg)
+						return "anticheat"
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg)), GF.dbHH) == 0:
 						if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
 							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time(), GF.dbHH)

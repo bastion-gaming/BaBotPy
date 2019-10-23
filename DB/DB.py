@@ -103,9 +103,6 @@ def newPlayer(ID, linkDB = None, linkfield = None):
 		updateField(FieldsL["ID"], "ID", ID, linkDB)
 		db.close()
 		return ("Le joueur a été ajouté !")
-	# elif valueAt(ID, "arrival", linkDB) == "0":
-	# 	db.close()
-	# 	return ("Le joueur a été ajouté !")
 	else:
 		db.close()
 		return ("Le joueur existe déjà")
