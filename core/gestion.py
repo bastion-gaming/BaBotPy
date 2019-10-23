@@ -49,13 +49,16 @@ class Gestion(commands.Cog):
 	@commands.command(pass_context=True)
 	async def getmember(self, ctx):
 		"""Update de la BDD"""
-		if permission(ctx,Inquisiteur):
-			members = ctx.guild.members
-			for member in members:
-				DB.newPlayer(member.id)
-			await ctx.channel.send("la bdd est remplis !")
+		if ctx.guild.id == wel.idBASTION:
+			if permission(ctx,Inquisiteur):
+				members = ctx.guild.members
+				for member in members:
+					DB.newPlayer(member.id)
+				await ctx.channel.send("la bdd est remplis !")
+			else:
+				ctx.send("tu n'as pas les droits")
 		else:
-			ctx.send("tu n'as pas les droits")
+			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
 	@commands.command(pass_context=True)
 	async def supp(self, ctx, nb):

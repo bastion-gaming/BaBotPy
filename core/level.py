@@ -112,67 +112,69 @@ class Level(commands.Cog):
 			"""
 			Permet d'avoir le level d'un utilisateur
 			"""
-			if Nom == None:
-				ID = ctx.author.id
-				Nom = ctx.author.name
-			elif len(Nom) == 21 :
-				ID = int(Nom[2:20])
-			elif len(Nom) == 22 :
-				ID = int(Nom[3:21])
-			else :
-				msg="Le nom que vous m'avez donné n'existe pas !"
-				ID = -1
-				await ctx.channel.send(msg)
-				return
-
-			if (ID != -1):
-				lvl = DB.valueAt(ID, "lvl")
-				xp = DB.valueAt(ID, "xp")
-				msg = "**Utilisateur:** {}".format(Nom)
-
-				# Niveaux part
-				msg+= "\n\n**Niveau :**\n"
-				for x in objet:
-					if lvl == x.level:
-						msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(lvl,xp,x.somMsg)
-				if lvl == lvlmax:
-					msg += "Actuel **{0}** \nLevel max atteint".format(lvl)
-
-				# Gems
-				msg+="\n\n**Balance:** *{0}* :gem:".format(DB.valueAt(ID,"gems", GF.dbGems))
-
-				# Statistique de l'utilisateur pour le module Gems
-				statgems = DB.valueAt(ID, "StatGems", GF.dbGems)
-				Titre = True
-				for x in statgems:
-					if statgems[x] > 0:
-						if Titre:
-							msg += "\n\n**Statistiques de *Get Gems* **"
-							Titre = False
-						msg += "\n• {}: `x{}`".format(str(x), statgems[x])
-
-				# Parrainage
-				P = DB.valueAt(ID,"parrain")
-				F_li = DB.valueAt(ID, "filleul")
-				msg+="\n\n**Parrainage:**"
-				if P != 0:
-					msg+="\nParrain: <@{0}>".format(P)
+			if ctx.guild.id == wel.idBASTION:
+				if Nom == None:
+					ID = ctx.author.id
+					Nom = ctx.author.name
+				elif len(Nom) == 21 :
+					ID = int(Nom[2:20])
+				elif len(Nom) == 22 :
+					ID = int(Nom[3:21])
 				else :
-					msg +="\nParain: `None`"
+					msg="Le nom que vous m'avez donné n'existe pas !"
+					ID = -1
+					await ctx.channel.send(msg)
+					return
 
-				if len(F_li) > 0:
-					if len(F_li)>1:
-						sV = "s"
-					else:
-						sV= ""
-					msg+="\nFilleul{1} `x{0}`:".format(len(F_li),sV)
-					for one in F_li:
-						msg+="\n<@"+str(one)+">"
+				if (ID != -1):
+					lvl = DB.valueAt(ID, "lvl")
+					xp = DB.valueAt(ID, "xp")
+					msg = "**Utilisateur:** {}".format(Nom)
+
+					# Niveaux part
+					msg+= "\n\n**Niveau :**\n"
+					for x in objet:
+						if lvl == x.level:
+							msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(lvl,xp,x.somMsg)
+					if lvl == lvlmax:
+						msg += "Actuel **{0}** \nLevel max atteint".format(lvl)
+
+					# Gems
+					msg+="\n\n**Balance:** *{0}* :gem:".format(DB.valueAt(ID,"gems", GF.dbGems))
+
+					# Statistique de l'utilisateur pour le module Gems
+					statgems = DB.valueAt(ID, "StatGems", GF.dbGems)
+					Titre = True
+					for x in statgems:
+						if statgems[x] > 0:
+							if Titre:
+								msg += "\n\n**Statistiques de *Get Gems* **"
+								Titre = False
+							msg += "\n• {}: `x{}`".format(str(x), statgems[x])
+
+					# Parrainage
+					P = DB.valueAt(ID,"parrain")
+					F_li = DB.valueAt(ID, "filleul")
+					msg+="\n\n**Parrainage:**"
+					if P != 0:
+						msg+="\nParrain: <@{0}>".format(P)
+					else :
+						msg +="\nParain: `None`"
+
+					if len(F_li) > 0:
+						if len(F_li)>1:
+							sV = "s"
+						else:
+							sV= ""
+						msg+="\nFilleul{1} `x{0}`:".format(len(F_li),sV)
+						for one in F_li:
+							msg+="\n<@"+str(one)+">"
 
 
-				emb = discord.Embed(title = "Informations :",color= 13752280, description = msg)
-				await ctx.channel.send(embed = emb)
-
+					emb = discord.Embed(title = "Informations :",color= 13752280, description = msg)
+					await ctx.channel.send(embed = emb)
+			else:
+				await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
 def setup(bot):
 	bot.add_cog(Level(bot))

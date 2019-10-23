@@ -70,11 +70,14 @@ class Utils(commands.Cog):
 		"""
 		Affiche le nombre d'utilisateurs inscrit dans la base de données
 		"""
-		l=DB.taille()
-		if l == 0:
-			await ctx.channel.send("Aucun utilisaeur enregistrer dans la base de donées")
+		if ctx.guild.id == wel.idBASTION:
+			l=DB.taille()
+			if l == 0:
+				await ctx.channel.send("Aucun utilisaeur enregistrer dans la base de donées")
+			else:
+				await ctx.channel.send("{} utilisateur inscrit".format(l))
 		else:
-			await ctx.channel.send("{} utilisateur inscrit".format(l))
+			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
 	@commands.command(pass_context=True)
 	async def changelog(self, ctx, version = None):
@@ -121,23 +124,26 @@ class UtilsSecret(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def test(self, ctx, ID = None, arg1 = None, arg2 = None):
-		if ID == "check":
-			if ge.permission(ctx,ge.admin):
-				while DB.membercheck(ctx):
-					i = 0
-				await ctx.channel.send("Suppression terminer, la DB est à jour")
+		if ctx.guild.id == wel.idBASTION:
+			if ID == "check":
+				if ge.permission(ctx,ge.admin):
+					while DB.membercheck(ctx):
+						i = 0
+					await ctx.channel.send("Suppression terminer, la DB est à jour")
+				else:
+					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
+			elif ID == "split":
+				if arg2 == None:
+					await ctx.channel.send("Split!")
+				elif ge.permission(ctx,ge.admin):
+					DBsplit.splitDB(arg1, arg2)
+					await ctx.channel.send("Split!")
+				else:
+					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
 			else:
-				ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
-		elif ID == "split":
-			if arg2 == None:
-				await ctx.channel.send("Split!")
-			elif ge.permission(ctx,ge.admin):
-				DBsplit.splitDB(arg1, arg2)
-				await ctx.channel.send("Split!")
-			else:
-				ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
+				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 		else:
-			await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
+			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
 
 	@commands.command(pass_context=True)
