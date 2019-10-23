@@ -973,39 +973,36 @@ class GemsPlay(commands.Cog):
 		"""**open [nom]** | Ouverture de Loot Box"""
 		ID = ctx.author.id
 
-		if DB.spam(ID,GF.couldown_l, "boxes", GF.dbGems):
-			if type == "open":
-				if name != None:
+		if type == "open":
+			if name != None:
+				for lootbox in GF.objetBox:
+					if name == "lootbox_{}".format(lootbox.nom):
+						name = lootbox.nom
+				if DB.nbElements(ID, "inventory", "lootbox_{}".format(name), GF.dbGems) > 0:
 					for lootbox in GF.objetBox:
-						if name == "lootbox_{}".format(lootbox.nom):
-							name = lootbox.nom
-					if DB.nbElements(ID, "inventory", "lootbox_{}".format(name), GF.dbGems) > 0:
-						for lootbox in GF.objetBox:
-							if name == lootbox.nom:
-								gain = r.randint(lootbox.min, lootbox.max)
-								titre = lootbox.titre
+						if name == lootbox.nom:
+							gain = r.randint(lootbox.min, lootbox.max)
+							titre = lootbox.titre
 
-								DB.addGems(ID, gain)
-								DB.add(ID, "inventory", "lootbox_{}".format(lootbox.nom), -1, GF.dbGems)
-								desc = "{}:gem:".format(gain)
-								msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
-								DB.updateComTime(ID, "boxes", GF.dbGems)
-								print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))
-								await ctx.channel.send(embed = msg)
-								return True
+							DB.addGems(ID, gain)
+							DB.add(ID, "inventory", "lootbox_{}".format(lootbox.nom), -1, GF.dbGems)
+							desc = "{}:gem:".format(gain)
+							msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
+							DB.updateComTime(ID, "boxes", GF.dbGems)
+							print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))
+							await ctx.channel.send(embed = msg)
+							return True
 
-						await ctx.chennel.send("Cette box n'existe pas!")
-						return False
-					else:
-						msg = "Tu ne possèdes pas cette Loot Box"
+					await ctx.chennel.send("Cette box n'existe pas!")
+					return False
 				else:
-					msg = "Commande `boxes open` incomplète"
-			elif type == None:
-				msg = "Commande `boxes` incomplète"
+					msg = "Tu ne possèdes pas cette Loot Box"
 			else:
-				msg = "Commande `boxes` invalide"
+				msg = "Commande `boxes open` incomplète"
+		elif type == None:
+			msg = "Commande `boxes` incomplète"
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_xl)+" secondes entre chaque commande !"
+			msg = "Commande `boxes` invalide"
 		await ctx.channel.send(msg)
 
 
