@@ -576,17 +576,23 @@ class GemsPlay(commands.Cog):
 	async def hothouse(self, ctx, fct = None, arg = None):
 		"""**[fonction]** {_n° plantation_} | Plantons compagnons !!"""
 		ID = ctx.author.id
+		maxplanting = 200
 		if DB.spam(ID,GF.couldown_c, "hothouse", GF.dbGems):
 			nbplanting = DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) + 1
-			if nbplanting >= 200:
-				nbplanting = 200
+			if nbplanting >= maxplanting:
+				nbplanting = maxplanting
 			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantation.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
 			if fct == None or fct == "harvest":
 				check = False
 				if  arg != None:
-					nbplanting = int(arg)
+					if int(arg) <= nbplanting:
+						nbplanting = int(arg)
+					else:
+						msg = "Tu n'as pas assez de plantations ou cette plantation n'est pas disponible!"
+						await ctx.channel.send(msg)
+						return 404
 				while i <= nbplanting:
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems) == 0:
 						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
@@ -677,6 +683,10 @@ class GemsPlay(commands.Cog):
 				#await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
 				#return 404
 				if arg != None:
+					if int(arg) > nbplanting:
+						msg = "Tu n'as pas assez de plantations ou cette plantation n'est pas disponible!"
+						await ctx.channel.send(msg)
+						return 404
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg)), GF.dbGems) == 0:
 						if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
 							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time(), GF.dbGems)

@@ -1,3 +1,5 @@
+import json
+
 exception = ["bank_upgrade", "backpack", "candy", "lollipop", "fishhook", "pickaxe", "fishingrod"]
 
 #========== Items ==========
@@ -49,3 +51,19 @@ PrixOutil = [Outil("pickaxe", 40, 80)
 ,Outil("sword", 100, 400)
 ,Outil("planting_plan", 2000, 2000)
 ,Outil("bank_upgrade", 0, 10000)]
+
+
+def initBourse():
+	try:
+		# essaie de lire le fichier bourse.json
+		with open('gems/bourse.json', 'r') as fp:
+			value = json.load(fp)
+	except:
+		# Création du fichier bourse.json avec les valeurs par défaut
+		dict = {}
+		for x in PrixItem:
+			dict[x.nom] = {"vente": x.vente, "achat": x.achat}
+		for x in PrixOutil:
+			dict[x.nom] = {"vente": x.vente, "achat": x.achat}
+		with open('gems/bourse.json', 'w') as fp:
+		    json.dump(dict, fp, indent=4)

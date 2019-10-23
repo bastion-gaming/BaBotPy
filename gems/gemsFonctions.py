@@ -3,6 +3,7 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
+import json
 from core import welcome as wel
 from gems import gemsItems as GI
 from discord.ext import commands
@@ -81,65 +82,38 @@ def setglobalguild(guild):
 	globalguild = guild
 
 
-def itemBourse(item, type, first = None):
-	"""Version 2.0 | Attribue les prix de la bourse """
+def itemBourse(item, type):
+	"""Version 2.1 | Attribue les prix de la bourse """
+	# récupération du fichier de sauvegarde de la bourse
+	with open('gems/bourse.json', 'r') as fp:
+		dict = json.load(fp)
+	temp = dict[item]
+	# Récuperation de la valeur courante
 	if type == "vente":
-		for x in GI.PrixItem:
-			if item == x.nom:
-				for y in GI.exception:
-					if item == y:
-						return x.vente
-				if first == True:
-					return x.vente
-				else:
-					for c in objetItem:
-						if c.nom == x.nom:
-							pnow = c.vente
-		for x in GI.PrixOutil:
-			if item == x.nom:
-				for y in GI.exception:
-					if item == y:
-						return x.vente
-				if first == True:
-					return x.vente
-				else:
-					for c in objetOutil:
-						if c.nom == x.nom:
-							pnow = c.vente
+		pnow = temp["vente"]
 	elif type == "achat":
-		for x in GI.PrixItem:
-			if item == x.nom:
-				for y in GI.exception:
-					if item == y:
-						return x.achat
-				if first == True:
-					return x.achat
-				else:
-					for c in objetItem:
-						if c.nom == x.nom:
-							pnow = c.achat
-		for x in GI.PrixOutil:
-			if item == x.nom:
-				for y in GI.exception:
-					if item == y:
-						return x.achat
-				if first == True:
-					return x.achat
-				else:
-					for c in objetOutil:
-						if c.nom == x.nom:
-							pnow = c.achat
+		pnow = temp["achat"]
 
+	# Gestion des exceptions
+	for y in GI.exception:
+		if item == y:
+			return pnow
+
+	# Fonctionnement de la bourse
 	DcrackB = r.randint(1, 1000)
+	# crack boursier négatif
 	if DcrackB == 1:
 		if pnow > 1000:
 			Prix = pnow - 500
 		else:
 			Prix = 10
+	# crack boursier positif
 	elif DcrackB == 1000:
 		Prix = pnow + 500
+	# évolution de la bourse normale (entre -10% et +10% de la valeur courante)
 	else:
 		D21 = r.randint(0,20)
+		# valeur minimal dynamique (permet au item dont le prix est au plus bas de remonter en valeur plus facilement)
 		if (pnow < 30 and type == "vente") or (pnow < 50 and type == "achat"):
 			if D21 >= 5:
 				pourcentage = D21 + 5
@@ -158,7 +132,7 @@ def itemBourse(item, type, first = None):
 				Prix = pnow
 			if Prix <= 10:
 				Prix = 10
-
+	# La valeur de vente ne peux etre supérieur à la valeur d'achat
 	if type == "vente":
 		for x in GI.PrixItem:
 			if item == x.nom:
@@ -168,6 +142,8 @@ def itemBourse(item, type, first = None):
 			if item == x.nom:
 				if Prix > x.achat:
 					Prix = x.achat
+		temp["vente"] = Prix
+	# La valeur d'achat ne peux être inférieur à la valeur de vente
 	elif type == "achat":
 		for x in GI.PrixItem:
 			if item == x.nom:
@@ -177,6 +153,11 @@ def itemBourse(item, type, first = None):
 			if item == x.nom:
 				if Prix < x.vente:
 					Prix = x.vente
+		temp["achat"] = Prix
+	# actualisation du fichier de sauvegarde de la bourse
+	dict[item] = temp
+	with open('gems/bourse.json', 'w') as fp:
+		json.dump(dict, fp, indent=4)
 	return Prix
 
 
@@ -184,6 +165,8 @@ def itemBourse(item, type, first = None):
 def loadItem(F = None):
 	DB.updateComTime(wel.idBaBot, "bourse", "DB/bastionDB")
 	DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
+	if F == True:
+		GI.initBourse()
 	#========== Items ==========
 	class Item:
 
@@ -195,30 +178,30 @@ def loadItem(F = None):
 			self.type = type
 
 	global objetItem
-	objetItem = [Item("cobblestone", itemBourse("cobblestone", "vente", F), itemBourse("cobblestone", "achat", F), 4, "minerai")
-	,Item("iron", itemBourse("iron", "vente", F), itemBourse("iron", "achat", F), 10, "minerai")
-	,Item("gold", itemBourse("gold", "vente", F), itemBourse("gold", "achat", F), 20, "minerai")
-	,Item("diamond", itemBourse("diamond", "vente", F), itemBourse("diamond", "achat", F), 40, "minerai")
-	,Item("emerald", itemBourse("emerald", "vente", F), itemBourse("emerald", "achat", F), 50, "minerai")
-	,Item("ruby", itemBourse("ruby", "vente", F), itemBourse("ruby", "achat", F), 70, "minerai")
-	,Item("fish", itemBourse("fish", "vente", F), itemBourse("fish", "achat", F), 2, "poisson")
-	,Item("tropicalfish", itemBourse("tropicalfish", "vente", F), itemBourse("tropicalfish", "achat", F), 8, "poisson")
-	,Item("blowfish", itemBourse("blowfish", "vente", F), itemBourse("blowfish", "achat", F), 8, "poisson")
-	,Item("octopus", itemBourse("octopus", "vente", F), itemBourse("octopus", "achat", F), 16, "poisson")
-	,Item("seed", itemBourse("seed", "vente", F), itemBourse("seed", "achat", F), 0.5, "plante")
-	,Item("oak", itemBourse("oak", "vente", F), itemBourse("oak", "achat", F), 50, "plante")
-	,Item("spruce", itemBourse("spruce", "vente", F), itemBourse("spruce", "achat", F), 70, "plante")
-	,Item("palm", itemBourse("palm", "vente", F), itemBourse("palm", "achat", F), 60, "plante")
-	,Item("wheat", itemBourse("wheat", "vente", F), itemBourse("wheat", "achat", F), 3, "plante")
-	,Item("cookie", itemBourse("cookie", "vente", F), itemBourse("cookie", "achat", F), 1, "consommable")
-	,Item("grapes", itemBourse("grapes", "vente", F), itemBourse("grapes", "achat", F), 1, "consommable")
-	,Item("wine_glass", itemBourse("wine_glass", "vente", F), itemBourse("wine_glass", "achat", F), 2, "consommable")
-	,Item("pumpkin", itemBourse("pumpkin", "vente", F), itemBourse("pumpkin", "achat", F), 5, "halloween")
-	,Item("pumpkinpie", itemBourse("pumpkinpie", "vente", F), itemBourse("pumpkinpie", "achat", F), 5, "halloween")
-	,Item("candy", itemBourse("candy", "vente", F), itemBourse("candy", "achat", F), 1, "halloween")
-	,Item("lollipop", itemBourse("lollipop", "vente", F), itemBourse("lollipop", "achat", F), 2, "halloween")
-	,Item("backpack", itemBourse("backpack", "vente", F), itemBourse("backpack", "achat", F), -200, "special")
-	,Item("fishhook", itemBourse("fishhook", "vente", F), itemBourse("fishhook", "achat", F), 1, "special")]
+	objetItem = [Item("cobblestone", itemBourse("cobblestone", "vente"), itemBourse("cobblestone", "achat"), 4, "minerai")
+	,Item("iron", itemBourse("iron", "vente"), itemBourse("iron", "achat"), 10, "minerai")
+	,Item("gold", itemBourse("gold", "vente"), itemBourse("gold", "achat"), 20, "minerai")
+	,Item("diamond", itemBourse("diamond", "vente"), itemBourse("diamond", "achat"), 40, "minerai")
+	,Item("emerald", itemBourse("emerald", "vente"), itemBourse("emerald", "achat"), 50, "minerai")
+	,Item("ruby", itemBourse("ruby", "vente"), itemBourse("ruby", "achat"), 70, "minerai")
+	,Item("fish", itemBourse("fish", "vente"), itemBourse("fish", "achat"), 2, "poisson")
+	,Item("tropicalfish", itemBourse("tropicalfish", "vente"), itemBourse("tropicalfish", "achat"), 8, "poisson")
+	,Item("blowfish", itemBourse("blowfish", "vente"), itemBourse("blowfish", "achat"), 8, "poisson")
+	,Item("octopus", itemBourse("octopus", "vente"), itemBourse("octopus", "achat"), 16, "poisson")
+	,Item("seed", itemBourse("seed", "vente"), itemBourse("seed", "achat"), 0.5, "plante")
+	,Item("oak", itemBourse("oak", "vente"), itemBourse("oak", "achat"), 50, "plante")
+	,Item("spruce", itemBourse("spruce", "vente"), itemBourse("spruce", "achat"), 70, "plante")
+	,Item("palm", itemBourse("palm", "vente"), itemBourse("palm", "achat"), 60, "plante")
+	,Item("wheat", itemBourse("wheat", "vente"), itemBourse("wheat", "achat"), 3, "plante")
+	,Item("cookie", itemBourse("cookie", "vente"), itemBourse("cookie", "achat"), 1, "consommable")
+	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "consommable")
+	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "consommable")
+	,Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
+	,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")
+	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "halloween")
+	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "halloween")
+	,Item("backpack", itemBourse("backpack", "vente"), itemBourse("backpack", "achat"), -200, "special")
+	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")]
 
 	#========== Outils ==========
 	class Outil:
@@ -232,13 +215,13 @@ def loadItem(F = None):
 			self.type = type
 
 	global objetOutil
-	objetOutil = [Outil("pickaxe", itemBourse("pickaxe", "vente", F), itemBourse("pickaxe", "achat", F), 15, 75, "")
-	,Outil("iron_pickaxe", itemBourse("iron_pickaxe", "vente", F), itemBourse("iron_pickaxe", "achat", F), 70, 200, "forge")
-	,Outil("diamond_pickaxe", itemBourse("diamond_pickaxe", "vente", F), itemBourse("diamond_pickaxe", "achat", F), 150, 450, "forge")
-	,Outil("fishingrod", itemBourse("fishingrod", "vente", F), itemBourse("fishingrod", "achat", F), 25, 100, "")
-	,Outil("sword", itemBourse("sword", "vente", F), itemBourse("sword", "achat", F), 55, 25, "forge")
-	,Outil("planting_plan", itemBourse("planting_plan", "vente", F), itemBourse("planting_plan", "achat", F), 3, 3, "")
-	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente", F), itemBourse("bank_upgrade", "achat", F), 10000, None, "bank")]
+	objetOutil = [Outil("pickaxe", itemBourse("pickaxe", "vente"), itemBourse("pickaxe", "achat"), 15, 75, "")
+	,Outil("iron_pickaxe", itemBourse("iron_pickaxe", "vente"), itemBourse("iron_pickaxe", "achat"), 70, 200, "forge")
+	,Outil("diamond_pickaxe", itemBourse("diamond_pickaxe", "vente"), itemBourse("diamond_pickaxe", "achat"), 150, 450, "forge")
+	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
+	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 25, "forge")
+	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 3, 3, "")
+	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente"), itemBourse("bank_upgrade", "achat"), 10000, None, "bank")]
 
 
 	#========== Aptitudes ==========
