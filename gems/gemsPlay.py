@@ -594,10 +594,10 @@ class GemsPlay(commands.Cog):
 						await ctx.channel.send(msg)
 						return 404
 				while i <= nbplanting:
-					if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems) == 0:
+					if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbHH) == 0:
 						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
 					else:
-						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems)
+						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbHH)
 						InstantTime = t.time()
 						time = PlantingTime - (InstantTime-GF.couldown_6h)
 						if time <= 0:
@@ -606,38 +606,31 @@ class GemsPlay(commands.Cog):
 							if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
 								if D10 <= 3:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "oak", nbHarvest, GF.dbGems)
 									item = "oak"
 								elif D10 > 3 and D10 <= 7:
 									nbHarvest = r.randint(1, 2)
-									DB.add(ID, "inventory", "pumpkin", nbHarvest, GF.dbGems)
 									item = "pumpkin"
 								elif D10 > 7 and D10 <= 9:
 									nbHarvest = r.randint(3, 5)
-									DB.add(ID, "inventory", "pumpkin", nbHarvest, GF.dbGems)
 									item = "pumpkin"
 								elif D10 >= 10:
 									nbHarvest = r.randint(1,2)
-									DB.add(ID, "inventory", "wheat", nbHarvest, GF.dbGems)
 									item = "wheat"
 							else:
 								if D10 <= 4:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "oak", nbHarvest, GF.dbGems)
 									item = "oak"
 								elif D10 > 4 and D10 <= 7:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "spruce", nbHarvest, GF.dbGems)
 									item = "spruce"
 								elif D10 > 7 and D10 <= 9:
 									nbHarvest = 1
-									DB.add(ID, "inventory", "palm", nbHarvest, GF.dbGems)
 									item = "palm"
 								elif D10 >= 10:
 									nbHarvest = r.randint(1,3)
-									DB.add(ID, "inventory", "wheat", nbHarvest, GF.dbGems)
 									item = "wheat"
-							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime, GF.dbGems)
+							DB.add(ID, "inventory", item, nbHarvest, GF.dbGems)
+							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime, GF.dbHH)
 							check = True
 							desc = "Ta plantation à fini de pousser, en la coupant tu gagne {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
 							if i > 1:
@@ -687,9 +680,9 @@ class GemsPlay(commands.Cog):
 						msg = "Tu n'as pas assez de plantations ou cette plantation n'est pas disponible!"
 						await ctx.channel.send(msg)
 						return 404
-					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg)), GF.dbGems) == 0:
+					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg)), GF.dbHH) == 0:
 						if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
-							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time(), GF.dbGems)
+							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time(), GF.dbHH)
 							DB.add(ID, "inventory", "seed", -1, GF.dbGems)
 							desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
 						else:
@@ -699,9 +692,9 @@ class GemsPlay(commands.Cog):
 					msg.add_field(name="Plntation numero {}".format(int(arg)), value=desc, inline=False)
 				else:
 					while i <= nbplanting:
-						if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbGems) == 0:
+						if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbHH) == 0:
 							if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
-								DB.add(ID, "hothouse", "planting_{}".format(i), t.time(), GF.dbGems)
+								DB.add(ID, "hothouse", "planting_{}".format(i), t.time(), GF.dbHH)
 								DB.add(ID, "inventory", "seed", -1, GF.dbGems)
 								desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
 							else:
