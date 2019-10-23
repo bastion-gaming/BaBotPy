@@ -122,20 +122,20 @@ class UtilsSecret(commands.Cog):
 	@commands.command(pass_context=True)
 	async def test(self, ctx, ID = None, arg1 = None, arg2 = None):
 		if ID == "check":
-			if ge.permission(ctx,ge.Inquisiteur):
+			if ge.permission(ctx,ge.admin):
 				while DB.membercheck(ctx):
 					i = 0
 				await ctx.channel.send("Suppression terminer, la DB est à jour")
 			else:
 				ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
-#		elif ID == "split":
-#			if arg2 == None:
-#				await ctx.channel.send("Split!")
-#			elif ge.permission(ctx,ge.Inquisiteur):
-#				DBsplit.splitDB(arg1, arg2)
-#				await ctx.channel.send("Split!")
-#			else:
-#				ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
+		elif ID == "split":
+			if arg2 == None:
+				await ctx.channel.send("Split!")
+			elif ge.permission(ctx,ge.admin):
+				DBsplit.splitDB(arg1, arg2)
+				await ctx.channel.send("Split!")
+			else:
+				ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
 		else:
 			await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 

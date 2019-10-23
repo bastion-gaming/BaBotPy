@@ -13,10 +13,13 @@ from operator import itemgetter
 
 # Variables DBs
 dbGems = "gems/dbGems"
-dbGemsTemplate = "gems/gemsTemplate"
+dbGemsTemplate = "gems/TemplateGems"
+
+dbHH = "gems/dbHotHouse"
+dbHHTemplate = "gems/TemplateHotHouse"
 
 dbSession = "gems/dbSession"
-dbSessionTemplate = "gems/SessionTemplate"
+dbSessionTemplate = "gems/TemplateSession"
 
 
 def checkDB_Session():
@@ -26,14 +29,6 @@ def checkDB_Session():
 	else :
 		print("La DB Gems Session n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbSession, dbSessionTemplate)
-	if flag == 0:
-		print("DB Gems Session >> Aucun champ n'a été ajouté, supprimé ou modifié.")
-	elif "add" in flag:
-		print("DB Gems Session >> Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "sup" in flag:
-		print("DB Gems Session >> Un ou plusieurs champs ont été supprimés de la DB.")
-	elif "type" in flag:
-		print("DB Gems Session >> Un ou plusieurs type ont été modifié sur la DB.")
 	print('------\n')
 
 
@@ -44,14 +39,15 @@ def checkDB_Gems():
 	else :
 		print("La DB Gems n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbGems, dbGemsTemplate)
-	if flag == 0:
-		print("DB Gems >> Aucun champ n'a été ajouté, supprimé ou modifié.")
-	elif "add" in flag:
-		print("DB Gems >> Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "sup" in flag:
-		print("DB Gems >> Un ou plusieurs champs ont été supprimés de la DB.")
-	elif "type" in flag:
-		print("DB Gems >> Un ou plusieurs type ont été modifié sur la DB.")
+	print('------\n')
+
+def checkDB_GemsHH():
+	"""Check l'existance et la conformité de la DB Session """
+	if DB.dbExist(dbHH):
+		print("La DB Gems existe, poursuite sans soucis.")
+	else :
+		print("La DB Gems n'existait pas. Elle a été (re)créée.")
+	flag = DB.checkField(dbHH, dbHHTemplate)
 	print('------\n')
 
 
@@ -490,6 +486,15 @@ def taxe(solde, pourcentage):
 	soldeTaxe = solde * pourcentage
 	soldeNew = solde - soldeTaxe
 	return (soldeTaxe, soldeNew)
+
+
+def startKit(ID):
+	if DB.valueAt(ID, "gems", dbGems) == 0:
+		DB.add(ID, "inventory", "pickaxe", 1, dbGems)
+		DB.add(ID, "inventory", "fishingrod", 1, dbGems)
+		GF.addDurabilite(ID, "pickaxe", 20)
+		GF.addDurabilite(ID, "fishingrod", 20)
+
 
 
 #===============================================================================

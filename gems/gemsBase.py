@@ -10,6 +10,8 @@ from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
 
+PREFIX = open("core/prefix.txt","r").read().replace("\n","")
+
 class GemsBase(commands.Cog):
 
 	def __init__(self,ctx):
@@ -21,17 +23,30 @@ class GemsBase(commands.Cog):
 	async def tuto(self, ctx):
 		"""Affiche le tutoriel !"""
 		ID = ctx.author.id
-		link = "https://www.youtube.com/watch?v="
-		await ctx.channel.send(":tools: En travaux :pencil:\n{}".format(link))
+		desc = "Le but du jeu est de gagner le plus de :gem:`gems` possible.\n\n"
+		msg = discord.Embed(title = "Tutoriel Get Gems!",color= 13752280, description = desc)
+		desc = "`{0}begin` | Permet de créer son compte joueur et d'obtenir son starter Kit!\n••••••••••••\n".format(PREFIX)
+		desc += "`{0}buy` | Permet d'acheter les items vendu au marché\n••••••••••••\n".format(PREFIX)
+		desc += "`{0}crime` | Permet d'effectuer des vols pour récupérer des :gem:`gem`\n••••••••••••\n".format(PREFIX)
+		desc += "`{0}mine` | Permet de récolter des matériaux.\nTu aura besoin d'une <:gem_pickaxe:{1}>`pickaxe` pour miner\n••••••••••••\n".format(PREFIX, GF.get_idmoji("pickaxe"))
+		desc += "`{0}fish` | Permet de pécher des poissons.\nTu aura besoin d'une <:gem_fishingrod:{1}>`fishingrod` pour miner\n••••••••••••\n".format(PREFIX, GF.get_idmoji("fishingrod"))
+		desc += "`{0}sell` | Permet de vendre les matériaux, les poissons, etc contre des :gem:`gems`\n••••\n".format(PREFIX)
+		desc += "`{0}forge` | Permet de créer des outils à partir des matériaux récoltés\n".format(PREFIX)
+		msg.add_field(name="Pour cela tu as les commandes:", value=desc, inline=False)
+		await ctx.channel.send(embed = msg)
+		# link = "https://www.youtube.com/watch?v="
+		# await ctx.channel.send(":tools: En travaux :pencil:\n{}".format(link))
 
 
 
 
 	@commands.command(pass_context=True)
 	async def begin(self, ctx):
-		"""Pour t'ajouter dans la base de données !"""
+		"""Pour créer son compte joueur et obtenir son starter Kit!"""
 		ID = ctx.author.id
-		await ctx.channel.send(DB.newPlayer(ID, GF.dbGems, GF.dbGemsTemplate))
+		msg = DB.newPlayer(ID, GF.dbGems, GF.dbGemsTemplate)
+		GF.startKit(ID)
+		await ctx.channel.send(msg)
 
 
 

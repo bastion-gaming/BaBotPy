@@ -22,10 +22,10 @@ class GemsEvent(commands.Cog):
 		ID = ctx.author.id
 		jour = dt.date.today()
 		if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
-			if DB.spam(ID,GF.couldown_l, "cooked", GF.dbGems):
-				if DB.nbElements(ID, "cooked", "furnace_1", GF.dbGems) == 0:
+			if DB.spam(ID,GF.couldown_c, "cooked", GF.dbGems):
+				if DB.nbElements(ID, "cooked", "furnace_1", GF.dbHH) == 0:
 					if DB.nbElements(ID, "inventory", "pumpkin", GF.dbGems) >= 12:
-						DB.add(ID, "cooked", "furnace_1", t.time(), GF.dbGems)
+						DB.add(ID, "cooked", "furnace_1", t.time(), GF.dbHH)
 						DB.add(ID, "inventory", "pumpkin", -12, GF.dbGems)
 						desc = "Votre plat a été mis au four".format(GF.get_idmoji("seed"))
 					else:
@@ -33,12 +33,12 @@ class GemsEvent(commands.Cog):
 						await ctx.channel.send(desc)
 						return False
 				else:
-					CookedTime = DB.nbElements(ID, "cooked", "furnace_1", GF.dbGems)
+					CookedTime = DB.nbElements(ID, "cooked", "furnace_1", GF.dbHH)
 					InstantTime = t.time()
 					time = CookedTime - (InstantTime-GF.couldown_2h)
 					if time <= 0:
 						DB.add(ID, "inventory", "pumpkinpie", 1, GF.dbGems)
-						DB.add(ID, "cooked", "furnace_1", -1*CookedTime, GF.dbGems)
+						DB.add(ID, "cooked", "furnace_1", -1*CookedTime, GF.dbHH)
 						desc = "Ton plat à fini de cuir, en le sortant du four tu gagne 1 <:gem_pumpkinpie:{}>`pumpkinpie`".format(GF.get_idmoji("pumpkinpie"))
 						D = r.randint(0,20)
 						if D == 20 or D == 0:
@@ -57,7 +57,7 @@ class GemsEvent(commands.Cog):
 				await ctx.channel.send(embed = msg)
 				DB.updateComTime(ID, "cooked", GF.dbGems)
 			else:
-				msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
+				msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
 				await ctx.channel.send(msg)
 
 

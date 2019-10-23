@@ -34,3 +34,12 @@ babot/
 env/
 gems/dbGems.json
 gems/dbSession.json
+gems/bourse.json
+gems/dbHotHouse.json
+help/cogs.txt
+help/help.txt
+multimedia/token_youtube.txt
+multimedia/twitch_client_id.txt
+multimedia/twitch_secret_id.txt
+token/token.txt
+token/token_getgems.txt

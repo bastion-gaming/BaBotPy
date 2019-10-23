@@ -29,7 +29,7 @@ def splitDB(source, destination):
 			DB.updateField(ID, "filleul", DB.valueAt(ID, "filleul", source), destination)
 
 		elif destination == "gems/dbGems":
-			DB.newPlayer(ID, destination, "gems/gemsTemplate")
+			DB.newPlayer(ID, destination, "gems/TemplateGems")
 			DB.updateField(ID, "ID", ID, destination)
 			DB.updateField(ID, "com_time", DB.valueAt(ID, "com_time", source), destination)
 			DB.updateField(ID, "gems", DB.valueAt(ID, "gems", source), destination)
@@ -38,9 +38,13 @@ def splitDB(source, destination):
 			DB.updateField(ID, "trophy", DB.valueAt(ID, "trophy", source), destination)
 			DB.updateField(ID, "daily", DB.valueAt(ID, "daily", source), destination)
 			DB.updateField(ID, "banque", DB.valueAt(ID, "banque", source), destination)
+			#DB.updateField(ID, "capability", DB.valueAt(ID, "capability", source), destination)
+
+		elif destination == "gems/dbHotHouse":
+			DB.newPlayer(ID, destination, "gems/TemplateHotHouse")
+			DB.updateField(ID, "ID", ID, destination)
 			DB.updateField(ID, "hothouse", DB.valueAt(ID, "hothouse", source), destination)
 			DB.updateField(ID, "cooked", DB.valueAt(ID, "cooked", source), destination)
-			#DB.updateField(ID, "capability", DB.valueAt(ID, "capability", source), destination)
 
 		i += 1
 	return True

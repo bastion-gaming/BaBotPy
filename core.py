@@ -24,7 +24,6 @@ TOKEN = open("token/token.txt", "r").read().replace("\n","")
 PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("help/cogs.txt","w")
-NONE = open("help/GemsCogs.txt","w")
 NONE = open("help/help.txt","w")
 
 jour = t.date.today()
@@ -78,6 +77,7 @@ async def on_ready():
 
 	print('------\n')
 	GF.checkDB_Gems()
+	GF.checkDB_GemsHH()
 	# GF.checkDB_Session()
 	# GF.loadItem(True)
 
