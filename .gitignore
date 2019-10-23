@@ -34,3 +34,4 @@ babot/
 env/
 gems/dbGems.json
 gems/dbSession.json
+gems/bourse.json
