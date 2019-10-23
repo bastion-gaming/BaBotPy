@@ -214,7 +214,7 @@ class GemsPlay(commands.Cog):
 				gain = r.randint(2,8)
 				jour = dt.date.today()
 				if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
-					msg = "**Halloween** | Des bonbons ou la vie ?\n"
+					msg = "**Halloween** | Des bonbons ou un sort ?\n"
 					msg += GF.message_crime[r.randint(0,3)]+" "+str(gain)
 					if r.randint(0,1) == 0:
 						msg += " :candy:`candy`"
