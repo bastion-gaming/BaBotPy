@@ -204,7 +204,7 @@ async def looped_task():
 			GF.setglobalguild(client.get_guild(wel.idServBot))
 			GF.loadItem(True)
 		else:
-			if DB.spam(wel.idBaBot,GF.couldown_c, "bourse", "DB/bastionDB"):
+			if DB.spam(wel.idBaBot,GF.couldown_12h, "bourse", "DB/bastionDB"):
 				GF.loadItem()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
