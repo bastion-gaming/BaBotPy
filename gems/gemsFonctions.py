@@ -492,8 +492,8 @@ def startKit(ID):
 	if DB.valueAt(ID, "gems", dbGems) == 0:
 		DB.add(ID, "inventory", "pickaxe", 1, dbGems)
 		DB.add(ID, "inventory", "fishingrod", 1, dbGems)
-		GF.addDurabilite(ID, "pickaxe", 20)
-		GF.addDurabilite(ID, "fishingrod", 20)
+		addDurabilite(ID, "pickaxe", 20)
+		addDurabilite(ID, "fishingrod", 20)
 
 
 
