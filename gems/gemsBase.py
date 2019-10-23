@@ -73,13 +73,14 @@ class GemsBase(commands.Cog):
 			UserList = []
 			baltop = ""
 			i = 0
-			while i < DB.taille(GF.dbGems):
+			t = DB.taille(GF.dbGems)
+			while i < t:
 				user = DB.userID(i, GF.dbGems)
 				gems = DB.userGems(i, GF.dbGems)
 				UserList.append((user, gems))
 				i = i + 1
 			UserList = sorted(UserList, key=itemgetter(1),reverse=False)
-			i = DB.taille(GF.dbGems) - 1
+			i = t - 1
 			j = 0
 			while i >= 0 and j != n : # affichage des données trié
 				baltop += "{2} | <@{0}> {1}:gem:\n".format(UserList[i][0], UserList[i][1], j+1)
@@ -389,6 +390,7 @@ class GemsBase(commands.Cog):
 				d_marketItemsPoisson = ""
 				d_marketItemsPlante = ""
 				d_marketItemsConsommable = ""
+				d_marketItemsHalloween = ""
 				d_marketBox = ""
 
 				for c in GF.objetOutil:
@@ -471,6 +473,24 @@ class GemsBase(commands.Cog):
 						if pourcentageA != 0:
 							d_marketItems += "_{}%_ ".format(pourcentageA)
 						d_marketItems += "| Poids **{}**\n".format(c.poids)
+					if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+						if c.type == "halloween":
+							if c.nom == "pumpkin" or c.nom == "pumpkinpie":
+								d_marketItemsHalloween += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+								if pourcentageV != 0:
+									d_marketItemsHalloween += "_{}%_ ".format(pourcentageV)
+								d_marketItemsHalloween += "| Achat **{}** ".format(c.achat)
+								if pourcentageA != 0:
+									d_marketItemsHalloween += "_{}%_ ".format(pourcentageA)
+								d_marketItemsHalloween += "| Poids **{}**\n".format(c.poids)
+							else:
+								d_marketItemsHalloween += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
+								if pourcentageV != 0:
+									d_marketItemsHalloween += "_{}%_ ".format(pourcentageV)
+								d_marketItemsHalloween += "| Achat **{}** ".format(c.achat)
+								if pourcentageA != 0:
+									d_marketItemsHalloween += "_{}%_ ".format(pourcentageA)
+								d_marketItemsHalloween += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
 					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
@@ -483,28 +503,8 @@ class GemsBase(commands.Cog):
 				msg.add_field(name="Poissons", value=d_marketItemsPoisson, inline=False)
 				msg.add_field(name="Plantes", value=d_marketItemsPlante, inline=False)
 				msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
-
-				d_marketItems = ""
-				if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
-					for c in GF.objetItem:
-						if c.type == "halloween":
-							if c.nom == "pumpkin" or c.nom == "pumpkinpie":
-								d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
-								if pourcentageV != 0:
-									d_marketItems += "_{}%_ ".format(pourcentageV)
-								d_marketItems += "| Achat **{}** ".format(c.achat)
-								if pourcentageA != 0:
-									d_marketItems += "_{}%_ ".format(pourcentageA)
-								d_marketItems += "| Poids **{}**\n".format(c.poids)
-							else:
-								d_marketItems += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
-								if pourcentageV != 0:
-									d_marketItems += "_{}%_ ".format(pourcentageV)
-								d_marketItems += "| Achat **{}** ".format(c.achat)
-								if pourcentageA != 0:
-									d_marketItems += "_{}%_ ".format(pourcentageA)
-								d_marketItems += "| Poids **{}**\n".format(c.poids)
-					msg.add_field(name="Halloween", value=d_marketItems, inline=False)
+				if d_marketItemsHalloween != "":
+					msg.add_field(name="Halloween", value=d_marketItemsHalloween, inline=False)
 
 				msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
 				DB.updateComTime(ID, "market", GF.dbGems)

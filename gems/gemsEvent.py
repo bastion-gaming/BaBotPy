@@ -37,7 +37,7 @@ class GemsEvent(commands.Cog):
 					InstantTime = t.time()
 					time = CookedTime - (InstantTime-GF.couldown_2h)
 					if time <= 0:
-						DB.add(ID, "inventory", "oak", 1, GF.dbGems)
+						DB.add(ID, "inventory", "pumpkinpie", 1, GF.dbGems)
 						DB.add(ID, "cooked", "furnace_1", -1*CookedTime, GF.dbGems)
 						desc = "Ton plat à fini de cuir, en le sortant du four tu gagne 1 <:gem_pumpkinpie:{}>`pumpkinpie`".format(GF.get_idmoji("pumpkinpie"))
 						D = r.randint(0,20)

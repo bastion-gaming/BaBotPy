@@ -24,6 +24,7 @@ TOKEN = open("token/token.txt", "r").read().replace("\n","")
 PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("help/cogs.txt","w")
+NONE = open("help/GemsCogs.txt","w")
 NONE = open("help/help.txt","w")
 
 jour = t.date.today()
@@ -78,7 +79,7 @@ async def on_ready():
 	print('------\n')
 	GF.checkDB_Gems()
 	# GF.checkDB_Session()
-	GF.loadItem(True)
+	# GF.loadItem(True)
 
 ####################### Commande help.py #######################
 
@@ -199,11 +200,11 @@ async def looped_task():
 		else:
 			activity = discord.Activity(type=discord.ActivityType.playing, name="{}help".format(PREFIX))
 			await client.change_presence(status=discord.Status.online, activity=activity)
-		if counter == 0:
+		if counter <= 1:
 			GF.setglobalguild(client.get_guild(wel.idServBot))
 			GF.loadItem(True)
 		else:
-			if DB.spam(wel.idBaBot,GF.couldown_12h, "bourse", "DB/bastionDB"):
+			if DB.spam(wel.idBaBot,GF.couldown_c, "bourse", "DB/bastionDB"):
 				GF.loadItem()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()

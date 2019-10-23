@@ -21,7 +21,8 @@ DEFAUT_PREFIX = "*"
 
 VERSION = open("core/version.txt").read().replace("\n","")
 TOKEN = open("token/token_getgems.txt", "r").read().replace("\n","")
-client = commands.Bot(command_prefix = "{0}".format(DEFAUT_PREFIX))
+PREFIX = DEFAUT_PREFIX
+client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("help/cogs.txt","w")
 NONE = open("help/help.txt","w")
 
@@ -33,7 +34,7 @@ client.remove_command("help")
 @client.event
 async def on_ready():
 	print('Connecté avec le nom : {0.user}'.format(client))
-	print('PREFIX = '+str(DEFAUT_PREFIX))
+	print('PREFIX = '+str(PREFIX))
 	GF.setglobalguild(client.get_guild(wel.idServBot))
 	print('\nBastionBot '+VERSION)
 	print('------\n')
