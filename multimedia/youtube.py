@@ -1,6 +1,7 @@
 import os
 import html
 import googleapiclient.discovery
+from core import welcome as wel
 
 token_youtube = open("multimedia/token_youtube.txt","r").read().replace("\n","")
 

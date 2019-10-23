@@ -5,6 +5,7 @@ import youtube_dl
 import os
 import asyncio
 from multimedia.youtube import youtube_top_link, search_youtube, get_youtube_url
+from core import welcome as wel
 
 admin = 0
 Inquisiteur = 1

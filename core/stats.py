@@ -10,6 +10,7 @@ import discord
 import json
 import matplotlib.pyplot as plt
 import os
+from core import welcome as wel
 
 client = discord.Client()
 file="core/time.json"

@@ -8,6 +8,7 @@ from discord.ext.commands import bot
 from discord.utils import get
 import discord
 import json
+from core import welcome as wel
 
 client = discord.Client()
 

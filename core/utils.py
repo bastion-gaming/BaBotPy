@@ -8,6 +8,7 @@ from discord.utils import get
 import discord
 import json
 import os
+from core import welcome as wel
 
 client = discord.Client()
 VERSION = open("core/version.txt").read().replace("\n","")

@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
 import discord
+from core import welcome as wel
 
 client = discord.Client()
 

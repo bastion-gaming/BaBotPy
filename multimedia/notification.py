@@ -7,6 +7,7 @@ import asyncio
 import aiohttp
 import json
 import re
+from core import welcome as wel
 
 
 PREFIX = open("core/prefix.txt","r").read().replace("\n","")
