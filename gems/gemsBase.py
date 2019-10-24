@@ -609,7 +609,7 @@ class GemsBase(commands.Cog):
 					nb = 1
 				else:
 					nb = int(nb)
-				if nb < 0:
+				if nb < 0 and nb != -1:
 					DB.addGems(ID, -100)
 					msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:"
 					await ctx.channel.send(msg)
