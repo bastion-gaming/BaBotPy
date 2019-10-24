@@ -336,12 +336,14 @@ couldown_4h = 86400/6 # 4h
 couldown_3h = 86400/8 # 3h
 couldown_2h = 86400/12 # 2h
 couldown_1h = 86400/24 # 1h
-couldown_30 = 86400/48 # 30 min
-couldown_xxxl = 30
-couldown_xxl = 15
-couldown_xl = 10
-couldown_l = 8 # l pour long
-couldown_c = 6 # c pour court
+couldown_30m = 86400/48 # 30 min
+couldown_10m = couldown_30m/3 # 10 min
+couldown_30s = 30 # 30s
+couldown_15s = 15 # 15s
+couldown_10s = 10 # 10s
+couldown_8s = 8 # 8s
+couldown_6s = 6 # 6s
+couldown_4s = 4 # 4s
 # nb de sec nécessaire entre 2 commandes
 
 

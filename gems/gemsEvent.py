@@ -22,7 +22,7 @@ class GemsEvent(commands.Cog):
 		ID = ctx.author.id
 		jour = dt.date.today()
 		if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10):
-			if DB.spam(ID,GF.couldown_c, "cooked", GF.dbGems):
+			if DB.spam(ID,GF.couldown_4s, "cooked", GF.dbGems):
 				if DB.nbElements(ID, "cooked", "furnace_1", GF.dbHH) == 0:
 					if DB.nbElements(ID, "inventory", "pumpkin", GF.dbGems) >= 12:
 						DB.add(ID, "cooked", "furnace_1", t.time(), GF.dbHH)
@@ -57,7 +57,7 @@ class GemsEvent(commands.Cog):
 				await ctx.channel.send(embed = msg)
 				DB.updateComTime(ID, "cooked", GF.dbGems)
 			else:
-				msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 				await ctx.channel.send(msg)
 
 

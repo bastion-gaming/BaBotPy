@@ -41,7 +41,7 @@ async def action(ctx, IDaction, P, type):
 				P = Pmax
 			elif int(P) <= 0:
 				P = 0
-			if DB.spam(ID,GF.couldown_l, type, GF.dbGems):
+			if DB.spam(ID,GF.couldown_4s, type, GF.dbGems):
 				action = []
 				action.append(IDaction)
 				action.append(P)
@@ -57,7 +57,7 @@ async def action(ctx, IDaction, P, type):
 					await ctx.channel.send(embed = round(ctx, IDSession))
 					return True
 			else:
-				msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
+				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 				await ctx.channel.send(msg)
 			return True
 	else:
@@ -107,6 +107,7 @@ def round(ctx, IDSession):
 	OwnerDesc = "Action: {0} | {1} \nPuissance: {2}".format(OwnerType, OwnerActionName, OwnerPuissance)
 	MemberDesc = "Action: {0} | {1} \nPuissance: {2}".format(MemberType, MemberActionName, MemberPuissance)
 
+	# Defense vs Defense
 	if OwnerType == "defense" and MemberType == "defense":
 		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
 		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
@@ -114,6 +115,7 @@ def round(ctx, IDSession):
 		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem))
 		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem))
 
+	# Attaque vs Attaque
 	elif OwnerType == "attaque" and MemberType == "attaque":
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
 		if OwnerDurabilite > OwnerPuissance:
@@ -159,6 +161,7 @@ def round(ctx, IDSession):
 		result = "{0} à perdu {1} point de vie\n".format(userOwner.name, MemberPuissance)
 		result += "{0} à perdu {1} point de vie\n".format(userMember.name, OwnerPuissance)
 
+	# Defense vs Attaque
 	elif OwnerType == "defense" and MemberType == "attaque":
 		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
 
@@ -188,7 +191,7 @@ def round(ctx, IDSession):
 			result = "{0} à perdu 0 point de vie\n".format(userOwner.name)
 		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem))
 
-
+	# Attaque vs Defense
 	elif OwnerType == "attaque" and MemberType == "defense":
 		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
 

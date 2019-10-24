@@ -56,7 +56,7 @@ class GemsBase(commands.Cog):
 	async def bal(self, ctx, nom = None):
 		"""**[nom]** | Êtes vous riche ou pauvre ?"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "bal", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "bal", GF.dbGems):
 			#print(nom)
 			if nom != None:
 				ID = DB.nom_ID(nom)
@@ -76,7 +76,7 @@ class GemsBase(commands.Cog):
 			print("Gems >> Balance de {} affichée".format(nom))
 			return
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -85,7 +85,7 @@ class GemsBase(commands.Cog):
 	async def baltop(self, ctx, n = 10):
 		"""**[nombre]** | Classement des joueurs (10 premiers par défaut)"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "baltop", GF.dbGems):
+		if DB.spam(ID,GF.couldown_6s, "baltop", GF.dbGems):
 			UserList = []
 			baltop = ""
 			i = 0
@@ -108,7 +108,7 @@ class GemsBase(commands.Cog):
 			# Message de réussite dans la console
 			print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,n))
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 
@@ -118,7 +118,7 @@ class GemsBase(commands.Cog):
 		"""**[item] [nombre]** | Permet d'acheter les items vendus au marché"""
 		ID = ctx.author.id
 		jour = dt.date.today()
-		if DB.spam(ID,GF.couldown_c, "buy", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "buy", GF.dbGems):
 			if  GF.testInvTaille(ID) or item == "backpack":
 				test = True
 				nb = int(nb)
@@ -199,7 +199,7 @@ class GemsBase(commands.Cog):
 			else:
 				msg = "Ton inventaire est plein"
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -211,7 +211,7 @@ class GemsBase(commands.Cog):
 		ID = ctx.author.id
 		# print(nb)
 		# print(type(nb))
-		if DB.spam(ID,GF.couldown_c, "sell", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "sell", GF.dbGems):
 			if int(nb) == -1:
 				nb = DB.nbElements(ID, "inventory", item, GF.dbGems)
 			nb = int(nb)
@@ -257,7 +257,7 @@ class GemsBase(commands.Cog):
 
 			DB.updateComTime(ID, "sell", GF.dbGems)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -267,7 +267,7 @@ class GemsBase(commands.Cog):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
 		nom = ctx.author.name
-		if DB.spam(ID,GF.couldown_c, "inv", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "inv", GF.dbGems):
 			if fct == None:
 				msg_inv = ""
 				msg_invOutils = ""
@@ -370,7 +370,7 @@ class GemsBase(commands.Cog):
 				msg = "Cette poche n'existe pas"
 				await ctx.channel.send(msg)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 
@@ -380,7 +380,7 @@ class GemsBase(commands.Cog):
 		"""Permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
 		jour = dt.date.today()
-		if DB.spam(ID,GF.couldown_c, "market", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "market", GF.dbGems):
 			if fct == None:
 				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 				if ctx.guild.id != wel.idBASTION:
@@ -555,7 +555,7 @@ class GemsBase(commands.Cog):
 				msg = "Ce marché n'existe pas"
 				await ctx.channel.send(msg)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 
@@ -564,7 +564,7 @@ class GemsBase(commands.Cog):
 	async def pay (self, ctx, nom, gain):
 		"""**[nom] [gain]** | Donner de l'argent à vos amis !"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "pay", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "pay", GF.dbGems):
 			try:
 				if int(gain) > 0:
 					gain = int(gain)
@@ -587,7 +587,7 @@ class GemsBase(commands.Cog):
 				msg = "La commande est mal formulée"
 				pass
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -596,7 +596,7 @@ class GemsBase(commands.Cog):
 	async def forge(self, ctx, item = None, nb = 1):
 		"""**[item] [nombre]** | Permet de concevoir des items spécifiques"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "forge", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "forge", GF.dbGems):
 			if GF.testInvTaille(ID):
 				#-------------------------------------
 				# Affichage des recettes disponible
@@ -692,7 +692,7 @@ class GemsBase(commands.Cog):
 			else:
 				msg = "Ton inventaire est plein"
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -701,7 +701,7 @@ class GemsBase(commands.Cog):
 	async def trophy(self, ctx, nom = None):
 		"""**[nom]** | Liste de vos trophées !"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_c, "trophy", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "trophy", GF.dbGems):
 			if nom != None:
 				ID = DB.nom_ID(nom)
 				nom = ctx.guild.get_member(ID)
@@ -731,7 +731,7 @@ class GemsBase(commands.Cog):
 			print("Gems >> {} a affiché les trophées de {}".format(ctx.author.name,nom))
 			await ctx.channel.send(embed = msg)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 
@@ -741,7 +741,7 @@ class GemsBase(commands.Cog):
 		"""Liste de tout les trophées disponibles !"""
 		ID = ctx.author.id
 		d_trophy = "Liste des :trophy:Trophées\n\n"
-		if DB.spam(ID,GF.couldown_c, "trophylist", GF.dbGems):
+		if DB.spam(ID,GF.couldown_6s, "trophylist", GF.dbGems):
 			#-------------------------------------
 			# Affichage des trophées standard
 			for c in GF.objetTrophy:
@@ -766,7 +766,7 @@ class GemsBase(commands.Cog):
 			print("Gems >> {} a affiché la liste des trophées".format(ctx.author.name))
 			await ctx.channel.send(embed = msg)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 

@@ -71,7 +71,7 @@ class GemsPlay(commands.Cog):
 		# !bank bal <nom d'un joueur> permet de visualiser l'état de la banque de ce joueur
 		#=======================================================================
 		if mARG == "bal":
-			if DB.spam(ID,GF.couldown_c, "bank_bal", GF.dbGems):
+			if DB.spam(ID,GF.couldown_4s, "bank_bal", GF.dbGems):
 				if ARG2 != None:
 					ID = DB.nom_ID(ARG2)
 					nom = ctx.guild.get_member(ID)
@@ -97,7 +97,7 @@ class GemsPlay(commands.Cog):
 				DB.updateComTime(ID, "bank_bal", GF.dbGems)
 				return
 			else:
-				msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 			return
 		#=======================================================================
@@ -106,7 +106,7 @@ class GemsPlay(commands.Cog):
 		# un nombre négatif enlève des Gems
 		#=======================================================================
 		elif mARG == "add":
-			if DB.spam(ID,GF.couldown_c, "bank_add", GF.dbGems):
+			if DB.spam(ID,GF.couldown_4s, "bank_add", GF.dbGems):
 				if ARG2 != None:
 					ARG2 = int(ARG2)
 					gems = DB.valueAt(ID, "gems", GF.dbGems)
@@ -135,7 +135,7 @@ class GemsPlay(commands.Cog):
 				else:
 					msg = "Il manque le nombre de :gem: à ajouter sur votre compte épargne"
 			else:
-				msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 			return
 		#=======================================================================
@@ -202,7 +202,7 @@ class GemsPlay(commands.Cog):
 	async def crime(self, ctx):
 		"""Commets un crime et gagne des :gem: Attention au DiscordCop!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "crime", GF.dbGems):
+		if DB.spam(ID,GF.couldown_6s, "crime", GF.dbGems):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
 				DB.add(ID, "StatGems", "DiscordCop Arrestation", 1, GF.dbGems)
@@ -227,7 +227,7 @@ class GemsPlay(commands.Cog):
 					DB.addGems(ID, gain)
 			DB.updateComTime(ID, "crime", GF.dbGems)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -248,7 +248,7 @@ class GemsPlay(commands.Cog):
 			await ctx.channel.send(msg)
 			return
 		elif valeur > 0 and gems >= valeur:
-			if DB.spam(ID,GF.couldown_xl, "gamble", GF.dbGems):
+			if DB.spam(ID,GF.couldown_8s, "gamble", GF.dbGems):
 				if r.randint(0,3) == 0:
 					gain = valeur*3
 					# l'espérence est de 0 sur la gamble
@@ -278,7 +278,7 @@ class GemsPlay(commands.Cog):
 
 				DB.updateComTime(ID, "gamble", GF.dbGems)
 			else:
-				msg = "Il faut attendre "+str(GF.couldown_xl)+" secondes entre chaque commande !"
+				msg = "Il faut attendre "+str(GF.couldown_8s)+" secondes entre chaque commande !"
 		elif gems < valeur:
 			msg = "Tu n'as pas assez de :gem:`gems` en banque"
 		else:
@@ -291,7 +291,7 @@ class GemsPlay(commands.Cog):
 	async def mine(self, ctx):
 		"""Minez compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "mine", GF.dbGems):
+		if DB.spam(ID,GF.couldown_6s, "mine", GF.dbGems):
 			if GF.testInvTaille(ID):
 				#print(DB.nbElements(ID, "inventory", "pickaxe"))
 				nbrand = r.randint(0,99)
@@ -483,7 +483,7 @@ class GemsPlay(commands.Cog):
 			else:
 				msg = "Ton inventaire est plein"
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -492,7 +492,7 @@ class GemsPlay(commands.Cog):
 	async def fish(self, ctx):
 		"""Péchons compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_l, "fish", GF.dbGems):
+		if DB.spam(ID,GF.couldown_6s, "fish", GF.dbGems):
 			if GF.testInvTaille(ID):
 				nbrand = r.randint(0,99)
 				if DB.nbElements(ID, "inventory", "fishingrod", GF.dbGems) >= 1:
@@ -567,7 +567,7 @@ class GemsPlay(commands.Cog):
 			else:
 				msg = "Ton inventaire est plein"
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_l)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
@@ -577,7 +577,7 @@ class GemsPlay(commands.Cog):
 		"""**[fonction]** {_n° plantation_} | Plantons compagnons !!"""
 		ID = ctx.author.id
 		maxplanting = 200
-		if DB.spam(ID,GF.couldown_c, "hothouse", GF.dbGems):
+		if DB.spam(ID,GF.couldown_4s, "hothouse", GF.dbGems):
 			nbplanting = DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) + 1
 			if nbplanting >= maxplanting:
 				nbplanting = maxplanting
@@ -726,7 +726,7 @@ class GemsPlay(commands.Cog):
 			else:
 				await ctx.channel.send(embed = msg, delete_after = 90)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_c)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
 
 
@@ -755,7 +755,7 @@ class GemsPlay(commands.Cog):
 		else:
 			mise = 10
 
-		if DB.spam(ID,GF.couldown_xl, "slots", GF.dbGems):
+		if DB.spam(ID,GF.couldown_8s, "slots", GF.dbGems):
 			tab = []
 			result = []
 			msg = "Votre mise: {} :gem:\n\n".format(mise)
@@ -963,7 +963,7 @@ class GemsPlay(commands.Cog):
 				DB.addGems(ID, val)
 			DB.updateComTime(ID, "slots", GF.dbGems)
 		else:
-			msg = "Il faut attendre "+str(GF.couldown_xl)+" secondes entre chaque commande !"
+			msg = "Il faut attendre "+str(GF.couldown_8s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
 
 
