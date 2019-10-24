@@ -581,7 +581,7 @@ class GemsPlay(commands.Cog):
 			nbplanting = DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) + 1
 			if nbplanting >= maxplanting:
 				nbplanting = maxplanting
-			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantation.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
+			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantations.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
 			if fct == None or fct == "harvest":
@@ -658,9 +658,9 @@ class GemsPlay(commands.Cog):
 						else:
 							await ctx.channel.send(embed = msg, delete_after = 90)
 						msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici vos plantation.".format(GF.get_idmoji("seed")))
-						msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
+						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 					else:
-						msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
+						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 					i += 1
 				if check == True:
 					D = r.randint(0,20)
@@ -676,7 +676,11 @@ class GemsPlay(commands.Cog):
 				#await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
 				#return 404
 				if arg != None:
-					if int(arg) > nbplanting:
+					try:
+						arg = int(arg)
+					except:
+						return 404
+					if arg > nbplanting:
 						msg = "Tu n'as pas assez de plantations ou cette plantation n'est pas disponible!"
 						await ctx.channel.send(msg)
 						return 404
@@ -685,25 +689,25 @@ class GemsPlay(commands.Cog):
 						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:"
 						await ctx.channel.send(msg)
 						return "anticheat"
-					if DB.nbElements(ID, "hothouse", "planting_{}".format(int(arg)), GF.dbHH) == 0:
+					if DB.nbElements(ID, "hothouse", "planting_{}".format(arg), GF.dbHH) == 0:
 						if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
-							DB.add(ID, "hothouse", "planting_{}".format(int(arg)), t.time(), GF.dbHH)
+							DB.add(ID, "hothouse", "planting_{}".format(arg), t.time(), GF.dbHH)
 							DB.add(ID, "inventory", "seed", -1, GF.dbGems)
-							desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
+							desc = "<:gem_{0}:{1}>`{0}` plantée".format("seed", GF.get_idmoji("seed"))
 						else:
-							desc = "Tu n'as pas de <:gem_seed:{}>`seed` à planter dans ton inventaire".format(GF.get_idmoji("seed"))
+							desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format("seed", GF.get_idmoji("seed"))
 					else:
 						desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
-					msg.add_field(name="Plntation numero {}".format(int(arg)), value=desc, inline=False)
+					msg.add_field(name="Plntation n°{}".format(arg), value=desc, inline=False)
 				else:
 					while i <= nbplanting:
 						if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbHH) == 0:
 							if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
 								DB.add(ID, "hothouse", "planting_{}".format(i), t.time(), GF.dbHH)
 								DB.add(ID, "inventory", "seed", -1, GF.dbGems)
-								desc = "<:gem_seed:{}>`seed` plantée".format(GF.get_idmoji("seed"))
+								desc = "<:gem_{0}:{1}>`{0}` plantée".format("seed", GF.get_idmoji("seed"))
 							else:
-								desc = "Tu n'as pas de <:gem_seed:{}>`seed` à planter dans ton inventaire".format(GF.get_idmoji("seed"))
+								desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format("seed", GF.get_idmoji("seed"))
 								if i > 15:
 									await ctx.channel.send(embed = msg)
 									await ctx.channel.send(desc)
@@ -715,10 +719,10 @@ class GemsPlay(commands.Cog):
 								await ctx.channel.send(embed = msg)
 							else:
 								await ctx.channel.send(embed = msg, delete_after = 90)
-							msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici vos plantation.".format(GF.get_idmoji("seed")))
-							msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
+							msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici vos plantations.".format(GF.get_idmoji("seed")))
+							msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 						else:
-							msg.add_field(name="Plantation numero {}".format(i), value=desc, inline=False)
+							msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 						i += 1
 			DB.updateComTime(ID, "hothouse", GF.dbGems)
 			if nbplanting // 10 == 0:

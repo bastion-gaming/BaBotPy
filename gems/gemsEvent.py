@@ -27,7 +27,7 @@ class GemsEvent(commands.Cog):
 					if DB.nbElements(ID, "inventory", "pumpkin", GF.dbGems) >= 12:
 						DB.add(ID, "cooked", "furnace_1", t.time(), GF.dbHH)
 						DB.add(ID, "inventory", "pumpkin", -12, GF.dbGems)
-						desc = "Ton plat a été mis au four"
+						desc = "Ton plat a été mis au four. Il aura fini de cuire dans :clock2:`2h`"
 					else:
 						desc = "Tu n'as pas assez de <:gem_pumpkin:{0}>`pumpkin` dans ton inventaire! \n\nIl te faut 12 <:gem_pumpkin:{0}>`pumpkin` pour faire une <:gem_pumpkinpie:{1}>`pumpkinpie`".format(GF.get_idmoji("pumpkin"), GF.get_idmoji("pumpkinpie"))
 						await ctx.channel.send(desc)

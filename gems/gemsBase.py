@@ -564,23 +564,68 @@ class GemsBase(commands.Cog):
 	async def pay (self, ctx, nom, gain):
 		"""**[nom] [gain]** | Donner de l'argent à vos amis !"""
 		ID = ctx.author.id
+		name = ctx.author.name
 		if DB.spam(ID,GF.couldown_4s, "pay", GF.dbGems):
 			try:
 				if int(gain) > 0:
 					gain = int(gain)
 					don = -gain
 					ID_recu = DB.nom_ID(nom)
+					Nom_recu = ctx.guild.get_member(ID_recu).name
 					if int(DB.valueAt(ID, "gems", GF.dbGems)) >= 0:
 						# print(ID_recu)
 						DB.addGems(ID_recu, gain)
 						DB.addGems(ID,don)
-						msg = "<@{0}> donne {1}:gem: à <@{2}> !".format(ID,gain,ID_recu)
+						msg = "{0} donne {1}:gem: à {2} !".format(name,gain,Nom_recu)
 						# Message de réussite dans la console
-						print("Gems >> {} a donné {} Gems à {}".format(ctx.author.name,gain,ctx.guild.get_member(ID_recu).name))
+						print("Gems >> {} a donné {} Gems à {}".format(name,gain,Nom_recu))
 					else:
-						msg = "<@{0}> n'a pas assez pour donner à <@{2}> !".format(ID,gain,ID_recu)
+						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, gain, Nom_recu)
 
 					DB.updateComTime(ID, "pay", GF.dbGems)
+				else :
+					msg = "Tu ne peux pas donner une somme négative ! N'importe quoi enfin !"
+			except ValueError:
+				msg = "La commande est mal formulée"
+				pass
+		else:
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
+		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def give(self, ctx, nom, item, nb = None):
+		"""**[nom] [item] [nombre]** | Donner des items à vos amis !"""
+		ID = ctx.author.id
+		name = ctx.author.name
+		if DB.spam(ID,GF.couldown_4s, "give", GF.dbGems):
+			try:
+				if nb == None:
+					nb = 1
+				else:
+					nb = int(nb)
+				if nb < 0:
+					DB.addGems(ID, -100)
+					msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:"
+					await ctx.channel.send(msg)
+					return "anticheat"
+				elif int(nb) > 0:
+					ID_recu = DB.nom_ID(nom)
+					Nom_recu = ctx.guild.get_member(ID_recu).name
+					if DB.nbElements(ID, "inventory", item, GF.dbGems) >= nb and nb > 0:
+						DB.add(ID, "inventory", item, -nb, GF.dbGems)
+						DB.add(ID_recu, "inventory", item, nb, GF.dbGems)
+						if item != "cookie" and item != "grapes" and item != "wine_glass" and item != "candy" and item != "lollipop":
+							msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
+						else:
+							msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+						# Message de réussite dans la console
+						print("Gems >> {0} a donné {1} {2} à {3}".format(name, nb, item, Nom_recu))
+					else:
+						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, gain, Nom_recu)
+
+					DB.updateComTime(ID, "give", GF.dbGems)
 				else :
 					msg = "Tu ne peux pas donner une somme négative ! N'importe quoi enfin !"
 			except ValueError:
