@@ -630,7 +630,7 @@ class GemsBase(commands.Cog):
 						else:
 							msg = "L'inventaire de {} est plein".format(Nom_recu)
 					else:
-						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, item, Nom_recu)
+						msg = "{0} n'a pas assez pour donner à {1} !".format(name, Nom_recu)
 
 					DB.updateComTime(ID, "give", GF.dbGems)
 				elif nb == -1:
