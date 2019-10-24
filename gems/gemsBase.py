@@ -9,6 +9,7 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
 from operator import itemgetter
+import json
 
 PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 
@@ -356,7 +357,6 @@ class GemsBase(commands.Cog):
 					msg_invCapAtt += "••••••••••"
 					msg.add_field(name="Attaque", value=msg_invCapAtt, inline=False)
 				if msg_invCapDef != "":
-					msg_invCapDef += "••••••••••"
 					msg.add_field(name="Défense", value=msg_invCapDef, inline=False)
 				DB.updateComTime(ID, "inv", GF.dbGems)
 				await ctx.channel.send(embed = msg)
@@ -408,15 +408,19 @@ class GemsBase(commands.Cog):
 				d_marketItemsHalloween = ""
 				d_marketBox = ""
 
+				# récupération du fichier de sauvegarde de la bourse
+				with open('gems/bourse.json', 'r') as fp:
+					dict = json.load(fp)
 				for c in GF.objetOutil:
 					for y in GI.PrixOutil:
 						if y.nom == c.nom:
+							temp = dict[c.nom]
 							if y.vente != 0:
-								pourcentageV = ((c.vente*100)//y.vente)-100
+								pourcentageV = ((c.vente*100)//temp["precVente"])-100
 							else:
 								pourcentageV = 0
 							if y.achat != 0:
-								pourcentageA = ((c.achat*100)//y.achat)-100
+								pourcentageA = ((c.achat*100)//temp["precAchat"])-100
 							else:
 								pourcentageA = 0
 
@@ -440,12 +444,13 @@ class GemsBase(commands.Cog):
 				for c in GF.objetItem :
 					for y in GI.PrixItem:
 						if y.nom == c.nom:
+							temp = dict[c.nom]
 							if y.vente != 0:
-								pourcentageV = ((c.vente*100)//y.vente)-100
+								pourcentageV = ((c.vente*100)//temp["precVente"])-100
 							else:
 								pourcentageV = 0
 							if y.achat != 0:
-								pourcentageA = ((c.achat*100)//y.achat)-100
+								pourcentageA = ((c.achat*100)//temp["precAchat"])-100
 							else:
 								pourcentageA = 0
 					if c.type == "minerai":
@@ -532,9 +537,9 @@ class GemsBase(commands.Cog):
 				descCapDef = ""
 				for c in GF.objetCapability:
 					if c.defaut != True:
-						if c.type == "attaque":
+						if c.type == "attaque" and c.ID != 100:
 							descCapAtt += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
-						elif c.type == "defense":
+						elif c.type == "defense" and c.ID != 200:
 							descCapDef += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
 				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
 				if descCapAtt != "":

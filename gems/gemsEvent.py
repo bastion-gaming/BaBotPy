@@ -17,7 +17,7 @@ class GemsEvent(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def cooked(self, ctx):
+	async def cooking(self, ctx):
 		"""**Halloween** | Cuisinons compagnons !!"""
 		ID = ctx.author.id
 		jour = dt.date.today()

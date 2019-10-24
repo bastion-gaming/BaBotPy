@@ -79,7 +79,7 @@ def setglobalguild(guild):
 
 
 def itemBourse(item, type):
-	"""Version 2.1 | Attribue les prix de la bourse """
+	"""Version 2.2 | Attribue les prix de la bourse """
 	# récupération du fichier de sauvegarde de la bourse
 	with open('gems/bourse.json', 'r') as fp:
 		dict = json.load(fp)
@@ -90,77 +90,82 @@ def itemBourse(item, type):
 	elif type == "achat":
 		pnow = temp["achat"]
 
-	# Gestion des exceptions
-	for y in GI.exception:
-		if item == y:
-			return pnow
+	#Verification pour l'actualisation de la bourse
+	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
+		# Gestion des exceptions
+		for y in GI.exception:
+			if item == y:
+				return pnow
 
-	# Fonctionnement de la bourse
-	DcrackB = r.randint(1, 1000)
-	# crack boursier négatif
-	if DcrackB == 1:
-		if pnow > 1000:
-			Prix = pnow - 500
-		else:
-			Prix = 10
-	# crack boursier positif
-	elif DcrackB == 1000:
-		Prix = pnow + 500
-	# évolution de la bourse normale (entre -10% et +10% de la valeur courante)
-	else:
-		D21 = r.randint(0,20)
-		# valeur minimal dynamique (permet au item dont le prix est au plus bas de remonter en valeur plus facilement)
-		if (pnow < 30 and type == "vente") or (pnow < 50 and type == "achat"):
-			if D21 >= 5:
-				pourcentage = D21 + 5
-				Prix = pnow + ((pnow*pourcentage)//100)
-			elif D21 < 5:
-				pourcentage = -1*(D21 + 5)
-				Prix = pnow + ((pnow*pourcentage)//100)
-		else:
-			if D21 > 10:
-				pourcentage = D21 - 10
-				Prix = pnow + ((pnow*pourcentage)//100)
-			elif D21 < 10:
-				pourcentage = -1*(D21 + 1)
-				Prix = pnow + ((pnow*pourcentage)//100)
+		# Fonctionnement de la bourse
+		DcrackB = r.randint(1, 1000)
+		# crack boursier négatif
+		if DcrackB == 1:
+			if pnow > 1000:
+				Prix = pnow - 500
 			else:
-				Prix = pnow
-			if Prix <= 10:
 				Prix = 10
-	# La valeur de vente ne peux etre supérieur à la valeur d'achat
-	if type == "vente":
-		for x in GI.PrixItem:
-			if item == x.nom:
-				if Prix > x.achat:
-					Prix = x.achat
-		for x in GI.PrixOutil:
-			if item == x.nom:
-				if Prix > x.achat:
-					Prix = x.achat
-		temp["vente"] = Prix
-	# La valeur d'achat ne peux être inférieur à la valeur de vente
-	elif type == "achat":
-		for x in GI.PrixItem:
-			if item == x.nom:
-				if Prix < x.vente:
-					Prix = x.vente
-		for x in GI.PrixOutil:
-			if item == x.nom:
-				if Prix < x.vente:
-					Prix = x.vente
-		temp["achat"] = Prix
-	# actualisation du fichier de sauvegarde de la bourse
-	dict[item] = temp
-	with open('gems/bourse.json', 'w') as fp:
-		json.dump(dict, fp, indent=4)
-	return Prix
+		# crack boursier positif
+		elif DcrackB == 1000:
+			Prix = pnow + 500
+		# évolution de la bourse normale (entre -10% et +10% de la valeur courante)
+		else:
+			D21 = r.randint(0,20)
+			# valeur minimal dynamique (permet au item dont le prix est au plus bas de remonter en valeur plus facilement)
+			if (pnow < 30 and type == "vente") or (pnow < 50 and type == "achat"):
+				if D21 >= 5:
+					pourcentage = D21 + 5
+					Prix = pnow + ((pnow*pourcentage)//100)
+				elif D21 < 5:
+					pourcentage = -1*(D21 + 5)
+					Prix = pnow + ((pnow*pourcentage)//100)
+			else:
+				if D21 > 10:
+					pourcentage = D21 - 10
+					Prix = pnow + ((pnow*pourcentage)//100)
+				elif D21 < 10:
+					pourcentage = -1*(D21 + 1)
+					Prix = pnow + ((pnow*pourcentage)//100)
+				else:
+					Prix = pnow
+				if Prix <= 10:
+					Prix = 10
+		# La valeur de vente ne peux etre supérieur à la valeur d'achat
+		if type == "vente":
+			for x in GI.PrixItem:
+				if item == x.nom:
+					if Prix > x.achat:
+						Prix = x.achat
+			for x in GI.PrixOutil:
+				if item == x.nom:
+					if Prix > x.achat:
+						Prix = x.achat
+			temp["vente"] = Prix
+			temp["precVente"] = pnow
+		# La valeur d'achat ne peux être inférieur à la valeur de vente
+		elif type == "achat":
+			for x in GI.PrixItem:
+				if item == x.nom:
+					if Prix < x.vente:
+						Prix = x.vente
+			for x in GI.PrixOutil:
+				if item == x.nom:
+					if Prix < x.vente:
+						Prix = x.vente
+			temp["achat"] = Prix
+			temp["precAchat"] = pnow
+		# actualisation du fichier de sauvegarde de la bourse
+		dict[item] = temp
+		with open('gems/bourse.json', 'w') as fp:
+			json.dump(dict, fp, indent=4)
+		return Prix
+	else:
+		return pnow
+# <<< def itemBourse(item, type):
 
 
 #Fonction d'actualisation/initialisation des items
 def loadItem(F = None):
-	DB.updateComTime(wel.idBaBot, "bourse", "DB/bastionDB")
-	DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
 	if F == True:
 		GI.initBourse()
 	#========== Items ==========
@@ -280,6 +285,10 @@ def loadItem(F = None):
 	,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:{}>`ruby` trouvé".format(get_idmoji("ruby")))
 	,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
+	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
+		DB.updateComTime(wel.idBaBot, "bourse", "DB/bastionDB")
+		DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
+# <<< def loadItem(F = None):
 
 ##############################################
 #========== Loot Box ==========

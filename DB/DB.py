@@ -192,12 +192,12 @@ def updateField(ID, fieldName, fieldValue, linkDB = None):
 	else:
 		db = TinyDB("DB/{}.json".format(DB_NOM))
 	if db.search(getattr(Query(),fieldName)) == []:
-		print("DB >> Le champ n'existe pas")
+		# print("DB >> Le champ n'existe pas")
 		db.close()
 		return "201"
 	else:
 		db.update({fieldName: fieldValue}, Query().ID == ID)
-		print("DB >> Le champ a été mis à jour")
+		# print("DB >> Le champ a été mis à jour")
 		db.close()
 		return "200"
 

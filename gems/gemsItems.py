@@ -26,14 +26,14 @@ PrixItem = [Item("cobblestone", 30, 50)
 ,Item("palm", 1050, 1300)
 ,Item("wheat", 1200, 2000)
 ,Item("cookie", 30, 40)
-,Item("grapes", 15, 25)
+,Item("grapes", 15, 30)
 ,Item("wine_glass", 120, 210)
 ,Item("pumpkin", 220, 330)
 ,Item("pumpkinpie", 1000, 1200)
 ,Item("candy", 1, 2)
 ,Item("lollipop", 5, 12)
 ,Item("backpack", 1, 3000)
-,Item("fishhook", 22, 46)]
+,Item("fishhook", 46, 64)]
 
 #========== Outils ==========
 class Outil:
@@ -62,8 +62,8 @@ def initBourse():
 		# Création du fichier bourse.json avec les valeurs par défaut
 		dict = {}
 		for x in PrixItem:
-			dict[x.nom] = {"vente": x.vente, "achat": x.achat}
+			dict[x.nom] = {"vente": x.vente, "achat": x.achat, "precVente": x.vente, "precAchat": x.achat}
 		for x in PrixOutil:
-			dict[x.nom] = {"vente": x.vente, "achat": x.achat}
+			dict[x.nom] = {"vente": x.vente, "achat": x.achat, "precVente": x.vente, "precAchat": x.achat}
 		with open('gems/bourse.json', 'w') as fp:
 		    json.dump(dict, fp, indent=4)
