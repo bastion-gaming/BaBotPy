@@ -600,6 +600,9 @@ class GemsBase(commands.Cog):
 		"""**[nom] [item] [nombre]** | Donner des items à vos amis !"""
 		ID = ctx.author.id
 		name = ctx.author.name
+		if item == "bank_upgrade":
+			await ctx.channel.send("Tu ne peux pas donner cette item!")
+			return False
 		if DB.spam(ID,GF.couldown_4s, "give", GF.dbGems):
 			try:
 				if nb == None:
@@ -615,14 +618,17 @@ class GemsBase(commands.Cog):
 					ID_recu = DB.nom_ID(nom)
 					Nom_recu = ctx.guild.get_member(ID_recu).name
 					if DB.nbElements(ID, "inventory", item, GF.dbGems) >= nb and nb > 0:
-						DB.add(ID, "inventory", item, -nb, GF.dbGems)
-						DB.add(ID_recu, "inventory", item, nb, GF.dbGems)
-						if item != "cookie" and item != "grapes" and item != "wine_glass" and item != "candy" and item != "lollipop":
-							msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
+						if GF.testInvTaille(ID_recu):
+							DB.add(ID, "inventory", item, -nb, GF.dbGems)
+							DB.add(ID_recu, "inventory", item, nb, GF.dbGems)
+							if item != "cookie" and item != "grapes" and item != "wine_glass" and item != "candy" and item != "lollipop":
+								msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
+							else:
+								msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+							# Message de réussite dans la console
+							print("Gems >> {0} a donné {1} {2} à {3}".format(name, nb, item, Nom_recu))
 						else:
-							msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
-						# Message de réussite dans la console
-						print("Gems >> {0} a donné {1} {2} à {3}".format(name, nb, item, Nom_recu))
+							msg = "L'inventaire de {} est plein".format(Nom_recu)
 					else:
 						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, gain, Nom_recu)
 
