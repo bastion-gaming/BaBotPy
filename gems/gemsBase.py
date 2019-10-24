@@ -614,7 +614,7 @@ class GemsBase(commands.Cog):
 					msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:"
 					await ctx.channel.send(msg)
 					return "anticheat"
-				elif int(nb) > 0:
+				elif nb > 0:
 					ID_recu = DB.nom_ID(nom)
 					Nom_recu = ctx.guild.get_member(ID_recu).name
 					if DB.nbElements(ID, "inventory", item, GF.dbGems) >= nb and nb > 0:
@@ -630,7 +630,27 @@ class GemsBase(commands.Cog):
 						else:
 							msg = "L'inventaire de {} est plein".format(Nom_recu)
 					else:
-						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, gain, Nom_recu)
+						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, item, Nom_recu)
+
+					DB.updateComTime(ID, "give", GF.dbGems)
+				elif nb == -1:
+					ID_recu = DB.nom_ID(nom)
+					Nom_recu = ctx.guild.get_member(ID_recu).name
+					nb = DB.nbElements(ID, "inventory", item, GF.dbGems)
+					if nb > 0:
+						if GF.testInvTaille(ID_recu):
+							DB.add(ID, "inventory", item, -nb, GF.dbGems)
+							DB.add(ID_recu, "inventory", item, nb, GF.dbGems)
+							if item != "cookie" and item != "grapes" and item != "wine_glass" and item != "candy" and item != "lollipop":
+								msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
+							else:
+								msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+							# Message de réussite dans la console
+							print("Gems >> {0} a donné {1} {2} à {3}".format(name, nb, item, Nom_recu))
+						else:
+							msg = "L'inventaire de {} est plein".format(Nom_recu)
+					else:
+						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, item, Nom_recu)
 
 					DB.updateComTime(ID, "give", GF.dbGems)
 				else :
