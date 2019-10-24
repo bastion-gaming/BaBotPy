@@ -274,7 +274,7 @@ class GemsPlay(commands.Cog):
 				else:
 					val = 0-valeur
 					DB.addGems(ID,val)
-					DB.addgems(wel.idBaBot, valeur)
+					DB.addgems(wel.idBaBot, int(valeur))
 					msg = "Dommage tu as perdu "+str(valeur)+":gem:"
 
 				DB.updateComTime(ID, "gamble", GF.dbGems)
