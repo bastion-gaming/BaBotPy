@@ -27,7 +27,7 @@ class GemsEvent(commands.Cog):
 					if DB.nbElements(ID, "inventory", "pumpkin", GF.dbGems) >= 12:
 						DB.add(ID, "cooked", "furnace_1", t.time(), GF.dbHH)
 						DB.add(ID, "inventory", "pumpkin", -12, GF.dbGems)
-						desc = "Votre plat a été mis au four".format(GF.get_idmoji("seed"))
+						desc = "Ton plat a été mis au four"
 					else:
 						desc = "Tu n'as pas assez de <:gem_pumpkin:{0}>`pumpkin` dans ton inventaire! \n\nIl te faut 12 <:gem_pumpkin:{0}>`pumpkin` pour faire une <:gem_pumpkinpie:{1}>`pumpkinpie`".format(GF.get_idmoji("pumpkin"), GF.get_idmoji("pumpkinpie"))
 						await ctx.channel.send(desc)
@@ -39,7 +39,7 @@ class GemsEvent(commands.Cog):
 					if time <= 0:
 						DB.add(ID, "inventory", "pumpkinpie", 1, GF.dbGems)
 						DB.add(ID, "cooked", "furnace_1", -1*CookedTime, GF.dbHH)
-						desc = "Ton plat à fini de cuir, en le sortant du four tu gagne 1 <:gem_pumpkinpie:{}>`pumpkinpie`".format(GF.get_idmoji("pumpkinpie"))
+						desc = "Ton plat à fini de cuire, en le sortant du four tu gagne 1 <:gem_pumpkinpie:{}>`pumpkinpie`".format(GF.get_idmoji("pumpkinpie"))
 						D = r.randint(0,20)
 						if D == 20 or D == 0:
 							DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
