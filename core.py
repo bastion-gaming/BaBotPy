@@ -78,8 +78,7 @@ async def on_ready():
 	print('------\n')
 	GF.checkDB_Gems()
 	GF.checkDB_GemsHH()
-	# GF.checkDB_Session()
-	# GF.loadItem(True)
+	GF.checkDB_Session()
 
 ####################### Commande help.py #######################
 
@@ -172,7 +171,7 @@ client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
 
-# client.load_extension('gems.gemsFight')
+client.load_extension('gems.gemsFight')
 
 client.load_extension('gems.gemsEvent')
 
