@@ -55,6 +55,7 @@ async def action(ctx, IDaction, P, type):
 				await ctx.channel.send(msg)
 				if checkround(IDSession):
 					await ctx.channel.send(embed = round(ctx, IDSession))
+					await checklife(ctx, IDSession)
 					return True
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
@@ -74,12 +75,60 @@ def checkround(IDSession):
 		return False
 
 
+async def checklife(ctx, IDSession):
+	lifeOwner = DB.valueAt(IDSession, "lifeOwner", GF.dbSession)
+	lifeMember = DB.valueAt(IDSession, "lifeMember", GF.dbSession)
+	member = DB.valueAt(IDSession, "member", GF.dbSession)
+	owner = ctx.guild.get_member(DB.valueAt(IDSession, "owner", GF.dbSession))
+	mise = DB.valueAt(IDSession, "mise", GF.dbSession)
+	if lifeOwner <= 0 and lifeMember <= 0:
+		desc = "Fin du duel\n\nMatch nul. Personne ne remprote la victoire!"
+		msg = discord.Embed(title = "Defis {}".format(DB.valueAt(IDSession, "ID", GF.dbSession)),color= 13752280, description = desc)
+		await ctx.channel.send(embed = msg)
+		msg = "••••••••••\n<:gem_sword:{1}> Match Nul! Fin du defis `{0}`".format(IDSession, GF.get_idmoji("sword"))
+		DB.removePlayer(IDSession, GF.dbSession)
+		await owner.send(msg)
+		for userID in member:
+			user = ctx.guild.get_member(userID)
+			await user.send(msg)
+		return "end"
+	elif lifeOwner <= 0 or lifeMember <= 0:
+		if lifeOwner <= 0:
+			for userID in member:
+				win = ctx.guild.get_member(userID)
+				winID = userID
+			lostID = DB.valueAt(IDSession, "owner", GF.dbSession)
+		elif lifeMember <= 0:
+			win = owner
+			winID = DB.valueAt(IDSession, "owner", GF.dbSession)
+			for userID in member:
+				lostID = userID
+		desc = "Duel terminée\nLa victoire revient à {0}\nTu gagne les {1} :gem:`gems` de ton adversaire".format(win.name, mise)
+		msg = discord.Embed(title = "Defis {}".format(DB.valueAt(IDSession, "ID", GF.dbSession)),color= 13752280, description = desc)
+		await ctx.channel.send(embed = msg)
+		DB.addGems(winID, mise)
+		lost_nbGems = DB.valueAt(lostID, "gems", GF.dbGems)
+		if lost_nbGems < mise:
+			DB.addGems(lostID, -lostnbGems)
+		else:
+			DB.addGems(lostID, -mise)
+		msg = "••••••••••\n<:gem_sword:{1}>Fin du defis `{0}`\n<@{1}> a gagné".format(IDSession, GF.get_idmoji("sword"), winID)
+		DB.removePlayer(IDSession, GF.dbSession)
+		await owner.send(msg)
+		for userID in member:
+			user = ctx.guild.get_member(userID)
+			await user.send(msg)
+		return "end"
+	else:
+		return True
+
+
 def round(ctx, IDSession):
 	valueOwner = DB.valueAt(IDSession, "actionOwner", GF.dbSession)
 	OwnerLife = DB.valueAt(IDSession, "lifeOwner", GF.dbSession)
 	userOwner = ctx.guild.get_member(DB.valueAt(IDSession, "owner", GF.dbSession))
 	OwnerAction = valueOwner[0]
-	OwnerPuissance = valueOwner[1]
+	OwnerPuissance = int(valueOwner[1])
 
 	valueMember = DB.valueAt(IDSession, "actionMember", GF.dbSession)
 	MemberLife = DB.valueAt(IDSession, "lifeMember", GF.dbSession)
@@ -87,7 +136,7 @@ def round(ctx, IDSession):
 	for one in member:
 		userMember = ctx.guild.get_member(one)
 	MemberAction = valueMember[0]
-	MemberPuissance = valueMember[1]
+	MemberPuissance = int(valueMember[1])
 
 	OwnerType = ""
 	MemberType = ""
@@ -118,16 +167,17 @@ def round(ctx, IDSession):
 	# Attaque vs Attaque
 	elif OwnerType == "attaque" and MemberType == "attaque":
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
-		if OwnerDurabilite > OwnerPuissance:
-			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
-			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
-		elif OwnerDurabilite == None:
+		if OwnerDurabilite == None:
 			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:
 				if c.nom == OwnerItem:
 					GF.addDurabilite(userOwner.id, c.nom, c.durabilite)
 			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
+		elif int(OwnerDurabilite) > OwnerPuissance:
+			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
 		else:
+			OwnerDurabilite = int(OwnerDurabilite)
 			OwnerDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
 			DB.add(userOwner.id, "inventory", OwnerItem, -1, GF.dbGems)
@@ -156,7 +206,7 @@ def round(ctx, IDSession):
 						GF.addDurabilite(userMember.id, c.nom, c.durabilite-MemberDurabilite-temp)
 
 		DB.updateField(IDSession, "lifeOwner", OwnerLife-MemberPuissance, GF.dbSession)
-		DB.updateField(IDSession, "lifeOwner", MemberLife-OwnerPuissance, GF.dbSession)
+		DB.updateField(IDSession, "lifeMember", MemberLife-OwnerPuissance, GF.dbSession)
 
 		result = "{0} à perdu {1} point de vie\n".format(userOwner.name, MemberPuissance)
 		result += "{0} à perdu {1} point de vie\n".format(userMember.name, OwnerPuissance)
@@ -166,16 +216,17 @@ def round(ctx, IDSession):
 		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
 
 		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
-		if MemberDurabilite > MemberPuissance:
-			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
-			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
-		elif MemberDurabilite == None:
+		if MemberDurabilite == None:
 			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			for c in GF.objetOutil:
 				if c.nom == MemberItem:
 					GF.addDurabilite(userMember.id, c.nom, c.durabilite)
 			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
+		elif MemberDurabilite > MemberPuissance:
+			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
+			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
 		else:
+			MemberDurabilite = int(MemberDurabilite)
 			MemberDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
 			temp = MemberPuissance - MemberDurabilite
 			DB.add(userMember.id, "inventory", MemberItem, -1, GF.dbGems)
@@ -196,16 +247,17 @@ def round(ctx, IDSession):
 		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
 
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
-		if OwnerDurabilite > OwnerPuissance:
-			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
-			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
-		elif OwnerDurabilite == None:
+		if OwnerDurabilite == None:
 			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:
 				if c.nom == OwnerItem:
 					GF.addDurabilite(userOwner.id, c.nom, c.durabilite)
 			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
+		if OwnerDurabilite > OwnerPuissance:
+			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
 		else:
+			OwnerDurabilite = int(OwnerDurabilite)
 			OwnerDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
 			DB.add(userOwner.id, "inventory", OwnerItem, -1, GF.dbGems)
@@ -216,16 +268,21 @@ def round(ctx, IDSession):
 
 		temp = OwnerPuissance - MemberPuissance
 		if temp > 0:
-			DB.updateField(IDSession, "lifeOwner", MemberLife-temp, GF.dbSession)
+			DB.updateField(IDSession, "lifeMember", MemberLife-temp, GF.dbSession)
 			result = "{0} à perdu {1} point de vie\n".format(userMember.name, temp)
 		else:
 			result = "{0} à perdu 0 point de vie\n".format(userMember.name)
 		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem))
 
-	msg = discord.Embed(title = "Round {}".format(DB.valueAt(IDSession, "round", GF.dbSession)),color= 13752280, description = "")
-	msg.add_field(name="{}".format(userOwner.name), value=desc, inline=False)
-	msg.add_field(name="{}".format(userMember.name), value=desc, inline=False)
+	nbRound = DB.valueAt(IDSession, "round", GF.dbSession)
+	msg = discord.Embed(title = "Round {}".format(nbRound),color= 13752280, description = "")
+	msg.add_field(name="{}".format(userOwner.name), value=OwnerDesc, inline=False)
+	msg.add_field(name="{}".format(userMember.name), value=MemberDesc, inline=False)
 	msg.add_field(name="Résultats", value=result, inline=False)
+
+	DB.updateField(IDSession, "actionOwner", [], GF.dbSession)
+	DB.updateField(IDSession, "actionMember", [], GF.dbSession)
+	DB.updateField(IDSession, "round", nbRound+1, GF.dbSession)
 	return msg
 
 
@@ -237,44 +294,53 @@ class GemsFight(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def defis(self, ctx, opt, arg1):
+	async def defis(self, ctx, opt, arg1, mise = None):
 		"""
-		**duel [nom]** | Gestion des sessions de duel
+		**duel [nom] [mise]** | Gestion des sessions de duel
 		"""
 		ID = ctx.author.id
 		IDmember = DB.nom_ID(arg1)
 		if opt == "duel":
-			# arg1 >> utilisateur à défier
-			if DB.OwnerSessionExist(ID, GF.dbSession) == False:
-				if DB.MemberSessionExist(IDmember, GF.dbSession) == False or DB.MemberSessionExist(ID, GF.dbSession) == False:
-					check = True
-					while check:
-						try:
-							code = GF.gen_code()
-							DB.valueAt(code, "ID", GF.dbSession)
-						except:
-							check = False
-					if DB.newPlayer(code, GF.dbSession, GF.dbSessionTemplate) == "Le joueur a été ajouté !":
-						DB.updateField(code, "owner", ID, GF.dbSession)
-						DB.updateField(code, "type", "duel", GF.dbSession)
-						DB.updateField(code, "sync", "NOK", GF.dbSession)
-						member = DB.valueAt(code, "member", GF.dbSession)
-						member.append(IDmember)
-						DB.updateField(code, "member", member, GF.dbSession)
-						msg = "Défis `{}` créée".format(code)
-						user = ctx.guild.get_member(IDmember)
-						msg += "\n Message envoyer à {}\n••••\nEn attende de synchronisation".format(user.name)
-						mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n".format(ctx.author.name, code, GF.get_idmoji("sword"))
-						try:
-							await user.send(mpuser)
-							await ctx.channel.send(msg)
-						except:
-							DB.removePlayer(code, GF.dbSession)
-							await ctx.channel.send("Défis impossible! tu ne peux pas défier un bot")
-				else:
-					await ctx.channel.send("Ce joueur à déjà été défié!")
+			if mise != None:
+				imise = int(mise)
 			else:
-				await ctx.channel.send("Tu as déjà créé une session de duel. Pour y mettre fin et en créé une nouvelle utilise la commande `!defis end {0}`".format(DB.OwnerSessionAt(ctx.author.id, "ID", GF.dbSession)))
+				await ctx.channel.send("Il manque la mise pour lancer ce défis")
+				return False
+			if DB.valueAt(ID, "gems", GF.dbGems) >= imise and DB.valueAt(IDmember, "gems", GF.dbGems) >= imise:
+				# arg1 >> utilisateur à défier
+				if DB.OwnerSessionExist(ID, GF.dbSession) == False:
+					if DB.MemberSessionExist(IDmember, GF.dbSession) == False or DB.MemberSessionExist(ID, GF.dbSession) == False:
+						check = True
+						while check:
+							try:
+								code = GF.gen_code()
+								DB.valueAt(code, "ID", GF.dbSession)
+							except:
+								check = False
+						if DB.newPlayer(code, GF.dbSession, GF.dbSessionTemplate) == "Le joueur a été ajouté !":
+							DB.updateField(code, "owner", ID, GF.dbSession)
+							DB.updateField(code, "type", "duel", GF.dbSession)
+							DB.updateField(code, "mise", imise, GF.dbSession)
+							DB.updateField(code, "sync", "NOK", GF.dbSession)
+							member = DB.valueAt(code, "member", GF.dbSession)
+							member.append(IDmember)
+							DB.updateField(code, "member", member, GF.dbSession)
+							msg = "Défis `{}` créée".format(code)
+							user = ctx.guild.get_member(IDmember)
+							msg += "\n Message envoyer à {}\n••••\nEn attende de synchronisation".format(user.name)
+							mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\nMise: {3}:gem:\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n\nBalance de {5}: {4} :gem:".format(ctx.author.name, code, GF.get_idmoji("sword"), imise, DB.valueAt(IDmember, "gems", GF.dbGems), ctx.guild.get_member(IDmember).name)
+							try:
+								await user.send(mpuser)
+								await ctx.channel.send(msg)
+							except:
+								DB.removePlayer(code, GF.dbSession)
+								await ctx.channel.send("Défis impossible! tu ne peux pas défier un bot")
+					else:
+						await ctx.channel.send("Ce joueur à déjà été défié!")
+				else:
+					await ctx.channel.send("Tu as déjà créé une session de duel. Pour y mettre fin et en créé une nouvelle utilise la commande `!defis end {0}`".format(DB.OwnerSessionAt(ctx.author.id, "ID", GF.dbSession)))
+			else:
+				await ctx.channel.send("Défis impossible! **{0}** ou **{1}** n'as pas assez de :gem:`gems` en banque.".format(ctx.guild.get_member(IDmember).name, ctx.author.name))
 		elif opt == "end":
 			# arg1 >> code d'identification de la session
 			try:

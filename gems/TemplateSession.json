@@ -7,14 +7,16 @@
 		"",
 	"member":
 		[],
+	"mise":
+		0,
 	"sync":
 		"",
 	"round":
 		1,
 	"lifeOwner":
-		20,
+		40,
 	"lifeMember":
-		20,
+		40,
 	"actionOwner":
 		[],
 	"actionMember":
