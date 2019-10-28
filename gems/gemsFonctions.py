@@ -29,7 +29,7 @@ def checkDB_Session():
 	else :
 		print("La DB Gems Session n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbSession, dbSessionTemplate)
-	print('------\n')
+	print('------')
 
 
 def checkDB_Gems():
@@ -39,16 +39,16 @@ def checkDB_Gems():
 	else :
 		print("La DB Gems n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbGems, dbGemsTemplate)
-	print('------\n')
+	print('------')
 
 def checkDB_GemsHH():
 	"""Check l'existance et la conformité de la DB Session """
 	if DB.dbExist(dbHH):
-		print("La DB Gems existe, poursuite sans soucis.")
+		print("La DB Gems HotHouse existe, poursuite sans soucis.")
 	else :
-		print("La DB Gems n'existait pas. Elle a été (re)créée.")
+		print("La DB Gems HotHouse n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbHH, dbHHTemplate)
-	print('------\n')
+	print('------')
 
 
 # Array
@@ -230,6 +230,7 @@ def loadItem(F = None):
 	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
 	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 25, "forge")
 	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 3, 3, "")
+	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 1, 1, "")
 	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente"), itemBourse("bank_upgrade", "achat"), 10000, None, "bank")]
 
 

@@ -585,6 +585,7 @@ class GemsPlay(commands.Cog):
 			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantations.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
+			DB.updateComTime(ID, "hothouse", GF.dbGems)
 			if fct == None or fct == "harvest":
 				check = False
 				if  arg != None:
@@ -645,7 +646,7 @@ class GemsPlay(commands.Cog):
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
 												GF.addDurabilite(ID, c.nom, c.durabilite)
-										DB.add(ID, "inventory", "planting_plan", -1, GF.dbGems)
+										DB.add(ID, "inventory", "planting_plan", -1, GF.dbHotHouse)
 
 						else:
 							timeH = int(time / 60 / 60)
@@ -725,7 +726,10 @@ class GemsPlay(commands.Cog):
 						else:
 							msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 						i += 1
-			DB.updateComTime(ID, "hothouse", GF.dbGems)
+			else:
+				msg = "Fonction inconnu"
+				await ctx.channel.send(msg)
+				return False
 			if nbplanting // 10 == 0:
 				await ctx.channel.send(embed = msg)
 			else:
