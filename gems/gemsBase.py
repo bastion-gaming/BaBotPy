@@ -3,7 +3,7 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
-from core import welcome as wel
+from core import welcome as wel, level
 from gems import gemsFonctions as GF, gemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import bot
@@ -68,9 +68,16 @@ class GemsBase(commands.Cog):
 			solde = DB.valueAt(ID, "gems", GF.dbGems)
 			title = "Compte principal de {}".format(nom)
 			msg = discord.Embed(title = title,color= 13752280, description = "")
-			desc = "{} :gem:\n".format(solde)
-			msg.add_field(name="Balance", value=desc, inline=False)
-
+			desc = "{} :gem:`gems`\n".format(solde)
+			desc+= "{0} <:redgem:{1}>`RED gems`".format(DB.valueAt(ID,"redgems", GF.dbGems), GF.get_idmoji("redgem"))
+			msg.add_field(name="**_Balance_**", value=desc, inline=False)
+			lvl = DB.valueAt(ID, "lvl", GF.dbGems)
+			xp = DB.valueAt(ID, "xp", GF.dbGems)
+			# Niveaux part
+			for x in level.objet:
+				if lvl == x.level:
+					desc = "XP: `{0}/{1}`".format(xp,x.somMsg)
+			msg.add_field(name="**_Niveau_: {0}**".format(lvl), value=desc, inline=False)
 			DB.updateComTime(ID, "bal", GF.dbGems)
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console
@@ -100,7 +107,7 @@ class GemsBase(commands.Cog):
 			i = t - 1
 			j = 0
 			while i >= 0 and j != n : # affichage des données trié
-				baltop += "{2} | <@{0}> {1}:gem:\n".format(UserList[i][0], UserList[i][1], j+1)
+				baltop += "{2} | <@{0}> {1}:gem:`gems`\n".format(UserList[i][0], UserList[i][1], j+1)
 				i = i - 1
 				j = j + 1
 			DB.updateComTime(ID, "baltop", GF.dbGems)
@@ -143,7 +150,7 @@ class GemsBase(commands.Cog):
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
 						else :
-							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem:`gems` en banque"
 						break
 				for c in GF.objetOutil :
 					if item == c.nom :
@@ -179,7 +186,7 @@ class GemsBase(commands.Cog):
 									if GF.get_durabilite(ID, "planting_plan") == None:
 										GF.addDurabilite(ID, "planting_plan", c.durabilite)
 						else :
-							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem:`gems` en banque"
 						break
 				for c in GF.objetBox :
 					if item == "lootbox_{}".format(c.nom) or item == c.nom :
@@ -191,7 +198,7 @@ class GemsBase(commands.Cog):
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
 						else :
-							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem: en banque"
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem:`gems` en banque"
 						break
 				if test :
 					msg = "Cet item n'est pas vendu au marché !"
@@ -224,11 +231,11 @@ class GemsBase(commands.Cog):
 						gain = c.vente*nb
 						DB.addGems(ID, gain)
 						if c.type != "consommable" and c.nom != "candy" and c.nom != "lollipop":
-							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,GF.get_idmoji(c.nom))
+							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem:`gems` !".format(nb,item,gain,GF.get_idmoji(c.nom))
 							# Message de réussite dans la console
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 						else:
-							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem: !".format(nb,item,gain)
+							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem:`gems` !".format(nb,item,gain)
 							# Message de réussite dans la console
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
 							if c.nom == "grapes" and int (nb/10) >= 1:
@@ -241,7 +248,7 @@ class GemsBase(commands.Cog):
 						test = False
 						gain = c.vente*nb
 						DB.addGems(ID, gain)
-						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem: !".format(nb,item,gain,GF.get_idmoji(c.nom))
+						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem:`gems` !".format(nb,item,gain,GF.get_idmoji(c.nom))
 						if DB.nbElements(ID, "inventory", item, GF.dbGems) == 1:
 							if GF.get_durabilite(ID, item) != None:
 								GF.addDurabilite(ID, item, -1)
@@ -264,7 +271,7 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def inv (self, ctx, fct = None):
+	async def inv (self, ctx, fct = None, type = None):
 		"""Permet de voir ce que vous avez dans le ventre !"""
 		ID = ctx.author.id
 		nom = ctx.author.name
@@ -347,10 +354,10 @@ class GemsBase(commands.Cog):
 				for c in GF.objetCapability:
 					for x in cap:
 						if "{}".format(c.ID) == str(x):
-							if c.type == "attaque":
-								msg_invCapAtt += "• **{0}** | ID: {3}\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
-							elif c.type == "defense":
-								msg_invCapDef += "• **{0}** | ID: {3}\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
+							if c.type == "attaque" and type != "defense":
+								msg_invCapAtt += "• ID: _{3}_ | **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
+							elif c.type == "defense" and (type != "attaque" or type != "attack"):
+								msg_invCapDef += "• ID: _{3}_ | **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
 
 				desc = ":tools: En travaux :pencil:"
 				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)
@@ -519,7 +526,7 @@ class GemsBase(commands.Cog):
 						d_marketItems += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
-					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem: \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
+					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem:`gems` \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
 
 				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
@@ -544,9 +551,9 @@ class GemsBase(commands.Cog):
 				for c in GF.objetCapability:
 					if c.defaut != True:
 						if c.type == "attaque" and c.ID != 100:
-							descCapAtt += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
+							descCapAtt += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:`gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
 						elif c.type == "defense" and c.ID != 200:
-							descCapDef += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
+							descCapDef += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:`gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
 				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
 				if descCapAtt != "":
 					descCapAtt += "••••••••••"
@@ -582,7 +589,7 @@ class GemsBase(commands.Cog):
 						# print(ID_recu)
 						DB.addGems(ID_recu, gain)
 						DB.addGems(ID,don)
-						msg = "{0} donne {1}:gem: à {2} !".format(name,gain,Nom_recu)
+						msg = "{0} donne {1}:gem:`gems` à {2} !".format(name,gain,Nom_recu)
 						# Message de réussite dans la console
 						print("Gems >> {} a donné {} Gems à {}".format(name,gain,Nom_recu))
 					else:
@@ -617,7 +624,7 @@ class GemsBase(commands.Cog):
 					nb = int(nb)
 				if nb < 0 and nb != -1:
 					DB.addGems(ID, -100)
-					msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:"
+					msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
 					await ctx.channel.send(msg)
 					return "anticheat"
 				elif nb > 0:

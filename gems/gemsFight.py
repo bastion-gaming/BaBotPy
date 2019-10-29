@@ -42,21 +42,29 @@ async def action(ctx, IDaction, P, type):
 			elif int(P) <= 0:
 				P = 0
 			if DB.spam(ID,GF.couldown_4s, type, GF.dbGems):
-				action = []
-				action.append(IDaction)
-				action.append(P)
-				if check == "owner":
-					DB.updateField(IDSession, "actionOwner", action, GF.dbSession)
-				elif check == "member":
-					DB.updateField(IDSession, "actionMember", action, GF.dbSession)
-				msg = "_Action de **{}** prise en compte_".format(ctx.author.name)
-				DB.updateComTime(ID, type, GF.dbGems)
-				await ctx.message.delete(delay=1)
-				await ctx.channel.send(msg)
-				if checkround(IDSession):
-					await ctx.channel.send(embed = round(ctx, IDSession))
-					await checklife(ctx, IDSession)
-					return True
+				for c in GF.objetCapability:
+					if "{}".format(c.ID) == IDaction:
+						ActionItem = c.item
+				if DB.nbElements(ID, "inventory", ActionItem, GF.dbGems) >= 1:
+					action = []
+					action.append(IDaction)
+					action.append(P)
+					if check == "owner":
+						DB.updateField(IDSession, "actionOwner", action, GF.dbSession)
+					elif check == "member":
+						DB.updateField(IDSession, "actionMember", action, GF.dbSession)
+					msg = "_Action de **{}** prise en compte_".format(ctx.author.name)
+					DB.updateComTime(ID, type, GF.dbGems)
+					await ctx.message.delete(delay=1)
+					await ctx.channel.send(msg)
+					if checkround(IDSession):
+						await ctx.channel.send(embed = round(ctx, IDSession))
+						await checklife(ctx, IDSession)
+						return True
+				else:
+					await ctx.message.delete(delay=1)
+					msg = "**_{2}_** | Action impossible! Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire.".format(ActionItem, GF.get_idmoji(ActionItem), ctx.author.name)
+					await ctx.channel.send(msg)
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 				await ctx.channel.send(msg)
@@ -140,7 +148,7 @@ def round(ctx, IDSession):
 
 	OwnerType = ""
 	MemberType = ""
-	result = ":tools: En travaux :pencil:"
+	result = ""
 
 	for c in GF.objetCapability:
 		if "{}".format(c.ID) == OwnerAction:
@@ -153,32 +161,34 @@ def round(ctx, IDSession):
 			MemberActionName = c.nom
 			MemberItem = c.item
 
-	OwnerDesc = "Action: {0} | {1} \nPuissance: {2}".format(OwnerType, OwnerActionName, OwnerPuissance)
-	MemberDesc = "Action: {0} | {1} \nPuissance: {2}".format(MemberType, MemberActionName, MemberPuissance)
+	OwnerDesc = "Action: _{0}_ | **{1}** \nPuissance: {2}".format(OwnerType, OwnerActionName, OwnerPuissance)
+	MemberDesc = "Action: _{0}_ | **{1}** \nPuissance: {2}".format(MemberType, MemberActionName, MemberPuissance)
 
 	# Defense vs Defense
 	if OwnerType == "defense" and MemberType == "defense":
-		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
-		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
-		result = "Personne n'as perdu de point de vie.\n"
-		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem))
-		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem))
+		# DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
+		# DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
+		result = "Personne n'as perdu de :hearts:\n"
+		result += "**{0}** {1} :hearts:\n".format(userOwner.name, DB.valueAt(IDSession, "lifeOwner", GF.dbSession))
+		result += "**{0}** {1} :hearts:\n".format(userMember.name, DB.valueAt(IDSession, "lifeMember", GF.dbSession))
+		# OwnerDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+		# MemberDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 
 	# Attaque vs Attaque
 	elif OwnerType == "attaque" and MemberType == "attaque":
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
 		if OwnerDurabilite == None:
-			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:
 				if c.nom == OwnerItem:
 					GF.addDurabilite(userOwner.id, c.nom, c.durabilite)
 			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
 		elif int(OwnerDurabilite) > OwnerPuissance:
-			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
 		else:
 			OwnerDurabilite = int(OwnerDurabilite)
-			OwnerDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
+			OwnerDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
 			DB.add(userOwner.id, "inventory", OwnerItem, -1, GF.dbGems)
 			if DB.nbElements(userOwner.id, "inventory", OwnerItem, GF.dbGems) > 0:
@@ -187,17 +197,17 @@ def round(ctx, IDSession):
 						GF.addDurabilite(userOwner.id, c.nom, c.durabilite-OwnerDurabilite-temp)
 
 		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
-		if MemberDurabilite > MemberPuissance:
-			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
-			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
-		elif MemberDurabilite == None:
-			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
+		if MemberDurabilite == None:
+			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			for c in GF.objetOutil:
 				if c.nom == MemberItem:
 					GF.addDurabilite(userMember.id, c.nom, c.durabilite)
 			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
+		elif MemberDurabilite > MemberPuissance:
+			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
+			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
 		else:
-			MemberDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
+			MemberDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
 			temp = MemberPuissance - MemberDurabilite
 			DB.add(userMember.id, "inventory", MemberItem, -1, GF.dbGems)
 			if DB.nbElements(userMember.id, "inventory", MemberItem, GF.dbGems) > 0:
@@ -208,26 +218,27 @@ def round(ctx, IDSession):
 		DB.updateField(IDSession, "lifeOwner", OwnerLife-MemberPuissance, GF.dbSession)
 		DB.updateField(IDSession, "lifeMember", MemberLife-OwnerPuissance, GF.dbSession)
 
-		result = "{0} à perdu {1} point de vie\n".format(userOwner.name, MemberPuissance)
-		result += "{0} à perdu {1} point de vie\n".format(userMember.name, OwnerPuissance)
+		result = "**{0}** {1} :hearts:\n".format(userOwner.name, DB.valueAt(IDSession, "lifeOwner", GF.dbSession))
+		result += "**{0}** {1} :hearts:\n".format(userMember.name, DB.valueAt(IDSession, "lifeMember", GF.dbSession))
 
 	# Defense vs Attaque
 	elif OwnerType == "defense" and MemberType == "attaque":
-		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
+		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance*8, GF.dbGems)
+		OwnerDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 
 		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
 		if MemberDurabilite == None:
-			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
+			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			for c in GF.objetOutil:
 				if c.nom == MemberItem:
 					GF.addDurabilite(userMember.id, c.nom, c.durabilite)
 			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
 		elif MemberDurabilite > MemberPuissance:
-			MemberDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
+			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			GF.addDurabilite(userMember.id, MemberItem, -MemberPuissance)
 		else:
 			MemberDurabilite = int(MemberDurabilite)
-			MemberDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
+			MemberDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
 			temp = MemberPuissance - MemberDurabilite
 			DB.add(userMember.id, "inventory", MemberItem, -1, GF.dbGems)
 			if DB.nbElements(userMember.id, "inventory", MemberItem, GF.dbGems) > 0:
@@ -237,28 +248,32 @@ def round(ctx, IDSession):
 		temp = MemberPuissance - OwnerPuissance
 		if temp > 0:
 			DB.updateField(IDSession, "lifeOwner", OwnerLife-temp, GF.dbSession)
-			result = "{0} à perdu {1} point de vie\n".format(userOwner.name, temp)
-		else:
-			result = "{0} à perdu 0 point de vie\n".format(userOwner.name)
-		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem))
+		elif temp < 0:
+			temp = -temp
+			DB.updateField(IDSession, "lifeMember", OwnerMember-temp, GF.dbSession)
+			result = "Effet miroir!\nLa défense est plus puissante que l'attaque et renvoie la différence à l'attaquant."
+
+		result += "**{0}** {1} :hearts:\n".format(userOwner.name, DB.valueAt(IDSession, "lifeOwner", GF.dbSession))
+		result += "**{0}** {1} :hearts:\n".format(userMember.name, DB.valueAt(IDSession, "lifeMember", GF.dbSession))
 
 	# Attaque vs Defense
 	elif OwnerType == "attaque" and MemberType == "defense":
-		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
+		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance*8, GF.dbGems)
+		MemberDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
 		if OwnerDurabilite == None:
-			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:
 				if c.nom == OwnerItem:
 					GF.addDurabilite(userOwner.id, c.nom, c.durabilite)
 			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
 		if OwnerDurabilite > OwnerPuissance:
-			OwnerDesc += "\n-{2} de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
+			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			GF.addDurabilite(userOwner.id, OwnerItem, -OwnerPuissance)
 		else:
 			OwnerDurabilite = int(OwnerDurabilite)
-			OwnerDesc += "Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
+			OwnerDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
 			DB.add(userOwner.id, "inventory", OwnerItem, -1, GF.dbGems)
 			if DB.nbElements(userOwner.id, "inventory", OwnerItem, GF.dbGems) > 0:
@@ -269,10 +284,13 @@ def round(ctx, IDSession):
 		temp = OwnerPuissance - MemberPuissance
 		if temp > 0:
 			DB.updateField(IDSession, "lifeMember", MemberLife-temp, GF.dbSession)
-			result = "{0} à perdu {1} point de vie\n".format(userMember.name, temp)
-		else:
-			result = "{0} à perdu 0 point de vie\n".format(userMember.name)
-		result += "{0} à perdu <:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem))
+		elif temp < 0:
+			temp = -temp
+			DB.updateField(IDSession, "lifeOwner", OwnerLife-temp, GF.dbSession)
+			result = "Effet miroir!\nLa défense est plus puissante que l'attaque et renvoie la différence à l'attaquant."
+
+		result += "**{0}** {1} :hearts:\n".format(userOwner.name, DB.valueAt(IDSession, "lifeOwner", GF.dbSession))
+		result += "**{0}** {1} :hearts:\n".format(userMember.name, DB.valueAt(IDSession, "lifeMember", GF.dbSession))
 
 	nbRound = DB.valueAt(IDSession, "round", GF.dbSession)
 	msg = discord.Embed(title = "Round {}".format(nbRound),color= 13752280, description = "")
@@ -328,7 +346,7 @@ class GemsFight(commands.Cog):
 							msg = "Défis `{}` créée".format(code)
 							user = ctx.guild.get_member(IDmember)
 							msg += "\n Message envoyer à {}\n••••\nEn attende de synchronisation".format(user.name)
-							mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\nMise: {3}:gem:\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n\nBalance de {5}: {4} :gem:".format(ctx.author.name, code, GF.get_idmoji("sword"), imise, DB.valueAt(IDmember, "gems", GF.dbGems), ctx.guild.get_member(IDmember).name)
+							mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\nMise: {3}:gem:`gems`\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n\nBalance de {5}: {4} :gem:`gems`".format(ctx.author.name, code, GF.get_idmoji("sword"), imise, DB.valueAt(IDmember, "gems", GF.dbGems), ctx.guild.get_member(IDmember).name)
 							try:
 								await user.send(mpuser)
 								await ctx.channel.send(msg)
@@ -410,18 +428,22 @@ class GemsFight(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def attack(self, ctx, IDatt, P):
+	async def attack(self, ctx, IDatt, P = None):
 		"""
 		**[ID] [Puissance]** | Lance l'attaque correspondant à l'ID avec la puissance spécifiée
 		"""
+		if P == None:
+			P = r.randint(1,10)
 		await action(ctx, IDatt, P, "attaque")
 
 
 	@commands.command(pass_context=True)
-	async def defense(self, ctx, IDatt, P):
+	async def defense(self, ctx, IDatt, P = None):
 		"""
 		**[ID] [Puissance]** | Lance la defense correspondant à l'ID avec la puissance spécifiée
 		"""
+		if P == None:
+			P = r.randint(1,10)
 		await action(ctx, IDatt, P, "defense")
 
 

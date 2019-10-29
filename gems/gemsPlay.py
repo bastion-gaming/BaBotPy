@@ -37,15 +37,15 @@ class GemsPlay(commands.Cog):
 			bonus = 125
 			gain = 100 + bonus*DailyMult
 			DB.addGems(ID, gain)
-			msg = "Récompense journalière! Tu as gagné 100:gem:"
-			msg += "\nNouvelle série: `{}`, Bonus: {}:gem:".format(DailyMult, bonus*DailyMult)
+			msg = "Récompense journalière! Tu as gagné 100:gem:`gems`"
+			msg += "\nNouvelle série: `{}`, Bonus: {}:gem:`gems`".format(DailyMult, bonus*DailyMult)
 
 		elif DailyTime == str(jour):
-			msg = "Tu as déja reçu ta récompense journalière aujourd'hui. Reviens demain pour gagner plus de :gem:"
+			msg = "Tu as déja reçu ta récompense journalière aujourd'hui. Reviens demain pour gagner plus de :gem:`gems`"
 		else:
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", 1)
-			msg = "Récompense journalière! Tu as gagné 100 :gem:"
+			msg = "Récompense journalière! Tu as gagné 100 :gem:`gems`"
 		await ctx.channel.send(msg)
 
 
@@ -84,11 +84,11 @@ class GemsPlay(commands.Cog):
 				if soldeMax == 0:
 					soldeMax = Taille
 				msg = discord.Embed(title = title,color= 13752280, description = "")
-				desc = "{} / {} :gem:\n".format(solde, soldeMax)
+				desc = "{} / {} :gem:`gems`\n".format(solde, soldeMax)
 				msg.add_field(name="Balance", value=desc, inline=False)
 
 				desc = "bank **bal** *[name]* | Permet de connaitre la balance d'un utilisateur"
-				desc += "\nbank **add** *[+/- nombre]* | Permet d'ajouter ou d'enlever des :gem: de son compte épargne"
+				desc += "\nbank **add** *[+/- nombre]* | Permet d'ajouter ou d'enlever des :gem:`gems` de son compte épargne"
 				desc += "\nbank **saving** | Permet de calculer son épargne (utilisable toute les 4h)"
 				desc += "\n\nLe prix de la <:gem_{0}:{1}>`{0}` dépend du plafond du compte".format("bank_upgrade", GF.get_idmoji("bank_upgrade"))
 
@@ -119,21 +119,21 @@ class GemsPlay(commands.Cog):
 						soldeNew = solde + ARG2
 						if soldeNew > soldeMax:
 							ARG2 = ARG2 - (soldeNew - soldeMax)
-							msg = "Plafond de {} :gem: du compte épargne atteint\n".format(soldeMax)
+							msg = "Plafond de {} :gem:`gems` du compte épargne atteint\n".format(soldeMax)
 						elif soldeNew < 0:
-							msg = "Le solde de ton compte épargne ne peux être négatif.\nSolde du compte: {} :gem:".format(solde)
+							msg = "Le solde de ton compte épargne ne peux être négatif.\nSolde du compte: {} :gem:`gems`".format(solde)
 							await ctx.channel.send(msg)
 							return
 						nbgm = -1*ARG2
 						DB.addGems(ID, nbgm)
 						DB.add(ID, "banque", "solde", ARG2, GF.dbGems)
-						msg += "Ton compte épargne a été crédité de {} :gem:".format(ARG2)
-						msg += "\nNouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
+						msg += "Ton compte épargne a été crédité de {} :gem:`gems`".format(ARG2)
+						msg += "\nNouveau solde: {} :gem:`gems`".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
 						DB.updateComTime(ID, "bank_add", GF.dbGems)
 					else:
 						msg = "Tu n'as pas assez de :gem:`gems` pour épargner cette somme"
 				else:
-					msg = "Il manque le nombre de :gem: à ajouter sur votre compte épargne"
+					msg = "Il manque le nombre de :gem:`gems` à ajouter sur votre compte épargne"
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
@@ -157,16 +157,16 @@ class GemsPlay(commands.Cog):
 					soldeTaxe = GF.taxe(soldeAdd, 0.1)
 					soldeAdd = soldeTaxe[1]
 					DB.add(ID, "banque", "solde", int(soldeAdd), GF.dbGems)
-					msg = "Tu as épargné {} :gem:\n".format(int(soldeAdd))
+					msg = "Tu as épargné {} :gem:`gems`\n".format(int(soldeAdd))
 					soldeNew = solde + soldeAdd
 					if soldeNew > soldeMax:
 						soldeMove = soldeNew - soldeMax
 						nbgm = -1 * soldeMove
 						DB.addGems(ID, int(soldeMove))
 						DB.add(ID, "banque", "solde", int(nbgm), GF.dbGems)
-						msg += "Plafond de {} :gem: du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
+						msg += "Plafond de {} :gem:`gems` du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
 
-					msg += "Nouveau solde: {} :gem:".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
+					msg += "Nouveau solde: {} :gem:`gems`".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
 
 					D = r.randint(0,20)
 					if D == 20 or D == 0:
@@ -200,16 +200,16 @@ class GemsPlay(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def crime(self, ctx):
-		"""Commets un crime et gagne des :gem: Attention au DiscordCop!"""
+		"""Commets un crime et gagne des :gem:`gems` Attention au DiscordCop!"""
 		ID = ctx.author.id
 		if DB.spam(ID,GF.couldown_6s, "crime", GF.dbGems):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
 				DB.add(ID, "StatGems", "DiscordCop Arrestation", 1, GF.dbGems)
 				if int(DB.addGems(ID, -10)) >= 0:
-					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:"
+					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:`gems`"
 				else:
-					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem: pour payer une amende"
+					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem:`gems` pour payer une amende"
 			else :
 				gain = r.randint(2,8)
 				jour = dt.date.today()
@@ -223,7 +223,7 @@ class GemsPlay(commands.Cog):
 						msg += " :lollipop:`lollipop`"
 						DB.add(ID, "inventory", "lollipop", gain, GF.dbGems)
 				else:
-					msg = GF.message_crime[r.randint(0,3)]+" "+str(gain)+" :gem:"
+					msg = GF.message_crime[r.randint(0,3)]+" "+str(gain)+" :gem:`gems`"
 					DB.addGems(ID, gain)
 			DB.updateComTime(ID, "crime", GF.dbGems)
 		else:
@@ -239,7 +239,7 @@ class GemsPlay(commands.Cog):
 		ID = ctx.author.id
 		gems = DB.valueAt(ID, "gems", GF.dbGems)
 		if valeur < 0:
-			msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
+			msg = "Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
 			DB.add(ID, "StatGems", "DiscordCop Amende", 1, GF.dbGems)
 			if gems > 100 :
 				DB.addGems(ID, -100)
@@ -252,7 +252,7 @@ class GemsPlay(commands.Cog):
 				if r.randint(0,3) == 0:
 					gain = valeur*3
 					# l'espérence est de 0 sur la gamble
-					msg = GF.message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:"
+					msg = GF.message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:`gems`"
 					DB.add(ID, "StatGems", "Gamble Win", 1, GF.dbGems)
 					for x in GF.objetTrophy:
 						if x.nom == "Gamble Jackpot":
@@ -275,7 +275,7 @@ class GemsPlay(commands.Cog):
 					val = 0-valeur
 					DB.addGems(ID,val)
 					DB.addGems(wel.idBaBot, int(valeur))
-					msg = "Dommage tu as perdu "+str(valeur)+":gem:"
+					msg = "Dommage tu as perdu "+str(valeur)+":gem:`gems`"
 
 				DB.updateComTime(ID, "gamble", GF.dbGems)
 			else:
@@ -688,7 +688,7 @@ class GemsPlay(commands.Cog):
 						return 404
 					elif int(arg) < 0:
 						DB.addGems(ID, -100)
-						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:"
+						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
 						await ctx.channel.send(msg)
 						return "anticheat"
 					if DB.nbElements(ID, "hothouse", "planting_{}".format(arg), GF.dbHH) == 0:
@@ -742,12 +742,12 @@ class GemsPlay(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def slots(self, ctx, imise = None):
-		"""**[mise]** | La machine à sous, la mise minimum est de 10 :gem:"""
+		"""**[mise]** | La machine à sous, la mise minimum est de 10 :gem:`gems`"""
 		ID = ctx.author.id
 
 		if imise != None:
 			if int(imise) < 0:
-				msg = "Je vous met un amende de 100 :gem: pour avoir essayé de tricher !"
+				msg = "Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
 				DB.add(ID, "StatGems", "DiscordCop Amende", 1, GF.dbGems)
 				if DB.valueAt(ID, "gems", GF.dbGems) > 100 :
 					DB.addGems(ID, -100)
@@ -767,7 +767,7 @@ class GemsPlay(commands.Cog):
 		if DB.spam(ID,GF.couldown_8s, "slots", GF.dbGems):
 			tab = []
 			result = []
-			msg = "Votre mise: {} :gem:\n\n".format(mise)
+			msg = "Votre mise: {} :gem:`gems`\n\n".format(mise)
 			val = 0-mise
 			for i in range(0,9): #Creation de la machine à sous
 				if i == 3:
@@ -960,9 +960,9 @@ class GemsPlay(commands.Cog):
 			prix = gain * mise
 			if gain != 0 and gain != 1:
 				if prix > 0:
-					msg += "\nJackpot, vous venez de gagner {} :gem:".format(prix)
+					msg += "\nJackpot, vous venez de gagner {} :gem:`gems`".format(prix)
 				else:
-					msg += "\nLa machine viens d'exploser :boom:\nTu as perdu {} :gem:".format(-1*prix)
+					msg += "\nLa machine viens d'exploser :boom:\nTu as perdu {} :gem:`gems`".format(-1*prix)
 				DB.addGems(ID, prix)
 			elif gain == 1:
 				msg += "\nBravo, voici un ticket gratuit pour relancer la machine à sous"
@@ -995,7 +995,7 @@ class GemsPlay(commands.Cog):
 
 							DB.addGems(ID, gain)
 							DB.add(ID, "inventory", "lootbox_{}".format(lootbox.nom), -1, GF.dbGems)
-							desc = "{}:gem:".format(gain)
+							desc = "{}:gem:`gems`".format(gain)
 							msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
 							DB.updateComTime(ID, "boxes", GF.dbGems)
 							print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))

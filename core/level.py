@@ -131,32 +131,35 @@ class Level(commands.Cog):
 					lvl = DB.valueAt(ID, "lvl")
 					xp = DB.valueAt(ID, "xp")
 					msg = "**Utilisateur:** {}".format(Nom)
+					emb = discord.Embed(title = "Informations",color= 13752280, description = msg)
 
 					# Niveaux part
-					msg+= "\n\n**Niveau :**\n"
+					msg= ""
 					for x in objet:
 						if lvl == x.level:
-							msg += "Actuel **{0}** \nXP: `{1}/{2}`".format(lvl,xp,x.somMsg)
+							msg += "XP: `{0}/{1}`".format(xp,x.somMsg)
 					if lvl == lvlmax:
 						msg += "Actuel **{0}** \nLevel max atteint".format(lvl)
+					emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
 
 					# Gems
-					msg+="\n\n**Balance:** *{0}* :gem:".format(DB.valueAt(ID,"gems", GF.dbGems))
+					msg = "{0} :gem:`gems`\n".format(DB.valueAt(ID,"gems", GF.dbGems))
+					msg+= "{0} <:redgem:{1}>`RED gems`".format(DB.valueAt(ID,"redgems", GF.dbGems), GF.get_idmoji("redgem"))
+					emb.add_field(name="**_Balance_**", value=msg, inline=False)
 
 					# Statistique de l'utilisateur pour le module Gems
 					statgems = DB.valueAt(ID, "StatGems", GF.dbGems)
-					Titre = True
+					msg = ""
 					for x in statgems:
 						if statgems[x] > 0:
-							if Titre:
-								msg += "\n\n**Statistiques de *Get Gems* **"
-								Titre = False
 							msg += "\n• {}: `x{}`".format(str(x), statgems[x])
+					if msg != "":
+						emb.add_field(name="**_Statistiques de Get Gems_**", value=msg, inline=False)
 
 					# Parrainage
 					P = DB.valueAt(ID,"parrain")
 					F_li = DB.valueAt(ID, "filleul")
-					msg+="\n\n**Parrainage:**"
+					msg=""
 					if P != 0:
 						msg+="\nParrain: <@{0}>".format(P)
 					else :
@@ -171,8 +174,7 @@ class Level(commands.Cog):
 						for one in F_li:
 							msg+="\n<@"+str(one)+">"
 
-
-					emb = discord.Embed(title = "Informations :",color= 13752280, description = msg)
+					emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
 					await ctx.channel.send(embed = emb)
 			else:
 				await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")

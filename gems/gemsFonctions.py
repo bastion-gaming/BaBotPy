@@ -249,7 +249,7 @@ def loadItem(F = None):
 
 	global objetCapability
 	objetCapability = [Capability(100, "Coup de <:gem_sword:{0}>`sword`".format(get_idmoji("sword")), True, 0, "attaque", 10, "sword", "Utilisez votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme la puissance de l'attaque en durabilité à chaque attaque".format(get_idmoji("sword")))
-	,Capability(200, "Mur de <:gem_cobblestone:{0}>`cobblestone`".format(get_idmoji("cobblestone")), True, 0, "defense", 10, "cobblestone", "Construisez un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 1 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")))]
+	,Capability(200, "Mur de <:gem_cobblestone:{0}>`cobblestone`".format(get_idmoji("cobblestone")), True, 0, "defense", 10, "cobblestone", "Construisez un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 8 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")))]
 
 
 	#========== Trophées ==========
@@ -262,21 +262,21 @@ def loadItem(F = None):
 			self.mingem = mingem #nombre de gems minimum necessaire
 
 	global objetTrophy
-	objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:` au gamble`", "special", 10000)
+	objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:`gems au gamble`", "special", 10000)
 	,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 	,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:{}>`ruby`".format(get_idmoji("ruby")), "special", 0)
 	,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
-	,Trophy("Gems 500", "`Avoir 500`:gem:", "unique", 500)
-	,Trophy("Gems 1k", "`Avoir 1k`:gem:", "unique", 1000)
-	,Trophy("Gems 5k", "`Avoir 5k`:gem:", "unique", 5000)
-	,Trophy("Gems 50k", "`Avoir 50k`:gem:", "unique", 50000)
-	,Trophy("Gems 200k", "`Avoir 200k`:gem:", "unique", 200000)
-	,Trophy("Gems 500k", "`Avoir 500k`:gem:", "unique", 500000)
-	,Trophy("Gems 1M", "`Avoir 1 Million`:gem:", "unique", 1000000)
-	,Trophy("Gems 10M", "`Avoir 10 Millions`:gem:", "unique", 10000000)
-	,Trophy("Gems 100M", "`Avoir 100 Millions`:gem:", "unique", 100000000)
-	,Trophy("Gems 500M", "`Avoir 500 Millions`:gem:", "unique", 500000000)
-	,Trophy("Le Milliard !!!", "`Avoir 1 Milliard`:gem:", "unique", 1000000000)]
+	,Trophy("Gems 500", "`Avoir 500`:gem:`gems`", "unique", 500)
+	,Trophy("Gems 1k", "`Avoir 1k`:gem:`gems`", "unique", 1000)
+	,Trophy("Gems 5k", "`Avoir 5k`:gem:`gems`", "unique", 5000)
+	,Trophy("Gems 50k", "`Avoir 50k`:gem:`gems`", "unique", 50000)
+	,Trophy("Gems 200k", "`Avoir 200k`:gem:`gems`", "unique", 200000)
+	,Trophy("Gems 500k", "`Avoir 500k`:gem:`gems`", "unique", 500000)
+	,Trophy("Gems 1M", "`Avoir 1 Million`:gem:`gems`", "unique", 1000000)
+	,Trophy("Gems 10M", "`Avoir 10 Millions`:gem:`gems`", "unique", 10000000)
+	,Trophy("Gems 100M", "`Avoir 100 Millions`:gem:`gems`", "unique", 100000000)
+	,Trophy("Gems 500M", "`Avoir 500 Millions`:gem:`gems`", "unique", 500000000)
+	,Trophy("Le Milliard !!!", "`Avoir 1 Milliard`:gem:`gems`", "unique", 1000000000)]
 
 
 	#========== Statistiques affiché dans info ==========
@@ -362,20 +362,8 @@ def get_idmoji(nameElem):
 	for x in TupleIdmoji:
 		if x.name == "gem_{}".format(nameElem):
 			return x.id
-
-	# """Version 1.0 | Permet de connaitre l'idmoji de l'item"""
-	# test = False
-	# for c in objetItem:
-	# 	if c.nom == nameElem:
-	# 		test = True
-	# 		return c.idmoji
-	#
-	# for c in objetOutil:
-	# 	if c.nom == nameElem:
-	# 		test = True
-	# 		return c.idmoji
-	# if test == False:
-	# 	return 0
+		elif x.name == nameElem:
+			return x.id
 
 
 def get_price(nameElem, type = None):
