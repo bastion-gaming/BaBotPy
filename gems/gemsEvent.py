@@ -4,6 +4,7 @@ import time as t
 import datetime as dt
 from DB import DB
 from gems import gemsFonctions as GF
+from core import level as lvl
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -59,6 +60,7 @@ class GemsEvent(commands.Cog):
 								DB.add(ID, "inventory", gain, nbgain, GF.dbGems)
 								DB.add(ID, "cooked", "furnace_{}".format(i), -1*CookedTime, GF.dbHH)
 								desc = "Ton plat à fini de cuire, en le sortant du four tu gagne {2} <:gem_{0}:{1}>`{0}`".format(gain, GF.get_idmoji(gain), nbgain)
+								lvl.addxp(ID, 1, GF.dbGems)
 								if i > 1:
 									if DB.nbElements(ID, "inventory", "furnace", GF.dbGems) > 0:
 										if GF.get_durabilite(ID, "furnace") == None:

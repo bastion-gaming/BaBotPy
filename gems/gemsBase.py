@@ -3,7 +3,7 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
-from core import welcome as wel, level
+from core import welcome as wel, level as lvl
 from gems import gemsFonctions as GF, gemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import bot
@@ -69,15 +69,16 @@ class GemsBase(commands.Cog):
 			title = "Compte principal de {}".format(nom)
 			msg = discord.Embed(title = title,color= 13752280, description = "")
 			desc = "{} :gem:`gems`\n".format(solde)
-			desc+= "{0} <:redgem:{1}>`R-gems`".format(DB.valueAt(ID,"redgems", GF.dbGems), GF.get_idmoji("redgem"))
+			if DB.valueAt(ID,"spinelles", GF.dbGems) > 0:
+				desc+= "{0} <:spinelle:{1}>`spinelles`".format(DB.valueAt(ID,"spinelles", GF.dbGems), GF.get_idmoji("spinelle"))
 			msg.add_field(name="**_Balance_**", value=desc, inline=False)
-			lvl = DB.valueAt(ID, "lvl", GF.dbGems)
+			lvlValue = DB.valueAt(ID, "lvl", GF.dbGems)
 			xp = DB.valueAt(ID, "xp", GF.dbGems)
 			# Niveaux part
-			for x in level.objet:
-				if lvl == x.level:
+			for x in lvl.objetXPgems:
+				if lvlValue == x.level:
 					desc = "XP: `{0}/{1}`".format(xp,x.somMsg)
-			msg.add_field(name="**_Niveau_: {0}**".format(lvl), value=desc, inline=False)
+			msg.add_field(name="**_Niveau_: {0}**".format(lvlValue), value=desc, inline=False)
 			DB.updateComTime(ID, "bal", GF.dbGems)
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console
@@ -100,7 +101,7 @@ class GemsBase(commands.Cog):
 			t = DB.taille(GF.dbGems)
 			while i < t:
 				user = DB.userID(i, GF.dbGems)
-				gems = DB.userGems(i, GF.dbGems)
+				gems = DB.usespinelles(i, GF.dbGems)
 				UserList.append((user, gems))
 				i = i + 1
 			UserList = sorted(UserList, key=itemgetter(1),reverse=False)
@@ -127,7 +128,29 @@ class GemsBase(commands.Cog):
 		ID = ctx.author.id
 		jour = dt.date.today()
 		if DB.spam(ID,GF.couldown_4s, "buy", GF.dbGems):
-			if  GF.testInvTaille(ID) or item == "backpack" or item == "bank_upgrade":
+			if item == "capability" or item == "capabilities" or item == "capacité" or item == "capacités" or item == "aptitude" or item == "aptitudes":
+				IDCap = nb
+				CapList = DB.valueAt(ID, "capability", GF.dbGems)
+				check = False
+				for c in GF.objetCapability:
+					if IDCap == c.ID:
+						check = True
+						prix = c.achat
+						mygems = DB.valueAt(ID, "spinelles", GF.dbGems)
+						for one in CapList:
+							if one == "{}".format(c.ID):
+								await ctx.channel.send("Tu pocèdes déjà cette aptitude!")
+								return False
+						if mygems >= prix:
+							CapList.append("{}".format(c.ID))
+							DB.updateField(ID, "capability", CapList, GF.dbGems)
+							DB.updateField(ID, "spinelles", mygems-prix, GF.dbGems)
+							msg = "Tu viens d'acquérir l'aptitude **{0}** !".format(c.nom)
+						else:
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de <:spinelle:{}>`spinelles` en banque".format(GF.get_idmoji("spinelle"))
+				if not check:
+					msg = "Désolé, nous ne pouvons pas executer cet achat, cette aptitude n'est pas vendu au marché"
+			elif GF.testInvTaille(ID) or item == "backpack" or item == "bank_upgrade":
 				test = True
 				nb = int(nb)
 				for c in GF.objetItem :
@@ -552,14 +575,15 @@ class GemsBase(commands.Cog):
 				CapList = DB.valueAt(ID, "capability", GF.dbGems)
 				for c in GF.objetCapability:
 					if c.defaut != True:
-						checkCap = ""
+						checkCap = False
 						for one in CapList:
 							if one == "{}".format(c.ID):
-								checkCap = ":white_check_mark: "
-						if c.type == "attaque" and type != "defense":
-							descCapAtt += "• {6}ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:redgem:{5}>`R-gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("redgem"), checkCap)
-						elif c.type == "defense" and (type != "attaque" and type != "attack"):
-							descCapDef += "• {6}ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:redgem:{5}>`R-gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("redgem"), checkCap)
+								checkCap = True
+						if not checkCap:
+							if c.type == "attaque" and type != "defense":
+								descCapAtt += "• ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:spinelle:{5}>`spinelles`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("spinelle"))
+							elif c.type == "defense" and (type != "attaque" and type != "attack"):
+								descCapDef += "• ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:spinelle:{5}>`spinelles`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("spinelle"))
 				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
 				if descCapAtt != "" and descCapDef != "":
 					descCapAtt += "••••••••••"

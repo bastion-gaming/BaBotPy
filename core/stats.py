@@ -10,7 +10,7 @@ import discord
 import json
 import matplotlib.pyplot as plt
 import os
-from core import welcome as wel
+from core import welcome as wel, level as lvl
 
 client = discord.Client()
 file="core/time.json"
@@ -40,7 +40,7 @@ async def countMsg(message):
 	ID = message.author.id
 	try:
 		DB.updateField(ID, "nbMsg", int(DB.valueAt(ID, "nbMsg")+1))
-		DB.updateField(ID, "xp", int(DB.valueAt(ID, "xp")+1))
+		lvl.addxp(ID, 1)
 	except:
 		return print("Le joueur n'existe pas.")
 	# return print(DB.valueAt(ID, "nbMsg"))

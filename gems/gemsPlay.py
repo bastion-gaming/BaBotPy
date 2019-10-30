@@ -4,7 +4,7 @@ import time as t
 import datetime as dt
 from DB import DB
 from gems import gemsFonctions as GF
-from core import welcome as wel
+from core import welcome as wel, level as lvl
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -39,6 +39,7 @@ class GemsPlay(commands.Cog):
 			DB.addGems(ID, gain)
 			msg = "Récompense journalière! Tu as gagné 100:gem:`gems`"
 			msg += "\nNouvelle série: `{}`, Bonus: {}:gem:`gems`".format(DailyMult, bonus*DailyMult)
+			lvl.addxp(ID, 10*(DailyMult/2), GF.dbGems)
 
 		elif DailyTime == str(jour):
 			msg = "Tu as déja reçu ta récompense journalière aujourd'hui. Reviens demain pour gagner plus de :gem:`gems`"
@@ -46,6 +47,7 @@ class GemsPlay(commands.Cog):
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", 1)
 			msg = "Récompense journalière! Tu as gagné 100 :gem:`gems`"
+			lvl.addxp(ID, 10, GF.dbGems)
 		await ctx.channel.send(msg)
 
 
@@ -182,6 +184,7 @@ class GemsPlay(commands.Cog):
 						DB.addGems(wel.idBaBot,int(soldeTaxe[0]))
 
 				DB.updateComTime(ID, "bank_saving", GF.dbGems)
+				lvl.addxp(ID, 0.4, GF.dbGems)
 			else:
 				ComTime = DB.valueAt(ID, "com_time", GF.dbGems)
 				if "bank_saving" in ComTime:
@@ -226,6 +229,7 @@ class GemsPlay(commands.Cog):
 					msg = GF.message_crime[r.randint(0,3)]+" "+str(gain)+" :gem:`gems`"
 					DB.addGems(ID, gain)
 			DB.updateComTime(ID, "crime", GF.dbGems)
+			lvl.addxp(ID, 1, GF.dbGems)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -278,6 +282,7 @@ class GemsPlay(commands.Cog):
 					msg = "Dommage tu as perdu "+str(valeur)+":gem:`gems`"
 
 				DB.updateComTime(ID, "gamble", GF.dbGems)
+				lvl.addxp(ID, 1, GF.dbGems)
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_8s)+" secondes entre chaque commande !"
 		elif gems < valeur:
@@ -481,6 +486,7 @@ class GemsPlay(commands.Cog):
 					msg = "Il faut acheter ou forger une pioche pour miner!"
 
 				DB.updateComTime(ID, "mine", GF.dbGems)
+				lvl.addxp(ID, 1, GF.dbGems)
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -565,6 +571,7 @@ class GemsPlay(commands.Cog):
 					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(GF.get_idmoji("fishingrod"))
 
 				DB.updateComTime(ID, "fish", GF.dbGems)
+				lvl.addxp(ID, 1, GF.dbGems)
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -633,6 +640,7 @@ class GemsPlay(commands.Cog):
 							DB.add(ID, "inventory", item, nbHarvest, GF.dbGems)
 							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime, GF.dbHH)
 							desc = "Ta plantation à fini de pousser, en la coupant tu gagne {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
+							lvl.addxp(ID, 1, GF.dbGems)
 							if i > 1:
 								if DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) > 0:
 									GF.addDurabilite(ID, "planting_plan", -1)
@@ -676,6 +684,7 @@ class GemsPlay(commands.Cog):
 						return 404
 					elif int(arg) < 0:
 						DB.addGems(ID, -100)
+						lvl.addxp(ID, -10, GF.dbGems)
 						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
 						await ctx.channel.send(msg)
 						return "anticheat"
@@ -736,6 +745,7 @@ class GemsPlay(commands.Cog):
 		if imise != None:
 			if int(imise) < 0:
 				msg = "Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
+				lvl.addxp(ID, -10, GF.dbGems)
 				DB.add(ID, "StatGems", "DiscordCop Amende", 1, GF.dbGems)
 				if DB.valueAt(ID, "gems", GF.dbGems) > 100 :
 					DB.addGems(ID, -100)
@@ -959,6 +969,7 @@ class GemsPlay(commands.Cog):
 				msg += "\nLa machine à sous ne paya rien ..."
 				DB.addGems(ID, val)
 			DB.updateComTime(ID, "slots", GF.dbGems)
+			lvl.addxp(ID, gain, GF.dbGems)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_8s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
