@@ -127,7 +127,7 @@ class GemsBase(commands.Cog):
 		ID = ctx.author.id
 		jour = dt.date.today()
 		if DB.spam(ID,GF.couldown_4s, "buy", GF.dbGems):
-			if  GF.testInvTaille(ID) or item == "backpack":
+			if  GF.testInvTaille(ID) or item == "backpack" or item == "bank_upgrade":
 				test = True
 				nb = int(nb)
 				for c in GF.objetItem :
