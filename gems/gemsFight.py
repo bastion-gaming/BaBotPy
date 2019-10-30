@@ -16,6 +16,7 @@ async def action(ctx, IDaction, P, type):
 	check = ""
 	# Vérifie si le joueur est présent dans une session
 	# Si OUI, recupère l'ID de la session
+
 	if DB.OwnerSessionExist(ID, GF.dbSession) == True:
 		IDSession = DB.OwnerSessionAt(ID, "ID", GF.dbSession)
 		check = "owner"
@@ -33,9 +34,17 @@ async def action(ctx, IDaction, P, type):
 				if "{}".format(c.ID) == IDaction:
 					Pmax = c.puissancemax
 					CapName = c.nom
+		checkCap = False
+		CapList = DB.valueAt(ID, "capability", GF.dbGems)
+		for one in CapList:
+			if one == IDaction:
+				checkCap = True
 		if CapName == "404":
 			await ctx.channel.send("Action impossible! {} inconnu".format(type))
 			return 404
+		elif not checkCap:
+			await ctx.channel.send("Tu ne pocèdes pas cette aptitude!")
+			return False
 		else:
 			if int(P) > Pmax:
 				P = Pmax
@@ -155,24 +164,22 @@ def round(ctx, IDSession):
 			OwnerType = c.type
 			OwnerActionName = c.nom
 			OwnerItem = c.item
+			OwnerNBperte = c.nbperte
 
 		if "{}".format(c.ID) == MemberAction:
 			MemberType = c.type
 			MemberActionName = c.nom
 			MemberItem = c.item
+			MemberNBperte = c.nbperte
 
 	OwnerDesc = "Action: _{0}_ | **{1}** \nPuissance: {2}".format(OwnerType, OwnerActionName, OwnerPuissance)
 	MemberDesc = "Action: _{0}_ | **{1}** \nPuissance: {2}".format(MemberType, MemberActionName, MemberPuissance)
 
 	# Defense vs Defense
 	if OwnerType == "defense" and MemberType == "defense":
-		# DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance, GF.dbGems)
-		# DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance, GF.dbGems)
 		result = "Personne n'as perdu de :hearts:\n"
 		result += "**{0}** {1} :hearts:\n".format(userOwner.name, DB.valueAt(IDSession, "lifeOwner", GF.dbSession))
 		result += "**{0}** {1} :hearts:\n".format(userMember.name, DB.valueAt(IDSession, "lifeMember", GF.dbSession))
-		# OwnerDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
-		# MemberDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 
 	# Attaque vs Attaque
 	elif OwnerType == "attaque" and MemberType == "attaque":
@@ -223,7 +230,7 @@ def round(ctx, IDSession):
 
 	# Defense vs Attaque
 	elif OwnerType == "defense" and MemberType == "attaque":
-		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance*8, GF.dbGems)
+		DB.add(userOwner.id, "inventory", OwnerItem, -OwnerPuissance*OwnerNBperte, GF.dbGems)
 		OwnerDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 
 		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
@@ -258,7 +265,7 @@ def round(ctx, IDSession):
 
 	# Attaque vs Defense
 	elif OwnerType == "attaque" and MemberType == "defense":
-		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance*8, GF.dbGems)
+		DB.add(userMember.id, "inventory", MemberItem, -MemberPuissance*MemberNBperte, GF.dbGems)
 		MemberDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 
 		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
@@ -319,7 +326,10 @@ class GemsFight(commands.Cog):
 		ID = ctx.author.id
 		IDmember = DB.nom_ID(arg1)
 		if opt == "duel":
-			if mise != None:
+			if ID == IDmember:
+				await ctx.channel.send("Tu ne peux pas te défier toi même")
+				return False
+			elif mise != None:
 				imise = int(mise)
 			else:
 				await ctx.channel.send("Il manque la mise pour lancer ce défis")
@@ -346,7 +356,7 @@ class GemsFight(commands.Cog):
 							msg = "Défis `{}` créée".format(code)
 							user = ctx.guild.get_member(IDmember)
 							msg += "\n Message envoyer à {}\n••••\nEn attende de synchronisation".format(user.name)
-							mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\nMise: {3}:gem:`gems`\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n\nBalance de {5}: {4} :gem:`gems`".format(ctx.author.name, code, GF.get_idmoji("sword"), imise, DB.valueAt(IDmember, "gems", GF.dbGems), ctx.guild.get_member(IDmember).name)
+							mpuser = "••••••••••\n<:gem_sword:{2}> {0} ta défié en duel <:gem_sword:{2}>\nMise: {3} :gem:`gems`\n\n2 choix s'offre à toi:\n- Tu peux accepter le defis en utilisant la commande `!defis accept {1}`\n- Tu peux refuser le defis en utilisant la commande `!defis deny {1}`\n\nBalance de {5}: {4} :gem:`gems`".format(ctx.author.name, code, GF.get_idmoji("sword"), imise, DB.valueAt(IDmember, "gems", GF.dbGems), ctx.guild.get_member(IDmember).name)
 							try:
 								await user.send(mpuser)
 								await ctx.channel.send(msg)
@@ -413,12 +423,21 @@ class GemsFight(commands.Cog):
 					check = False
 					for one in member:
 						if one == ctx.author.id:
+							userMember = ctx.guild.get_member(one)
 							check = True
 					if check:
 						DB.updateField(arg1, "sync", "OK", GF.dbSession)
 						msg = "••••••••••\n<:gem_sword:{2}> {1} a accepté le defis `{0}`".format(arg1, ctx.author.name, GF.get_idmoji("sword"))
 						owner = ctx.guild.get_member(DB.valueAt(arg1, "owner", GF.dbSession))
 						await owner.send(msg)
+						msg = "__Commandes utiles__:"
+						msg += "\n`!inv capabilities` :arrow_forward: Permet de voir la liste de tes Attaque/Défense.\n"
+						msg += "\n`!attack [ID de l'attaque] [Puissance]` :arrow_forward: Permet de lancer une attaque pour reduire la vie de l'adversaire."
+						msg += "\n`!defense [ID de la defense] [Puissance]` :arrow_forward: Permet de lancer une defense pour contré l'attaque d'un adversaire."
+						msg += "\n_Si la puissance n'est pas indiquée alors elle sera aléatoire_"
+						msg += "\n\n`!defis end {}` :arrow_forward: Mettre fin au défis".format(arg1)
+						await owner.send(msg)
+						await userMember.send(msg)
 						msg = "{1} a accepté le defis de {0}".format(owner.name, ctx.author.name)
 						await ctx.channel.send(msg)
 				else:

@@ -144,7 +144,7 @@ class Level(commands.Cog):
 
 					# Gems
 					msg = "{0} :gem:`gems`\n".format(DB.valueAt(ID,"gems", GF.dbGems))
-					msg+= "{0} <:redgem:{1}>`RED gems`".format(DB.valueAt(ID,"redgems", GF.dbGems), GF.get_idmoji("redgem"))
+					msg+= "{0} <:redgem:{1}>`R-gems`".format(DB.valueAt(ID,"redgems", GF.dbGems), GF.get_idmoji("redgem"))
 					emb.add_field(name="**_Balance_**", value=msg, inline=False)
 
 					# Statistique de l'utilisateur pour le module Gems

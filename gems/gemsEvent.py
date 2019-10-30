@@ -35,9 +35,9 @@ class GemsEvent(commands.Cog):
 				item = "chocolate"
 				gain = "cupcake"
 				nbitem = 8
-			if item != "":
+			if fct == None:
 				DB.updateComTime(ID, "cooked", GF.dbGems)
-				if fct == None:
+				if item != "":
 					nbcooking = DB.nbElements(ID, "inventory", "furnace", GF.dbGems) + 1
 					if nbcooking >= maxcooking:
 						nbcooking = maxcooking
@@ -50,8 +50,6 @@ class GemsEvent(commands.Cog):
 								desc = "Ton plat a été mis au four. Il aura fini de cuire dans :clock2:`2h`"
 							else:
 								desc = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire! \nIl te faut {4} <:gem_{0}:{1}>`{0}` pour faire 1 <:gem_{2}:{3}>`{2}`".format(item, GF.get_idmoji(item), gain, GF.get_idmoji(gain), nbitem)
-								# await ctx.channel.send(desc)
-								# return False
 						else:
 							CookedTime = DB.nbElements(ID, "cooked", "furnace_{}".format(i), GF.dbHH)
 							InstantTime = t.time()
@@ -73,13 +71,6 @@ class GemsEvent(commands.Cog):
 												if c.nom == "furnace":
 													GF.addDurabilite(ID, c.nom, c.durabilite)
 											DB.add(ID, "inventory", "furnace", -1, GF.dbGems)
-								# D = r.randint(0,20)
-								# if D == 20 or D == 0:
-								# 	DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
-								# 	desc += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
-								# elif D >= 9 and D <= 11:
-								# 	DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
-								# 	desc += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 							else:
 								timeH = int(time / 60 / 60)
 								time = time - timeH * 3600
@@ -90,12 +81,12 @@ class GemsEvent(commands.Cog):
 						i += 1
 					await ctx.channel.send(embed = msg)
 				else:
-					msg = "Fonction inconnu"
+					msg = "Commande indisponible! Elle reviendra lors d'un prochain événement."
 					await ctx.channel.send(msg)
-					return False
 			else:
-				msg = "Commande indisponible! Elle reviendra lors d'un prochain événement."
+				msg = "Fonction inconnu"
 				await ctx.channel.send(msg)
+				return False
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)

@@ -587,7 +587,6 @@ class GemsPlay(commands.Cog):
 			i = 1
 			DB.updateComTime(ID, "hothouse", GF.dbGems)
 			if fct == None or fct == "harvest":
-				check = False
 				if  arg != None:
 					if int(arg) <= nbplanting:
 						nbplanting = int(arg)
@@ -633,7 +632,6 @@ class GemsPlay(commands.Cog):
 									item = "wheat"
 							DB.add(ID, "inventory", item, nbHarvest, GF.dbGems)
 							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime, GF.dbHH)
-							check = True
 							desc = "Ta plantation à fini de pousser, en la coupant tu gagne {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
 							if i > 1:
 								if DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) > 0:
@@ -664,16 +662,6 @@ class GemsPlay(commands.Cog):
 					else:
 						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 					i += 1
-				if check == True:
-					D = r.randint(0,20)
-					if D == 20 or D == 0:
-						DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
-						msgLB = "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
-						await ctx.channel.send(msgLB)
-					elif D >= 9 and D <= 11:
-						DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
-						msgLB = "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
-						await ctx.channel.send(msgLB)
 			elif fct == "plant":
 				#await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
 				#return 404

@@ -228,7 +228,7 @@ def loadItem(F = None):
 	,Outil("iron_pickaxe", itemBourse("iron_pickaxe", "vente"), itemBourse("iron_pickaxe", "achat"), 70, 200, "forge")
 	,Outil("diamond_pickaxe", itemBourse("diamond_pickaxe", "vente"), itemBourse("diamond_pickaxe", "achat"), 150, 450, "forge")
 	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
-	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 25, "forge")
+	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 50, "forge")
 	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 3, 3, "")
 	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 1, 1, "")
 	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente"), itemBourse("bank_upgrade", "achat"), 10000, None, "bank")]
@@ -237,7 +237,7 @@ def loadItem(F = None):
 	#========== Aptitudes ==========
 	class Capability:
 
-		def __init__(self, ID, nom, defaut, achat, type, puissancemax, item, desc):
+		def __init__(self, ID, nom, defaut, achat, type, puissancemax, item, desc, nbperte):
 			self.ID = ID
 			self.nom = nom
 			self.defaut = defaut
@@ -246,10 +246,13 @@ def loadItem(F = None):
 			self.puissancemax = puissancemax
 			self.item = item
 			self.desc = desc
+			self.nbperte = nbperte
 
 	global objetCapability
-	objetCapability = [Capability(100, "Coup de <:gem_sword:{0}>`sword`".format(get_idmoji("sword")), True, 0, "attaque", 10, "sword", "Utilisez votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme la puissance de l'attaque en durabilité à chaque attaque".format(get_idmoji("sword")))
-	,Capability(200, "Mur de <:gem_cobblestone:{0}>`cobblestone`".format(get_idmoji("cobblestone")), True, 0, "defense", 10, "cobblestone", "Construisez un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 8 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")))]
+	objetCapability = [Capability(100, "Coup de <:gem_sword:{0}>`sword`".format(get_idmoji("sword")), True, 0, "attaque", 10, "sword", "Utilisez votre <:gem_sword:{}>`sword` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("sword")), 0)
+	,Capability(101, "<:gem_iron_pickaxe:{0}> Le mineur du bastion".format(get_idmoji("iron_pickaxe")), False, 5, "attaque", 10, "iron_pickaxe", "Utilisez votre <:gem_iron_pickaxe:{}>`pioche en fer` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("iron_pickaxe")), 0)
+	,Capability(200, "Mur de <:gem_cobblestone:{0}>`cobblestone`".format(get_idmoji("cobblestone")), True, 0, "defense", 10, "cobblestone", "Construisez un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 9 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")), 9)
+	,Capability(201, "Grille de <:gem_iron:{0}>`fer`".format(get_idmoji("iron")), False, 5, "defense", 10, "iron", "Construisez une grille de <:gem_iron:{0}>`fer`\nConsonne 7 <:gem_iron:{0}>`fer` par point d'attaque contré".format(get_idmoji("iron")), 7)]
 
 
 	#========== Trophées ==========

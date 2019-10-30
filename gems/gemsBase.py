@@ -69,7 +69,7 @@ class GemsBase(commands.Cog):
 			title = "Compte principal de {}".format(nom)
 			msg = discord.Embed(title = title,color= 13752280, description = "")
 			desc = "{} :gem:`gems`\n".format(solde)
-			desc+= "{0} <:redgem:{1}>`RED gems`".format(DB.valueAt(ID,"redgems", GF.dbGems), GF.get_idmoji("redgem"))
+			desc+= "{0} <:redgem:{1}>`R-gems`".format(DB.valueAt(ID,"redgems", GF.dbGems), GF.get_idmoji("redgem"))
 			msg.add_field(name="**_Balance_**", value=desc, inline=False)
 			lvl = DB.valueAt(ID, "lvl", GF.dbGems)
 			xp = DB.valueAt(ID, "xp", GF.dbGems)
@@ -356,13 +356,14 @@ class GemsBase(commands.Cog):
 						if "{}".format(c.ID) == str(x):
 							if c.type == "attaque" and type != "defense":
 								msg_invCapAtt += "• ID: _{3}_ | **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
-							elif c.type == "defense" and (type != "attaque" or type != "attack"):
+							elif c.type == "defense" and (type != "attaque" and type != "attack"):
 								msg_invCapDef += "• ID: _{3}_ | **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
 
-				desc = ":tools: En travaux :pencil:"
+				desc = "Voici la liste de tes aptitudes."
 				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)
-				if msg_invCapAtt != "":
+				if msg_invCapAtt != "" and msg_invCapDef != "":
 					msg_invCapAtt += "••••••••••"
+				if msg_invCapAtt != "":
 					msg.add_field(name="Attaque", value=msg_invCapAtt, inline=False)
 				if msg_invCapDef != "":
 					msg.add_field(name="Défense", value=msg_invCapDef, inline=False)
@@ -384,7 +385,7 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def market (self, ctx, fct = None):
+	async def market (self, ctx, fct = None, type = None):
 		"""Permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
 		jour = dt.date.today()
@@ -545,18 +546,24 @@ class GemsBase(commands.Cog):
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher le marché".format(ctx.author.name))
 			elif fct == "capability" or fct == "capabilities" or fct == "capacité" or fct == "capacités" or fct == "aptitude" or fct == "aptitudes":
-				desc = ":tools: En travaux :pencil:"
+				desc = "Permet de voir toutes les aptitudes que l'on peux acheter!\n\n"
 				descCapAtt = ""
 				descCapDef = ""
+				CapList = DB.valueAt(ID, "capability", GF.dbGems)
 				for c in GF.objetCapability:
 					if c.defaut != True:
-						if c.type == "attaque" and c.ID != 100:
-							descCapAtt += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:`gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
-						elif c.type == "defense" and c.ID != 200:
-							descCapDef += "• ID: {4} **{0}**\n___Achat__:_ {3} :gem:`gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat)
+						checkCap = ""
+						for one in CapList:
+							if one == "{}".format(c.ID):
+								checkCap = ":white_check_mark: "
+						if c.type == "attaque" and type != "defense":
+							descCapAtt += "• {6}ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:redgem:{5}>`R-gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("redgem"), checkCap)
+						elif c.type == "defense" and (type != "attaque" and type != "attack"):
+							descCapDef += "• {6}ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:redgem:{5}>`R-gems`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("redgem"), checkCap)
 				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
-				if descCapAtt != "":
+				if descCapAtt != "" and descCapDef != "":
 					descCapAtt += "••••••••••"
+				if descCapAtt != "":
 					msg.add_field(name="Attaque", value=descCapAtt, inline=False)
 				if descCapDef != "":
 					msg.add_field(name="Défense", value=descCapDef, inline=False)
