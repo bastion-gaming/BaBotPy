@@ -382,7 +382,7 @@ class GemsBase(commands.Cog):
 							elif c.type == "defense" and (type != "attaque" and type != "attack"):
 								msg_invCapDef += "• ID: _{3}_ | **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
 
-				desc = "Voici la liste de tes aptitudes."
+				desc = "Voici la liste de tes aptitudes.\n\nD'autres aptitudes sont disponible sur le marché `!market capabilities`\n"
 				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)
 				if msg_invCapAtt != "" and msg_invCapDef != "":
 					msg_invCapAtt += "••••••••••"
@@ -569,7 +569,7 @@ class GemsBase(commands.Cog):
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher le marché".format(ctx.author.name))
 			elif fct == "capability" or fct == "capabilities" or fct == "capacité" or fct == "capacités" or fct == "aptitude" or fct == "aptitudes":
-				desc = "Permet de voir toutes les aptitudes que l'on peux acheter!\n\n"
+				desc = "Permet de voir toutes les aptitudes que l'on peux acheter!\n\nUtilise la commande `!buy capability [ID de l'aptitude]` pour acheter une aptitude\n"
 				descCapAtt = ""
 				descCapDef = ""
 				CapList = DB.valueAt(ID, "capability", GF.dbGems)
