@@ -101,14 +101,20 @@ class GemsBase(commands.Cog):
 			t = DB.taille(GF.dbGems)
 			while i < t:
 				user = DB.userID(i, GF.dbGems)
-				gems = DB.usespinelles(i, GF.dbGems)
-				UserList.append((user, gems))
+				gems = DB.userGems(i, "gems", GF.dbGems)
+				spinelles = DB.userGems(i, "spinelles", GF.dbGems)
+				guilde = DB.valueAt(user, "guilde", GF.dbGems)
+				UserList.append((user, gems, spinelles, guilde))
 				i = i + 1
 			UserList = sorted(UserList, key=itemgetter(1),reverse=False)
 			i = t - 1
 			j = 0
 			while i >= 0 and j != n : # affichage des données trié
-				baltop += "{2} | <@{0}> {1}:gem:`gems`\n".format(UserList[i][0], UserList[i][1], j+1)
+				baltop += "{2} | _{3} _<@{0}> {1}:gem:`gems`".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
+				if UserList[i][2] != 0:
+					baltop+=" | {0} <:spinelle:{1}>`spinelles`\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
+				else:
+					baltop+="\n"
 				i = i - 1
 				j = j + 1
 			DB.updateComTime(ID, "baltop", GF.dbGems)
@@ -527,18 +533,18 @@ class GemsBase(commands.Cog):
 							d_marketItemsEvent += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
 							if pourcentageV != 0:
 								d_marketItemsEvent += "_{}%_ ".format(pourcentageV)
-								d_marketItemsEvent += "| Achat **{}** ".format(c.achat)
-								if pourcentageA != 0:
-									d_marketItemsEvent += "_{}%_ ".format(pourcentageA)
-									d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
+							d_marketItemsEvent += "| Achat **{}** ".format(c.achat)
+							if pourcentageA != 0:
+								d_marketItemsEvent += "_{}%_ ".format(pourcentageA)
+							d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
 						else:
 							d_marketItemsEvent += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
 							if pourcentageV != 0:
 								d_marketItemsEvent += "_{}%_ ".format(pourcentageV)
-								d_marketItemsEvent += "| Achat **{}** ".format(c.achat)
-								if pourcentageA != 0:
-									d_marketItemsEvent += "_{}%_ ".format(pourcentageA)
-									d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
+							d_marketItemsEvent += "| Achat **{}** ".format(c.achat)
+							if pourcentageA != 0:
+								d_marketItemsEvent += "_{}%_ ".format(pourcentageA)
+							d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
 					else:
 						d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))

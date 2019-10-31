@@ -473,7 +473,7 @@ class GemsFight(commands.Cog):
 	@commands.command(pass_context=True)
 	async def convert(self, ctx, nb = None):
 		"""
-		Convertisseur de :gem:`gems` (250 000 = 1)
+		**[Nombre de spinelle]** | Convertisseur de :gem:`gems` (250 000 pour 1)
 		"""
 		n = 250000
 		ID = ctx.author.id

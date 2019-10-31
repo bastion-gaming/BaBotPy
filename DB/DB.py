@@ -307,13 +307,16 @@ def MemberSessionAt(member, fieldName, linkDB = None):
 	db.close()
 	return value
 
-def userGems(i, linkDB = None):
+def userGems(i, item, linkDB = None):
 	"""Retourne le nombre de gems du joueur i"""
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
 	else:
 		db = TinyDB("DB/{}.json".format(DB_NOM))
-	gems = db.search(Query().gems)[i]["gems"]
+	if item == "gems":
+		gems = db.search(Query().gems)[i]["gems"]
+	elif item == "spinelles":
+		gems = db.search(Query().spinelles)[i]["spinelles"]
 	db.close()
 	return gems
 
