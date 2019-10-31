@@ -172,6 +172,8 @@ client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
 
+client.load_extension('gems.gemsGuilde')
+
 client.load_extension('gems.gemsFight')
 
 client.load_extension('gems.gemsEvent')
