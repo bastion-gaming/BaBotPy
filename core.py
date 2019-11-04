@@ -114,19 +114,20 @@ async def on_member_remove(member):
 @client.event
 async def on_voice_state_update(member,before,after):
 	guild = client.get_guild(member.guild.id)
-	if guild.afk_channel != None:
-		afkchannel = guild.afk_channel.id
-	else:
-		afkchannel = 0
-	if after.channel != None and not (member.name in on_vocal) and after.channel.id != afkchannel:
-		on_vocal[member.name] = time.time()
-	elif (after.channel == None or  after.channel.id == afkchannel) and  member.name in on_vocal :
-		time_on_vocal = round((time.time() - on_vocal[member.name])/60)
-		print('{} as passé {} minutes en vocal !'.format(member.name,time_on_vocal))
-		XP = int(DB.valueAt(member.id, "xp")) + int(time_on_vocal)
-		DB.updateField(member.id, "xp", XP)
-		lvl.checklevelvocal(member)
-		del on_vocal[member.name]
+	if guild.id == wel.idBASTION:
+		if guild.afk_channel != None:
+			afkchannel = guild.afk_channel.id
+		else:
+			afkchannel = 0
+		if after.channel != None and not (member.name in on_vocal) and after.channel.id != afkchannel:
+			on_vocal[member.name] = time.time()
+		elif (after.channel == None or  after.channel.id == afkchannel) and  member.name in on_vocal :
+			time_on_vocal = round((time.time() - on_vocal[member.name])/60)
+			print('{} as passé {} minutes en vocal !'.format(member.name,time_on_vocal))
+			XP = int(DB.valueAt(member.id, "xp")) + int(time_on_vocal)
+			DB.updateField(member.id, "xp", XP)
+			lvl.checklevelvocal(member)
+			del on_vocal[member.name]
 
 ####################### Stat ####################################
 

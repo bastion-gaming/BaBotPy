@@ -57,8 +57,8 @@ PrixOutil = [Outil("pickaxe", 40, 80)
 ,Outil("diamond_pickaxe", 600, 1800)
 ,Outil("fishingrod", 35, 70)
 ,Outil("sword", 100, 400)
-,Outil("planting_plan", 2000, 2000)
-,Outil("furnace", 1000, 1000)
+,Outil("planting_plan", 1500, 1500)
+,Outil("furnace", 800, 800)
 ,Outil("bank_upgrade", 0, 10000)]
 
 
