@@ -27,8 +27,6 @@ async def memberjoin(member, channel):
 		ID = member.id
 		if DB.newPlayer(ID) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			DB.newPlayer(member.id, GF.dbGems, GF.dbGemsTemplate)
-			DB.newPlayer(member.id, GF.dbHH, GF.dbHHTemplate)
 			DB.updateField(ID, "arrival", str(t.datetime.now()))
 			cap = DB.valueAt(ID, "capability")
 			for c in GF.objetCapability:
