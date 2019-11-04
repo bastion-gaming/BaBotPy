@@ -192,14 +192,25 @@ class GemsBase(commands.Cog):
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de <:spinelle:{}>`spinelles` en banque".format(GF.get_idmoji("spinelle"))
 				if not check:
 					msg = "Désolé, nous ne pouvons pas executer cet achat, cette aptitude n'est pas vendu au marché"
-			elif GF.testInvTaille(ID) or item == "backpack" or item == "bank_upgrade":
+			elif GF.testInvTaille(ID) or item == "backpack" or item == "hyperpack" or item == "bank_upgrade":
 				test = True
 				nb = int(nb)
 				for c in GF.objetItem :
 					if item == c.nom :
 						test = False
-						prix = 0 - (c.achat*nb)
-						if DB.addGems(ID, prix) >= "0":
+						check = False
+						prix = (c.achat*nb)
+						if c.type != "spinelle":
+							if DB.valueAt(ID, "gems", GF.dbGems) >= prix:
+								argent = ":gem:`gems`"
+								DB.updateField(ID, "gems", DB.valueAt(ID, "gems", GF.dbGems)-prix, GF.dbGems)
+								check = True
+						else:
+							if DB.valueAt(ID, "spinelles", GF.dbGems) >= prix:
+								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
+								DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)-prix, GF.dbGems)
+								check = True
+						if check:
 							if c.type == "halloween":
 								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
 									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
@@ -215,7 +226,7 @@ class GemsBase(commands.Cog):
 							# Message de réussite dans la console
 							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
 						else :
-							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem:`gems` en banque"
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de {} en banque".format(argent)
 						break
 				for c in GF.objetOutil :
 					if item == c.nom :
@@ -236,7 +247,17 @@ class GemsBase(commands.Cog):
 							prix = int(prix)
 						else:
 							prix = -1 * (c.achat*nb)
-						if DB.addGems(ID, prix) >= "0":
+						if c.type != "spinelle":
+							if DB.valueAt(ID, "gems", GF.dbGems) >= prix:
+								argent = ":gem:`gems`"
+								DB.updateField(ID, "gems", DB.valueAt(ID, "gems", GF.dbGems)-prix, GF.dbGems)
+								check = True
+						else:
+							if DB.valueAt(ID, "spinelles", GF.dbGems) >= prix:
+								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
+								DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)-prix, GF.dbGems)
+								check = True
+						if check:
 							if c.type == "bank":
 								DB.add(ID, "banque", "soldeMax", nb*c.poids, GF.dbGems)
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
@@ -251,7 +272,7 @@ class GemsBase(commands.Cog):
 									if GF.get_durabilite(ID, "planting_plan") == None:
 										GF.addDurabilite(ID, "planting_plan", c.durabilite)
 						else :
-							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem:`gems` en banque"
+							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de {} en banque".format(argent)
 						break
 				for c in GF.objetBox :
 					if item == "lootbox_{}".format(c.nom) or item == c.nom :
@@ -292,28 +313,39 @@ class GemsBase(commands.Cog):
 				test = True
 				for c in GF.objetItem:
 					if item == c.nom:
+
 						test = False
 						gain = c.vente*nb
-						DB.addGems(ID, gain)
-						if c.type != "consommable" and c.nom != "candy" and c.nom != "lollipop":
-							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem:`gems` !".format(nb,item,gain,GF.get_idmoji(c.nom))
-							# Message de réussite dans la console
-							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
+						if c.type != "spinelle":
+							DB.addGems(ID, gain)
+							argent = ":gem:`gems`"
 						else:
-							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} :gem:`gems` !".format(nb,item,gain)
+							DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)+gain, GF.dbGems)
+							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
+						if c.type != "consommable" and c.nom != "candy" and c.nom != "lollipop":
+							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} {4} !".format(nb, item, gain, GF.get_idmoji(c.nom), argent)
 							# Message de réussite dans la console
-							print("Gems >> {} a vendu {} {}".format(ctx.author.name,nb,item))
+							print("Gems >> {} a vendu {} {}".format(ctx.author.name, nb, item))
+						else:
+							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} {3} !".format(nb, item, gain, argent)
+							# Message de réussite dans la console
+							print("Gems >> {} a vendu {} {}".format(ctx.author.name, nb, item))
 							if c.nom == "grapes" and int (nb/10) >= 1:
 								nbwine = int(nb/10)
 								DB.add(ID, "inventory", "wine_glass", nbwine, GF.dbGems)
 								msg+="\nTu gagne {}:wine_glass:`verre de vin`".format(nbwine)
-						break
+
 				for c in GF.objetOutil:
 					if item == c.nom:
 						test = False
 						gain = c.vente*nb
-						DB.addGems(ID, gain)
-						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} :gem:`gems` !".format(nb,item,gain,GF.get_idmoji(c.nom))
+						if c.type != "spinelle":
+							DB.addGems(ID, gain)
+							argent = ":gem:`gems`"
+						else:
+							DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)+gain, GF.dbGems)
+							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
+						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} {4} !".format(nb, item, gain, GF.get_idmoji(c.nom), argent)
 						if DB.nbElements(ID, "inventory", item, GF.dbGems) == 1:
 							if GF.get_durabilite(ID, item) != None:
 								GF.addDurabilite(ID, item, -1)
@@ -481,6 +513,7 @@ class GemsBase(commands.Cog):
 				d_marketItemsConsommable = ""
 				d_marketItemsEvent = ""
 				d_marketBox = ""
+				d_marketSpinelle = ""
 
 				# récupération du fichier de sauvegarde de la bourse
 				with open('gems/bourse.json', 'r') as fp:
@@ -582,6 +615,11 @@ class GemsBase(commands.Cog):
 								d_marketItemsEvent += "_{}%_ ".format(pourcentageA)
 							d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
+					elif c.type == "spinelle":
+						d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}**<:spinelle:{3}> ".format(c.nom,c.vente,GF.get_idmoji(c.nom), GF.get_idmoji("spinelle"))
+						d_marketItems += "| Achat **{}**<:spinelle:{}> ".format(c.achat, GF.get_idmoji("spinelle"))
+						d_marketItems += "| Poids **{}**\n".format(c.poids)
+					#=======================================================================================
 					else:
 						d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
 						if pourcentageV != 0:
@@ -604,6 +642,8 @@ class GemsBase(commands.Cog):
 				msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
 				if d_marketItemsEvent != "":
 					msg.add_field(name="Événement", value=d_marketItemsEvent, inline=False)
+				if d_marketSpinelle != "":
+					msg.add_field(name="Spinelles <:spinelle:{}>".format(GF.get_idmoji("spinelle")), value=d_marketSpinelle, inline=False)
 
 				msg.add_field(name="Loot Box", value=d_marketBox, inline=False)
 				DB.updateComTime(ID, "market", GF.dbGems)

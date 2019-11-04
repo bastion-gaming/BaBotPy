@@ -2,7 +2,7 @@ import json
 import datetime as dt
 
 jour = dt.date.today()
-exception = ["bank_upgrade", "backpack", "candy", "lollipop", "fishhook", "pickaxe", "fishingrod"]
+exception = ["bank_upgrade", "backpack", "hyperbackpack", "candy", "lollipop", "fishhook", "pickaxe", "fishingrod"]
 
 #========== Items ==========
 class Item:
@@ -31,6 +31,7 @@ PrixItem = [Item("cobblestone", 30, 50)
 ,Item("grapes", 15, 30)
 ,Item("wine_glass", 120, 210)
 ,Item("backpack", 1, 3000)
+,Item("hyperpack", 1, 1)
 ,Item("fishhook", 46, 64)]
 
 if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 11):

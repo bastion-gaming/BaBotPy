@@ -199,6 +199,7 @@ def loadItem(F = None):
 	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "consommable")
 	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "consommable")
 	,Item("backpack", itemBourse("backpack", "vente"), itemBourse("backpack", "achat"), -200, "special")
+	,Item("hyperpack", itemBourse("hyperpack", "vente"), itemBourse("hyperpack", "achat"), -20000, "spinelle")
 	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")]
 
 	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 11):
