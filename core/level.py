@@ -2,7 +2,7 @@ import random as r
 import datetime as dt
 from DB import DB
 from core import roles
-from gems import GemsFonctions as GF
+from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get

@@ -7,7 +7,7 @@ import datetime as t
 from datetime import datetime
 
 from DB import DB
-from gems import GemsFonctions as GF
+from gems import gemsFonctions as GF
 from core import roles, stats as stat
 
 idBaBot = 604776153458278415

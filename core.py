@@ -8,7 +8,7 @@ from datetime import datetime
 from DB import DB
 from core import roles, stats as stat, level as lvl, welcome as wel
 from multimedia import notification as notif
-from gems import GemsFonctions as GF
+from gems import gemsFonctions as GF
 
 import asyncio
 import aiohttp
@@ -167,17 +167,17 @@ client.load_extension('multimedia.notification')
 
 ####################### Commande gems.py #######################
 
-client.load_extension('gems.GemsFonctions')
+client.load_extension('gems.gemsFonctions')
 
-client.load_extension('gems.GemsBase')
+client.load_extension('gems.gemsBase')
 
-client.load_extension('gems.GemsPlay')
+client.load_extension('gems.gemsPlay')
 
-client.load_extension('gems.GemsGuild')
+client.load_extension('gems.gemsGuild')
 
-# client.load_extension('gems.GemsFight')
+# client.load_extension('gems.gemsFight')
 
-client.load_extension('gems.GemsEvent')
+client.load_extension('gems.gemsEvent')
 
 #---------------------------------------------------------------
 #---------------------------------------------------------------

@@ -5,7 +5,7 @@ import datetime as dt
 from DB import DB
 import json
 from core import welcome as wel
-from gems import GemsItems as GI
+from gems import gemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get

@@ -3,7 +3,7 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
-from gems import GemsFonctions as GF
+from gems import gemsFonctions as GF
 from core import level as lvl
 from discord.ext import commands
 from discord.ext.commands import bot
@@ -337,6 +337,42 @@ class GemsGuild(commands.Cog):
 			name = ctx.author.mention
 		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
 		msg = guild_leave(ctx, guilde, name)
+		await ctx.channel.send(msg)
+
+
+	@commands.command(pass_context=True)
+	async def guildchest(self, ctx, fct = None, n = 1):
+		"""**[add/bal] [nombre de spinelles]** | Gestion du coffre de Guilde"""
+		ID = ctx.author.id
+		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+		with open('gems/guildes.json', 'r') as fp:
+			dict = json.load(fp)
+		value = dict[guilde]
+		if fct == "add":
+			if n == 0:
+				return "STOP"
+			soldeS = DB.valueAt(ID, "spinelles", GF.dbGems)
+			if soldeS >= n:
+				if n < 0:
+					if value["Coffre"] < -n:
+						msg = "Il n'y a pas assez de <:spinelle:{}>`spinelles` dans le coffre de Guilde".format(GF.get_idmoji("spinelle"))
+						await ctx.channel.send(msg)
+						return "STOP"
+				newSoldeS = soldeS - n
+				DB.updateField(ID, "spinelles", newSoldeS, GF.dbGems)
+				value["Coffre"] = value["Coffre"] + n
+				with open('gems/guildes.json', 'w') as fp:
+					json.dump(dict, fp, indent=4)
+				if n > 0:
+					msg = "{0} <:spinelle:{1}>`spinelles` ont été ajoutée au coffre de Guilde".format(n, GF.get_idmoji("spinelle"))
+				else:
+					msg = "{0} <:spinelle:{1}>`spinelles` ont été retirée du coffre de Guilde".format(-n, GF.get_idmoji("spinelle"))
+			else:
+				msg = "Tu n'as pas assez de <:spinelle:{}>`spinelles` en banque".format(GF.get_idmoji("spinelle"))
+		elif fct == "bal":
+			msg = "Coffre de la Guilde | `{0}` | {1} <:spinelle:{2}>`spinelles`".format(guilde, value["Coffre"], GF.get_idmoji("spinelle"))
+		else:
+			msg = "Commande mal formulée"
 		await ctx.channel.send(msg)
 
 
