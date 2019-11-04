@@ -4,7 +4,7 @@ import time as t
 import datetime as dt
 from DB import DB
 from core import welcome as wel, level as lvl
-from gems import GemsFonctions as GF, gemsItems as GI
+from gems import GemsFonctions as GF, GemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get

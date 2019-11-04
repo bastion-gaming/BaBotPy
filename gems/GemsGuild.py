@@ -277,7 +277,7 @@ class GemsGuild(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def guild_promote(self, ctx, name):
+	async def guildpromote(self, ctx, name):
 		"""**[pseudo]** | Promouvoir un Membre de la guilde au grade Admin"""
 		ID = ctx.author.id
 		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
@@ -289,7 +289,7 @@ class GemsGuild(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def guild_displacement(self, ctx, name):
+	async def guilddisplacement(self, ctx, name):
 		"""**[pseudo]** | Destituer un Admin de la guilde au grade de Membre"""
 		ID = ctx.author.id
 		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
@@ -342,9 +342,7 @@ class GemsGuild(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def convert(self, ctx, nb = None):
-		"""
-		**[Nombre de spinelle]** | Convertisseur de :gem:`gems` (250 000 pour 1)
-		"""
+		"""**[Nombre de spinelle]** | Convertisseur :gem:`gems` :left_right_arrow: `spinelles` (250 000 pour 1)"""
 		n = 250000
 		ID = ctx.author.id
 		balGems = DB.valueAt(ID, "gems", GF.dbGems)
