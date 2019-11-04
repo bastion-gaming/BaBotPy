@@ -56,7 +56,8 @@ class Gestion(commands.Cog):
 				members = ctx.guild.members
 				for member in members:
 					DB.newPlayer(member.id)
-					DB.newPlayer(member.id, GF.dbGems)
+					DB.newPlayer(member.id, GF.dbGems, GF.dbGemsTemplate)
+					DB.newPlayer(member.id, GF.dbHH, GF.dbHHTemplate)
 				await ctx.channel.send("la bdd est remplis !")
 			else:
 				ctx.send("tu n'as pas les droits")
