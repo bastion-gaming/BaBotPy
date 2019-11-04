@@ -47,6 +47,7 @@ class GemsBase(commands.Cog):
 		"""Pour créer son compte joueur et obtenir son starter Kit!"""
 		ID = ctx.author.id
 		msg = DB.newPlayer(ID, GF.dbGems, GF.dbGemsTemplate)
+		DB.newPlayer(ID, GF.dbHH, GF.dbHHTemplate)
 		GF.startKit(ID)
 		await ctx.channel.send(msg)
 
