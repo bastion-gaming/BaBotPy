@@ -8,6 +8,7 @@ import time
 import asyncio
 from DB import DB
 from core import welcome as wel
+from gems import gemsFonctions as GF
 
 PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 client = Bot(command_prefix = "{0}".format(PREFIX))
@@ -55,6 +56,7 @@ class Gestion(commands.Cog):
 				members = ctx.guild.members
 				for member in members:
 					DB.newPlayer(member.id)
+					DB.newPlayer(member.id, GF.dbGems)
 				await ctx.channel.send("la bdd est remplis !")
 			else:
 				ctx.send("tu n'as pas les droits")
