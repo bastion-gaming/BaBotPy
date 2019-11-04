@@ -125,9 +125,9 @@ class GemsBase(commands.Cog):
 				i = t - 1
 				j = 0
 				while i >= 0 and j != n : # affichage des données trié
-					baltop += "{2} | _{3} _<@{0}> {1}:gem:`gems`".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
+					baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
 					if UserList[i][2] != 0:
-						baltop+=" | {0} <:spinelle:{1}>`spinelles`\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
+						baltop+=" | {0} <:spinelle:{1}>\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
 					else:
 						baltop+="\n"
 					i = i - 1
@@ -149,7 +149,7 @@ class GemsBase(commands.Cog):
 					i = len(GuildKey) - 1
 					j = 0
 					while i >= 0 and j != m : # affichage des données trié
-						baltop += "{2} | {0} {1} <:spinelle:{3}>`spinelles`\n".format(GuildList[i][0], GuildList[i][1], j+1, GF.get_idmoji("spinelle"))
+						baltop += "{2} | {0} {1} <:spinelle:{3}>\n".format(GuildList[i][0], GuildList[i][1], j+1, GF.get_idmoji("spinelle"))
 						i = i - 1
 						j = j + 1
 					msg = discord.Embed(title = "Classement des guildes",color= 13752280, description = baltop)
