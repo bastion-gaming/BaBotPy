@@ -53,7 +53,7 @@ class GemsEvent(commands.Cog):
 						else:
 							CookedTime = DB.nbElements(ID, "cooked", "furnace_{}".format(i), GF.dbHH)
 							InstantTime = t.time()
-							time = CookedTime - (InstantTime-GF.couldown_10s)
+							time = CookedTime - (InstantTime-GF.couldown_2h)
 							if time <= 0:
 								nbgain = r.randint(1,3)
 								DB.add(ID, "inventory", gain, nbgain, GF.dbGems)
