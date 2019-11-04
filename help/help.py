@@ -27,7 +27,7 @@ class Helpme(commands.Cog):
 			if nameElem == "gems":
 				for COG in COGS:
 					mCOG = COG.lower()
-					if mCOG == "gems" or mCOG == "gemsbase" or mCOG == "gemsplay" or mCOG == "gemsevent" or mCOG == "gemsfight":
+					if mCOG == "gems" or mCOG == "gemsbase" or mCOG == "gemsplay" or mCOG == "gemsevent" or mCOG == "gemsfight" or mCOG == "gemsguilde":
 						cog = self.bot.get_cog(COG)
 						coms = cog.get_commands()
 						for com in coms :

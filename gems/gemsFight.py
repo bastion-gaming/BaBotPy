@@ -3,7 +3,7 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
-from gems import gemsFonctions as GF
+from gems import GemsFonctions as GF
 from core import welcome as wel, level as lvl
 from discord.ext import commands
 from discord.ext.commands import bot
@@ -468,42 +468,6 @@ class GemsFight(commands.Cog):
 		if P == None:
 			P = r.randint(1,10)
 		await action(ctx, IDatt, P, "defense")
-
-
-	@commands.command(pass_context=True)
-	async def convert(self, ctx, nb = None):
-		"""
-		**[Nombre de spinelle]** | Convertisseur de :gem:`gems` (250 000 pour 1)
-		"""
-		n = 250000
-		ID = ctx.author.id
-		balGems = DB.valueAt(ID, "gems", GF.dbGems)
-		balspinelle = DB.valueAt(ID, "spinelles", GF.dbGems)
-		max = balGems // n
-		if nb != None:
-			try:
-				nb = int(nb)
-			except:
-				await ctx.channel.send("Erreur! Nombre de <:spinelle:{}>`spinelles` incorrect".format(GF.get_idmoji("spinelle")))
-				return 404
-			if nb < 0:
-				if balspinelle >= -nb:
-					max = nb
-				else:
-					await ctx.channel.send("Tu n'as pas assez de <:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle")))
-					return False
-			elif nb <= max:
-				max = nb
-			else:
-				await ctx.channel.send("Tu n'as pas assez de :gem:`gems`")
-				return False
-		else:
-			if max == 0:
-				await ctx.channel.send("Tu n'as pas assez de :gem:`gems`")
-				return False
-		DB.updateField(ID, "spinelles", balspinelle+max, GF.dbGems)
-		DB.updateField(ID, "gems", balGems-(max*n), GF.dbGems)
-		await ctx.channel.send("Convertion terminée! Ton solde a été crédité de {0} <:spinelle:{1}>`spinelles`".format(max, GF.get_idmoji("spinelle")))
 
 
 

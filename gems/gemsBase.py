@@ -4,7 +4,7 @@ import time as t
 import datetime as dt
 from DB import DB
 from core import welcome as wel, level as lvl
-from gems import gemsFonctions as GF, gemsItems as GI
+from gems import GemsFonctions as GF, gemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -91,37 +91,73 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def baltop(self, ctx, n = 10):
+	async def baltop(self, ctx, n = None, m = None):
 		"""**[nombre]** | Classement des joueurs (10 premiers par défaut)"""
 		ID = ctx.author.id
+		try:
+			if n == None:
+				n = 10
+			else:
+				n = int(n)
+			check = True
+		except:
+			if m == None:
+				m = 10
+			else:
+				m = int(m)
+			check = False
+
+		baltop = ""
 		if DB.spam(ID,GF.couldown_6s, "baltop", GF.dbGems):
-			UserList = []
-			baltop = ""
-			i = 0
-			t = DB.taille(GF.dbGems)
-			while i < t:
-				user = DB.userID(i, GF.dbGems)
-				gems = DB.userGems(i, "gems", GF.dbGems)
-				spinelles = DB.userGems(i, "spinelles", GF.dbGems)
-				guilde = DB.valueAt(user, "guilde", GF.dbGems)
-				UserList.append((user, gems, spinelles, guilde))
-				i = i + 1
-			UserList = sorted(UserList, key=itemgetter(1),reverse=False)
-			i = t - 1
-			j = 0
-			while i >= 0 and j != n : # affichage des données trié
-				baltop += "{2} | _{3} _<@{0}> {1}:gem:`gems`".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
-				if UserList[i][2] != 0:
-					baltop+=" | {0} <:spinelle:{1}>`spinelles`\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
-				else:
-					baltop+="\n"
-				i = i - 1
-				j = j + 1
 			DB.updateComTime(ID, "baltop", GF.dbGems)
-			msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
+			if check:
+				UserList = []
+				i = 0
+				t = DB.taille(GF.dbGems)
+				while i < t:
+					user = DB.userID(i, GF.dbGems)
+					gems = DB.userGems(i, "gems", GF.dbGems)
+					spinelles = DB.userGems(i, "spinelles", GF.dbGems)
+					guilde = DB.valueAt(user, "guilde", GF.dbGems)
+					UserList.append((user, gems, spinelles, guilde))
+					i = i + 1
+				UserList = sorted(UserList, key=itemgetter(1),reverse=False)
+				i = t - 1
+				j = 0
+				while i >= 0 and j != n : # affichage des données trié
+					baltop += "{2} | _{3} _<@{0}> {1}:gem:`gems`".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
+					if UserList[i][2] != 0:
+						baltop+=" | {0} <:spinelle:{1}>`spinelles`\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
+					else:
+						baltop+="\n"
+					i = i - 1
+					j = j + 1
+				msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
+				# Message de réussite dans la console
+				print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,n))
+			else:
+				if n == "guild":
+					GuildList = []
+					with open('gems/guildes.json', 'r') as fp:
+						dict = json.load(fp)
+					GuildKey = dict.keys()
+					for one in GuildKey:
+						name = one
+						coffre = dict[one]["Coffre"]
+						GuildList.append((name, coffre))
+					GuildList = sorted(GuildList, key=itemgetter(1),reverse=False)
+					i = len(GuildKey) - 1
+					j = 0
+					while i >= 0 and j != m : # affichage des données trié
+						baltop += "{2} | {0} {1} <:spinelle:{3}>`spinelles`\n".format(GuildList[i][0], GuildList[i][1], j+1, GF.get_idmoji("spinelle"))
+						i = i - 1
+						j = j + 1
+					msg = discord.Embed(title = "Classement des guildes",color= 13752280, description = baltop)
+					# Message de réussite dans la console
+					print("Gems >> {} a afficher le classement des {} premières guildes".format(ctx.author.name,m))
+				else:
+					msg = discord.Embed(title = "Classement",color= 13752280, description = "Erreur! Commande incorrect")
 			await ctx.channel.send(embed = msg)
-			# Message de réussite dans la console
-			print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,n))
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)

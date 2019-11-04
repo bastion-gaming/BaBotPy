@@ -5,7 +5,7 @@ import datetime as dt
 from DB import DB
 import json
 from core import welcome as wel
-from gems import gemsItems as GI
+from gems import GemsItems as GI
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
@@ -207,7 +207,7 @@ def loadItem(F = None):
 		,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "halloween")
 		,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "halloween")]
 
-	if (jour.month == 12 and jour.day >= 17) or (jour.month == 1 and jour.day <= 6):
+	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 6):
 		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
 		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
 		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
@@ -229,8 +229,8 @@ def loadItem(F = None):
 	,Outil("diamond_pickaxe", itemBourse("diamond_pickaxe", "vente"), itemBourse("diamond_pickaxe", "achat"), 150, 450, "forge")
 	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
 	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 50, "forge")
-	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 3, 3, "")
-	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 2, 2, "")
+	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 4, 4, "")
+	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 3, 3, "")
 	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente"), itemBourse("bank_upgrade", "achat"), 10000, None, "bank")]
 
 

@@ -3,7 +3,7 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
-from gems import gemsFonctions as GF
+from gems import GemsFonctions as GF
 from core import welcome as wel, level as lvl
 from discord.ext import commands
 from discord.ext.commands import bot

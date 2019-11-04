@@ -1,7 +1,10 @@
 {
-    "Test": {
+    "Get Gems": {
         "Chef": 129362501187010561,
         "Admins": [],
-        "Membres": []
+        "Membres": [
+            604242616904581141
+        ],
+        "Coffre": 0
     }
 }

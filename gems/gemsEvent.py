@@ -3,7 +3,7 @@ import random as r
 import time as t
 import datetime as dt
 from DB import DB
-from gems import gemsFonctions as GF
+from gems import GemsFonctions as GF
 from core import level as lvl
 from discord.ext import commands
 from discord.ext.commands import bot
@@ -14,7 +14,6 @@ class GemsEvent(commands.Cog):
 
 	def __init__(self,ctx):
 		return(None)
-
 
 
 	@commands.command(pass_context=True)
@@ -32,7 +31,7 @@ class GemsEvent(commands.Cog):
 				item = "pumpkin"
 				gain = "pumpkinpie"
 				nbitem = 12
-			elif (jour.month == 10 and jour.day >= 18) or (jour.month == 1 and jour.day <= 5):
+			elif (jour.month == 10 and jour.day >= 14) or (jour.month == 1 and jour.day <= 5):
 				item = "chocolate"
 				gain = "cupcake"
 				nbitem = 8

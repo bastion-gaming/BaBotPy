@@ -38,7 +38,7 @@ if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 11
 	,Item("pumpkinpie", 1000, 1200)
 	,Item("candy", 1, 2)
 	,Item("lollipop", 5, 12)]
-if (jour.month == 12 and jour.day >= 17) or (jour.month == 1 and jour.day <= 6):
+if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 6):
 	PrixItem += [Item("christmas", 800, 1000)
 	,Item("cupcake", 950, 1234)
 	,Item("chocolate", 70, 110)]
