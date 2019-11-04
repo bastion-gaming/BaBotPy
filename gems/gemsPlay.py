@@ -652,7 +652,7 @@ class GemsPlay(commands.Cog):
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
 												GF.addDurabilite(ID, c.nom, c.durabilite)
-										DB.add(ID, "inventory", "planting_plan", -1, GF.dbHotHouse)
+										DB.add(ID, "inventory", "planting_plan", -1, GF.dbHH)
 
 						else:
 							timeH = int(time / 60 / 60)
