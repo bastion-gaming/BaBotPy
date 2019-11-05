@@ -244,7 +244,6 @@ class GemsBase(commands.Cog):
 								prix += c.achat*soldeMult
 								soldeMult+=1
 								i+=1
-							prix = -1 * prix
 							prix = int(prix)
 						else:
 							prix = -1 * (c.achat*nb)
