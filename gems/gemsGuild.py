@@ -25,7 +25,8 @@ except:
 
 def guild_create(ctx, guilde):
 	ID = ctx.author.id
-	dict = {}
+	with open('gems/guildes.json', 'r') as fp:
+		dict = json.load(fp)
 	for key in dict.keys():
 		if key == guilde:
 			return "Ce nom de guilde existe déja."

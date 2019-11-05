@@ -203,14 +203,14 @@ class GemsBase(commands.Cog):
 						prix = (c.achat*nb)
 						if c.type != "spinelle":
 							if DB.valueAt(ID, "gems", GF.dbGems) >= prix:
-								argent = ":gem:`gems`"
 								DB.updateField(ID, "gems", DB.valueAt(ID, "gems", GF.dbGems)-prix, GF.dbGems)
 								check = True
+							argent = ":gem:`gems`"
 						else:
 							if DB.valueAt(ID, "spinelles", GF.dbGems) >= prix:
-								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 								DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)-prix, GF.dbGems)
 								check = True
+							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 						if check:
 							if c.type == "halloween":
 								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
@@ -250,14 +250,14 @@ class GemsBase(commands.Cog):
 							prix = -1 * (c.achat*nb)
 						if c.type != "spinelle":
 							if DB.valueAt(ID, "gems", GF.dbGems) >= prix:
-								argent = ":gem:`gems`"
 								DB.updateField(ID, "gems", DB.valueAt(ID, "gems", GF.dbGems)-prix, GF.dbGems)
 								check = True
+							argent = ":gem:`gems`"
 						else:
 							if DB.valueAt(ID, "spinelles", GF.dbGems) >= prix:
-								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 								DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)-prix, GF.dbGems)
 								check = True
+							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 						if check:
 							if c.type == "bank":
 								DB.add(ID, "banque", "soldeMax", nb*c.poids, GF.dbGems)
@@ -314,7 +314,6 @@ class GemsBase(commands.Cog):
 				test = True
 				for c in GF.objetItem:
 					if item == c.nom:
-
 						test = False
 						gain = c.vente*nb
 						if c.type != "spinelle":
