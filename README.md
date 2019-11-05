@@ -65,50 +65,50 @@ correspondant à un jeu puis l'associer à un salon.
 **Gems Base**: Commandes de base du module. Il permet d'afficher par exemple le marché, l'inventaire ou le système d'achat/vente.
 
 Liste des commandes:
-• begin
-• tuto
-• bal
-• baltop
-• pay
-• give
-• buy
-• sell
-• market
-• inv
-• forge
-• trophylist
-• trophy
+- begin
+- tuto
+- bal
+- baltop
+- pay
+- give
+- buy
+- sell
+- market
+- inv
+- forge
+- trophylist
+- trophy
 
 **Gems Play**: Commandes permettant de jouer et de gagner des GEMS (l'argent du jeu).
 
 Liste des commandes:
-• daily
-• bank
-• gamble
-• crime
-• mine
-• fish
-• slots
-• hothouse
-• boxes open
+- daily
+- bank
+- gamble
+- crime
+- mine
+- fish
+- slots
+- hothouse
+- boxes open
 
 **Gems Guild**: Commandes permettant la gestion des guildes.
 
 Liste des commandes:
-• guildinfo
-• guildcreate
-• guildsupp
-• guildleave
-• guildrequest
-• guildadd
-• guildpromote
-• guilddisplacement
-• convert
+- guildinfo
+- guildcreate
+- guildsupp
+- guildleave
+- guildrequest
+- guildadd
+- guildpromote
+- guilddisplacement
+- convert
 
 **Gems Event**: Commandes relative aux évènements (limité dans le temps).
 
 Liste des commandes:
-• cooking
+- cooking
 
 ### Module Help
 
