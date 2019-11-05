@@ -31,10 +31,10 @@ parties du bot.
 
 **Gestion**: Gestion des permissions.
 
-**Vote**: Pouvoir créer un vote en configurant la *Question*, les *Réponses* et le *temps du vote*. 
+**Vote**: Pouvoir créer un vote en configurant la *Question*, les *Réponses* et le *temps du vote*.
 
 **Stats**: Compter le nombre de message poster dans les salons en fonction du temps. C'est
-utile et là au moins on est sûr qu'il nous lis pas en même temps. 
+utile et là au moins on est sûr qu'il nous lis pas en même temps.
 
 **Rôles**: Ce module va se charger de gérer les rôles. C'est a dire de mettre le rôle "Joueurs" aux
 nouveaux membres mais aussi pour pouvoir en une commande créer un nouveau rôle
@@ -48,7 +48,7 @@ correspondant à un jeu puis l'associer à un salon.
 
 ### Module DB
 
-**DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des joueurs et leur quantité d'argent. Onutilise TinyDB 
+**DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des joueurs et leur quantité d'argent. Onutilise TinyDB
 
 ### Module Multimédia
 
@@ -65,31 +65,50 @@ correspondant à un jeu puis l'associer à un salon.
 **Gems Base**: Commandes de base du module. Il permet d'afficher par exemple le marché, l'inventaire ou le système d'achat/vente.
 
 Liste des commandes:
-- begin
-- bal
-- baltop
-- pay
-- buy
-- sell
-- market
-- inv
-- forge
-- bourse
-- trophylist
-- trophy
+• begin
+• tuto
+• bal
+• baltop
+• pay
+• give
+• buy
+• sell
+• market
+• inv
+• forge
+• trophylist
+• trophy
 
 **Gems Play**: Commandes permettant de jouer et de gagner des GEMS (l'argent du jeu).
 
 Liste des commandes:
-- daily
-- bank
-- gamble
-- crime
-- mine
-- fish
-- slots
-- hothouse
-- boxes open 
+• daily
+• bank
+• gamble
+• crime
+• mine
+• fish
+• slots
+• hothouse
+• boxes open
+
+**Gems Guild**: Commandes permettant la gestion des guildes.
+
+Liste des commandes:
+• guildinfo
+• guildcreate
+• guildsupp
+• guildleave
+• guildrequest
+• guildadd
+• guildpromote
+• guilddisplacement
+• convert
+
+**Gems Event**: Commandes relative aux évènements (limité dans le temps).
+
+Liste des commandes:
+• cooking
 
 ### Module Help
 
@@ -130,9 +149,11 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 - Live Notification
 
 **_Gems_**
-- Gems Fonction
+- Gems Fonctions
 - Gems Base
 - Gems Play
+- Gems Guild
+- Gems Event
 
 **_Help_**
 
@@ -142,6 +163,9 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 
 **_Module Multimédia_**
 - Musique
+
+**_Gems_**
+- Gems Fight
 
 ## Non commencé
 
