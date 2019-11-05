@@ -173,7 +173,7 @@ client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
 
-client.load_extension('gems.gemsGuild')
+# client.load_extension('gems.gemsGuild')
 
 # client.load_extension('gems.gemsFight')
 
