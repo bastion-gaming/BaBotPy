@@ -362,7 +362,7 @@ class GemsGuild(commands.Cog):
 					await ctx.channel.send("Tu as déjà fais une demande pour rejoindre cette guilde.")
 					return False
 			user = ctx.guild.get_member(value["Chef"])
-			mp = "**{2}** demande à rejoindre ta guilde `{0}`.\nPour accepter sa requête, utilise la commande `!guildadd {1}`".format(guilde, ctx.author.mention, ctx.author.name)
+			mp = "**{2}** demande à rejoindre ta guilde `{0}`.\nPour accepter sa requête, utilise la commande `!guildadd `{1}".format(guilde, ctx.author.mention, ctx.author.name)
 			try:
 				await user.send(mp)
 				msg = "Requête envoyer au chef de guilde"
