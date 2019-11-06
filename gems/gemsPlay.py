@@ -34,7 +34,12 @@ class GemsPlay(commands.Cog):
 		if DailyTime == str(jour - dt.timedelta(days=1)):
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", DailyMult + 1)
-			bonus = 125
+			if DailyMult >= 60:
+				bonus = 500
+			elif DailyMult >= 30:
+				bonus = 200
+			else:
+				bonus = 125
 			gain = 100 + bonus*DailyMult
 			DB.addGems(ID, gain)
 			msg = "Récompense journalière! Tu as gagné 100:gem:`gems`"

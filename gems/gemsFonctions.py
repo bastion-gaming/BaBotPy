@@ -91,7 +91,7 @@ def itemBourse(item, type):
 		pnow = temp["achat"]
 
 	#Verification pour l'actualisation de la bourse
-	if DB.spam(wel.idBaBot,couldown_10s, "bourse", "DB/bastionDB"):
+	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
 		# Gestion des exceptions
 		for y in GI.exception:
 			if item == y:
@@ -328,7 +328,7 @@ def loadItem(F = None):
 	,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:{}>`ruby` trouvé".format(get_idmoji("ruby")))
 	,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
-	if DB.spam(wel.idBaBot,couldown_10s, "bourse", "DB/bastionDB"):
+	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
 		DB.updateComTime(wel.idBaBot, "bourse", "DB/bastionDB")
 		DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
 # <<< def loadItem(F = None):
