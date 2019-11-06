@@ -231,7 +231,7 @@ def loadItem(F = None):
 		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
 		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
 		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
-	elif jour.year >= 2019:
+	elif jour.year >= 2020:
 		for one in GI.ObjetChristmas:
 			ObjetEventEnd.append(one)
 		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
