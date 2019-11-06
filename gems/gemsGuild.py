@@ -161,8 +161,11 @@ def guild_add(ctx, guilde, name):
 				if one != IDmember:
 					temp.append(one)
 			value["Demandes"] = temp
-			MemberList.append(IDmember)
-			DB.updateField(IDmember, "guilde", guilde, GF.dbGems)
+			if DB.valueAt(IDmember, "guilde", GF.dbGems) == "":
+				MemberList.append(IDmember)
+				DB.updateField(IDmember, "guilde", guilde, GF.dbGems)
+			else:
+				return "{} est membre d'une autre guilde!".format(ctx.guild.get_member(IDmember).name)
 			with open('gems/guildes.json', 'w') as fp:
 				json.dump(dict, fp, indent=4)
 			return "**{}** a été ajouté au membres de la guilde `{}`".format(name, guilde)
@@ -352,12 +355,16 @@ class GemsGuild(commands.Cog):
 				with open('gems/guildes.json', 'r') as fp:
 					dict = json.load(fp)
 				value = dict[guilde]
-				user = ctx.guild.get_member(value["Chef"])
-				mp = "**{2}** demande à rejoindre ta guilde `{0}`.\nPour accepter sa requête, utilise la commande `!guildadd {1}`".format(guilde, ctx.author.mention, ctx.author.name)
-				await user.send(mp)
-				msg = "Requête envoyer au chef de guilde"
 			except:
 				msg = "Cette guilde n'existe pas!"
+			for one in value["Demandes"]:
+				if ID == one:
+					await ctx.channel.send("Tu as déjà fais une demande pour rejoindre cette guilde.")
+					return False
+			user = ctx.guild.get_member(value["Chef"])
+			mp = "**{2}** demande à rejoindre ta guilde `{0}`.\nPour accepter sa requête, utilise la commande `!guildadd {1}`".format(guilde, ctx.author.mention, ctx.author.name)
+			await user.send(mp)
+			msg = "Requête envoyer au chef de guilde"
 		else:
 			msg = "Tu fais déjà partie d'une guilde"
 		await ctx.channel.send(msg)
