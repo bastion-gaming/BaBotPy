@@ -361,6 +361,9 @@ class GemsGuild(commands.Cog):
 				if ID == one:
 					await ctx.channel.send("Tu as déjà fais une demande pour rejoindre cette guilde.")
 					return False
+			value["Demandes"].append(ID)
+			with open('gems/guildes.json', 'w') as fp:
+				json.dump(dict, fp, indent=4)
 			user = ctx.guild.get_member(value["Chef"])
 			mp = "**{2}** demande à rejoindre ta guilde `{0}`.\nPour accepter sa requête, utilise la commande `!guildadd `{1}".format(guilde, ctx.author.mention, ctx.author.name)
 			try:
