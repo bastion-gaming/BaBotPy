@@ -144,26 +144,14 @@ def itemBourse(item, type):
 		# La valeur de vente ne peux etre supérieur à la valeur d'achat
 		if not zE:
 			if type == "vente":
-				for x in GI.PrixItem:
-					if item == x.nom:
-						if Prix > x.achat:
-							Prix = x.achat
-				for x in GI.PrixOutil:
-					if item == x.nom:
-						if Prix > x.achat:
-							Prix = x.achat
+				if Prix > temp["achat"]:
+					Prix = temp["achat"]
 				temp["vente"] = Prix
 				temp["precVente"] = pnow
 			# La valeur d'achat ne peux être inférieur à la valeur de vente
 			elif type == "achat":
-				for x in GI.PrixItem:
-					if item == x.nom:
-						if Prix < x.vente:
-							Prix = x.vente
-				for x in GI.PrixOutil:
-					if item == x.nom:
-						if Prix < x.vente:
-							Prix = x.vente
+				if Prix < temp["vente"]:
+					Prix = temp["vente"]
 				temp["achat"] = Prix
 				temp["precAchat"] = pnow
 		# actualisation du fichier de sauvegarde de la bourse
