@@ -36,8 +36,6 @@ class GemsBase(commands.Cog):
 		desc += "`{0}forge` | Permet de créer des outils à partir des matériaux récoltés\n".format(PREFIX)
 		msg.add_field(name="Pour cela tu as les commandes:", value=desc, inline=False)
 		await ctx.channel.send(embed = msg)
-		# link = "https://www.youtube.com/watch?v="
-		# await ctx.channel.send(":tools: En travaux :pencil:\n{}".format(link))
 
 
 
@@ -49,6 +47,7 @@ class GemsBase(commands.Cog):
 		msg = DB.newPlayer(ID, GF.dbGems, GF.dbGemsTemplate)
 		DB.newPlayer(ID, GF.dbHH, GF.dbHHTemplate)
 		GF.startKit(ID)
+		msg +="\nPour connaitre les commandes de bases, faite `{}tuto`".format(PREFIX)
 		await ctx.channel.send(msg)
 
 

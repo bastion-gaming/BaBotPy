@@ -206,7 +206,7 @@ def loadItem(F = None):
 	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "consommable")
 	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "consommable")]
 
-	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 11):
+	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 10):
 		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
 		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
 	elif jour.year >= 2019:
@@ -215,7 +215,7 @@ def loadItem(F = None):
 		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
 		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
 
-	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 6):
+	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
 		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
 		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
 		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
@@ -425,13 +425,13 @@ def get_default_price(nameElem, type = None):
 			if c.nom == nameElem:
 				for one in GI.ObjetHalloween:
 					if one == nameElem:
-						if (jour.month == 10 and jour.day >= 21) or (jour.month == 11 and jour.day <= 11):
+						if (jour.month == 10 and jour.day >= 21) or (jour.month == 11 and jour.day <= 10):
 							return c.achat
 						else:
 							return 0
 				for one in GI.ObjetChristmas:
 					if one == nameElem:
-						if (jour.month == 12 and jour.day >= 12) or (jour.month == 1 and jour.day <= 6):
+						if (jour.month == 12 and jour.day >= 12) or (jour.month == 1 and jour.day <= 5):
 							return c.achat
 						else:
 							return 0
