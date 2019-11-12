@@ -1,0 +1,8 @@
+{
+  "idBastion":
+    "link_gems",
+  "Commande":
+    "PRIMARYKEY_TEXT",
+  "Com_time":
+    "BLOB"
+}

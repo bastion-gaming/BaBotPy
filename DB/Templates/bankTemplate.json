@@ -1,0 +1,8 @@
+{
+  "idGems":
+    "link_gems",
+  "Solde":
+    "INTEGER",
+  "SoldeMax":
+    "INTEGER"
+}

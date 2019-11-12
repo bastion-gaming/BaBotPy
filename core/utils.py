@@ -10,6 +10,8 @@ import json
 import os
 from core import welcome as wel
 
+from DB import SQLite as sql
+
 client = discord.Client()
 VERSION = open("core/version.txt").read().replace("\n","")
 
@@ -141,6 +143,12 @@ class UtilsSecret(commands.Cog):
 					await ctx.channel.send("Split!")
 				else:
 					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
+			elif ID == "sql":
+				if arg1 == "init":
+					sql.init()
+				else:
+					sql.checkField()
+				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 			else:
 				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 		else:

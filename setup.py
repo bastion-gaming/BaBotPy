@@ -10,6 +10,7 @@ def install(package):
 install("pip")
 install("discord.py")
 install("tinydb")
+install("pysqlite3")
 install("matplotlib")
 install("ffmpeg-python")
 install("youtube-dl")

@@ -5,7 +5,7 @@ from discord.utils import get
 import datetime as t
 from datetime import datetime
 
-from DB import DB
+from DB import DB, SQLite as sql
 from core import roles, stats as stat, level as lvl, welcome as wel
 from multimedia import notification as notif
 from gems import gemsFonctions as GF
@@ -75,6 +75,16 @@ async def on_ready():
 	elif "type" in flag:
 		print("Un ou plusieurs type ont été modifié sur la DB.")
 
+	print('------')
+	flag = sql.checkField()
+	if flag == 0:
+		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "sup" in flag:
+		print("Un ou plusieurs champs ont été supprimés de la DB.")
+	elif "type" in flag:
+		print("Un ou plusieurs type ont été modifié sur la DB.")
 	print('------\n')
 	GF.checkDB_Gems()
 	GF.checkDB_GemsHH()

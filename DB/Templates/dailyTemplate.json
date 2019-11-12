@@ -1,0 +1,8 @@
+{
+  "idGems":
+    "link_gems",
+  "DailyMult":
+    "INTEGER",
+  "DailyTime":
+    "BLOB"
+}
