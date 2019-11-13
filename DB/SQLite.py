@@ -9,6 +9,17 @@ from gems import gemsFonctions as GF
 
 DB_NOM = 'bastionDB'
 
+def nom_ID(nom):
+	"""Convertis un nom en ID discord """
+	if len(nom) == 21 :
+		ID = int(nom[2:20])
+	elif len(nom) == 22 :
+		ID = int(nom[3:21])
+	else :
+		print("DB >> mauvais nom")
+		ID = -1
+	return(ID)
+
 #===============================================================================
 # Ouverture du fichier DB
 #===============================================================================
@@ -18,9 +29,11 @@ conn = sql.connect('DB/{}.db'.format(DB_NOM))
 # Initialisation et vérification de la DB
 #===============================================================================
 def init():
+	# Liste des tables
 	with open("DB/DBlist.json", "r") as f:
 		l = json.load(f)
 	for one in l:
+		# Ouverture du template de la table en cours
 		with open("DB/Templates/{}Template.json".format(one), "r") as f:
 			t = json.load(f)
 		cursor = conn.cursor()
@@ -47,6 +60,7 @@ def init():
 			else:
 				script += "{0} {1}".format(x, t[x])
 			i += 1
+		# Configuration des clés primaires
 		if PRIMARYKEY != "" and PRIMARYKEYlink != "":
 			script += ", PRIMARY KEY ({}, {})".format(PRIMARYKEY, PRIMARYKEYlink)
 		elif PRIMARYKEY != "" and PRIMARYKEYlink == "":
@@ -56,90 +70,99 @@ def init():
 		if link != "":
 			script += ", {}".format(link)
 		script += ")"
+		# éxécution du script pour la table en cours
 		cursor.execute(script)
 		conn.commit()
+	# Quand toute les tables ont été créée (si elles n'existait pas), envoie un message de fin
 	return "SQL >> DB initialisée"
 
 #-------------------------------------------------------------------------------
 def checkField():
+	# Init de la variable flag
 	flag = 0
-	try:
-		with open("DB/DBlist.json", "r") as f:
-			l = json.load(f)
-		for one in l:
-			with open("DB/Templates/{}Template.json".format(one), "r") as f:
-				t = json.load(f)
-			cursor = conn.cursor()
-			cursor.execute("PRAGMA table_info({0});".format(one))
-			rows = cursor.fetchall()
+	FctCheck = False
+	while not FctCheck:
+		try:
+			FctCheck = True
+			# Liste des tables
+			with open("DB/DBlist.json", "r") as f:
+				l = json.load(f)
+			for one in l:
+				# Ouverture du template de la table en cours
+				with open("DB/Templates/{}Template.json".format(one), "r") as f:
+					t = json.load(f)
+				cursor = conn.cursor()
+				# Récupération du nom des colonnes de la table en cours
+				cursor.execute("PRAGMA table_info({0});".format(one))
+				rows = cursor.fetchall()
 
-			#Suppression
-			for x in rows:
-				if x[1] not in t:
-					script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
-					cursor.execute(script)
-					init()
-					cursor.execute("PRAGMA table_info({0}_old);".format(one))
-					temp = ""
-					for z in cursor.fetchall():
-						if temp == "":
-							temp += "{}".format(z[1])
-						else:
-							temp += ", {}".format(z[1])
-					script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
-					cursor.execute(script)
-					cursor.execute("DROP TABLE {}_old".format(one))
-					conn.commit()
-					flag = "sup"+str(flag)
+				#Suppression
+				for x in rows:
+					if x[1] not in t:
+						script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
+						cursor.execute(script)
+						init()
+						cursor.execute("PRAGMA table_info({0}_old);".format(one))
+						temp = ""
+						for z in cursor.fetchall():
+							if temp == "":
+								temp += "{}".format(z[1])
+							else:
+								temp += ", {}".format(z[1])
+						script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
+						cursor.execute(script)
+						cursor.execute("DROP TABLE {}_old".format(one))
+						conn.commit()
+						flag = "sup"+str(flag)
 
-			#Type & add
-			for x in t:
-				check = False
-				NotCheck = False
-				y = t[x].split("_")
-				for row in rows:
-					if row[1] == x:
-						if len(y) > 1:
-							if row[2] == y[1]:
-								check = True
-							elif y[0] == "link":
-								if row[2] == "INTEGER":
+				#Type & add
+				for x in t:
+					check = False
+					NotCheck = False
+					y = t[x].split("_")
+					for row in rows:
+						if row[1] == x:
+							if len(y) > 1:
+								if row[2] == y[1]:
 									check = True
+								elif y[0] == "link":
+									if row[2] == "INTEGER":
+										check = True
+									else:
+										NotCheck = True
 								else:
 									NotCheck = True
 							else:
-								NotCheck = True
-						else:
-							if row[2] == t[x]:
-								check = True
+								if row[2] == t[x]:
+									check = True
+								else:
+									NotCheck = True
+					if NotCheck:
+						script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
+						cursor.execute(script)
+						init()
+						cursor.execute("PRAGMA table_info({0}_old);".format(one))
+						temp = ""
+						for z in cursor.fetchall():
+							if temp == "":
+								temp += "{}".format(z[1])
 							else:
-								NotCheck = True
-				if NotCheck:
-					script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
-					cursor.execute(script)
-					init()
-					cursor.execute("PRAGMA table_info({0}_old);".format(one))
-					temp = ""
-					for z in cursor.fetchall():
-						if temp == "":
-							temp += "{}".format(z[1])
+								temp += ", {}".format(z[1])
+						script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
+						cursor.execute(script)
+						cursor.execute("DROP TABLE {}_old".format(one))
+						conn.commit()
+						flag = "type"+str(flag)
+					elif not check:
+						if len(y) > 1:
+							temp = y[1]
 						else:
-							temp += ", {}".format(z[1])
-					script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
-					cursor.execute(script)
-					cursor.execute("DROP TABLE {}_old".format(one))
-					conn.commit()
-					flag = "type"+str(flag)
-				elif not check:
-					if len(y) > 1:
-						temp = y[1]
-					else:
-						temp = y[0]
-					script = "ALTER TABLE {0} ADD COLUMN {1} {2}".format(one, x, temp)
-					cursor.execute(script)
-					flag = "add"+str(flag)
-	except:
-		checkField()
+							temp = y[0]
+						script = "ALTER TABLE {0} ADD COLUMN {1} {2}".format(one, x, temp)
+						cursor.execute(script)
+						flag = "add"+str(flag)
+		except:
+			FctCheck = False
 	return flag
 
 
@@ -330,3 +353,26 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 		return "404"
 
 #-------------------------------------------------------------------------------
+# def updateComTime(ID, nameElem, linkDB = None):
+#-------------------------------------------------------------------------------
+# def addGems(ID, nbGems):
+#-------------------------------------------------------------------------------
+# def daily_data(ID, nameElem):
+#-------------------------------------------------------------------------------
+# def updateDaily(ID, nameElem, value):
+#-------------------------------------------------------------------------------
+# def spam(ID,couldown, nameElem, linkDB = None):
+#-------------------------------------------------------------------------------
+# def nbElements(ID, stockeur, nameElem, linkDB = None):
+#-------------------------------------------------------------------------------
+# def add(ID, stockeur, nameElem, nbElem, linkDB = None):
+#-------------------------------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
+#
