@@ -2,5 +2,5 @@
   "ID":
     "PRIMARYKEY_INTEGER",
   "ID_discord":
-    "BLOB"
+    "INTEGER"
 }

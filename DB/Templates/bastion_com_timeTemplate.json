@@ -1,8 +1,8 @@
 {
-  "idBastion":
+  "idbastion":
     "link_bastion",
   "Commande":
     "PRIMARYKEY_TEXT",
   "Com_time":
-    "BLOB"
+    "TEXT"
 }

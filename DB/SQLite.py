@@ -9,8 +9,14 @@ from gems import gemsFonctions as GF
 
 DB_NOM = 'bastionDB'
 
+#===============================================================================
+# Ouverture du fichier DB
+#===============================================================================
 conn = sql.connect('DB/{}.db'.format(DB_NOM))
 
+#===============================================================================
+# Initialisation et vérification de la DB
+#===============================================================================
 def init():
 	with open("DB/DBlist.json", "r") as f:
 		l = json.load(f)
@@ -56,81 +62,251 @@ def init():
 
 
 def checkField():
-	with open("DB/DBlist.json", "r") as f:
-		l = json.load(f)
-	for one in l:
-		with open("DB/Templates/{}Template.json".format(one), "r") as f:
-			t = json.load(f)
-		cursor = conn.cursor()
-		cursor.execute("PRAGMA table_info({0});".format(one))
-		rows = cursor.fetchall()
-		flag = 0
+	flag = 0
+	try:
+		with open("DB/DBlist.json", "r") as f:
+			l = json.load(f)
+		for one in l:
+			with open("DB/Templates/{}Template.json".format(one), "r") as f:
+				t = json.load(f)
+			cursor = conn.cursor()
+			cursor.execute("PRAGMA table_info({0});".format(one))
+			rows = cursor.fetchall()
 
-		#Suppression
-		for x in rows:
-			if x not in t:
-				script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
-				cursor.execute(script)
-				init()
-				cursor.execute("PRAGMA table_info({0}_old);".format(one))
-				temp = ""
-				for z in cursor.fetchall():
-					if temp == "":
-						temp += "{}".format(z[1])
-					else:
-						temp += ", {}".format(z[1])
-				script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
-				print(script)
-				cursor.execute(script)
-				cursor.execute("DROP TABLE {}_old".format(one))
-				conn.commit()
-				flag = "sup"+str(flag)
+			#Suppression
+			for x in rows:
+				if x[1] not in t:
+					script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
+					cursor.execute(script)
+					init()
+					cursor.execute("PRAGMA table_info({0}_old);".format(one))
+					temp = ""
+					for z in cursor.fetchall():
+						if temp == "":
+							temp += "{}".format(z[1])
+						else:
+							temp += ", {}".format(z[1])
+					script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
+					cursor.execute(script)
+					cursor.execute("DROP TABLE {}_old".format(one))
+					conn.commit()
+					flag = "sup"+str(flag)
 
-		#Type & add
-		for x in t:
-			check = False
-			NotCheck = False
-			y = t[x].split("_")
-			for row in rows:
-				if row[1] == x:
-					if len(y) > 1:
-						if row[2] == y[1]:
-							check = True
-						elif y[0] == "link":
-							if row[2] == "INTEGER":
+			#Type & add
+			for x in t:
+				check = False
+				NotCheck = False
+				y = t[x].split("_")
+				for row in rows:
+					if row[1] == x:
+						if len(y) > 1:
+							if row[2] == y[1]:
 								check = True
+							elif y[0] == "link":
+								if row[2] == "INTEGER":
+									check = True
+								else:
+									NotCheck = True
 							else:
 								NotCheck = True
 						else:
-							NotCheck = True
-					else:
-						if row[2] == t[x]:
-							check = True
+							if row[2] == t[x]:
+								check = True
+							else:
+								NotCheck = True
+				if NotCheck:
+					script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
+					cursor.execute(script)
+					init()
+					cursor.execute("PRAGMA table_info({0}_old);".format(one))
+					temp = ""
+					for z in cursor.fetchall():
+						if temp == "":
+							temp += "{}".format(z[1])
 						else:
-							NotCheck = True
-			if NotCheck:
-				script = "ALTER TABLE {0} RENAME TO {0}_old".format(one)
-				cursor.execute(script)
-				init()
-				cursor.execute("PRAGMA table_info({0}_old);".format(one))
-				temp = ""
-				for z in cursor.fetchall():
-					if temp == "":
-						temp += "{}".format(z[1])
+							temp += ", {}".format(z[1])
+					script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
+					cursor.execute(script)
+					cursor.execute("DROP TABLE {}_old".format(one))
+					conn.commit()
+					flag = "type"+str(flag)
+				elif not check:
+					if len(y) > 1:
+						temp = y[1]
 					else:
-						temp += ", {}".format(z[1])
-				script = "INSERT INTO {0} ({1})\n	SELECT {1}\n	FROM {0}_old".format(one, temp)
-				print(script)
-				cursor.execute(script)
-				cursor.execute("DROP TABLE {}_old".format(one))
-				conn.commit()
-				flag = "type"+str(flag)
-			elif not check:
-				if len(y) > 1:
-					temp = y[1]
-				else:
-					temp = y[0]
-				script = "ALTER TABLE {0} ADD COLUMN {1} {2}".format(one, x, temp)
-				cursor.execute(script)
-				flag = "add"+str(flag)
+						temp = y[0]
+					script = "ALTER TABLE {0} ADD COLUMN {1} {2}".format(one, x, temp)
+					cursor.execute(script)
+					flag = "add"+str(flag)
+	except:
+		checkField()
 	return flag
+
+#===============================================================================
+# Gestion des utilisateurs
+#===============================================================================
+
+def get_PlayerID(ID):
+	script = "SELECT * FROM IDs WHERE ID_discord = {}".format(ID)
+	cursor = conn.cursor()
+	cursor.execute(script)
+	rows = cursor.fetchall()
+	if rows == []:
+		return "Error 404"
+	else:
+		for x in rows:
+			return "{}".format(x[0])
+
+def newPlayer(ID, nameDB = None):
+	"""
+	Permet d'ajouter un nouveau joueur à la base de donnée en fonction de son ID.
+
+	ID: int de l'ID du joueur
+	"""
+	if nameDB == None:
+		nameDB = "bastion"
+
+	with open("DB/Templates/{}Template.json".format(nameDB), "r") as f:
+		t = json.load(f)
+
+	PlayerID = get_PlayerID(ID)
+	if PlayerID == "Error 404":
+		#Init du joueur avec les champs de base
+		script = "INSERT INTO IDs (ID_discord) VALUES ({})".format(ID)
+		cursor.execute(script)
+		conn.commit()
+		PlayerID = get_PlayerID(ID)
+		data = "ID"
+		values = PlayerID
+		for x in t:
+			if x == "arrival":
+				data += ", {}".format(x)
+				values += ", '{}'".format(str(dt.date.today()))
+			elif x != "id{}".format(nameDB) and x != "ID":
+				data += ", {}".format(x)
+				if "INTEGER" in t[x]:
+					values += ", 0"
+				else:
+					values += ", NULL"
+		script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
+		cursor.execute(script)
+		conn.commit()
+		return ("Le joueur a été ajouté !")
+	else:
+		script = "SELECT * FROM {0} WHERE ID = {1}".format(nameDB, PlayerID)
+		cursor.execute(script)
+		z = cursor.fetchall()
+		if z == []:
+			data = "ID"
+			values = PlayerID
+			for x in t:
+				if x == "arrival":
+					data += ", {}".format(x)
+					values += ", '{}'".format(str(dt.date.today()))
+				elif x != "id{}".format(nameDB) and x != "ID":
+					data += ", {}".format(x)
+					if "INTEGER" in t[x]:
+						values += ", 0"
+					else:
+						values += ", NULL"
+			script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
+			cursor.execute(script)
+			conn.commit()
+			return ("Le joueur a été ajouté !")
+		else:
+			return ("Le joueur existe déjà")
+
+#===============================================================================
+# Compteur
+#===============================================================================
+def countTotalMsg():
+	#Init a
+	script = "SELECT SUM(nbmsg) FROM bastion"
+	cursor = conn.cursor()
+	cursor.execute(script)
+	for a in cursor.fetchall():
+		return a[0]
+
+def countTotalGems():
+	#Init a
+	script = "SELECT SUM(gems) FROM gems"
+	cursor = conn.cursor()
+	cursor.execute(script)
+	for a in cursor.fetchall():
+		return a[0]
+
+def countTotalSpinelles():
+	#Init a
+	script = "SELECT SUM(spinelles) FROM gems"
+	cursor = conn.cursor()
+	cursor.execute(script)
+	for a in cursor.fetchall():
+		return a[0]
+
+#===============================================================================
+# Fonctions
+#===============================================================================
+
+def updateField(ID, fieldName, fieldValue, nameDB = None):
+	"""
+	Permet de mettre à jour la valeur fieldName par la fieldValue.
+
+	ID: int de l'ID du joueur.
+	fieldName: string du nom du champ à changer
+	fieldValue: string qui va remplacer l'ancienne valeur
+	"""
+	PlayerID = get_PlayerID(ID)
+	if PlayerID != "Error 404":
+		if nameDB == None:
+			nameDB = "bastion"
+		cursor = conn.cursor()
+		nameDBexcept = ["inventory", "durability", "filleul", "bastion_com_time", "gems_com_time"]
+
+		if not nameDB in nameDBexcept:
+			try:
+				script = "SELECT {1} FROM {0}".format(nameDB, fieldName)
+				cursor.execute(script)
+				one = cursor.fetchall()
+			except:
+				one = []
+		else:
+			fieldName2 = "Item"
+			link = "gems"
+			try:
+				script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = {4} and Item = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID)
+				cursor.execute(script)
+				one = cursor.fetchall()
+			except:
+				one = []
+		if one == []:
+			# print("DB >> Le champ n'existe pas")
+			return "201"
+		else:
+			if nameDB == "bastion" or nameDB == "gems":
+				IDname = "ID"
+			else:
+				cursor.execute("PRAGMA table_info({0});".format(nameDB))
+				rows = cursor.fetchall()
+				for x in rows:
+					if x[1] == "idbastion":
+						IDname = "bastion"
+					elif x[1] == "idgems":
+						IDname = "gems"
+				script = "SELECT id{0} FROM {0} WHERE ID = {1}".format(IDname, PlayerID)
+				cursor.execute(script)
+				for z in cursor.fetchall():
+					PlayerID = z[0]
+			script = "UPDATE {0} SET {1} = {2} WHERE id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+			for x in nameDBexcept:
+				if x == nameDB:
+					if x == "inventory":
+						script = "UPDATE {0} SET Stock = {2} WHERE Item = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "durability":
+						script = "UPDATE {0} SET Durability = {2} WHERE Item = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					else:
+						return "202"
+			cursor.execute(script)
+			conn.commit()
+			return "200"
+	else:
+		return "404"

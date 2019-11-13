@@ -1,10 +1,10 @@
 {
-  "idBastion":
+  "idbastion":
     "PRIMARYKEY_INTEGER",
   "ID":
     "ID_INTEGER",
   "arrival":
-    "BLOB",
+    "TEXT",
   "nbmsg":
     "INTEGER",
   "lvl":
@@ -12,5 +12,5 @@
   "xp":
     "INTEGER",
   "parrain":
-    "BLOB"
+    "INTEGER"
 }

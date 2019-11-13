@@ -126,7 +126,7 @@ class UtilsSecret(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def test(self, ctx, ID = None, arg1 = None, arg2 = None):
+	async def test(self, ctx, ID = None, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
 		if ctx.guild.id == wel.idBASTION:
 			if ID == "check":
 				if ge.permission(ctx,ge.admin):
@@ -142,13 +142,23 @@ class UtilsSecret(commands.Cog):
 					DBsplit.splitDB(arg1, arg2)
 					await ctx.channel.send("Split!")
 				else:
-					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
+					await ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
 			elif ID == "sql":
 				if arg1 == "init":
 					sql.init()
+				elif arg1 == "begin":
+					if arg2 == "bastion" or arg2 == "gems":
+						msg = sql.newPlayer(ctx.author.id, arg2)
+					else:
+						msg = "DB inconnu"
+					await ctx.channel.send(msg)
+				elif arg1 == "update":
+					msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
+					await ctx.channel.send(msg)
 				else:
-					sql.checkField()
-				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
+					msg = sql.checkPlayerID(ctx.author.id)
+					await ctx.channel.send(msg)
+					await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 			else:
 				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 		else:

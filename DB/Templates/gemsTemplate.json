@@ -1,5 +1,5 @@
 {
-  "idGems":
+  "idgems":
     "PRIMARYKEY_INTEGER",
   "ID":
     "ID_INTEGER",

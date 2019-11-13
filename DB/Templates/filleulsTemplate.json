@@ -1,6 +1,6 @@
 {
-  "idBastion":
+  "idbastion":
     "link_bastion",
   "ID_filleul":
-    "PRIMARYKEY_BLOB"
+    "PRIMARYKEY_INTEGER"
 }

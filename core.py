@@ -70,21 +70,22 @@ async def on_ready():
 		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
 	elif "add" in flag:
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "sup" in flag:
-		print("Un ou plusieurs champs ont été supprimés de la DB.")
 	elif "type" in flag:
 		print("Un ou plusieurs type ont été modifié sur la DB.")
+	elif "sup" in flag:
+		print("Un ou plusieurs champs ont été supprimés de la DB.")
 
 	print('------')
+	print(sql.init())
 	flag = sql.checkField()
 	if flag == 0:
-		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
+		print("SQL >> Aucun champ n'a été ajouté, supprimé ou modifié.")
 	elif "add" in flag:
-		print("Un ou plusieurs champs ont été ajoutés à la DB.")
+		print("SQL >> Un ou plusieurs champs ont été ajoutés à la DB.")
 	elif "sup" in flag:
-		print("Un ou plusieurs champs ont été supprimés de la DB.")
+		print("SQL >> Un ou plusieurs champs ont été supprimés de la DB.")
 	elif "type" in flag:
-		print("Un ou plusieurs type ont été modifié sur la DB.")
+		print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
 	print('------\n')
 	GF.checkDB_Gems()
 	GF.checkDB_GemsHH()
