@@ -60,7 +60,7 @@ def init():
 		conn.commit()
 	return "SQL >> DB initialisée"
 
-
+#-------------------------------------------------------------------------------
 def checkField():
 	flag = 0
 	try:
@@ -142,6 +142,7 @@ def checkField():
 		checkField()
 	return flag
 
+
 #===============================================================================
 # Gestion des utilisateurs
 #===============================================================================
@@ -157,6 +158,7 @@ def get_PlayerID(ID):
 		for x in rows:
 			return "{}".format(x[0])
 
+#-------------------------------------------------------------------------------
 def newPlayer(ID, nameDB = None):
 	"""
 	Permet d'ajouter un nouveau joueur à la base de donnée en fonction de son ID.
@@ -216,6 +218,7 @@ def newPlayer(ID, nameDB = None):
 		else:
 			return ("Le joueur existe déjà")
 
+
 #===============================================================================
 # Compteur
 #===============================================================================
@@ -227,6 +230,7 @@ def countTotalMsg():
 	for a in cursor.fetchall():
 		return a[0]
 
+#-------------------------------------------------------------------------------
 def countTotalGems():
 	#Init a
 	script = "SELECT SUM(gems) FROM gems"
@@ -235,6 +239,7 @@ def countTotalGems():
 	for a in cursor.fetchall():
 		return a[0]
 
+#-------------------------------------------------------------------------------
 def countTotalSpinelles():
 	#Init a
 	script = "SELECT SUM(spinelles) FROM gems"
@@ -243,10 +248,23 @@ def countTotalSpinelles():
 	for a in cursor.fetchall():
 		return a[0]
 
+#-------------------------------------------------------------------------------
+def taille(nameDB = None):
+	"""Retourne la taille de la table selectionner"""
+	if nameDB == None:
+		nameDB = "bastion"
+	cursor = conn.cursor()
+	cursor.execute("PRAGMA table_info({0});".format(nameDB))
+	rows = cursor.fetchall()
+	script = "SELECT count({1}) FROM {0}".format(nameDB, rows[0][1])
+	cursor.execute(script)
+	for t in cursor.fetchall():
+		return t[0]
+
+
 #===============================================================================
 # Fonctions
 #===============================================================================
-
 def updateField(ID, fieldName, fieldValue, nameDB = None):
 	"""
 	Permet de mettre à jour la valeur fieldName par la fieldValue.
@@ -310,3 +328,5 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 			return "200"
 	else:
 		return "404"
+
+#-------------------------------------------------------------------------------

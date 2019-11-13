@@ -144,20 +144,24 @@ class UtilsSecret(commands.Cog):
 				else:
 					await ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
 			elif ID == "sql":
-				if arg1 == "init":
-					sql.init()
-				elif arg1 == "begin":
-					if arg2 == "bastion" or arg2 == "gems":
-						msg = sql.newPlayer(ctx.author.id, arg2)
+				if ge.permission(ctx,ge.admin):
+					if arg1 == "init":
+						sql.init()
+					elif arg1 == "begin":
+						if arg2 == "bastion" or arg2 == "gems":
+							msg = sql.newPlayer(ctx.author.id, arg2)
+						else:
+							msg = "DB inconnu"
+						await ctx.channel.send(msg)
+					elif arg1 == "update":
+						msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
+						await ctx.channel.send(msg)
+					elif arg1 == "taille":
+						msg = sql.taille(arg2)
+						await ctx.channel.send(msg)
 					else:
-						msg = "DB inconnu"
-					await ctx.channel.send(msg)
-				elif arg1 == "update":
-					msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
-					await ctx.channel.send(msg)
+						await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 				else:
-					msg = sql.checkPlayerID(ctx.author.id)
-					await ctx.channel.send(msg)
 					await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 			else:
 				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
