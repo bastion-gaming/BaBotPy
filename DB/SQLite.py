@@ -288,6 +288,9 @@ def taille(nameDB = None):
 #===============================================================================
 # Fonctions
 #===============================================================================
+nameDBexcept = ["inventory", "durability", "hothouse", "cooking", "trophy", "statgems", "filleul", "bastion_com_time", "gems_com_time", "capability"]
+
+#-------------------------------------------------------------------------------
 def updateField(ID, fieldName, fieldValue, nameDB = None):
 	"""
 	Permet de mettre à jour la valeur fieldName par la fieldValue.
@@ -301,15 +304,72 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 		if nameDB == None:
 			nameDB = "bastion"
 		cursor = conn.cursor()
-		nameDBexcept = ["inventory", "durability", "hothouse", "cooking", "trophy", "statgems", "filleul", "bastion_com_time", "gems_com_time", "capability"]
+
+		one = valueAt(ID, fieldName, nameDB)
+		if one == 0:
+			# print("DB >> Le champ n'existe pas")
+			return "201"
+		else:
+			if nameDB == "bastion" or nameDB == "gems":
+				IDname = "ID"
+				script = "UPDATE {0} SET {1} = '{2}' WHERE {4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+			else:
+				cursor.execute("PRAGMA table_info({0});".format(nameDB))
+				rows = cursor.fetchall()
+				for x in rows:
+					if x[1] == "idbastion":
+						IDname = "bastion"
+					elif x[1] == "idgems":
+						IDname = "gems"
+				script = "SELECT id{0} FROM {0} WHERE ID = '{1}'".format(IDname, PlayerID)
+				cursor.execute(script)
+				for z in cursor.fetchall():
+					PlayerID = z[0]
+				script = "UPDATE {0} SET {1} = '{2}' WHERE id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+			for x in nameDBexcept:
+				if x == nameDB:
+					if x == "inventory":
+						script = "UPDATE {0} SET Stock = '{2}' WHERE Item = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "trophy" or x == "statgems":
+						script = "UPDATE {0} SET Stock = '{2}' WHERE Nom = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "durability":
+						script = "UPDATE {0} SET Durability = '{2}' WHERE Item = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "gems_com_time" or x == "bastion_com_time":
+						script = "UPDATE {0} SET Com_time = '{2}' WHERE Commande = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "hothouse":
+						script = "UPDATE {0} SET Time = '{2}', Plante = '{5}' WHERE idPlantation = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
+					elif x == "cooking":
+						script = "UPDATE {0} SET Time = '{2}', Plat = '{5}'  WHERE idFour = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname, fieldValue[1])
+					else:
+						return "202"
+			cursor.execute(script)
+			conn.commit()
+			return "200"
+	else:
+		return "404"
+
+#-------------------------------------------------------------------------------
+def valueAt(ID, fieldName, nameDB = None):
+	"""
+	Permet de récupérer la valeur contenue dans le champ fieldName de ID
+
+	ID: int de l'ID du joueur
+	fieldName: string du nom du champ à chercher
+	"""
+	if nameDB == None:
+		nameDB = "bastion"
+
+	PlayerID = get_PlayerID(ID)
+	if PlayerID != "Error 404":
+		cursor = conn.cursor()
 
 		if not nameDB in nameDBexcept:
 			try:
-				script = "SELECT {1} FROM {0}".format(nameDB, fieldName)
+				script = "SELECT {1} FROM {0} WHERE ID = '{2}'".format(nameDB, fieldName, PlayerID)
 				cursor.execute(script)
-				one = cursor.fetchall()
+				value = cursor.fetchall()
 			except:
-				one = []
+				value = []
 		else:
 			fieldName2 = ""
 			for x in nameDBexcept:
@@ -320,71 +380,49 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 					else:
 						if x == "inventory" or x == "durability":
 							fieldName2 = "Item"
+							fieldName3 = "Stock, Item"
 						elif x == "trophy" or x == "statgems":
 							fieldName2 = "Nom"
+							fieldName3 = "Stock, Nom"
 						elif x == "hothouse":
 							fieldName2 = "idPlantation"
+							fieldName3 = "Time, Plante, idPlantation"
 						elif x == "cooking":
 							fieldName2 = "idFour"
+							fieldName3 = "Time, Plat, idFour"
 						elif x == "gems_com_time":
 							fieldName2 = "Commande"
+							fieldName3 = "Com_time, Commande"
 						link = "gems"
 			try:
-				script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = {4} and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID)
+				script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
 				cursor.execute(script)
-				one = cursor.fetchall()
+				value = cursor.fetchall()
 			except:
-				one = []
-		if one == []:
-			# print("DB >> Le champ n'existe pas")
-			return "201"
-		else:
-			if nameDB == "bastion" or nameDB == "gems":
-				IDname = "ID"
-			else:
-				cursor.execute("PRAGMA table_info({0});".format(nameDB))
-				rows = cursor.fetchall()
-				for x in rows:
-					if x[1] == "idbastion":
-						IDname = "bastion"
-					elif x[1] == "idgems":
-						IDname = "gems"
-				script = "SELECT id{0} FROM {0} WHERE ID = {1}".format(IDname, PlayerID)
-				cursor.execute(script)
-				for z in cursor.fetchall():
-					PlayerID = z[0]
-			script = "UPDATE {0} SET {1} = {2} WHERE id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
-			for x in nameDBexcept:
-				if x == nameDB:
-					if x == "inventory" or x == "trophy" or x == "statgems":
-						script = "UPDATE {0} SET Stock = {2} WHERE {5} = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname, fieldName2)
-					elif x == "durability":
-						script = "UPDATE {0} SET Durability = {2} WHERE Item = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
-					elif x == "gems_com_time" or x == "bastion_com_time":
-						script = "UPDATE {0} SET Com_time = {2} WHERE Commande = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
-					elif x == "hothouse":
-						try:
-							int(fieldValue)
-							script = "UPDATE {0} SET Time = {2} WHERE idPlantation = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
-						except:
-							script = "UPDATE {0} SET Plante = {2} WHERE idPlantation = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
-					elif x == "cooking":
-						try:
-							int(fieldValue)
-							script = "UPDATE {0} SET Time = {2} WHERE idFour = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
-						except:
-							script = "UPDATE {0} SET Plat = {2} WHERE idFour = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
-					else:
-						return "202"
-			cursor.execute(script)
-			conn.commit()
-			return "200"
-	else:
-		return "404"
+				value = []
 
+		if value == []:
+			return 0
+		else:
+			return value[0]
 
 #-------------------------------------------------------------------------------
 # def addGems(ID, nbGems):
+# 	"""
+# 	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
+# 	Si vous souhaitez en retirer mettez un nombre négatif.
+# 	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
+# 	strictement inférieur à 0.
+# 	"""
+# 	old_value = valueAt(ID, "gems", GF.dbGems)
+# 	new_value = int(old_value) + nbGems
+# 	if new_value >= 0:
+# 		updateField(ID, "gems", new_value, GF.dbGems)
+# 		print("DB >> Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+# 	else:
+# 	 	print("DB >> Il n'y a pas assez sur ce compte !")
+# 	return str(new_value)
+
 #-------------------------------------------------------------------------------
 # def daily_data(ID, nameElem):
 #-------------------------------------------------------------------------------

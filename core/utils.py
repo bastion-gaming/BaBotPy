@@ -156,6 +156,9 @@ class UtilsSecret(commands.Cog):
 					elif arg1 == "update":
 						msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
 						await ctx.channel.send(msg)
+					elif arg1 == "value":
+						msg = sql.valueAt(ctx.author.id, arg3, arg2)
+						await ctx.channel.send(msg)
 					elif arg1 == "taille":
 						msg = sql.taille(arg2)
 						await ctx.channel.send(msg)
