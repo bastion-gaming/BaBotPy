@@ -26,7 +26,7 @@ def dbExist(linkDB = None):
 		return False
 	return True
 
-
+#-------------------------------------------------------------------------------
 def fieldList(file):
 	with open("{}.json".format(file), "r") as f:
 		t = json.load(f)
@@ -47,6 +47,7 @@ def DBFieldList(linkDB = None):
 	db.close()
 	return L
 
+#-------------------------------------------------------------------------------
 def checkField(linkDB, linkfield):
 	"""
 	Va vérifier que la base de donnée est à jour par rapport au fichier fieldTemplate.
@@ -107,7 +108,7 @@ def newPlayer(ID, linkDB = None, linkfield = None):
 		db.close()
 		return ("Le joueur existe déjà")
 
-
+#-------------------------------------------------------------------------------
 def removePlayer(ID, linkDB = None):
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
@@ -124,7 +125,7 @@ def removePlayer(ID, linkDB = None):
 		db.close()
 		return ("Le joueur n'existe pas")
 
-
+#-------------------------------------------------------------------------------
 def membercheck(ctx):
 	"""
 	Pour chaque joueur de la DB, vérifie si il est présent sur le serveur Bastion.
@@ -161,6 +162,7 @@ def countTotalMsg(linkDB = None):
 	db.close()
 	return a
 
+#-------------------------------------------------------------------------------
 def countTotalGems(linkDB = None):
 	#Init a
 	a=0
@@ -201,7 +203,7 @@ def updateField(ID, fieldName, fieldValue, linkDB = None):
 		db.close()
 		return "200"
 
-
+#-------------------------------------------------------------------------------
 def valueAt(ID, fieldName, linkDB = None):
 	"""
 	Permet de récupérer la valeur contenue dans le champ fieldName de ID
@@ -217,6 +219,7 @@ def valueAt(ID, fieldName, linkDB = None):
 	db.close()
 	return value
 
+#-------------------------------------------------------------------------------
 def taille(linkDB = None):
 	"""Retourne la taille de la DB"""
 	if linkDB != None:
@@ -227,6 +230,7 @@ def taille(linkDB = None):
 	db.close()
 	return t
 
+#-------------------------------------------------------------------------------
 def userID(i, linkDB = None):
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
@@ -236,6 +240,7 @@ def userID(i, linkDB = None):
 	db.close()
 	return ID
 
+#-------------------------------------------------------------------------------
 def userExist(ID, linkDB = None):
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))
@@ -248,6 +253,7 @@ def userExist(ID, linkDB = None):
 		db.close()
 		return True
 
+#-------------------------------------------------------------------------------
 def OwnerSessionExist(value, linkDB = None):
 	"""
 	Vérifie l'existance d'une session créée par Owner
@@ -263,6 +269,7 @@ def OwnerSessionExist(value, linkDB = None):
 		db.close()
 		return True
 
+#-------------------------------------------------------------------------------
 def MemberSessionExist(value, linkDB = None):
 	"""
 	Vérifie l'existance d'une session créée par Owner
@@ -280,7 +287,7 @@ def MemberSessionExist(value, linkDB = None):
 		db.close()
 		return True
 
-
+#-------------------------------------------------------------------------------
 def OwnerSessionAt(owner, fieldName, linkDB = None):
 	"""
 	Retourne le code session (ID) créé par Owner
@@ -293,6 +300,7 @@ def OwnerSessionAt(owner, fieldName, linkDB = None):
 	db.close()
 	return value
 
+#-------------------------------------------------------------------------------
 def MemberSessionAt(member, fieldName, linkDB = None):
 	"""
 	Retourne le code session (ID) créé par Owner
@@ -307,6 +315,7 @@ def MemberSessionAt(member, fieldName, linkDB = None):
 	db.close()
 	return value
 
+#-------------------------------------------------------------------------------
 def userGems(i, item, linkDB = None):
 	"""Retourne le nombre de gems du joueur i"""
 	if linkDB != None:
@@ -320,6 +329,7 @@ def userGems(i, item, linkDB = None):
 	db.close()
 	return gems
 
+#-------------------------------------------------------------------------------
 def updateComTime(ID, nameElem, linkDB = None):
 	"""
 	Met à jour la date du dernier appel à une fonction
@@ -334,6 +344,7 @@ def updateComTime(ID, nameElem, linkDB = None):
 	updateField(ID, "com_time", ComTime, linkDB)
 	db.close()
 
+#-------------------------------------------------------------------------------
 def addGems(ID, nbGems):
 	"""
 	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
@@ -350,6 +361,7 @@ def addGems(ID, nbGems):
 	 	print("DB >> Il n'y a pas assez sur ce compte !")
 	return str(new_value)
 
+#-------------------------------------------------------------------------------
 def daily_data(ID, nameElem):
 	"""Retourne les info sur le Daily de ID"""
 	DailyData = valueAt(ID, "daily", GF.dbGems)
@@ -359,6 +371,7 @@ def daily_data(ID, nameElem):
 		return True
 	return data
 
+#-------------------------------------------------------------------------------
 def updateDaily(ID, nameElem, value):
 	"""
 	Met à jour les info du daily
@@ -370,6 +383,7 @@ def updateDaily(ID, nameElem, value):
 		DailyData[nameElem] = str(value)
 	updateField(ID, "daily", DailyData, GF.dbGems)
 
+#-------------------------------------------------------------------------------
 def spam(ID,couldown, nameElem, linkDB = None):
 	"""Antispam """
 	if linkDB == None:
@@ -383,6 +397,7 @@ def spam(ID,couldown, nameElem, linkDB = None):
 	# on récupère la date de la dernière commande
 	return(time < t.time()-couldown)
 
+#-------------------------------------------------------------------------------
 def nom_ID(nom):
 	"""Convertis un nom en ID """
 	if len(nom) == 21 :
@@ -394,6 +409,7 @@ def nom_ID(nom):
 		ID = -1
 	return(ID)
 
+#-------------------------------------------------------------------------------
 def nbElements(ID, stockeur, nameElem, linkDB = None):
 	"""
 	Permet de savoir combien il y'a de nameElem dans l'inventaire de ID
@@ -407,7 +423,7 @@ def nbElements(ID, stockeur, nameElem, linkDB = None):
 	else:
 		return 0
 
-
+#-------------------------------------------------------------------------------
 def add(ID, stockeur, nameElem, nbElem, linkDB = None):
 	"""
 	Permet de modifier le nombre de nameElem pour ID dans le stockeur (inventory | StatGems | Trophy | banque)

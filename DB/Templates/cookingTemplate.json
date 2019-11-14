@@ -1,0 +1,10 @@
+{
+  "idgems":
+    "link_gems",
+  "idFour":
+    "PRIMARYKEY_INTEGER",
+  "Time":
+    "TEXT",
+  "Plat":
+    "TEXT"
+}

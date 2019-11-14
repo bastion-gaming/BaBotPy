@@ -1,0 +1,16 @@
+{
+  "idgems":
+    "PRIMARYKEY_INTEGER",
+  "ID":
+    "ID_INTEGER",
+  "guilde":
+    "TEXT",
+  "gems":
+    "INTEGER",
+  "spinelles":
+    "INTEGER",
+  "lvl":
+    "INTEGER",
+  "xp":
+    "INTEGER"
+}

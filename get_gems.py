@@ -2,10 +2,10 @@ import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from discord.utils import get
-import datetime as t
+import datetime as dt
 from datetime import datetime
 
-from DB import DB
+from DB import TinyDB as DB
 from gems import gemsFonctions as GF
 from core import welcome as wel
 
@@ -26,7 +26,7 @@ client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("help/cogs.txt","w")
 NONE = open("help/help.txt","w")
 
-jour = t.date.today()
+jour = dt.date.today()
 
 client.remove_command("help")
 

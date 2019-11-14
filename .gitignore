@@ -46,3 +46,5 @@ token/token_getgems.txt
 icons/gem_ Template upgrade.psd
 icons/spinelle.psd
 gems/guildes.json
+*.db
+*.bak

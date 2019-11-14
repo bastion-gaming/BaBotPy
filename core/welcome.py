@@ -3,10 +3,10 @@ from discord.ext.commands import bot
 from discord.utils import get
 import discord
 
-import datetime as t
+import datetime as dt
 from datetime import datetime
 
-from DB import DB
+from DB import TinyDB as DB
 from gems import gemsFonctions as GF
 from core import roles, stats as stat
 
@@ -23,7 +23,7 @@ idcategory_admin = 417453424402235407
 async def memberjoin(member, channel):
 	if member.guild.id == idBASTION:
 		channel_regle = member.guild.get_channel(417454223224209408)
-		time = t.time()
+		time = dt.time()
 		ID = member.id
 		if DB.newPlayer(ID) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
@@ -36,7 +36,7 @@ async def memberjoin(member, channel):
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
 		else:
 			if DB.valueAt(ID, "arrival") == "0":
-				DB.updateField(ID, "arrival", str(t.datetime.now()))
+				DB.updateField(ID, "arrival", str(dt.datetime.now()))
 			await roles.addrole(member, "Nouveau")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()

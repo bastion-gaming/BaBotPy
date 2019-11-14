@@ -1,4 +1,4 @@
-from DB import DB
+from DB import TinyDB as DB
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
