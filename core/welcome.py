@@ -27,12 +27,12 @@ async def memberjoin(member, channel):
 		ID = member.id
 		if DB.newPlayer(ID) == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			DB.updateField(ID, "arrival", str(dt.datetime.now()))
-			cap = DB.valueAt(ID, "capability")
+			DB.updateField(ID, "arrival", str(t.datetime.now()))
+			cap = DB.valueAt(ID, "capability", GF.dbGems)
 			for c in GF.objetCapability:
 				if c.defaut == True:
 					cap.append(c.nom)
-			DB.updateField(ID, "capability", cap)
+			DB.updateField(ID, "capability", cap, GF.dbGems)
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
 		else:
 			if DB.valueAt(ID, "arrival") == "0":
@@ -48,7 +48,7 @@ async def memberjoin(member, channel):
 
 def memberremove(member):
 	ID = member.id
-	gems = DB.valueAt(ID, "gems")
+	gems = DB.valueAt(ID, "gems", GF.dbGems)
 	if member.guild.id == idBASTION:
 		stat.countDeco()
 		BotGems = DB.valueAt(idBaBot, "gems", GF.dbGems)

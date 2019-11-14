@@ -137,7 +137,7 @@ async def on_voice_state_update(member,before,after):
 			print('{} as passé {} minutes en vocal !'.format(member.name,time_on_vocal))
 			XP = int(DB.valueAt(member.id, "xp")) + int(time_on_vocal)
 			DB.updateField(member.id, "xp", XP)
-			lvl.checklevelvocal(member)
+			await lvl.checklevelvocal(member)
 			del on_vocal[member.name]
 
 ####################### Stat ####################################
