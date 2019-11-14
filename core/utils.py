@@ -143,34 +143,45 @@ class UtilsSecret(commands.Cog):
 					await ctx.channel.send("Split!")
 				else:
 					await ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
-			elif ID == "sql":
-				if ge.permission(ctx,ge.admin):
-					if arg1 == "init":
-						sql.init()
-					elif arg1 == "begin":
-						if arg2 == "bastion" or arg2 == "gems":
-							msg = sql.newPlayer(ctx.author.id, arg2)
-						else:
-							msg = "DB inconnu"
-						await ctx.channel.send(msg)
-					elif arg1 == "update":
-						msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
-						await ctx.channel.send(msg)
-					elif arg1 == "value":
-						msg = sql.valueAt(ctx.author.id, arg3, arg2)
-						await ctx.channel.send(msg)
-					elif arg1 == "taille":
-						msg = sql.taille(arg2)
-						await ctx.channel.send(msg)
-					else:
-						await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
-				else:
-					await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 			else:
 				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 		else:
 			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
+
+	@commands.command(pass_context=True)
+	async def sql(self, ctx, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
+		if ge.permission(ctx,ge.admin) or ctx.author.id == 129362501187010561:
+			if arg1 == "init":
+				sql.init()
+			elif arg1 == "begin":
+				if arg2 == "bastion" or arg2 == "gems":
+					msg = sql.newPlayer(ctx.author.id, arg2)
+				else:
+					msg = "DB inconnu"
+				await ctx.channel.send(msg)
+			elif arg1 == "update":
+				msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "value":
+				msg = sql.valueAt(ctx.author.id, arg3, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "gems":
+				msg = sql.addGems(ctx.author.id, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "spinelles":
+				msg = sql.addSpinelles(ctx.author.id, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "add":
+				msg = sql.add(ctx.author.id, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "taille":
+				msg = sql.taille(arg2)
+				await ctx.channel.send(msg)
+			else:
+				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
+		else:
+			await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 
 	@commands.command(pass_context=True)
 	async def bot(self, ctx, ID = None):

@@ -407,22 +407,38 @@ def valueAt(ID, fieldName, nameDB = None):
 			return value[0]
 
 #-------------------------------------------------------------------------------
-# def addGems(ID, nbGems):
-# 	"""
-# 	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
-# 	Si vous souhaitez en retirer mettez un nombre négatif.
-# 	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
-# 	strictement inférieur à 0.
-# 	"""
-# 	old_value = valueAt(ID, "gems", GF.dbGems)
-# 	new_value = int(old_value) + nbGems
-# 	if new_value >= 0:
-# 		updateField(ID, "gems", new_value, GF.dbGems)
-# 		print("DB >> Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
-# 	else:
-# 	 	print("DB >> Il n'y a pas assez sur ce compte !")
-# 	return str(new_value)
+def addGems(ID, nb):
+	"""
+	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
+	Si vous souhaitez en retirer mettez un nombre négatif.
+	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
+	strictement inférieur à 0.
+	"""
+	old_value = valueAt(ID, "gems", "gems")
+	new_value = int(old_value[0]) + int(nb)
+	if new_value >= 0:
+		updateField(ID, "gems", new_value, "gems")
+		print("DB >> Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+	else:
+	 	print("DB >> Il n'y a pas assez sur ce compte !")
+	return str(new_value)
 
+#-------------------------------------------------------------------------------
+def addSpinelles(ID, nb):
+	"""
+	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.
+	Si vous souhaitez en retirer mettez un nombre négatif.
+	Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
+	strictement inférieur à 0.
+	"""
+	old_value = valueAt(ID, "spinelles", "gems")
+	new_value = int(old_value[0]) + int(nb)
+	if new_value >= 0:
+		updateField(ID, "spinelles", new_value, "gems")
+		print("DB >> Le compte de "+str(ID)+ " est maintenant de: "+str(new_value))
+	else:
+	 	print("DB >> Il n'y a pas assez sur ce compte !")
+	return str(new_value)
 #-------------------------------------------------------------------------------
 # def daily_data(ID, nameElem):
 #-------------------------------------------------------------------------------
