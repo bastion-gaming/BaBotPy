@@ -170,8 +170,11 @@ def checkField():
 # Gestion des utilisateurs
 #===============================================================================
 
-def get_PlayerID(ID):
-	script = "SELECT * FROM IDs WHERE ID_discord = {}".format(ID)
+def get_PlayerID(ID, nameDB = None):
+	if nameDB == None:
+		script = "SELECT * FROM IDs WHERE ID_discord = {}".format(ID)
+	else:
+		script = "SELECT ID, id{0} FROM {0} JOIN IDs USING(ID) WHERE ID_discord = {1}".format(nameDB, ID)
 	cursor = conn.cursor()
 	cursor.execute(script)
 	rows = cursor.fetchall()
@@ -394,6 +397,9 @@ def valueAt(ID, fieldName, nameDB = None):
 						elif x == "gems_com_time":
 							fieldName2 = "Commande"
 							fieldName3 = "Com_time, Commande"
+						elif x == "capability":
+							fieldName2 = "idCapability"
+							fieldName3 = "idCapability"
 						link = "gems"
 			try:
 				script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
@@ -455,6 +461,66 @@ def spam(ID, couldown, nameElem, nameDB = None):
 
 	# on récupère la date de la dernière commande
 	return(time < t.time()-couldown)
-	
+
 #-------------------------------------------------------------------------------
-# def add(ID, stockeur, nameElem, nbElem, nameDB = None):
+def add(ID, nameElem, nbElem, nameDB = None):
+	"""
+	Permet de modifier le nombre de nameElem pour ID dans la table nameDB
+	Pour en retirer mettez nbElemn en négatif
+	"""
+	if nameDB == None:
+		nameDB = "bastion"
+
+	if nameDB == "bastion" or nameDB == "filleul" or nameDB == "bastion_com_time":
+		PlayerID = get_PlayerID(ID, "bastion")
+	else:
+		PlayerID = get_PlayerID(ID, "gems")
+
+	old_value = valueAt(ID, nameElem, nameDB)
+	if old_value != 0:
+		new_value = int(old_value[0]) + int(nbElem)
+		if new_value < 0:
+			new_value = 0
+		updateField(ID, nameElem, new_value, nameDB)
+		return 100
+	else:
+		cursor = conn.cursor()
+		with open("DB/Templates/{}Template.json".format(nameDB), "r") as f:
+			t = json.load(f)
+		for x in t:
+			if x == "idgems" or x == "idbastion":
+				data = "{}".format(x)
+			else:
+				data += ",{}".format(x)
+
+		if not nameDB in nameDBexcept:
+			for x in t:
+				y = t[x].split("_")
+				if len(y) > 1:
+					y2 = y[1]
+				else:
+					y2 = y[0]
+				if x == "idgems" or x == "idbastion":
+					values = "{}".format(PlayerID)
+				elif x == nameElem:
+					values += ",'{}'".format(nbElem)
+				elif y2 == "INTEGER":
+					values = ",'0'"
+				elif y2 == "TEXT":
+					values = ",''"
+		else:
+			if nameDB == "inventory" or nameDB == "durability" or nameDB == "trophy" or nameDB == "statgems" or nameDB == "bastion_com_time" or nameDB == "gems_com_time":
+				values = "'{2}', '{0}', '{1}'".format(nameElem, nbElem, PlayerID)
+			elif nameDB == "hothouse" or nameDB == "cooking":
+				values = "'{3}', '{0}', '{1}', '{2}'".format(nameElem, nbElem[0], nbElem[1], PlayerID)
+			elif nameDB == "capability":
+				values = "{1}, {0}".format(nameElem, PlayerID)
+		try:
+			script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
+			print("==========")
+			print(script)
+			cursor.execute(script)
+			conn.commit()
+			return 101
+		except:
+			return 404

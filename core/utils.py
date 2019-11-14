@@ -1,6 +1,6 @@
 import random as r
 import datetime as dt
-from DB import DB, DBsplit
+from DB import DB
 from core import gestion as ge
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
@@ -135,14 +135,6 @@ class UtilsSecret(commands.Cog):
 					await ctx.channel.send("Suppression terminer, la DB est à jour")
 				else:
 					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
-			elif ID == "split":
-				if arg2 == None:
-					await ctx.channel.send("Split!")
-				elif ge.permission(ctx,ge.admin):
-					DBsplit.splitDB(arg1, arg2)
-					await ctx.channel.send("Split!")
-				else:
-					await ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
 			else:
 				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 		else:
@@ -173,7 +165,7 @@ class UtilsSecret(commands.Cog):
 				msg = sql.addSpinelles(ctx.author.id, arg2)
 				await ctx.channel.send(msg)
 			elif arg1 == "add":
-				msg = sql.add(ctx.author.id, arg2)
+				msg = sql.add(ctx.author.id, arg3, arg4, arg2)
 				await ctx.channel.send(msg)
 			elif arg1 == "taille":
 				msg = sql.taille(arg2)
