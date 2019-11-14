@@ -2,7 +2,7 @@ import discord
 import random as r
 import time as t
 import datetime as dt
-from DB import DB
+from DB import TinyDB as DB
 from core import welcome as wel, level as lvl
 from gems import gemsFonctions as GF, gemsItems as GI
 from discord.ext import commands

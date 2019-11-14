@@ -5,7 +5,7 @@ from discord.utils import get
 import datetime as dt
 from datetime import datetime
 
-from DB import DB, SQLite as sql
+from DB import TinyDB as DB, SQLite as sql
 from core import roles, stats as stat, level as lvl, welcome as wel
 from multimedia import notification as notif
 from gems import gemsFonctions as GF

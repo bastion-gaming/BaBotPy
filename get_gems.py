@@ -5,7 +5,7 @@ from discord.utils import get
 import datetime as dt
 from datetime import datetime
 
-from DB import DB
+from DB import TinyDB as DB
 from gems import gemsFonctions as GF
 from core import welcome as wel
 

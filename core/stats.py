@@ -1,6 +1,6 @@
 import random as r
 import datetime as dt
-from DB import DB
+from DB import TinyDB as DB
 from tinydb import TinyDB
 from gems import gemsFonctions as GF
 from discord.ext import commands, tasks

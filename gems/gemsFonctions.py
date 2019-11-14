@@ -2,7 +2,7 @@ import discord
 import random as r
 import time as t
 import datetime as dt
-from DB import DB
+from DB import TinyDB as DB
 import json
 from core import welcome as wel
 from gems import gemsItems as GI
