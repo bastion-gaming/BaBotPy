@@ -251,13 +251,13 @@ def loadItem(F = None):
 
 	global objetCapability
 	objetCapability = [Capability(100, "Coup de <:gem_sword:{0}>`sword`".format(get_idmoji("sword")), True, 0, "attaque", 10, "sword", "Utilise ton <:gem_sword:{}>`sword` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("sword")), 0)
-	,Capability(101, "Coup d'ameçon <:gem_fishingrod:{0}>".format(get_idmoji("fishingrod")), False, 10, "attaque", 10, "fishingrod", "Utilise ta <:gem_fishingrod:{}>`canne à pèche` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("fishingrod")), 0)
-	,Capability(102, "Lancer de <:gem_iron_pickaxe:{0}>`pioche`".format(get_idmoji("iron_pickaxe")), False, 20, "attaque", 10, "iron_pickaxe", "Utilise ta <:gem_iron_pickaxe:{}>`pioche en fer` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("iron_pickaxe")), 0)
-	,Capability(103, "<:gem_diamond_pickaxe:{0}> Le mineur du bastion".format(get_idmoji("diamond_pickaxe")), False, 30, "attaque", 10, "fish", "Utilise ta <:gem_diamond_pickaxe:{}>`pioche en diamant` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("diamond_pickaxe")), 0)
+	,Capability(101, "Coup d'ameçon <:gem_fishingrod:{0}>".format(get_idmoji("fishingrod")), False, 5, "attaque", 10, "fishingrod", "Utilise ta <:gem_fishingrod:{}>`canne à pèche` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("fishingrod")), 0)
+	,Capability(102, "Lancer de <:gem_iron_pickaxe:{0}>`pioche`".format(get_idmoji("iron_pickaxe")), False, 10, "attaque", 10, "iron_pickaxe", "Utilise ta <:gem_iron_pickaxe:{}>`pioche en fer` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("iron_pickaxe")), 0)
+	,Capability(103, "<:gem_diamond_pickaxe:{0}> Le mineur du bastion".format(get_idmoji("diamond_pickaxe")), False, 20, "attaque", 10, "diamond_pickaxe", "Utilise ta <:gem_diamond_pickaxe:{}>`pioche en diamant` pour attaquer.\nConsomme la puissance de l'attaque en durabilité".format(get_idmoji("diamond_pickaxe")), 0)
 	,Capability(200, "Mur de <:gem_cobblestone:{0}>`cobblestone`".format(get_idmoji("cobblestone")), True, 0, "defense", 10, "cobblestone", "Construis un mur de <:gem_cobblestone:{0}>`cobblestone`\nConsonne 9 <:gem_cobblestone:{0}>`cobblestone` par point d'attaque contré".format(get_idmoji("cobblestone")), 9)
-	,Capability(201, "Banc de <:gem_fish:{0}>`poissons`".format(get_idmoji("fish")), False, 10, "defense", 10, "fish", "Lance un banc de <:gem_fish:{0}>`poissons`\nConsonne 16 <:gem_fish:{0}>`poissons` par point d'attaque contré".format(get_idmoji("fish")), 16)
-	,Capability(202, "Grille de <:gem_iron:{0}>`fer`".format(get_idmoji("iron")), False, 20, "defense", 10, "iron", "Construis une grille de <:gem_iron:{0}>`fer`\nConsonne 7 <:gem_iron:{0}>`fer` par point d'attaque contré".format(get_idmoji("iron")), 7)
-	,Capability(203, "Forêt de <:gem_oak:{0}>`chêne`".format(get_idmoji("oak")), False, 30, "defense", 10, "oak", "Fait pousser une forêt de <:gem_oak:{0}>`chêne`\nConsonne 5 <:gem_iron:{0}>`fer` par point d'attaque contré".format(get_idmoji("oak")), 5)]
+	,Capability(201, "Banc de <:gem_fish:{0}>`poissons`".format(get_idmoji("fish")), False, 5, "defense", 10, "fish", "Lance un banc de <:gem_fish:{0}>`poissons`\nConsonne 16 <:gem_fish:{0}>`poissons` par point d'attaque contré".format(get_idmoji("fish")), 16)
+	,Capability(202, "Grille de <:gem_iron:{0}>`fer`".format(get_idmoji("iron")), False, 10, "defense", 10, "iron", "Construis une grille de <:gem_iron:{0}>`fer`\nConsonne 7 <:gem_iron:{0}>`fer` par point d'attaque contré".format(get_idmoji("iron")), 7)
+	,Capability(203, "Forêt de <:gem_oak:{0}>`chêne`".format(get_idmoji("oak")), False, 10, "defense", 15, "oak", "Fait pousser une forêt de <:gem_oak:{0}>`chêne`\nConsonne 5 <:gem_iron:{0}>`fer` par point d'attaque contré".format(get_idmoji("oak")), 5)]
 
 
 	#========== Trophées ==========
