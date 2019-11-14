@@ -301,7 +301,7 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 		if nameDB == None:
 			nameDB = "bastion"
 		cursor = conn.cursor()
-		nameDBexcept = ["inventory", "durability", "filleul", "bastion_com_time", "gems_com_time"]
+		nameDBexcept = ["inventory", "durability", "hothouse", "cooking", "trophy", "statgems", "filleul", "bastion_com_time", "gems_com_time", "capability"]
 
 		if not nameDB in nameDBexcept:
 			try:
@@ -311,10 +311,26 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 			except:
 				one = []
 		else:
-			fieldName2 = "Item"
-			link = "gems"
+			fieldName2 = ""
+			for x in nameDBexcept:
+				if x == nameDB:
+					if x == "bastion_com_time":
+						fieldName2 = "Commande"
+						link = "bastion"
+					else:
+						if x == "inventory" or x == "durability":
+							fieldName2 = "Item"
+						elif x == "trophy" or x == "statgems":
+							fieldName2 = "Nom"
+						elif x == "hothouse":
+							fieldName2 = "idPlantation"
+						elif x == "cooking":
+							fieldName2 = "idFour"
+						elif x == "gems_com_time":
+							fieldName2 = "Commande"
+						link = "gems"
 			try:
-				script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = {4} and Item = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID)
+				script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = {4} and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID)
 				cursor.execute(script)
 				one = cursor.fetchall()
 			except:
@@ -340,10 +356,24 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 			script = "UPDATE {0} SET {1} = {2} WHERE id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
 			for x in nameDBexcept:
 				if x == nameDB:
-					if x == "inventory":
-						script = "UPDATE {0} SET Stock = {2} WHERE Item = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					if x == "inventory" or x == "trophy" or x == "statgems":
+						script = "UPDATE {0} SET Stock = {2} WHERE {5} = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname, fieldName2)
 					elif x == "durability":
 						script = "UPDATE {0} SET Durability = {2} WHERE Item = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "gems_com_time" or x == "bastion_com_time":
+						script = "UPDATE {0} SET Com_time = {2} WHERE Commande = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "hothouse":
+						try:
+							int(fieldValue)
+							script = "UPDATE {0} SET Time = {2} WHERE idPlantation = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+						except:
+							script = "UPDATE {0} SET Plante = {2} WHERE idPlantation = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+					elif x == "cooking":
+						try:
+							int(fieldValue)
+							script = "UPDATE {0} SET Time = {2} WHERE idFour = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+						except:
+							script = "UPDATE {0} SET Plat = {2} WHERE idFour = '{1}' and id{4} = {3}".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
 					else:
 						return "202"
 			cursor.execute(script)
@@ -352,14 +382,11 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 	else:
 		return "404"
 
-#-------------------------------------------------------------------------------
-# def updateComTime(ID, nameElem, linkDB = None):
+
 #-------------------------------------------------------------------------------
 # def addGems(ID, nbGems):
 #-------------------------------------------------------------------------------
 # def daily_data(ID, nameElem):
-#-------------------------------------------------------------------------------
-# def updateDaily(ID, nameElem, value):
 #-------------------------------------------------------------------------------
 # def spam(ID,couldown, nameElem, linkDB = None):
 #-------------------------------------------------------------------------------
