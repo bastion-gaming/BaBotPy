@@ -376,6 +376,7 @@ def valueAt(ID, fieldName, nameDB = None):
 				if x == nameDB:
 					if x == "bastion_com_time":
 						fieldName2 = "Commande"
+						fieldName3 = "Com_time, Commande"
 						link = "bastion"
 					else:
 						if x == "inventory" or x == "durability":
@@ -439,11 +440,21 @@ def addSpinelles(ID, nb):
 	else:
 	 	print("DB >> Il n'y a pas assez sur ce compte !")
 	return str(new_value)
+
 #-------------------------------------------------------------------------------
-# def daily_data(ID, nameElem):
+def spam(ID, couldown, nameElem, nameDB = None):
+	"""Antispam """
+	if nameDB == None:
+		nameDB = "bastion_com_time"
+
+	ComTime = valueAt(ID, "Com_time", nameDB)
+	if ComTime != 0:
+		time = ComTime[0]
+	else:
+		return True
+
+	# on récupère la date de la dernière commande
+	return(time < t.time()-couldown)
+	
 #-------------------------------------------------------------------------------
-# def spam(ID,couldown, nameElem, linkDB = None):
-#-------------------------------------------------------------------------------
-# def nbElements(ID, stockeur, nameElem, linkDB = None):
-#-------------------------------------------------------------------------------
-# def add(ID, stockeur, nameElem, nbElem, linkDB = None):
+# def add(ID, stockeur, nameElem, nbElem, nameDB = None):
