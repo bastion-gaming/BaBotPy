@@ -2,7 +2,7 @@ import json
 import datetime as dt
 
 jour = dt.date.today()
-exception = ["bank_upgrade", "backpack", "hyperbackpack", "candy", "lollipop", "fishhook", "pickaxe", "fishingrod"]
+exception = ["bank_upgrade", "backpack", "hyperpack", "candy", "lollipop", "fishhook", "pickaxe", "fishingrod"]
 
 #========== Items ==========
 class Item:
