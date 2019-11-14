@@ -1,6 +1,6 @@
 import random as r
 import datetime as dt
-from DB import DB, DBsplit
+from DB import TinyDB as DB
 from core import gestion as ge
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
@@ -9,6 +9,8 @@ import discord
 import json
 import os
 from core import welcome as wel
+
+from DB import SQLite as sql
 
 client = discord.Client()
 VERSION = open("core/version.txt").read().replace("\n","")
@@ -124,7 +126,7 @@ class UtilsSecret(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def test(self, ctx, ID = None, arg1 = None, arg2 = None):
+	async def test(self, ctx, ID = None, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
 		if ctx.guild.id == wel.idBASTION:
 			if ID == "check":
 				if ge.permission(ctx,ge.admin):
@@ -133,19 +135,45 @@ class UtilsSecret(commands.Cog):
 					await ctx.channel.send("Suppression terminer, la DB est à jour")
 				else:
 					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
-			elif ID == "split":
-				if arg2 == None:
-					await ctx.channel.send("Split!")
-				elif ge.permission(ctx,ge.admin):
-					DBsplit.splitDB(arg1, arg2)
-					await ctx.channel.send("Split!")
-				else:
-					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
 			else:
 				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 		else:
 			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
+
+	@commands.command(pass_context=True)
+	async def sql(self, ctx, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
+		if ge.permission(ctx,ge.admin) or ctx.author.id == 129362501187010561:
+			if arg1 == "init":
+				sql.init()
+			elif arg1 == "begin":
+				if arg2 == "bastion" or arg2 == "gems":
+					msg = sql.newPlayer(ctx.author.id, arg2)
+				else:
+					msg = "DB inconnu"
+				await ctx.channel.send(msg)
+			elif arg1 == "update":
+				msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "value":
+				msg = sql.valueAt(ctx.author.id, arg3, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "gems":
+				msg = sql.addGems(ctx.author.id, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "spinelles":
+				msg = sql.addSpinelles(ctx.author.id, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "add":
+				msg = sql.add(ctx.author.id, arg3, arg4, arg2)
+				await ctx.channel.send(msg)
+			elif arg1 == "taille":
+				msg = sql.taille(arg2)
+				await ctx.channel.send(msg)
+			else:
+				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
+		else:
+			await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 
 	@commands.command(pass_context=True)
 	async def bot(self, ctx, ID = None):

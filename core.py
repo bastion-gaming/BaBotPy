@@ -2,10 +2,10 @@ import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from discord.utils import get
-import datetime as t
+import datetime as dt
 from datetime import datetime
 
-from DB import DB
+from DB import TinyDB as DB, SQLite as sql
 from core import roles, stats as stat, level as lvl, welcome as wel
 from multimedia import notification as notif
 from gems import gemsFonctions as GF
@@ -26,7 +26,7 @@ client = commands.Bot(command_prefix = "{0}".format(PREFIX))
 NONE = open("help/cogs.txt","w")
 NONE = open("help/help.txt","w")
 
-jour = t.date.today()
+jour = dt.date.today()
 
 ############# Notification variables ################
 TWITCH_CLIENT_ID = open("multimedia/twitch_client_id.txt", "r").read().replace("\n","")
@@ -70,11 +70,22 @@ async def on_ready():
 		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
 	elif "add" in flag:
 		print("Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "sup" in flag:
-		print("Un ou plusieurs champs ont été supprimés de la DB.")
 	elif "type" in flag:
 		print("Un ou plusieurs type ont été modifié sur la DB.")
+	elif "sup" in flag:
+		print("Un ou plusieurs champs ont été supprimés de la DB.")
 
+	print('------')
+	print(sql.init())
+	flag = sql.checkField()
+	if flag == 0:
+		print("SQL >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("SQL >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "sup" in flag:
+		print("SQL >> Un ou plusieurs champs ont été supprimés de la DB.")
+	elif "type" in flag:
+		print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
 	print('------\n')
 	GF.checkDB_Gems()
 	GF.checkDB_GemsHH()

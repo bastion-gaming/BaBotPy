@@ -1,0 +1,10 @@
+{
+  "idgems":
+    "link_gems",
+  "idPlantation":
+    "PRIMARYKEY_INTEGER",
+  "Time":
+    "TEXT",
+  "Plante":
+    "TEXT"
+}

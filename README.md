@@ -48,7 +48,7 @@ correspondant à un jeu puis l'associer à un salon.
 
 ### Module DB
 
-**DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des joueurs et leur quantité d'argent. Onutilise TinyDB
+**DB**: On propose que le bot n'est qu'une seule base de donnée pour stocker les niveaux des joueurs et leur quantité d'argent. On utilise TinyDB et SQLite
 
 ### Module Multimédia
 

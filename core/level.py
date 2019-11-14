@@ -1,6 +1,6 @@
 import random as r
 import datetime as dt
-from DB import DB
+from DB import TinyDB as DB
 from core import roles
 from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
@@ -201,7 +201,7 @@ class Level(commands.Cog):
 					if lvl == lvlmax:
 						msg += "Actuel **{0}** \nLevel max atteint".format(lvl)
 					emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
-				
+
 				try:
 					# Gems
 					msg = "{0} :gem:`gems`\n".format(DB.valueAt(ID,"gems", GF.dbGems))

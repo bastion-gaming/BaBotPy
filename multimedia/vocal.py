@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from DB import DB
+from DB import TinyDB as DB
 import youtube_dl
 import os
 import asyncio

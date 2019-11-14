@@ -2,7 +2,7 @@ import discord
 import random as r
 from discord.ext import commands
 import asyncio
-from DB import DB
+from DB import TinyDB as DB
 
 
 class Kaamelott(commands.Cog):

@@ -6,7 +6,7 @@ from discord.ext.commands import Bot
 from discord.utils import get
 import time
 import asyncio
-from DB import DB
+from DB import TinyDB as DB
 from core import welcome as wel
 from gems import gemsFonctions as GF
 

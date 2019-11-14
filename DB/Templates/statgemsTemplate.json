@@ -1,0 +1,8 @@
+{
+  "idgems":
+    "link_gems",
+  "Nom":
+    "PRIMARYKEY_TEXT",
+  "Stock":
+    "INTEGER"
+}
