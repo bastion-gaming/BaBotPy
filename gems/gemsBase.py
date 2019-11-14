@@ -36,8 +36,6 @@ class GemsBase(commands.Cog):
 		desc += "`{0}forge` | Permet de créer des outils à partir des matériaux récoltés\n".format(PREFIX)
 		msg.add_field(name="Pour cela tu as les commandes:", value=desc, inline=False)
 		await ctx.channel.send(embed = msg)
-		# link = "https://www.youtube.com/watch?v="
-		# await ctx.channel.send(":tools: En travaux :pencil:\n{}".format(link))
 
 
 
@@ -47,7 +45,9 @@ class GemsBase(commands.Cog):
 		"""Pour créer son compte joueur et obtenir son starter Kit!"""
 		ID = ctx.author.id
 		msg = DB.newPlayer(ID, GF.dbGems, GF.dbGemsTemplate)
+		DB.newPlayer(ID, GF.dbHH, GF.dbHHTemplate)
 		GF.startKit(ID)
+		msg +="\nPour connaitre les commandes de bases, faite `{}tuto`".format(PREFIX)
 		await ctx.channel.send(msg)
 
 
@@ -125,9 +125,9 @@ class GemsBase(commands.Cog):
 				i = t - 1
 				j = 0
 				while i >= 0 and j != n : # affichage des données trié
-					baltop += "{2} | _{3} _<@{0}> {1}:gem:`gems`".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
+					baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
 					if UserList[i][2] != 0:
-						baltop+=" | {0} <:spinelle:{1}>`spinelles`\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
+						baltop+=" | {0}<:spinelle:{1}>\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
 					else:
 						baltop+="\n"
 					i = i - 1
@@ -149,7 +149,7 @@ class GemsBase(commands.Cog):
 					i = len(GuildKey) - 1
 					j = 0
 					while i >= 0 and j != m : # affichage des données trié
-						baltop += "{2} | {0} {1} <:spinelle:{3}>`spinelles`\n".format(GuildList[i][0], GuildList[i][1], j+1, GF.get_idmoji("spinelle"))
+						baltop += "{2} | {0} {1} <:spinelle:{3}>\n".format(GuildList[i][0], GuildList[i][1], j+1, GF.get_idmoji("spinelle"))
 						i = i - 1
 						j = j + 1
 					msg = discord.Embed(title = "Classement des guildes",color= 13752280, description = baltop)
@@ -199,34 +199,31 @@ class GemsBase(commands.Cog):
 					if item == c.nom :
 						test = False
 						check = False
-						prix = (c.achat*nb)
-						if c.type != "spinelle":
-							if DB.valueAt(ID, "gems", GF.dbGems) >= prix:
+						if c.achat != 0:
+							prix = (c.achat*nb)
+							if c.type != "spinelle":
+								if DB.valueAt(ID, "gems", GF.dbGems) >= prix:
+									DB.updateField(ID, "gems", DB.valueAt(ID, "gems", GF.dbGems)-prix, GF.dbGems)
+									check = True
 								argent = ":gem:`gems`"
-								DB.updateField(ID, "gems", DB.valueAt(ID, "gems", GF.dbGems)-prix, GF.dbGems)
-								check = True
-						else:
-							if DB.valueAt(ID, "spinelles", GF.dbGems) >= prix:
+							else:
+								if DB.valueAt(ID, "spinelles", GF.dbGems) >= prix:
+									DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)-prix, GF.dbGems)
+									check = True
 								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
-								DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)-prix, GF.dbGems)
-								check = True
-						if check:
-							if c.type == "halloween":
-								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+							if check:
+								if c.type != "consommable":
 									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
 									msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								else:
-									msg = "Désolé, nous ne pouvons pas executer cet achat, cette item n'est pas vendu au marché"
-							elif c.type != "consommable":
-								DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
-								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
-							else:
-								DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
-								msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
-							# Message de réussite dans la console
-							print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
-						else :
-							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de {} en banque".format(argent)
+									DB.add(ID, "inventory", c.nom, nb, GF.dbGems)
+									msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
+								# Message de réussite dans la console
+								print("Gems >> {} a acheté {} {}".format(ctx.author.name,nb,item))
+							else :
+								msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de {} en banque".format(argent)
+						else:
+							msg = "Désolé, nous ne pouvons pas executer cet achat, cette item n'est pas vendu au marché"
 						break
 				for c in GF.objetOutil :
 					if item == c.nom :
@@ -243,20 +240,19 @@ class GemsBase(commands.Cog):
 								prix += c.achat*soldeMult
 								soldeMult+=1
 								i+=1
-							prix = -1 * prix
 							prix = int(prix)
 						else:
 							prix = -1 * (c.achat*nb)
 						if c.type != "spinelle":
 							if DB.valueAt(ID, "gems", GF.dbGems) >= prix:
-								argent = ":gem:`gems`"
 								DB.updateField(ID, "gems", DB.valueAt(ID, "gems", GF.dbGems)-prix, GF.dbGems)
 								check = True
+							argent = ":gem:`gems`"
 						else:
 							if DB.valueAt(ID, "spinelles", GF.dbGems) >= prix:
-								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 								DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)-prix, GF.dbGems)
 								check = True
+							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 						if check:
 							if c.type == "bank":
 								DB.add(ID, "banque", "soldeMax", nb*c.poids, GF.dbGems)
@@ -313,7 +309,6 @@ class GemsBase(commands.Cog):
 				test = True
 				for c in GF.objetItem:
 					if item == c.nom:
-
 						test = False
 						gain = c.vente*nb
 						if c.type != "spinelle":
@@ -322,7 +317,7 @@ class GemsBase(commands.Cog):
 						else:
 							DB.updateField(ID, "spinelles", DB.valueAt(ID, "spinelles", GF.dbGems)+gain, GF.dbGems)
 							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
-						if c.type != "consommable" and c.nom != "candy" and c.nom != "lollipop":
+						if c.type != "consommable":
 							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} {4} !".format(nb, item, gain, GF.get_idmoji(c.nom), argent)
 							# Message de réussite dans la console
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name, nb, item))
@@ -405,10 +400,7 @@ class GemsBase(commands.Cog):
 								elif c.type == "consommable":
 									msg_invItemsConsommable += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
 								elif c.type == "halloween" or c.type == "christmas" or c.type == "event":
-									if c.nom == "candy" or c.nom == "lollipop":
-										msg_invItemsEvent += ":{0}:`{0}`: `x{1}`\n".format(str(x), str(inv[x]))
-									else:
-										msg_invItemsEvent += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
+									msg_invItemsEvent += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 								else:
 									msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 
@@ -437,7 +429,7 @@ class GemsBase(commands.Cog):
 				if msg_invItemsConsommable != "":
 					msg.add_field(name="Consommables", value=msg_invItemsConsommable, inline=False)
 				if msg_invItemsEvent != "":
-					msg.add_field(name="Halloween", value=msg_invItemsEvent, inline=False)
+					msg.add_field(name="Événement", value=msg_invItemsEvent, inline=False)
 				if msg_invBox != "":
 					msg.add_field(name="Loot Box", value=msg_invBox, inline=False)
 				DB.updateComTime(ID, "inv", GF.dbGems)
@@ -489,14 +481,9 @@ class GemsBase(commands.Cog):
 		if DB.spam(ID,GF.couldown_4s, "market", GF.dbGems):
 			if fct == None:
 				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
-				if ctx.guild.id != wel.idBASTION:
-					if DB.spam(wel.idGetGems, GF.couldown_12h, "bourse", "DB/bastionDB"):
-						GF.loadItem()
-					ComTime = DB.valueAt(wel.idGetGems, "com_time", "DB/bastionDB")
-				elif ctx.guild.id == wel.idBASTION:
-					if DB.spam(wel.idBaBot, GF.couldown_12h, "bourse", "DB/bastionDB"):
-						GF.loadItem()
-					ComTime = DB.valueAt(wel.idBaBot, "com_time", "DB/bastionDB")
+				if DB.spam(wel.idBaBot, GF.couldown_10s, "bourse", "DB/bastionDB"):
+					GF.loadItem()
+				ComTime = DB.valueAt(wel.idBaBot, "com_time", "DB/bastionDB")
 				if "bourse" in ComTime:
 					time = ComTime["bourse"]
 				time = time - (t.time()-GF.couldown_12h)
@@ -553,11 +540,17 @@ class GemsBase(commands.Cog):
 						if y.nom == c.nom:
 							temp = dict[c.nom]
 							if y.vente != 0:
-								pourcentageV = ((c.vente*100)//temp["precVente"])-100
+								try:
+									pourcentageV = ((c.vente*100)//temp["precVente"])-100
+								except:
+									pourcentageV = 404
 							else:
 								pourcentageV = 0
 							if y.achat != 0:
-								pourcentageA = ((c.achat*100)//temp["precAchat"])-100
+								try:
+									pourcentageA = ((c.achat*100)//temp["precAchat"])-100
+								except:
+									pourcentageA = 404
 							else:
 								pourcentageA = 0
 					#=======================================================================================
@@ -598,22 +591,14 @@ class GemsBase(commands.Cog):
 						d_marketItemsConsommable += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
 					elif c.type == "halloween" or c.type == "christmas" or c.type == "event":
-						if c.nom == "candy" or c.nom == "lollipop":
-							d_marketItemsEvent += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
-							if pourcentageV != 0:
-								d_marketItemsEvent += "_{}%_ ".format(pourcentageV)
+						d_marketItemsEvent += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+						if pourcentageV != 0:
+							d_marketItemsEvent += "_{}%_ ".format(pourcentageV)
+						if c.achat != 0:
 							d_marketItemsEvent += "| Achat **{}** ".format(c.achat)
 							if pourcentageA != 0:
 								d_marketItemsEvent += "_{}%_ ".format(pourcentageA)
-							d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
-						else:
-							d_marketItemsEvent += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
-							if pourcentageV != 0:
-								d_marketItemsEvent += "_{}%_ ".format(pourcentageV)
-							d_marketItemsEvent += "| Achat **{}** ".format(c.achat)
-							if pourcentageA != 0:
-								d_marketItemsEvent += "_{}%_ ".format(pourcentageA)
-							d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
+						d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
 					elif c.type == "spinelle":
 						d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}**<:spinelle:{3}> ".format(c.nom,c.vente,GF.get_idmoji(c.nom), GF.get_idmoji("spinelle"))
@@ -783,7 +768,7 @@ class GemsBase(commands.Cog):
 						else:
 							msg = "L'inventaire de {} est plein".format(Nom_recu)
 					else:
-						msg = "{0} n'a pas assez pour donner à {2} !".format(name, nb, item, Nom_recu)
+						msg = "{0} n'a pas assez pour donner à {1} !".format(name, Nom_recu)
 
 					DB.updateComTime(ID, "give", GF.dbGems)
 				else :

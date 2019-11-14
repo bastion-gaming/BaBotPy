@@ -130,30 +130,30 @@ def itemBourse(item, type):
 					Prix = pnow
 				if Prix <= 10:
 					Prix = 10
+		#objet evenementiels
+		zE = False
+		for z in ObjetEventEnd:
+			if z == item:
+				zE = True
+				if type == "vente":
+					temp["vente"] = get_default_price(item, type)
+					temp["precVente"] = get_default_price(item, type)
+				elif type == "achat":
+					temp["achat"] = get_default_price(item, type)
+					temp["precAchat"] = get_default_price(item, type)
 		# La valeur de vente ne peux etre supérieur à la valeur d'achat
-		if type == "vente":
-			for x in GI.PrixItem:
-				if item == x.nom:
-					if Prix > x.achat:
-						Prix = x.achat
-			for x in GI.PrixOutil:
-				if item == x.nom:
-					if Prix > x.achat:
-						Prix = x.achat
-			temp["vente"] = Prix
-			temp["precVente"] = pnow
-		# La valeur d'achat ne peux être inférieur à la valeur de vente
-		elif type == "achat":
-			for x in GI.PrixItem:
-				if item == x.nom:
-					if Prix < x.vente:
-						Prix = x.vente
-			for x in GI.PrixOutil:
-				if item == x.nom:
-					if Prix < x.vente:
-						Prix = x.vente
-			temp["achat"] = Prix
-			temp["precAchat"] = pnow
+		if not zE:
+			if type == "vente":
+				if Prix > temp["achat"]:
+					Prix = temp["achat"]
+				temp["vente"] = Prix
+				temp["precVente"] = pnow
+			# La valeur d'achat ne peux être inférieur à la valeur de vente
+			elif type == "achat":
+				if Prix < temp["vente"]:
+					Prix = temp["vente"]
+				temp["achat"] = Prix
+				temp["precAchat"] = pnow
 		# actualisation du fichier de sauvegarde de la bourse
 		dict[item] = temp
 		with open('gems/bourse.json', 'w') as fp:
@@ -169,6 +169,8 @@ def loadItem(F = None):
 	jour = dt.date.today()
 	if F == True:
 		GI.initBourse()
+	global ObjetEventEnd
+	ObjetEventEnd = []
 	#========== Items ==========
 	class Item:
 
@@ -200,15 +202,26 @@ def loadItem(F = None):
 	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "consommable")
 	,Item("backpack", itemBourse("backpack", "vente"), itemBourse("backpack", "achat"), -200, "special")
 	,Item("hyperpack", itemBourse("hyperpack", "vente"), itemBourse("hyperpack", "achat"), -20000, "spinelle")
-	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")]
+	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")
+	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "consommable")
+	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "consommable")]
 
-	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 11):
+	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 10):
 		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
-		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")
-		,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "halloween")
-		,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "halloween")]
+		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
+	elif jour.year >= 2019:
+		for one in GI.ObjetHalloween:
+			ObjetEventEnd.append(one)
+		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
+		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
 
-	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 6):
+	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
+		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
+		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
+		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
+	elif jour.year >= 2020:
+		for one in GI.ObjetChristmas:
+			ObjetEventEnd.append(one)
 		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
 		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
 		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
@@ -271,6 +284,7 @@ def loadItem(F = None):
 
 	global objetTrophy
 	objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:`gems au gamble`", "special", 10000)
+	,Trophy("Hyper Gamble Jackpot", "`Gagner plus de 100000`:gem:`gems au gamble`", "special", 100000)
 	,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 	,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:{}>`ruby`".format(get_idmoji("ruby")), "special", 0)
 	,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
@@ -376,29 +390,57 @@ def get_idmoji(nameElem):
 
 def get_price(nameElem, type = None):
 	"""Permet de connaitre le prix de l'item"""
-	test = False
 	if type == None or type == "vente":
 		for c in objetItem:
 			if c.nom == nameElem:
-				test = True
 				return c.vente
 
 		for c in objetOutil:
 			if c.nom == nameElem:
-				test = True
 				return c.vente
 	elif type == "achat":
 		for c in objetItem:
 			if c.nom == nameElem:
-				test = True
 				return c.achat
 
 		for c in objetOutil:
 			if c.nom == nameElem:
-				test = True
 				return c.achat
-	if test == False:
-		return 0
+	return 0
+
+
+def get_default_price(nameElem, type = None):
+	"""Permet de connaitre le prix par defaut de l'item"""
+	jour = dt.date.today()
+	if type == None or type == "vente":
+		for c in GI.PrixItem:
+			if c.nom == nameElem:
+				return c.vente
+
+		for c in GI.PrixOutil:
+			if c.nom == nameElem:
+				return c.vente
+	elif type == "achat":
+		for c in GI.PrixItem:
+			if c.nom == nameElem:
+				for one in GI.ObjetHalloween:
+					if one == nameElem:
+						if (jour.month == 10 and jour.day >= 21) or (jour.month == 11 and jour.day <= 10):
+							return c.achat
+						else:
+							return 0
+				for one in GI.ObjetChristmas:
+					if one == nameElem:
+						if (jour.month == 12 and jour.day >= 12) or (jour.month == 1 and jour.day <= 5):
+							return c.achat
+						else:
+							return 0
+				return c.achat
+
+		for c in GI.PrixOutil:
+			if c.nom == nameElem:
+				return c.achat
+	return 0
 
 
 

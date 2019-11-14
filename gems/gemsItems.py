@@ -30,19 +30,20 @@ PrixItem = [Item("cobblestone", 30, 50)
 ,Item("cookie", 30, 40)
 ,Item("grapes", 15, 30)
 ,Item("wine_glass", 120, 210)
-,Item("backpack", 1, 3000)
+,Item("candy", 1, 2)
+,Item("lollipop", 5, 12)
+,Item("backpack", 3000, 3000)
 ,Item("hyperpack", 1, 1)
 ,Item("fishhook", 46, 64)]
 
-if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 11):
-	PrixItem += [Item("pumpkin", 220, 330)
-	,Item("pumpkinpie", 1000, 1200)
-	,Item("candy", 1, 2)
-	,Item("lollipop", 5, 12)]
-if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 6):
-	PrixItem += [Item("christmas", 800, 1000)
-	,Item("cupcake", 950, 1234)
-	,Item("chocolate", 70, 110)]
+ObjetHalloween = ["pumpkin", "pumpkinpie"]
+PrixItem += [Item("pumpkin", 220, 330)
+,Item("pumpkinpie", 1000, 1200)]
+
+ObjetChristmas = ["christmas", "cupcake", "chocolate"]
+PrixItem += [Item("christmas", 800, 1000)
+,Item("cupcake", 950, 1234)
+,Item("chocolate", 70, 110)]
 
 #========== Outils ==========
 class Outil:

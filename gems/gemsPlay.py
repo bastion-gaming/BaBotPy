@@ -34,12 +34,22 @@ class GemsPlay(commands.Cog):
 		if DailyTime == str(jour - dt.timedelta(days=1)):
 			DB.updateDaily(ID, "dailytime", jour)
 			DB.updateDaily(ID, "dailymult", DailyMult + 1)
-			bonus = 125
+			if DailyMult >= 60:
+				bonus = 500
+			elif DailyMult >= 30:
+				bonus = 200
+			else:
+				bonus = 125
 			gain = 100 + bonus*DailyMult
 			DB.addGems(ID, gain)
 			msg = "Récompense journalière! Tu as gagné 100:gem:`gems`"
 			msg += "\nNouvelle série: `{}`, Bonus: {}:gem:`gems`".format(DailyMult, bonus*DailyMult)
 			lvl.addxp(ID, 10*(DailyMult/2), GF.dbGems)
+			if DailyMult%30 == 0:
+				m = (DailyMult//30)*2
+				nbS = DB.valueAt(ID, "spinelles", GF.dbGems)
+				DB.updateField(ID, "spinelles", nbS + m, GF.dbGems)
+				msg+="\nBravo pour c'est {0} jours consécutifs :confetti_ball:! Tu as mérité {1}<:spinelle:{2}>`spinelles`".format(DailyMult, m, GF.get_idmoji("spinelle"))
 
 		elif DailyTime == str(jour):
 			msg = "Tu as déja reçu ta récompense journalière aujourd'hui. Reviens demain pour gagner plus de :gem:`gems`"
@@ -261,9 +271,14 @@ class GemsPlay(commands.Cog):
 					for x in GF.objetTrophy:
 						if x.nom == "Gamble Jackpot":
 							jackpot = x.mingem
+						elif x.nom == "Hyper Gamble Jackpot":
+							hyperjackpot = x.mingem
 					if gain >= jackpot:
 						DB.add(ID, "trophy", "Gamble Jackpot", 1, GF.dbGems)
 						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
+					elif gain >= hyperjackpot:
+						DB.add(ID, "trophy", "Hyper Gamble Jackpot", 1, GF.dbGems)
+						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Hyper Gamble Jackpot`."
 					DB.addGems(ID, gain)
 					D = r.randint(0,20)
 					if D == 0:
@@ -652,7 +667,7 @@ class GemsPlay(commands.Cog):
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
 												GF.addDurabilite(ID, c.nom, c.durabilite)
-										DB.add(ID, "inventory", "planting_plan", -1, GF.dbHotHouse)
+										DB.add(ID, "inventory", "planting_plan", -1, GF.dbGems)
 
 						else:
 							timeH = int(time / 60 / 60)
@@ -957,8 +972,10 @@ class GemsPlay(commands.Cog):
 			#Calcul du prix
 			prix = gain * mise
 			if gain != 0 and gain != 1:
-				if prix > 0:
-					msg += "\nJackpot, vous venez de gagner {} :gem:`gems`".format(prix)
+				if prix > 400:
+					msg += "\n:slot_machine: Jackpot! Tu viens de gagner {} :gem:`gems`".format(prix)
+				elif prix > 0:
+					msg += "\nBravo, tu viens de gagner {} :gem:`gems`".format(prix)
 				else:
 					msg += "\nLa machine viens d'exploser :boom:\nTu as perdu {} :gem:`gems`".format(-1*prix)
 				DB.addGems(ID, prix)

@@ -8,6 +8,7 @@ import time
 import asyncio
 from DB import DB
 from core import welcome as wel
+from gems import gemsFonctions as GF
 
 PREFIX = open("core/prefix.txt","r").read().replace("\n","")
 client = Bot(command_prefix = "{0}".format(PREFIX))

@@ -25,11 +25,12 @@ except:
 
 def guild_create(ctx, guilde):
 	ID = ctx.author.id
-	dict = {}
+	with open('gems/guildes.json', 'r') as fp:
+		dict = json.load(fp)
 	for key in dict.keys():
 		if key == guilde:
 			return "Ce nom de guilde existe déja."
-	dict[guilde] = {"Chef": ctx.author.id, "Admins": [], "Membres": [], "Coffre": 0}
+	dict[guilde] = {"Chef": ctx.author.id, "Admins": [], "Membres": [], "Coffre": 0, "Demandes": []}
 	with open('gems/guildes.json', 'w') as fp:
 		json.dump(dict, fp, indent=4)
 	DB.updateField(ID, "guilde", guilde, GF.dbGems)
@@ -150,11 +151,26 @@ def guild_add(ctx, guilde, name):
 		for one in MemberList:
 			if IDmember == one:
 				return "{} fait déjà partie de la guilde {}".format(name, guild)
-		MemberList.append(IDmember)
-		DB.updateField(IDmember, "guilde", guilde, GF.dbGems)
-		with open('gems/guildes.json', 'w') as fp:
-			json.dump(dict, fp, indent=4)
-		return "{} a été ajouté au membres de la guilde `{}`".format(name, guilde)
+		checkD = False
+		for one in value["Demandes"]:
+			if one == IDmember:
+				checkD = True
+		if checkD:
+			temp = []
+			for one in value["Demandes"]:
+				if one != IDmember:
+					temp.append(one)
+			value["Demandes"] = temp
+			if DB.valueAt(IDmember, "guilde", GF.dbGems) == "":
+				MemberList.append(IDmember)
+				DB.updateField(IDmember, "guilde", guilde, GF.dbGems)
+			else:
+				return "{} est membre d'une autre guilde!".format(ctx.guild.get_member(IDmember).name)
+			with open('gems/guildes.json', 'w') as fp:
+				json.dump(dict, fp, indent=4)
+			return "**{}** a été ajouté au membres de la guilde `{}`".format(name, guilde)
+		else:
+			return "**{}** n'as pas demander à rejoindre ta guilde".format(ctx.guild.get_member(IDmember).name)
 	else:
 		return "Tu n'as pas les droits d'ajouter un membre à ta guilde!"
 
@@ -312,7 +328,7 @@ class GemsGuild(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def guildremove(self, ctx):
+	async def guildsupp(self, ctx):
 		"""Suppression de ta Guilde"""
 		ID = ctx.author.id
 		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
@@ -324,8 +340,39 @@ class GemsGuild(commands.Cog):
 	async def guildadd(self, ctx, name):
 		"""**[pseudo]** | Ajout d'un Membre à la Guilde"""
 		ID = ctx.author.id
+		check = False
 		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
 		msg = guild_add(ctx, guilde, name)
+		await ctx.channel.send(msg)
+
+
+	@commands.command(pass_context=True)
+	async def guildrequest(self, ctx, guilde):
+		"""**[nom de la guilde]** | Ajout d'un Membre à la Guilde"""
+		ID = ctx.author.id
+		if DB.valueAt(ID, "guilde", GF.dbGems) == "":
+			try:
+				with open('gems/guildes.json', 'r') as fp:
+					dict = json.load(fp)
+				value = dict[guilde]
+			except:
+				msg = "Cette guilde n'existe pas!"
+			for one in value["Demandes"]:
+				if ID == one:
+					await ctx.channel.send("Tu as déjà fais une demande pour rejoindre cette guilde.")
+					return False
+			value["Demandes"].append(ID)
+			with open('gems/guildes.json', 'w') as fp:
+				json.dump(dict, fp, indent=4)
+			user = ctx.guild.get_member(value["Chef"])
+			mp = "**{2}** demande à rejoindre ta guilde `{0}`.\nPour accepter sa requête, utilise la commande `!guildadd `{1}".format(guilde, ctx.author.mention, ctx.author.name)
+			try:
+				await user.send(mp)
+				msg = "Requête envoyer au chef de guilde"
+			except:
+				await ctx.channel.send("{0} | {1}".format(user.mention, mp))
+		else:
+			msg = "Tu fais déjà partie d'une guilde"
 		await ctx.channel.send(msg)
 
 

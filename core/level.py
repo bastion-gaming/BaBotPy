@@ -201,21 +201,24 @@ class Level(commands.Cog):
 					if lvl == lvlmax:
 						msg += "Actuel **{0}** \nLevel max atteint".format(lvl)
 					emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
+				
+				try:
+					# Gems
+					msg = "{0} :gem:`gems`\n".format(DB.valueAt(ID,"gems", GF.dbGems))
+					if DB.valueAt(ID,"spinelles", GF.dbGems) > 0:
+						msg+= "{0} <:spinelle:{1}>`spinelles`".format(DB.valueAt(ID,"spinelles", GF.dbGems), GF.get_idmoji("spinelle"))
+					emb.add_field(name="**_Balance_**", value=msg, inline=False)
 
-				# Gems
-				msg = "{0} :gem:`gems`\n".format(DB.valueAt(ID,"gems", GF.dbGems))
-				if DB.valueAt(ID,"spinelles", GF.dbGems) > 0:
-					msg+= "{0} <:spinelle:{1}>`spinelles`".format(DB.valueAt(ID,"spinelles", GF.dbGems), GF.get_idmoji("spinelle"))
-				emb.add_field(name="**_Balance_**", value=msg, inline=False)
-
-				# Statistique de l'utilisateur pour le module Gems
-				statgems = DB.valueAt(ID, "StatGems", GF.dbGems)
-				msg = ""
-				for x in statgems:
-					if statgems[x] > 0:
-						msg += "\n• {}: `x{}`".format(str(x), statgems[x])
-				if msg != "":
-					emb.add_field(name="**_Statistiques de Get Gems_**", value=msg, inline=False)
+					# Statistique de l'utilisateur pour le module Gems
+					statgems = DB.valueAt(ID, "StatGems", GF.dbGems)
+					msg = ""
+					for x in statgems:
+						if statgems[x] > 0:
+							msg += "\n• {}: `x{}`".format(str(x), statgems[x])
+					if msg != "":
+						emb.add_field(name="**_Statistiques de Get Gems_**", value=msg, inline=False)
+				except:
+					msg = ""
 
 				if ctx.guild.id == wel.idBASTION:
 					# Parrainage
