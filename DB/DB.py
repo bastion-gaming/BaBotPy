@@ -361,6 +361,7 @@ def addGems(ID, nbGems):
 	 	print("DB >> Il n'y a pas assez sur ce compte !")
 	return str(new_value)
 
+#-------------------------------------------------------------------------------
 def daily_data(ID, nameElem):
 	"""Retourne les info sur le Daily de ID"""
 	DailyData = valueAt(ID, "daily", GF.dbGems)
