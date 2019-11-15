@@ -196,8 +196,14 @@ def newPlayer(ID, nameDB = None):
 
 	with open("DB/Templates/{}Template.json".format(nameDB), "r") as f:
 		t = json.load(f)
+	if nameDB == "gems":
+		with open("DB/Templates/dailyTemplate.json", "r") as f:
+			t2 = json.load(f)
+		with open("DB/Templates/bankTemplate.json", "r") as f:
+			t3 = json.load(f)
 
 	PlayerID = get_PlayerID(ID)
+	cursor = conn.cursor()
 	if PlayerID == "Error 404":
 		#Init du joueur avec les champs de base
 		script = "INSERT INTO IDs (ID_discord) VALUES ({})".format(ID)
@@ -219,6 +225,35 @@ def newPlayer(ID, nameDB = None):
 		script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
 		cursor.execute(script)
 		conn.commit()
+		if nameDB == "gems":
+			PlayerID = get_PlayerID(ID, "gems")
+			data = "idgems"
+			values = PlayerID
+			for x in t2:
+				if x != "id{}".format(nameDB) and x != "ID":
+					data += ", {}".format(x)
+					if "INTEGER" in t2[x]:
+						values += ", 0"
+					else:
+						values += ", NULL"
+			script = "INSERT INTO daily ({0}) VALUES ({1})".format(data, values)
+			print(script)
+			cursor.execute(script)
+			conn.commit()
+
+			data = "idgems"
+			values = PlayerID
+			for x in t3:
+				if x != "id{}".format(nameDB) and x != "ID":
+					data += ", {}".format(x)
+					if "INTEGER" in t3[x]:
+						values += ", 0"
+					else:
+						values += ", NULL"
+			script = "INSERT INTO bank ({0}) VALUES ({1})".format(data, values)
+			print(script)
+			cursor.execute(script)
+			conn.commit()
 		return ("Le joueur a été ajouté !")
 	else:
 		script = "SELECT * FROM {0} WHERE ID = {1}".format(nameDB, PlayerID)
@@ -240,6 +275,35 @@ def newPlayer(ID, nameDB = None):
 			script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
 			cursor.execute(script)
 			conn.commit()
+			if nameDB == "gems":
+				PlayerID = get_PlayerID(ID, "gems")
+				data = "idgems"
+				values = PlayerID
+				for x in t2:
+					if x != "id{}".format(nameDB) and x != "ID":
+						data += ", {}".format(x)
+						if "INTEGER" in t2[x]:
+							values += ", 0"
+						else:
+							values += ", NULL"
+				script = "INSERT INTO daily ({0}) VALUES ({1})".format(data, values)
+				print(script)
+				cursor.execute(script)
+				conn.commit()
+
+				data = "idgems"
+				values = PlayerID
+				for x in t3:
+					if x != "id{}".format(nameDB) and x != "ID":
+						data += ", {}".format(x)
+						if "INTEGER" in t3[x]:
+							values += ", 0"
+						else:
+							values += ", NULL"
+				script = "INSERT INTO bank ({0}) VALUES ({1})".format(data, values)
+				print(script)
+				cursor.execute(script)
+				conn.commit()
 			return ("Le joueur a été ajouté !")
 		else:
 			return ("Le joueur existe déjà")
@@ -345,6 +409,8 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 						script = "UPDATE {0} SET Time = '{2}', Plat = '{5}'  WHERE idFour = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname, fieldValue[1])
 					else:
 						return "202"
+			# print("==== updateField ====")
+			# print(script)
 			cursor.execute(script)
 			conn.commit()
 			return "200"
@@ -368,7 +434,11 @@ def valueAt(ID, fieldName, nameDB = None):
 
 		if not nameDB in nameDBexcept:
 			try:
-				script = "SELECT {1} FROM {0} WHERE ID = '{2}'".format(nameDB, fieldName, PlayerID)
+				if nameDB == "bastion" or nameDB == "gems":
+					script = "SELECT {1} FROM {0} WHERE ID = '{2}'".format(nameDB, fieldName, PlayerID)
+				else:
+					PlayerID2 = get_PlayerID(ID, "gems")
+					script = "SELECT {1} FROM {0} WHERE idgems = '{2}'".format(nameDB, fieldName, PlayerID2)
 				cursor.execute(script)
 				value = cursor.fetchall()
 			except:
@@ -400,9 +470,15 @@ def valueAt(ID, fieldName, nameDB = None):
 						elif x == "capability":
 							fieldName2 = "idCapability"
 							fieldName3 = "idCapability"
+						elif x == "filleuls":
+							fieldName2 = "ID_filleul"
+							fieldName3 = "ID_filleul"
 						link = "gems"
 			try:
-				script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
+				if fieldName == "all":
+					script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = '{4}'".format(nameDB, fieldName, fieldName2, link, PlayerID)
+				else:
+					script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
 				cursor.execute(script)
 				value = cursor.fetchall()
 			except:
@@ -471,7 +547,7 @@ def add(ID, nameElem, nbElem, nameDB = None):
 	if nameDB == None:
 		nameDB = "bastion"
 
-	if nameDB == "bastion" or nameDB == "filleul" or nameDB == "bastion_com_time":
+	if nameDB == "bastion" or nameDB == "filleuls" or nameDB == "bastion_com_time":
 		PlayerID = get_PlayerID(ID, "bastion")
 	else:
 		PlayerID = get_PlayerID(ID, "gems")
@@ -513,12 +589,12 @@ def add(ID, nameElem, nbElem, nameDB = None):
 				values = "'{2}', '{0}', '{1}'".format(nameElem, nbElem, PlayerID)
 			elif nameDB == "hothouse" or nameDB == "cooking":
 				values = "'{3}', '{0}', '{1}', '{2}'".format(nameElem, nbElem[0], nbElem[1], PlayerID)
-			elif nameDB == "capability":
+			elif nameDB == "capability" or nameDB == "filleuls":
 				values = "{1}, {0}".format(nameElem, PlayerID)
 		try:
 			script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
-			print("==========")
-			print(script)
+			# print("==== add ====")
+			# print(script)
 			cursor.execute(script)
 			conn.commit()
 			return 101

@@ -10,7 +10,7 @@ import json
 import os
 from core import welcome as wel
 
-from DB import SQLite as sql
+from DB import SQLite as sql, ConversionDB as cdb
 
 client = discord.Client()
 VERSION = open("core/version.txt").read().replace("\n","")
@@ -170,6 +170,9 @@ class UtilsSecret(commands.Cog):
 			elif arg1 == "taille":
 				msg = sql.taille(arg2)
 				await ctx.channel.send(msg)
+			elif arg1 == "conv":
+				cdb.conversionBastion(arg2)
+				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 			else:
 				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 		else:
