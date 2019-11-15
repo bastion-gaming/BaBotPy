@@ -5,9 +5,6 @@ import json
 
 
 def conversionBastion(nameDB):
-	t = DB.taille()
-	i = 1
-
 	if nameDB == "bastion":
 		linkDB = "DB/bastionDB"
 		with open("DB/fieldTemplate.json", "r") as f:
@@ -20,6 +17,8 @@ def conversionBastion(nameDB):
 			templateHH = json.load(f)
 	else:
 		return 404
+	t = DB.taille(linkDB)
+	i = 1
 	while i < t:
 		check = False
 		ID = DB.userID(i)
@@ -66,7 +65,7 @@ def conversionBastion(nameDB):
 					for y in v:
 						y2 = y.split("_")
 						y3 = int(y2[1])
-						z = [v[y], "seed"]
+						z = [v[y], ""]
 						if y3 <= 200:
 							sql.add(ID, y3, z, "hothouse")
 				elif x == "cooked":
