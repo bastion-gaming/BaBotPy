@@ -29,7 +29,7 @@ def conversionBastion(nameDB):
 					print("Le joueur existe deja!")
 					check = True
 			elif not check:
-				print("==== {} ====".format(x))
+				# print("==== {} ====".format(x))
 				if x == "com_time":
 					v = DB.valueAt(ID, x, linkDB)
 					for y in v:
