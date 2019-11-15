@@ -231,6 +231,7 @@ def newPlayer(ID, nameDB = None):
 		cursor.execute(script)
 		conn.commit()
 		if nameDB == "gems":
+			#Init du joueur dans Get Gems avec les champs de base
 			PlayerID = get_PlayerID(ID, "gems")
 			data = "idgems"
 			values = PlayerID
@@ -261,6 +262,7 @@ def newPlayer(ID, nameDB = None):
 			conn.commit()
 		return ("Le joueur a été ajouté !")
 	else:
+		#Init du joueur dans Bastion avec les champs de base
 		script = "SELECT * FROM {0} WHERE ID = {1}".format(nameDB, PlayerID)
 		cursor.execute(script)
 		z = cursor.fetchall()
@@ -280,35 +282,6 @@ def newPlayer(ID, nameDB = None):
 			script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
 			cursor.execute(script)
 			conn.commit()
-			if nameDB == "gems":
-				PlayerID = get_PlayerID(ID, "gems")
-				data = "idgems"
-				values = PlayerID
-				for x in t2:
-					if x != "id{}".format(nameDB) and x != "ID":
-						data += ", {}".format(x)
-						if "INTEGER" in t2[x]:
-							values += ", 0"
-						else:
-							values += ", NULL"
-				script = "INSERT INTO daily ({0}) VALUES ({1})".format(data, values)
-				# print(script)
-				cursor.execute(script)
-				conn.commit()
-
-				data = "idgems"
-				values = PlayerID
-				for x in t3:
-					if x != "id{}".format(nameDB) and x != "ID":
-						data += ", {}".format(x)
-						if "INTEGER" in t3[x]:
-							values += ", 0"
-						else:
-							values += ", NULL"
-				script = "INSERT INTO bank ({0}) VALUES ({1})".format(data, values)
-				# print(script)
-				cursor.execute(script)
-				conn.commit()
 			return ("Le joueur a été ajouté !")
 		else:
 			return ("Le joueur existe déjà")
@@ -372,7 +345,10 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 	fieldName: string du nom du champ à changer
 	fieldValue: string qui va remplacer l'ancienne valeur
 	"""
-	PlayerID = get_PlayerID(ID)
+	if nameDB == "bastion" or nameDB == "filleuls" or nameDB == "bastion_com_time":
+		PlayerID = get_PlayerID(ID, "bastion")
+	else:
+		PlayerID = get_PlayerID(ID, "gems")
 	if PlayerID != "Error 404":
 		if nameDB == None:
 			nameDB = "bastion"
@@ -385,7 +361,7 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 			return "201"
 		else:
 			if nameDB == "bastion" or nameDB == "gems":
-				IDname = "ID"
+				IDname = "id{}".format(nameDB)
 				script = "UPDATE {0} SET {1} = '{2}' WHERE {4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
 			else:
 				cursor.execute("PRAGMA table_info({0});".format(nameDB))
@@ -395,7 +371,7 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 						IDname = "bastion"
 					elif x[1] == "idgems":
 						IDname = "gems"
-				script = "SELECT id{0} FROM {0} WHERE ID = '{1}'".format(IDname, PlayerID)
+				script = "SELECT id{0} FROM {0} WHERE id{0} = '{1}'".format(nameDB, PlayerID)
 				cursor.execute(script)
 				for z in cursor.fetchall():
 					PlayerID = z[0]
@@ -434,7 +410,10 @@ def valueAt(ID, fieldName, nameDB = None):
 	"""
 	if nameDB == None:
 		nameDB = "bastion"
-	PlayerID = get_PlayerID(ID)
+	if nameDB == "bastion" or nameDB == "filleuls" or nameDB == "bastion_com_time":
+		PlayerID = get_PlayerID(ID, "bastion")
+	else:
+		PlayerID = get_PlayerID(ID, "gems")
 	if PlayerID != "Error 404":
 		cursor = conn.cursor()
 
@@ -442,7 +421,7 @@ def valueAt(ID, fieldName, nameDB = None):
 			try:
 				# Récupération de la valeur de fieldName dans la table nameDB
 				if nameDB == "bastion" or nameDB == "gems":
-					script = "SELECT {1} FROM {0} WHERE ID = '{2}'".format(nameDB, fieldName, PlayerID)
+					script = "SELECT {1} FROM {0} WHERE id{0} = '{2}'".format(nameDB, fieldName, PlayerID)
 				else:
 					PlayerID2 = get_PlayerID(ID, "gems")
 					script = "SELECT {1} FROM {0} WHERE idgems = '{2}'".format(nameDB, fieldName, PlayerID2)
@@ -489,11 +468,11 @@ def valueAt(ID, fieldName, nameDB = None):
 			try:
 				# Paramètre spécial (à mettre a la place du fieldName) permettant de retourner toutes les valeurs liées à un PlayerID dans la table nameDB
 				if fieldName == "all":
-					script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE id{3} = '{4}'".format(nameDB, fieldName, fieldName3, link, PlayerID)
+					script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) WHERE id{3} = '{4}'".format(nameDB, fieldName, fieldName3, link, PlayerID)
 					print(script)
 				else:
 					# Récupération de la valeur de fieldName dans la table nameDB
-					script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE id{3} = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
+					script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) WHERE id{3} = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
 					print(script)
 				cursor.execute(script)
 				value = cursor.fetchall()
@@ -557,6 +536,30 @@ def spam(ID, couldown, nameElem, nameDB = None):
 
 	# on récupère la date de la dernière commande
 	return(time < t.time()-couldown)
+
+#-------------------------------------------------------------------------------
+def updateComTime(ID, nameElem, nameDB = None):
+	"""
+	Met à jour la date du dernier appel à une fonction
+	"""
+	if nameDB == None:
+		nameDB = "bastion_com_time"
+	elif nameDB == "bastion" or nameDB == "gems":
+		nameDB = "{}_com_time".format(nameDB)
+	else:
+		return "Error 404"
+
+	old_value = valueAt(ID, nameElem, nameDB)
+	try:
+		if old_value != 0:
+			new_value = t.time()
+			updateField(ID, nameElem, new_value, nameDB)
+			return 100
+		else:
+			add(ID, nameElem, t.time(), nameDB)
+			return 101
+	except:
+		return 404
 
 #-------------------------------------------------------------------------------
 def add(ID, nameElem, nbElem, nameDB = None):
