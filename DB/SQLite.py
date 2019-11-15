@@ -37,6 +37,7 @@ def init():
 		with open("DB/Templates/{}Template.json".format(one), "r") as f:
 			t = json.load(f)
 		cursor = conn.cursor()
+		# Création du script
 		script = "CREATE TABLE IF NOT EXISTS {}(".format(one)
 		i = 0
 		PRIMARYKEY = ""
@@ -171,6 +172,9 @@ def checkField():
 #===============================================================================
 
 def get_PlayerID(ID, nameDB = None):
+	"""
+	Permet de convertir un ID discord en PlayerID interne à la base de données
+	"""
 	if nameDB == None:
 		script = "SELECT * FROM IDs WHERE ID_discord = {}".format(ID)
 	else:
@@ -179,6 +183,7 @@ def get_PlayerID(ID, nameDB = None):
 	cursor.execute(script)
 	rows = cursor.fetchall()
 	if rows == []:
+		# Le PlayerID n'as pas été trouvé. Envoie un code Erreur
 		return "Error 404"
 	else:
 		for x in rows:
@@ -237,7 +242,7 @@ def newPlayer(ID, nameDB = None):
 					else:
 						values += ", NULL"
 			script = "INSERT INTO daily ({0}) VALUES ({1})".format(data, values)
-			print(script)
+			# print(script)
 			cursor.execute(script)
 			conn.commit()
 
@@ -251,7 +256,7 @@ def newPlayer(ID, nameDB = None):
 					else:
 						values += ", NULL"
 			script = "INSERT INTO bank ({0}) VALUES ({1})".format(data, values)
-			print(script)
+			# print(script)
 			cursor.execute(script)
 			conn.commit()
 		return ("Le joueur a été ajouté !")
@@ -287,7 +292,7 @@ def newPlayer(ID, nameDB = None):
 						else:
 							values += ", NULL"
 				script = "INSERT INTO daily ({0}) VALUES ({1})".format(data, values)
-				print(script)
+				# print(script)
 				cursor.execute(script)
 				conn.commit()
 
@@ -301,7 +306,7 @@ def newPlayer(ID, nameDB = None):
 						else:
 							values += ", NULL"
 				script = "INSERT INTO bank ({0}) VALUES ({1})".format(data, values)
-				print(script)
+				# print(script)
 				cursor.execute(script)
 				conn.commit()
 			return ("Le joueur a été ajouté !")
@@ -313,7 +318,7 @@ def newPlayer(ID, nameDB = None):
 # Compteur
 #===============================================================================
 def countTotalMsg():
-	#Init a
+	# Donne le nombre total de messages écrit sur le discord de Bastion
 	script = "SELECT SUM(nbmsg) FROM bastion"
 	cursor = conn.cursor()
 	cursor.execute(script)
@@ -322,7 +327,7 @@ def countTotalMsg():
 
 #-------------------------------------------------------------------------------
 def countTotalGems():
-	#Init a
+	# Donne le nombre total de gems (somme des gems de tout les utilisateurs de Get Gems)
 	script = "SELECT SUM(gems) FROM gems"
 	cursor = conn.cursor()
 	cursor.execute(script)
@@ -331,7 +336,7 @@ def countTotalGems():
 
 #-------------------------------------------------------------------------------
 def countTotalSpinelles():
-	#Init a
+	# Donne le nombre total de spinelles (somme des spinelles de tout les utilisateurs de Get Gems)
 	script = "SELECT SUM(spinelles) FROM gems"
 	cursor = conn.cursor()
 	cursor.execute(script)
@@ -355,7 +360,8 @@ def taille(nameDB = None):
 #===============================================================================
 # Fonctions
 #===============================================================================
-nameDBexcept = ["inventory", "durability", "hothouse", "cooking", "trophy", "statgems", "filleul", "bastion_com_time", "gems_com_time", "capability"]
+# Liste des tables dont l'enregistrement des données est spécifique
+nameDBexcept = ["inventory", "durability", "hothouse", "cooking", "trophy", "statgems", "filleuls", "bastion_com_time", "gems_com_time", "capability"]
 
 #-------------------------------------------------------------------------------
 def updateField(ID, fieldName, fieldValue, nameDB = None):
@@ -372,6 +378,7 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 			nameDB = "bastion"
 		cursor = conn.cursor()
 
+		# Vérification que la donnée fieldName existe dans la table nameDB
 		one = valueAt(ID, fieldName, nameDB)
 		if one == 0:
 			# print("DB >> Le champ n'existe pas")
@@ -427,13 +434,13 @@ def valueAt(ID, fieldName, nameDB = None):
 	"""
 	if nameDB == None:
 		nameDB = "bastion"
-
 	PlayerID = get_PlayerID(ID)
 	if PlayerID != "Error 404":
 		cursor = conn.cursor()
 
 		if not nameDB in nameDBexcept:
 			try:
+				# Récupération de la valeur de fieldName dans la table nameDB
 				if nameDB == "bastion" or nameDB == "gems":
 					script = "SELECT {1} FROM {0} WHERE ID = '{2}'".format(nameDB, fieldName, PlayerID)
 				else:
@@ -442,6 +449,7 @@ def valueAt(ID, fieldName, nameDB = None):
 				cursor.execute(script)
 				value = cursor.fetchall()
 			except:
+				# Aucune données n'a été trouvé
 				value = []
 		else:
 			fieldName2 = ""
@@ -451,10 +459,17 @@ def valueAt(ID, fieldName, nameDB = None):
 						fieldName2 = "Commande"
 						fieldName3 = "Com_time, Commande"
 						link = "bastion"
+					elif x == "filleuls":
+						fieldName2 = "ID_filleul"
+						fieldName3 = "ID_filleul"
+						link = "bastion"
 					else:
 						if x == "inventory" or x == "durability":
 							fieldName2 = "Item"
-							fieldName3 = "Stock, Item"
+							if x == "inventory":
+								fieldName3 = "Stock, Item"
+							else:
+								fieldName3 = "Durability, Item"
 						elif x == "trophy" or x == "statgems":
 							fieldName2 = "Nom"
 							fieldName3 = "Stock, Nom"
@@ -470,24 +485,29 @@ def valueAt(ID, fieldName, nameDB = None):
 						elif x == "capability":
 							fieldName2 = "idCapability"
 							fieldName3 = "idCapability"
-						elif x == "filleuls":
-							fieldName2 = "ID_filleul"
-							fieldName3 = "ID_filleul"
 						link = "gems"
 			try:
+				# Paramètre spécial (à mettre a la place du fieldName) permettant de retourner toutes les valeurs liées à un PlayerID dans la table nameDB
 				if fieldName == "all":
-					script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = '{4}'".format(nameDB, fieldName, fieldName2, link, PlayerID)
+					script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE id{3} = '{4}'".format(nameDB, fieldName, fieldName3, link, PlayerID)
+					print(script)
 				else:
-					script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE ID = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
+					# Récupération de la valeur de fieldName dans la table nameDB
+					script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) JOIN IDs USING(ID) WHERE id{3} = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
+					print(script)
 				cursor.execute(script)
 				value = cursor.fetchall()
 			except:
+				# Aucune données n'a été trouvé
 				value = []
 
 		if value == []:
 			return 0
 		else:
-			return value[0]
+			if fieldName == "all":
+				return value
+			else:
+				return value[0]
 
 #-------------------------------------------------------------------------------
 def addGems(ID, nb):
