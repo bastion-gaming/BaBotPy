@@ -170,7 +170,13 @@ class GemsBase(commands.Cog):
 		ID = ctx.author.id
 		jour = dt.date.today()
 		if DB.spam(ID,GF.couldown_4s, "buy", GF.dbGems):
-			if item == "capability" or item == "capabilities" or item == "capacité" or item == "capacités" or item == "aptitude" or item == "aptitudes":
+			if int(nb) < 0:
+				DB.addGems(ID, -100)
+				lvl.addxp(ID, -10, GF.dbGems)
+				msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
+				await ctx.channel.send(msg)
+				return "anticheat"
+			elif item == "capability" or item == "capabilities" or item == "capacité" or item == "capacités" or item == "aptitude" or item == "aptitudes":
 				IDCap = nb
 				CapList = DB.valueAt(ID, "capability", GF.dbGems)
 				check = False
