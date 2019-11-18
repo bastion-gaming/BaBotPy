@@ -2,7 +2,7 @@ import discord
 import random as r
 import time as t
 import datetime as dt
-from DB import TinyDB as DB
+from DB import TinyDB as DB, SQLite as sql
 from gems import gemsFonctions as GF
 from core import level as lvl
 from discord.ext import commands
