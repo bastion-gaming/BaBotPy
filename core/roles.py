@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
 from core import gestion as ge
-from DB import TinyDB as DB
+from DB import TinyDB as DB, SQLite as sql
 from core import welcome as wel
 
 rolelist = ["BastioBot","Ingénieur du Bastion","Responsable Twitch","PEGI master","Pollmaster","Groovy","Bastion RPG","Ambassadeur","Candidat Ambassade","Twitcher","Joueurs"]
@@ -75,7 +75,7 @@ class Roles(commands.Cog):
 		if ge.permission(ctx, ge.Joueurs)==True:
 			if nom != None:
 				if ge.permission(ctx, ge.Inquisiteur)==True:
-					ID = DB.nom_ID(nom)
+					ID = sql.nom_ID(nom)
 					nom = ctx.guild.get_member(ID)
 					nom = nom.name
 				else:
@@ -110,7 +110,7 @@ class Roles(commands.Cog):
 		if ge.permission(ctx, ge.Joueurs)==True:
 			if nom != None:
 				if ge.permission(ctx, ge.Inquisiteur)==True:
-					ID = DB.nom_ID(nom)
+					ID = sql.nom_ID(nom)
 					nom = ctx.guild.get_member(ID)
 					nom = nom.name
 				else:

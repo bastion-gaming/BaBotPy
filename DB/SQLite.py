@@ -399,7 +399,7 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 					elif x == "hothouse":
 						script = "UPDATE {0} SET Time = '{2}', Plante = '{5}' WHERE idPlantation = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
 					elif x == "cooking":
-						script = "UPDATE {0} SET Time = '{2}', Plat = '{5}'  WHERE idFour = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname, fieldValue[1])
+						script = "UPDATE {0} SET Time = '{2}', Plat = '{5}'  WHERE idFour = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
 					else:
 						return "202"
 			# print("==== updateField ====")
@@ -541,7 +541,9 @@ def spam(ID, couldown, nameElem, nameDB = None):
 		nameDB = "{}_com_time".format(nameDB)
 
 	ComTime = valueAt(ID, nameElem, nameDB)
-	if ComTime[0] != 0:
+	if ComTime == 0:
+		return True
+	elif ComTime[0] != 0:
 		time = ComTime[0]
 	else:
 		return True
@@ -589,10 +591,13 @@ def add(ID, nameElem, nbElem, nameDB = None):
 
 	old_value = valueAt(ID, nameElem, nameDB)
 	if old_value != 0:
-		new_value = int(old_value[0]) + int(nbElem)
-		if new_value < 0:
-			new_value = 0
-		updateField(ID, nameElem, new_value, nameDB)
+		if nameDB == "hothouse" or nameDB == "cooking":
+			updateField(ID, nameElem, nbElem, nameDB)
+		else:
+			new_value = int(old_value[0]) + int(nbElem)
+			if new_value < 0:
+				new_value = 0
+			updateField(ID, nameElem, new_value, nameDB)
 		return 100
 	else:
 		cursor = conn.cursor()

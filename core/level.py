@@ -90,7 +90,8 @@ def addxp(ID, nb, nameDB = None):
 	if nameDB == None:
 		nameDB = "bastion"
 	balXP = sql.valueAt(ID, "xp", nameDB)
-	balXP = int(balXP[0])
+	if balXP != 0:
+		balXP = int(balXP[0])
 	ns = balXP + int(nb)
 	if ns <= 0:
 		ns = 0

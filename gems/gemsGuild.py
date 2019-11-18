@@ -33,7 +33,7 @@ def guild_create(ctx, guilde):
 	dict[guilde] = {"Chef": ctx.author.id, "Admins": [], "Membres": [], "Coffre": 0, "Demandes": []}
 	with open('gems/guildes.json', 'w') as fp:
 		json.dump(dict, fp, indent=4)
-	DB.updateField(ID, "guilde", guilde, GF.dbGems)
+	sql.updateField(ID, "guilde", guilde, "gems")
 	return "Guilde `{}` créé".format(guilde)
 
 def guild_remove(ctx, guilde):
@@ -48,9 +48,9 @@ def guild_remove(ctx, guilde):
 		        check = True
 		if check:
 			del dict[guilde]
-		DB.updateField(ID, "guilde", "", GF.dbGems)
+		sql.updateField(ID, "guilde", "", "gems")
 		for one in value["Membres"]:
-			DB.updateField(one, "guilde", "", GF.dbGems)
+			sql.updateField(one, "guilde", "", "gems")
 		with open('gems/guildes.json', 'w') as fp:
 		    json.dump(dict, fp)
 		return "Guilde `{}` supprimée".format(guilde)
@@ -60,7 +60,7 @@ def guild_remove(ctx, guilde):
 
 def guild_promotion(ctx, guilde, name):
 	ID = ctx.author.id
-	IDmember = DB.nom_ID(name)
+	IDmember = sql.nom_ID(name)
 	member = ctx.guild.get_member(IDmember)
 	with open('gems/guildes.json', 'r') as fp:
 		dict = json.load(fp)
@@ -96,7 +96,7 @@ def guild_promotion(ctx, guilde, name):
 
 def guild_destitution(ctx, guilde, name):
 	ID = ctx.author.id
-	IDmember = DB.nom_ID(name)
+	IDmember = sql.nom_ID(name)
 	member = ctx.guild.get_member(IDmember)
 	with open('gems/guildes.json', 'r') as fp:
 		dict = json.load(fp)
@@ -135,7 +135,7 @@ def guild_destitution(ctx, guilde, name):
 
 def guild_add(ctx, guilde, name):
 	ID = ctx.author.id
-	IDmember = DB.nom_ID(name)
+	IDmember = sql.nom_ID(name)
 	if ID == IDmember:
 		return "Tu fait déjà partie de cette guilde!"
 
@@ -161,9 +161,9 @@ def guild_add(ctx, guilde, name):
 				if one != IDmember:
 					temp.append(one)
 			value["Demandes"] = temp
-			if DB.valueAt(IDmember, "guilde", GF.dbGems) == "":
+			if sql.valueAt(IDmember, "guilde", "gems")[0] == "":
 				MemberList.append(IDmember)
-				DB.updateField(IDmember, "guilde", guilde, GF.dbGems)
+				sql.updateField(IDmember, "guilde", guilde, "gems")
 			else:
 				return "{} est membre d'une autre guilde!".format(ctx.guild.get_member(IDmember).name)
 			with open('gems/guildes.json', 'w') as fp:
@@ -176,7 +176,7 @@ def guild_add(ctx, guilde, name):
 
 def guild_leave(ctx, guilde, name):
 	ID = ctx.author.id
-	IDmember = DB.nom_ID(name)
+	IDmember = sql.nom_ID(name)
 	with open('gems/guildes.json', 'r') as fp:
 		dict = json.load(fp)
 	value = dict[guilde]
@@ -224,7 +224,7 @@ def guild_leave(ctx, guilde, name):
 			if check:
 				with open('gems/guildes.json', 'w') as fp:
 					json.dump(dict, fp, indent=4)
-				DB.updateField(IDmember, "guilde", "", GF.dbGems)
+				sql.updateField(IDmember, "guilde", "", "gems")
 				return "{} a été supprimée de la guilde `{}`".format(name, guilde)
 			else:
 				return "Erreur! Impossible de supprimer {} de la guilde".format(name)
@@ -261,7 +261,7 @@ class GemsGuild(commands.Cog):
 		"""**_{nom de la guilde}_** | Affiche les informations d'une Guilde"""
 		ID = ctx.author.id
 		if guilde == None:
-			guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+			guilde = sql.valueAt(ID, "guilde", "gems")[0]
 		with open('gems/guildes.json', 'r') as fp:
 			dict = json.load(fp)
 		value = dict[guilde]
@@ -272,19 +272,25 @@ class GemsGuild(commands.Cog):
 			desc = "{0} <:spinelle:{1}>`spinelles`".format(value["Coffre"], GF.get_idmoji("spinelle"))
 			msg.add_field(name="**_Coffre de guilde_**", value=desc, inline=False)
 
-			msg.add_field(name="**_Chef de guilde_**", value="{}".format(ctx.guild.get_member(value["Chef"]).name), inline=False)
+			msg.add_field(name="**_Chef de guilde_**", value="<@{}>".format(value["Chef"]), inline=False)
 
 			if value["Admins"] != []:
 				desc = ""
 				for one in value["Admins"]:
-					desc += "• {}\n".format(ctx.guild.get_member(one).name)
+					desc += "• <@{}>\n".format(one)
 				msg.add_field(name="**_Admins_**", value=desc, inline=False)
 
 			if value["Membres"] != []:
 				desc = ""
 				for one in value["Membres"]:
-					desc += "• {}\n".format(ctx.guild.get_member(one).name)
-				msg.add_field(name="**_Membres_**", value=desc, inline=False)
+					check = False
+					for two in value["Admins"]:
+						if one == two:
+							check = True
+					if not check:
+						desc += "• <@{}>\n".format(one)
+				if desc != "":
+					msg.add_field(name="**_Membres_**", value=desc, inline=False)
 
 			await ctx.channel.send(embed = msg)
 		else:
@@ -296,7 +302,7 @@ class GemsGuild(commands.Cog):
 	async def guildpromote(self, ctx, name):
 		"""**[pseudo]** | Promouvoir un Membre de la guilde au grade Admin"""
 		ID = ctx.author.id
-		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+		guilde = sql.valueAt(ID, "guilde", "gems")[0]
 		if guilde != "":
 			msg = guild_promotion(ctx, guilde, name)
 		else:
@@ -308,7 +314,7 @@ class GemsGuild(commands.Cog):
 	async def guilddisplacement(self, ctx, name):
 		"""**[pseudo]** | Destituer un Admin de la guilde au grade de Membre"""
 		ID = ctx.author.id
-		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+		guilde = sql.valueAt(ID, "guilde", "gems")[0]
 		if guilde != "":
 			msg = guild_destitution(ctx, guilde, name)
 		else:
@@ -320,7 +326,7 @@ class GemsGuild(commands.Cog):
 	async def guildcreate(self, ctx, guilde):
 		"""**[nom de la guilde]** | Création d'une Guilde"""
 		ID = ctx.author.id
-		if DB.valueAt(ID, "guilde", GF.dbGems) == "":
+		if sql.valueAt(ID, "guilde", "gems")[0] == "":
 			msg = guild_create(ctx, guilde)
 		else:
 			msg = "Tu fais déjà partie d'une guilde!"
@@ -331,7 +337,7 @@ class GemsGuild(commands.Cog):
 	async def guildsupp(self, ctx):
 		"""Suppression de ta Guilde"""
 		ID = ctx.author.id
-		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+		guilde = sql.valueAt(ID, "guilde", "gems")[0]
 		msg = guild_remove(ctx, guilde)
 		await ctx.channel.send(msg)
 
@@ -341,7 +347,7 @@ class GemsGuild(commands.Cog):
 		"""**[pseudo]** | Ajout d'un Membre à la Guilde"""
 		ID = ctx.author.id
 		check = False
-		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+		guilde = sql.valueAt(ID, "guilde", "gems")[0]
 		msg = guild_add(ctx, guilde, name)
 		await ctx.channel.send(msg)
 
@@ -350,7 +356,7 @@ class GemsGuild(commands.Cog):
 	async def guildrequest(self, ctx, guilde):
 		"""**[nom de la guilde]** | Ajout d'un Membre à la Guilde"""
 		ID = ctx.author.id
-		if DB.valueAt(ID, "guilde", GF.dbGems) == "":
+		if sql.valueAt(ID, "guilde", "gems")[0] == "":
 			try:
 				with open('gems/guildes.json', 'r') as fp:
 					dict = json.load(fp)
@@ -382,7 +388,7 @@ class GemsGuild(commands.Cog):
 		ID = ctx.author.id
 		if name == None:
 			name = ctx.author.mention
-		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+		guilde = sql.valueAt(ID, "guilde", "gems")[0]
 		msg = guild_leave(ctx, guilde, name)
 		await ctx.channel.send(msg)
 
@@ -391,14 +397,14 @@ class GemsGuild(commands.Cog):
 	async def guildchest(self, ctx, fct = None, n = 1):
 		"""**[add/bal] [nombre de spinelles]** | Gestion du coffre de Guilde"""
 		ID = ctx.author.id
-		guilde = DB.valueAt(ID, "guilde", GF.dbGems)
+		guilde = sql.valueAt(ID, "guilde", "gems")[0]
 		with open('gems/guildes.json', 'r') as fp:
 			dict = json.load(fp)
 		value = dict[guilde]
 		if fct == "add":
 			if n == 0:
 				return "STOP"
-			soldeS = DB.valueAt(ID, "spinelles", GF.dbGems)
+			soldeS = sql.valueAt(ID, "spinelles", "gems")
 			if soldeS >= n:
 				if n < 0:
 					if value["Coffre"] < -n:
@@ -406,7 +412,7 @@ class GemsGuild(commands.Cog):
 						await ctx.channel.send(msg)
 						return "STOP"
 				newSoldeS = soldeS - n
-				DB.updateField(ID, "spinelles", newSoldeS, GF.dbGems)
+				sql.updateField(ID, "spinelles", newSoldeS, "gems")
 				value["Coffre"] = value["Coffre"] + n
 				with open('gems/guildes.json', 'w') as fp:
 					json.dump(dict, fp, indent=4)
@@ -428,8 +434,8 @@ class GemsGuild(commands.Cog):
 		"""**[Nombre de spinelle]** | Convertisseur :gem:`gems` :left_right_arrow: `spinelles` (250 000 pour 1)"""
 		n = 250000
 		ID = ctx.author.id
-		balGems = DB.valueAt(ID, "gems", GF.dbGems)
-		balspinelle = DB.valueAt(ID, "spinelles", GF.dbGems)
+		balGems = sql.valueAt(ID, "gems", "gems")
+		balspinelle = sql.valueAt(ID, "spinelles", "gems")
 		max = balGems // n
 		if nb != None:
 			try:
@@ -452,8 +458,8 @@ class GemsGuild(commands.Cog):
 			if max == 0:
 				await ctx.channel.send("Tu n'as pas assez de :gem:`gems`")
 				return False
-		DB.updateField(ID, "spinelles", balspinelle+max, GF.dbGems)
-		DB.updateField(ID, "gems", balGems-(max*n), GF.dbGems)
+		sql.updateField(ID, "spinelles", balspinelle+max, "gems")
+		sql.updateField(ID, "gems", balGems-(max*n), "gems")
 		await ctx.channel.send("Convertion terminée! Ton solde a été crédité de {0} <:spinelle:{1}>`spinelles`".format(max, GF.get_idmoji("spinelle")))
 
 

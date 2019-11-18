@@ -1,6 +1,6 @@
 import random as r
 import datetime as dt
-from DB import TinyDB as DB
+from DB import TinyDB as DB, SQLite as sql
 from tinydb import TinyDB
 from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
@@ -39,24 +39,26 @@ def countDeco():
 async def countMsg(message):
 	ID = message.author.id
 	try:
-		DB.updateField(ID, "nbMsg", int(DB.valueAt(ID, "nbMsg")+1))
-		lvl.addxp(ID, 1)
+		value = sql.valueAt(ID, "nbmsg", "bastion")
+		if value != 0:
+			value = value[0]
+		sql.updateField(ID, "nbmsg", value+1, "bastion")
+		lvl.addxp(ID, 1, "bastion")
 	except:
 		return print("Le joueur n'existe pas.")
-	# return print(DB.valueAt(ID, "nbMsg"))
 
 def hourCount():
 	d=dt.datetime.now().hour
 	if fileExist() == False:
 		t = {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6": 0,"7": 0,"8": 0,"9": 0,"10": 0,"11": 0,"12": 0,"13": 0,"14": 0,"15": 0,"16": 0,"17": 0,"18": 0,"19": 0,"20": 0,"21": 0,"22": 0,"23":0}
-		t[str(d)]=int(DB.countTotalMsg())
+		t[str(d)]=int(sql.countTotalMsg())
 		with open(file, 'w') as f:
 			f.write(json.dumps(t, indent=4))
 		return d
 	else:
 		with open(file, "r") as f:
 			t = json.load(f)
-			t[str(d)]=int(DB.countTotalMsg())
+			t[str(d)]=int(sql.countTotalMsg())
 		with open(file, 'w') as f:
 			f.write(json.dumps(t, indent=4))
 	print("time.json modifié")
@@ -83,7 +85,7 @@ class Stats(commands.Cog):
 		"""
 		if self.hour != dt.datetime.now().hour :
 			if self.day != dt.date.today():
-				msg_total = DB.countTotalMsg()
+				msg_total = sql.countTotalMsg()
 				local_heure={}
 				f = open(file, "r")
 				connexion = json.load(open(co, "r"))
@@ -124,7 +126,7 @@ class Stats(commands.Cog):
 		Permet de savoir combien i y'a eu de message posté depuis que le bot est sur le serveur
 		"""
 		if ctx.guild.id == wel.idBASTION:
-			msg = "Depuis que je suis sur ce serveur il y'a eu : "+str(DB.countTotalMsg())+" messages."
+			msg = "Depuis que je suis sur ce serveur il y'a eu : "+str(sql.countTotalMsg())+" messages."
 			await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
@@ -142,8 +144,10 @@ class Stats(commands.Cog):
 				ID = -1
 
 			if (ID != -1):
-				res = DB.valueAt(ID, "nbMsg")
-				msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(DB.valueAt(ID, "arrival")[:10])
+				res = sql.valueAt(ID, "nbmsg", "bastion")
+				if res == 0:
+					res = res[0]
+				msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(sql.valueAt(ID, "arrival", "bastion")[:10])
 			await ctx.channel.send(msg)
 		else:
 			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
@@ -263,11 +267,17 @@ class Stats(commands.Cog):
 			if os.path.isfile("cache/piegraph.png"):
 				os.remove('cache/piegraph.png')
 				print('removed old graphe file')
-			total = DB.countTotalMsg()
+			total = sql.countTotalMsg()
 			a = []
-			db = TinyDB("DB/{}.json".format(DB.DB_NOM))
-			for item in db:
-				a.append([item["nbMsg"],item["ID"]])
+			taille = sql.taille("bastion")
+			i = 1
+			while i <= taille:
+				IDi = sql.userID(i, "bastion")
+				nbMsg = sql.valueAt(IDi, "nbmsg", "bastion")
+				if nbMsg != 0:
+					nbMsg = nbMsg[0]
+				a.append([nbMsg,IDi])
+				i += 1
 			a.sort(reverse = True)
 			richest = a[:r]
 			sous_total = 0
@@ -308,11 +318,17 @@ class Stats(commands.Cog):
 		if os.path.isfile("cache/piegraph.png"):
 			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
-		total = DB.countTotalGems(GF.dbGems)
+		total = sql.countTotalGems()
 		a = []
-		db = TinyDB("gems/dbGems.json")
-		for item in db:
-			a.append([item["gems"],item["ID"]])
+		taille = sql.taille("gems")
+		i = 1
+		while i <= taille:
+			IDi = sql.userID(i, "gems")
+			nbMsg = sql.valueAt(IDi, "gems", "gems")
+			if nbMsg != 0:
+				nbMsg = nbMsg[0]
+			a.append([nbMsg,IDi])
+			i += 1
 		a.sort(reverse = True)
 		richest = a[:r]
 		sous_total = 0

@@ -6,7 +6,7 @@ import discord
 import datetime as dt
 from datetime import datetime
 
-from DB import TinyDB as DB
+from DB import TinyDB as DB, SQLite as sql
 from gems import gemsFonctions as GF
 from core import roles, stats as stat
 
@@ -25,18 +25,19 @@ async def memberjoin(member, channel):
 		channel_regle = member.guild.get_channel(417454223224209408)
 		time = dt.time()
 		ID = member.id
-		if DB.newPlayer(ID) == "Le joueur a été ajouté !":
+		if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			DB.updateField(ID, "arrival", str(t.datetime.now()))
-			cap = DB.valueAt(ID, "capability", GF.dbGems)
+			cap = sql.valueAt(ID, "all", "capability")
 			for c in GF.objetCapability:
 				if c.defaut == True:
-					cap.append(c.nom)
-			DB.updateField(ID, "capability", cap, GF.dbGems)
+					check = False
+					for x in cap:
+						if c.ID == x[0]:
+							check = True
+					if not check:
+						sql.add(ID, c.ID, 1, "capability")
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
 		else:
-			if DB.valueAt(ID, "arrival") == "0":
-				DB.updateField(ID, "arrival", str(dt.datetime.now()))
 			await roles.addrole(member, "Nouveau")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
 		stat.countCo()
@@ -48,22 +49,17 @@ async def memberjoin(member, channel):
 
 def memberremove(member):
 	ID = member.id
-	gems = DB.valueAt(ID, "gems", GF.dbGems)
+	gems = sql.valueAt(ID, "gems", "gems")
+	BotGems = sql.valueAt(idBaBot, "gems", "gems")
+	idBot = idBaBot
+	pourcentage = 0.3
 	if member.guild.id == idBASTION:
 		stat.countDeco()
-		BotGems = DB.valueAt(idBaBot, "gems", GF.dbGems)
-		idBot = idBaBot
-		pourcentage = 0.3
-		DB.updateField(ID, "lvl", 0)
-		DB.updateField(ID, "xp", 0)
-	else:
-		BotGems = DB.valueAt(idGetGems, "gems", GF.dbGems)
-		idBot = idGetGems
-		pourcentage = 0.02
+		sql.updateField(ID, "lvl", 0, "bastion")
+		sql.updateField(ID, "xp", 0, "bastion")
 	transfert = gems * pourcentage
-	DB.updateField(idBot, "gems", BotGems + int(transfert), GF.dbGems)
-	DB.updateField(ID, "gems", gems - int(transfert), GF.dbGems)
-	# DB.removePlayer(ID)
+	sql.addGems(idBot, "gems", int(transfert))
+	sql.updateField(ID, "gems", gems - int(transfert), "gems")
 	print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
 
 

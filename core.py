@@ -87,8 +87,6 @@ async def on_ready():
 	elif "type" in flag:
 		print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
 	print('------\n')
-	GF.checkDB_Gems()
-	GF.checkDB_GemsHH()
 	GF.checkDB_Session()
 
 ####################### Commande help.py #######################
@@ -135,8 +133,11 @@ async def on_voice_state_update(member,before,after):
 		elif (after.channel == None or  after.channel.id == afkchannel) and  member.name in on_vocal :
 			time_on_vocal = round((time.time() - on_vocal[member.name])/60)
 			print('{} as passé {} minutes en vocal !'.format(member.name,time_on_vocal))
-			XP = int(DB.valueAt(member.id, "xp")) + int(time_on_vocal)
-			DB.updateField(member.id, "xp", XP)
+			balXP = sql.valueAt(ID, "xp", "bastion")
+			if balXP != 0:
+				balXP = int(balXP[0])
+			XP = balXP + int(time_on_vocal)
+			sql.updateField(member.id, "xp", XP, "bastion")
 			await lvl.checklevelvocal(member)
 			del on_vocal[member.name]
 
@@ -218,7 +219,7 @@ async def looped_task():
 			GF.setglobalguild(client.get_guild(wel.idServBot))
 			GF.loadItem(True)
 		else:
-			if DB.spam(wel.idBaBot,GF.couldown_12h, "bourse", "DB/bastionDB"):
+			if sql.spam(wel.idBaBot,GF.couldown_12h, "bourse", "gems"):
 				GF.loadItem()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()
