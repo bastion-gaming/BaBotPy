@@ -12,12 +12,6 @@ from discord.utils import get
 from operator import itemgetter
 
 # Variables DBs
-dbGems = "gems/dbGems"
-dbGemsTemplate = "gems/TemplateGems"
-
-dbHH = "gems/dbHotHouse"
-dbHHTemplate = "gems/TemplateHotHouse"
-
 dbSession = "gems/dbSession"
 dbSessionTemplate = "gems/TemplateSession"
 
@@ -464,34 +458,6 @@ def testTrophy(ID, nameElem):
 			if int(gems) >= nbGemsNecessaire:
 				sql.add(ID, c.nom, 1, "trophy")
 				return 1
-
-
-#integrer a la fonction add
-def addDurabilite(ID, nameElem, nbElem):
-	"""Modifie la durabilité de l'outil nameElem"""
-	durabilite = DB.valueAt(ID, "durabilite", dbGems)
-	if DB.nbElements(ID, "inventory", nameElem, dbGems) > 0 and nbElem < 0:
-		durabilite[nameElem] += nbElem
-	elif nbElem >= 0:
-		durabilite[nameElem] = nbElem
-	else:
-		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
-		return 404
-	DB.updateField(ID, "durabilite", durabilite, dbGems)
-
-
-#integrer a la fonction valueAt
-def get_durabilite(ID, nameElem):
-	"""Permet de savoir la durabilite de nameElem dans l'inventaire de ID"""
-	nb = DB.nbElements(ID, "inventory", nameElem, dbGems)
-	if nb > 0:
-		durabilite = DB.valueAt(ID, "durabilite", dbGems)
-		for c in objetOutil:
-			if nameElem == c.nom:
-				if nameElem in durabilite:
-					return durabilite[nameElem]
-	else:
-		return -1
 
 
 
