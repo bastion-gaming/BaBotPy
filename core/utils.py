@@ -127,23 +127,15 @@ class UtilsSecret(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def test(self, ctx, ID = None, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
-		if ctx.guild.id == wel.idBASTION:
-			if ID == "check":
-				if ge.permission(ctx,ge.admin):
-					while DB.membercheck(ctx):
-						i = 0
-					await ctx.channel.send("Suppression terminer, la DB est à jour")
-				else:
-					ctx.channel.send("Tu n'as pas les droits pour exécuter cette commande")
-			else:
-				await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
+		if ID == "check":
+			await ctx.channel.send("Check!")
 		else:
-			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+			await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
 
 
 	@commands.command(pass_context=True)
 	async def sql(self, ctx, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
-		if ge.permission(ctx,ge.admin) or ctx.author.id == 129362501187010561:
+		if ge.permission(ctx,ge.admin):# or ctx.author.id == 129362501187010561:
 			if arg1 == "init":
 				sql.init()
 			elif arg1 == "begin":

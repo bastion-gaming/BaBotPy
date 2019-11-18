@@ -24,13 +24,17 @@ def permission(ctx,grade,author = None):
 		roles = ctx.author.roles
 		for role in roles :
 			if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
-				return(True)
+				return True
+			if (grade == 0 or grade == 1) and role.permissions.administrator:
+				return True
 	else :
 		roles = author.roles
 		for role in roles :
 			if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
-				return(True)
-	return(False)
+				return True
+			if (grade == 0 or grade == 1) and role.permissions.administrator:
+				return True
+	return False
 
 class Gestion(commands.Cog):
 
