@@ -153,7 +153,7 @@ async def on_message(message):
 		else:
 			await client.process_commands(message)
 	else:
-		await lvl.checklevel(message, GF.dbGems)
+		await lvl.checklevel(message, "gems")
 		await client.process_commands(message)
 
 ####################### Commande stats.py #######################

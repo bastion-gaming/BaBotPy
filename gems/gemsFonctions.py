@@ -31,26 +31,6 @@ def checkDB_Session():
 	flag = DB.checkField(dbSession, dbSessionTemplate)
 	print('------')
 
-
-def checkDB_Gems():
-	"""Check l'existance et la conformité de la DB Session """
-	if DB.dbExist(dbGems):
-		print("La DB Gems existe, poursuite sans soucis.")
-	else :
-		print("La DB Gems n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField(dbGems, dbGemsTemplate)
-	print('------')
-
-def checkDB_GemsHH():
-	"""Check l'existance et la conformité de la DB Session """
-	if DB.dbExist(dbHH):
-		print("La DB Gems HotHouse existe, poursuite sans soucis.")
-	else :
-		print("La DB Gems HotHouse n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField(dbHH, dbHHTemplate)
-	print('------')
-
-
 # Array
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
 ,"Tu as volé une pomme qui vaut"
@@ -91,7 +71,7 @@ def itemBourse(item, type):
 		pnow = temp["achat"]
 
 	#Verification pour l'actualisation de la bourse
-	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
+	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
 		# Gestion des exceptions
 		for y in GI.exception:
 			if item == y:
@@ -316,9 +296,8 @@ def loadItem(F = None):
 	,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:{}>`ruby` trouvé".format(get_idmoji("ruby")))
 	,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
-	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
-		DB.updateComTime(wel.idBaBot, "bourse", "DB/bastionDB")
-		DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
+	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
+		sql.updateComTime(wel.idBaBot, "bourse", "gems")
 # <<< def loadItem(F = None):
 
 ##############################################
@@ -446,19 +425,19 @@ def get_default_price(nameElem, type = None):
 
 def testInvTaille(ID):
 	"""Verifie si l'inventaire est plein """
-	inv = DB.valueAt(ID, "inventory", dbGems)
+	inv = sql.valueAt(ID, "all", "inventory")
 	tailletot = 0
 	for c in objetOutil:
 		for x in inv:
-			if c.nom == str(x):
-				if inv[x] > 0:
-					tailletot += c.poids*int(inv[x])
+			if c.nom == str(x[1]):
+				if int(x[0]) > 0:
+					tailletot += c.poids*int(int(x[0]))
 
 	for c in objetItem:
 		for x in inv:
-			if c.nom == str(x):
-				if inv[x] > 0:
-					tailletot += c.poids*int(inv[x])
+			if c.nom == str(x[1]):
+				if int(x[0]) > 0:
+					tailletot += c.poids*int(int(x[0]))
 
 	if tailletot <= invMax:
 		return True
@@ -472,21 +451,22 @@ def testTrophy(ID, nameElem):
 	Permet de modifier le nombre de nameElem pour ID dans les trophées
 	Pour en retirer mettez nbElemn en négatif
 	"""
-	trophy = DB.valueAt(ID, "trophy", dbGems)
-	gems = DB.valueAt(ID, "gems", dbGems)
+	trophy = sql.valueAt(ID, "all", "trophy")
+	gems = sql.valueAt(ID, "gems", "gems")
+	gems = gems[0]
 	i = 2
 	for c in objetTrophy:
 		nbGemsNecessaire = c.mingem
 		if c.type == "unique":
-			if nameElem in trophy:
-				i = 0
-			elif gems >= nbGemsNecessaire:
-				i = 1
-				DB.add(ID, "trophy", c.nom, 1, dbGems)
-	return i
+			for x in trophy:
+				if nameElem == x[1]:
+					return 0
+			if int(gems) >= nbGemsNecessaire:
+				sql.add(ID, c.nom, 1, "trophy")
+				return 1
 
 
-
+#integrer a la fonction add
 def addDurabilite(ID, nameElem, nbElem):
 	"""Modifie la durabilité de l'outil nameElem"""
 	durabilite = DB.valueAt(ID, "durabilite", dbGems)
@@ -500,7 +480,7 @@ def addDurabilite(ID, nameElem, nbElem):
 	DB.updateField(ID, "durabilite", durabilite, dbGems)
 
 
-
+#integrer a la fonction valueAt
 def get_durabilite(ID, nameElem):
 	"""Permet de savoir la durabilite de nameElem dans l'inventaire de ID"""
 	nb = DB.nbElements(ID, "inventory", nameElem, dbGems)
@@ -547,11 +527,13 @@ def taxe(solde, pourcentage):
 
 
 def startKit(ID):
-	if DB.valueAt(ID, "gems", dbGems) == 0:
-		DB.add(ID, "inventory", "pickaxe", 1, dbGems)
-		DB.add(ID, "inventory", "fishingrod", 1, dbGems)
-		addDurabilite(ID, "pickaxe", 20)
-		addDurabilite(ID, "fishingrod", 20)
+	gems = sql.valueAt(ID, "gems", "gems")
+	gems = gems[0]
+	if gems == 0:
+		sql.add(ID, "pickaxe", 1, "inventory")
+		sql.add(ID, "fishingrod", 1, "inventory")
+		sql.add(ID, "pickaxe", 20, "durability")
+		sql.add(ID, "fishingrod", 20, "durability")
 
 
 
@@ -569,9 +551,7 @@ def gen_code():
 
 def checkCapability(ID):
 	"""Vérifie si ID à les aptitudes par defaut dans la poche Aptitudes de son inventaire """
-	supercheck = False
-	cap = DB.valueAt(ID, "capability", dbGems)
-	captemp = cap
+	cap = sql.valueAt(ID, "all", "capability")
 	for c in objetCapability:
 		if c.defaut == True:
 			check = False
@@ -579,13 +559,10 @@ def checkCapability(ID):
 				if "{}".format(c.ID) == str(x):
 					check = True
 			if check == False:
-				captemp.append("{}".format(c.ID))
-				supercheck = True
+				sql.add(ID, c.ID, 1, "capability")
 			else:
 				check == False
-	if supercheck:
-		DB.updateField(ID, "capability", captemp, dbGems)
-	return DB.valueAt(ID, "capability", dbGems)
+	return sql.valueAt(ID, "all", "capability")
 
 
 

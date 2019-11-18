@@ -74,7 +74,7 @@ class Utils(commands.Cog):
 		Affiche le nombre d'utilisateurs inscrit dans la base de données
 		"""
 		if ctx.guild.id == wel.idBASTION:
-			l=DB.taille()
+			l=sql.taille("IDs")
 			if l == 0:
 				await ctx.channel.send("Aucun utilisaeur enregistrer dans la base de donées")
 			else:

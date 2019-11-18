@@ -190,6 +190,16 @@ def get_PlayerID(ID, nameDB = None):
 			return "{}".format(x[0])
 
 #-------------------------------------------------------------------------------
+def userID(i, nameDB = None):
+	if nameDB == None:
+		nameDB = "bastion"
+	script = "SELECT ID_discord FROM {1} JOIN IDs USING(ID) WHERE id{1} = '{0}'".format(i, nameDB)
+	cursor = conn.cursor()
+	cursor.execute(script)
+	ID = cursor.fetchall()
+	return ID[0][0]
+
+#-------------------------------------------------------------------------------
 def newPlayer(ID, nameDB = None):
 	"""
 	Permet d'ajouter un nouveau joueur à la base de donnée en fonction de son ID.
@@ -371,7 +381,7 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 						IDname = "bastion"
 					elif x[1] == "idgems":
 						IDname = "gems"
-				script = "SELECT id{0} FROM {0} WHERE id{0} = '{1}'".format(nameDB, PlayerID)
+				script = "SELECT id{2} FROM {0} WHERE id{2} = '{1}'".format(nameDB, PlayerID, IDname)
 				cursor.execute(script)
 				for z in cursor.fetchall():
 					PlayerID = z[0]
@@ -379,17 +389,17 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 			for x in nameDBexcept:
 				if x == nameDB:
 					if x == "inventory":
-						script = "UPDATE {0} SET Stock = '{2}' WHERE Item = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+						script = "UPDATE {0} SET Stock = '{2}' WHERE Item = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID)
 					elif x == "trophy" or x == "statgems":
-						script = "UPDATE {0} SET Stock = '{2}' WHERE Nom = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+						script = "UPDATE {0} SET Stock = '{2}' WHERE Nom = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
 					elif x == "durability":
-						script = "UPDATE {0} SET Durability = '{2}' WHERE Item = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
+						script = "UPDATE {0} SET Durability = '{2}' WHERE Item = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
 					elif x == "gems_com_time" or x == "bastion_com_time":
 						script = "UPDATE {0} SET Com_time = '{2}' WHERE Commande = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname)
 					elif x == "hothouse":
-						script = "UPDATE {0} SET Time = '{2}', Plante = '{5}' WHERE idPlantation = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
+						script = "UPDATE {0} SET Time = '{2}', Plante = '{5}' WHERE idPlantation = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
 					elif x == "cooking":
-						script = "UPDATE {0} SET Time = '{2}', Plat = '{5}'  WHERE idFour = '{1}' and id{4} = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname, fieldValue[1])
+						script = "UPDATE {0} SET Time = '{2}', Plat = '{5}'  WHERE idFour = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue, PlayerID, IDname, fieldValue[1])
 					else:
 						return "202"
 			# print("==== updateField ====")
@@ -469,11 +479,11 @@ def valueAt(ID, fieldName, nameDB = None):
 				# Paramètre spécial (à mettre a la place du fieldName) permettant de retourner toutes les valeurs liées à un PlayerID dans la table nameDB
 				if fieldName == "all":
 					script = "SELECT {2} FROM {0} JOIN {3} USING(id{3}) WHERE id{3} = '{4}'".format(nameDB, fieldName, fieldName3, link, PlayerID)
-					print(script)
+					# print(script)
 				else:
 					# Récupération de la valeur de fieldName dans la table nameDB
 					script = "SELECT {5} FROM {0} JOIN {3} USING(id{3}) WHERE id{3} = '{4}' and {2} = '{1}'".format(nameDB, fieldName, fieldName2, link, PlayerID, fieldName3)
-					print(script)
+					# print(script)
 				cursor.execute(script)
 				value = cursor.fetchall()
 			except:
@@ -527,15 +537,17 @@ def spam(ID, couldown, nameElem, nameDB = None):
 	"""Antispam """
 	if nameDB == None:
 		nameDB = "bastion_com_time"
+	elif nameDB == "bastion" or nameDB == "gems":
+		nameDB = "{}_com_time".format(nameDB)
 
-	ComTime = valueAt(ID, "Com_time", nameDB)
-	if ComTime != 0:
+	ComTime = valueAt(ID, nameElem, nameDB)
+	if ComTime[0] != 0:
 		time = ComTime[0]
 	else:
 		return True
 
 	# on récupère la date de la dernière commande
-	return(time < t.time()-couldown)
+	return(float(time) < t.time()-couldown)
 
 #-------------------------------------------------------------------------------
 def updateComTime(ID, nameElem, nameDB = None):
@@ -551,7 +563,7 @@ def updateComTime(ID, nameElem, nameDB = None):
 
 	old_value = valueAt(ID, nameElem, nameDB)
 	try:
-		if old_value != 0:
+		if old_value[0] != 0:
 			new_value = t.time()
 			updateField(ID, nameElem, new_value, nameDB)
 			return 100
