@@ -171,14 +171,16 @@ def loadItem(F = None):
 	,Item("spruce", itemBourse("spruce", "vente"), itemBourse("spruce", "achat"), 70, "plante")
 	,Item("palm", itemBourse("palm", "vente"), itemBourse("palm", "achat"), 60, "plante")
 	,Item("wheat", itemBourse("wheat", "vente"), itemBourse("wheat", "achat"), 3, "plante")
-	,Item("cookie", itemBourse("cookie", "vente"), itemBourse("cookie", "achat"), 1, "consommable")
-	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "consommable")
-	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "consommable")
+	,Item("cookie", itemBourse("cookie", "vente"), itemBourse("cookie", "achat"), 1, "emoji")
+	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "emoji")
+	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "emoji")
+	,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "consommable")
+	,Item("cacao", itemBourse("cacao", "vente"), itemBourse("cacao", "achat"), 1, "plante")
+	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "emoji")
+	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "emoji")
 	,Item("backpack", itemBourse("backpack", "vente"), itemBourse("backpack", "achat"), -200, "special")
 	,Item("hyperpack", itemBourse("hyperpack", "vente"), itemBourse("hyperpack", "achat"), -20000, "spinelle")
-	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")
-	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "consommable")
-	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "consommable")]
+	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")]
 
 	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 10):
 		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
@@ -190,15 +192,11 @@ def loadItem(F = None):
 		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
 
 	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
-		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
-		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
-		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
+		objetItem += [Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")]
 	elif jour.year >= 2020:
 		for one in GI.ObjetChristmas:
 			ObjetEventEnd.append(one)
-		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
-		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
-		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
+		objetItem += [Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")]
 
 	#========== Outils ==========
 	class Outil:

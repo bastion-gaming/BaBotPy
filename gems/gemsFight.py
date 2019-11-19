@@ -124,7 +124,7 @@ async def checklife(ctx, IDSession):
 			winID = DB.valueAt(IDSession, "owner", GF.dbSession)
 			for userID in member:
 				lostID = userID
-		desc = "Duel terminée\nLa victoire revient à {0}\nTu gagne les {1} :gem:`gems` de ton adversaire".format(win.name, mise)
+		desc = "Duel terminée\nLa victoire revient à {0}\nTu gagnes les {1} :gem:`gems` de ton adversaire".format(win.name, mise)
 		msg = discord.Embed(title = "Defis {}".format(DB.valueAt(IDSession, "ID", GF.dbSession)),color= 13752280, description = desc)
 		await ctx.channel.send(embed = msg)
 		sql.addGems(winID, mise)

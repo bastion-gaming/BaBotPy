@@ -36,15 +36,17 @@ class GemsEvent(commands.Cog):
 		gain = ""
 		i = 1
 		maxcooking = 10
+		itemHalloween = "pumpkin"
+		gainHallowwen = "pumpkinpie"
+		itemChristmas = "chocolate"
+		gainChristmas = "cupcake"
 
 		if sql.spam(ID,GF.couldown_4s, "cooking", "gems"):
 			if (jour.month == 10 and jour.day >= 26) or (jour.month == 11 and jour.day <= 10):
 				item = "pumpkin"
-				gain = "pumpkinpie"
 				nbitem = 12
 			elif (jour.month == 10 and jour.day >= 14) or (jour.month == 1 and jour.day <= 5):
 				item = "chocolate"
-				gain = "cupcake"
 				nbitem = 8
 			if fct == None:
 				sql.updateComTime(ID, "cooking", "gems")
@@ -87,9 +89,13 @@ class GemsEvent(commands.Cog):
 								data = []
 								data.append(0)
 								data.append("")
+								if valueItem == itemHalloween:
+									gain = gainHallowwen
+								elif valueItem == itemChristmas:
+									gain = gainChristmas
 								sql.add(ID, gain, nbgain, "inventory")
 								sql.updateField(ID, i, data, "cooking")
-								desc = "Ton plat à fini de cuire, en le sortant du four tu gagne {2} <:gem_{0}:{1}>`{0}`".format(gain, GF.get_idmoji(gain), nbgain)
+								desc = "Ton plat à fini de cuire, en le sortant du four tu gagnes {2} <:gem_{0}:{1}>`{0}`".format(gain, GF.get_idmoji(gain), nbgain)
 								lvl.addxp(ID, 1, "gems")
 								if i > 1:
 									nbfurnace = sql.valueAt(ID, "furnace", "inventory")

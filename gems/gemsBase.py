@@ -221,7 +221,7 @@ class GemsBase(commands.Cog):
 								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 							if check:
 								sql.add(ID, c.nom, nb, "inventory")
-								if c.type != "consommable":
+								if c.type != "emoji":
 									msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								else:
 									msg = "Tu viens d'acquérir {0} :{1}:`{1}` !".format(nb, c.nom)
@@ -328,7 +328,7 @@ class GemsBase(commands.Cog):
 						else:
 							slq.addSpinelles(ID, gain)
 							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
-						if c.type != "consommable":
+						if c.type != "emoji":
 							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} {4} !".format(nb, item, gain, GF.get_idmoji(c.nom), argent)
 							# Message de réussite dans la console
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name, nb, item))
@@ -339,7 +339,7 @@ class GemsBase(commands.Cog):
 							if c.nom == "grapes" and int (nb/10) >= 1:
 								nbwine = int(nb/10)
 								sql.add(ID, "wine_glass", nbwine, "inventory")
-								msg+="\nTu gagne {}:wine_glass:`verre de vin`".format(nbwine)
+								msg+="\nTu gagnes {}:wine_glass:`verre de vin`".format(nbwine)
 
 				for c in GF.objetOutil:
 					if item == c.nom:
@@ -386,7 +386,6 @@ class GemsBase(commands.Cog):
 				msg_invItemsMinerai = ""
 				msg_invItemsPoisson = ""
 				msg_invItemsPlante = ""
-				msg_invItemsConsommable = ""
 				msg_invItemsEvent = ""
 				msg_invBox = ""
 				inv = sql.valueAt(ID, "all", "inventory")
@@ -411,12 +410,15 @@ class GemsBase(commands.Cog):
 									msg_invItemsPoisson += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
 								elif c.type == "plante":
 									msg_invItemsPlante += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
-								elif c.type == "consommable":
-									msg_invItemsConsommable += ":{0}:`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]))
+								elif c.type == "emoji":
+									msg_invItems += ":{0}:`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]))
 								elif c.type == "halloween" or c.type == "christmas" or c.type == "event":
 									msg_invItemsEvent += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
 								else:
-									msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
+									if c.type == "emoji":
+										msg_invItems += ":{0}:`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]))
+									else:
+										msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
 
 								tailletot += c.poids*int(x[0])
 
@@ -440,8 +442,6 @@ class GemsBase(commands.Cog):
 					msg.add_field(name="Poissons", value=msg_invItemsPoisson, inline=False)
 				if msg_invItemsPlante != "":
 					msg.add_field(name="Plantes", value=msg_invItemsPlante, inline=False)
-				if msg_invItemsConsommable != "":
-					msg.add_field(name="Consommables", value=msg_invItemsConsommable, inline=False)
 				if msg_invItemsEvent != "":
 					msg.add_field(name="Événement", value=msg_invItemsEvent, inline=False)
 				if msg_invBox != "":
@@ -510,7 +510,6 @@ class GemsBase(commands.Cog):
 				d_marketItemsMinerai = ""
 				d_marketItemsPoisson = ""
 				d_marketItemsPlante = ""
-				d_marketItemsConsommable = ""
 				d_marketItemsEvent = ""
 				d_marketBox = ""
 				d_marketSpinelle = ""
@@ -594,15 +593,6 @@ class GemsBase(commands.Cog):
 							d_marketItemsPlante += "_{}%_ ".format(pourcentageA)
 						d_marketItemsPlante += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
-					elif c.type == "consommable":
-						d_marketItemsConsommable += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
-						if pourcentageV != 0:
-							d_marketItemsConsommable += "_{}%_ ".format(pourcentageV)
-						d_marketItemsConsommable += "| Achat **{}** ".format(c.achat)
-						if pourcentageA != 0:
-							d_marketItemsConsommable += "_{}%_ ".format(pourcentageA)
-						d_marketItemsConsommable += "| Poids **{}**\n".format(c.poids)
-					#=======================================================================================
 					elif c.type == "halloween" or c.type == "christmas" or c.type == "event":
 						d_marketItemsEvent += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
 						if pourcentageV != 0:
@@ -619,13 +609,22 @@ class GemsBase(commands.Cog):
 						d_marketItems += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
 					else:
-						d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
-						if pourcentageV != 0:
-							d_marketItems += "_{}%_ ".format(pourcentageV)
-						d_marketItems += "| Achat **{}** ".format(c.achat)
-						if pourcentageA != 0:
-							d_marketItems += "_{}%_ ".format(pourcentageA)
-						d_marketItems += "| Poids **{}**\n".format(c.poids)
+						if c.type == "emoji":
+							d_marketItems += ":{0}:`{0}`: Vente **{1}** ".format(c.nom,c.vente)
+							if pourcentageV != 0:
+								d_marketItems += "_{}%_ ".format(pourcentageV)
+							d_marketItems += "| Achat **{}** ".format(c.achat)
+							if pourcentageA != 0:
+								d_marketItems += "_{}%_ ".format(pourcentageA)
+							d_marketItems += "| Poids **{}**\n".format(c.poids)
+						else:
+							d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+							if pourcentageV != 0:
+								d_marketItems += "_{}%_ ".format(pourcentageV)
+							d_marketItems += "| Achat **{}** ".format(c.achat)
+							if pourcentageA != 0:
+								d_marketItems += "_{}%_ ".format(pourcentageA)
+							d_marketItems += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
 					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem:`gems` \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
@@ -637,7 +636,6 @@ class GemsBase(commands.Cog):
 				msg.add_field(name="Minerais", value=d_marketItemsMinerai, inline=False)
 				msg.add_field(name="Poissons", value=d_marketItemsPoisson, inline=False)
 				msg.add_field(name="Plantes", value=d_marketItemsPlante, inline=False)
-				msg.add_field(name="Consommables", value=d_marketItemsConsommable, inline=False)
 				if d_marketItemsEvent != "":
 					msg.add_field(name="Événement", value=d_marketItemsEvent, inline=False)
 				if d_marketSpinelle != "":

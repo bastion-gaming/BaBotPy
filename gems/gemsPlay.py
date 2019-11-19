@@ -625,8 +625,8 @@ class GemsPlay(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def hothouse(self, ctx, fct = None, arg = None):
-		"""**[fonction]** {_n° plantation_} | Plantons compagnons !!"""
+	async def hothouse(self, ctx, fct = None, arg = None, arg2 = None):
+		"""**[harvest / plant]** {_n° plantation / item à planter_} | Plantons compagnons !!"""
 		ID = ctx.author.id
 		maxplanting = 200
 		if sql.spam(ID,GF.couldown_4s, "hothouse", "gems"):
@@ -637,7 +637,7 @@ class GemsPlay(commands.Cog):
 				nbplanting = 1
 			if nbplanting >= maxplanting:
 				nbplanting = maxplanting
-			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantations.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
+			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici tes plantations.\nUtilisé `hothouse plant seed` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
 			sql.updateComTime(ID, "hothouse", "gems")
@@ -658,47 +658,64 @@ class GemsPlay(commands.Cog):
 					else:
 						valueTime = 0
 						valueItem = ""
+					if valueItem == "cacao":
+						couldown = GF.couldown_4h
+					else:
+						couldown = GF.couldown_6h
 					if valueTime == 0:
-						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
+						desc = "Cette plantation est vide!"
 					else:
 						PlantingTime = float(valueTime)
 						InstantTime = t.time()
-						time = PlantingTime - (InstantTime-GF.couldown_6h)
+						time = PlantingTime - (InstantTime-couldown)
 						if time <= 0:
-							D10 = r.randint(1,10)
+							De = r.randint(1,15)
 							jour = dt.date.today()
-							if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
-								if D10 <= 3:
-									nbHarvest = 1
-									item = "oak"
-								elif D10 > 3 and D10 <= 7:
-									nbHarvest = r.randint(1, 2)
-									item = "pumpkin"
-								elif D10 > 7 and D10 <= 9:
-									nbHarvest = r.randint(3, 5)
-									item = "pumpkin"
-								elif D10 >= 10:
-									nbHarvest = r.randint(1,2)
-									item = "wheat"
-							else:
-								if D10 <= 4:
-									nbHarvest = 1
-									item = "oak"
-								elif D10 > 4 and D10 <= 7:
-									nbHarvest = 1
-									item = "spruce"
-								elif D10 > 7 and D10 <= 9:
-									nbHarvest = 1
-									item = "palm"
-								elif D10 >= 10:
-									nbHarvest = r.randint(1,3)
-									item = "wheat"
+							if valueItem == "seed" or valueItem == "":
+								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+									if De <= 2:
+										nbHarvest = 1
+										item = "oak"
+									elif De > 2 and De <= 7:
+										nbHarvest = r.randint(1, 2)
+										item = "pumpkin"
+									elif De > 7 and De <= 10:
+										nbHarvest = 1
+										item = "spruce"
+									elif De > 10 and De <= 12:
+										nbHarvest = 1
+										item = "palm"
+									elif De > 12 and De <= 14:
+										nbHarvest = r.randint(1,3)
+										item = "wheat"
+									elif De > 14:
+										nbHarvest = r.randint(3,9)
+										item = "grapes"
+								else:
+									if De <= 5:
+										nbHarvest = 1
+										item = "oak"
+									elif De > 5 and De <= 9:
+										nbHarvest = 1
+										item = "spruce"
+									elif De > 9 and De <= 12:
+										nbHarvest = 1
+										item = "palm"
+									elif De > 12 and De <= 14:
+										nbHarvest = r.randint(1,3)
+										item = "wheat"
+									elif De > 14:
+										nbHarvest = r.randint(3,9)
+										item = "grapes"
+							elif valueItem == "cacao":
+								nbHarvest = 1
+								item = "chocolate"
 							data = []
 							data.append(0)
 							data.append("")
 							sql.add(ID, item, nbHarvest, "inventory")
 							sql.updateField(ID, i, data, "hothouse")
-							desc = "Ta plantation à fini de pousser, en la coupant tu gagne {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
+							desc = "Ta plantation à fini de pousser, en la coupant tu gagnes {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
 							lvl.addxp(ID, 1, "gems")
 							if i > 1:
 								nbPlan = sql.valueAt(ID, "planting_plan", "inventory")
@@ -721,13 +738,13 @@ class GemsPlay(commands.Cog):
 							time = time - timeH * 3600
 							timeM = int(time / 60)
 							timeS = int(time - timeM * 60)
-							desc = "Ta plantation aura fini de pousser dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
+							desc = "<:gem_{3}:{4}>`{3}` | Ta plantation aura fini de pousser dans :clock2:`{0}h {1}m {2}s`".format(timeH,timeM,timeS,valueItem,GF.get_idmoji(valueItem))
 					if i % 10 == 0 and i != nbplanting:
 						if i // 10 == 1:
 							await ctx.channel.send(embed = msg)
 						else:
 							await ctx.channel.send(embed = msg, delete_after = 90)
-						msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici vos plantation.".format(GF.get_idmoji("seed")))
+						msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici tes plantation.")
 						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 					else:
 						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
@@ -735,16 +752,18 @@ class GemsPlay(commands.Cog):
 			elif fct == "plant":
 				#await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
 				#return False
-				if arg != None:
+				if arg != "seed" and arg != "cacao":
+					arg = "seed"
+				if arg2 != None:
 					try:
-						arg = int(arg)
+						arg2 = int(arg2)
 					except:
 						return 404
-					if arg > nbplanting:
+					if arg2 > nbplanting:
 						msg = "Tu n'as pas assez de plantations ou cette plantation n'est pas disponible!"
 						await ctx.channel.send(msg)
 						return 404
-					elif int(arg) < 0:
+					elif int(arg2) < 0:
 						sql.addGems(ID, -100)
 						lvl.addxp(ID, -10, "gems")
 						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
@@ -758,21 +777,25 @@ class GemsPlay(commands.Cog):
 					else:
 						valueTime = 0
 						valueItem = ""
+					if valueItem == "cacao":
+						couldown = "4h"
+					else:
+						couldown = "6h"
 					if valueTime == 0:
-						PlantingItemValue = sql.valueAt(ID, "seed", "inventory")
+						PlantingItemValue = sql.valueAt(ID, arg, "inventory")
 						if PlantingItemValue != 0:
 							PlantingItemValue = PlantingItemValue[0]
 						if PlantingItemValue >= 1:
 							data = []
 							data.append(str(t.time()))
-							data.append("seed")
-							sql.add(ID, arg, data, "hothouse")
-							sql.add(ID, "seed", -1, "inventory")
-							desc = "<:gem_{0}:{1}>`{0}` plantée".format("seed", GF.get_idmoji("seed"))
+							data.append(arg)
+							sql.add(ID, arg2, data, "hothouse")
+							sql.add(ID, arg, -1, "inventory")
+							desc = "<:gem_{0}:{1}>`{0}` plantée. Elle aura fini de pousser dans :clock2:`{2}`".format(arg, GF.get_idmoji(arg), couldown)
 						else:
-							desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format("seed", GF.get_idmoji("seed"))
+							desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format(arg, GF.get_idmoji(arg))
 					else:
-						desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
+						desc = "Tu as déjà planté une <:gem_{0}:{1}>`{0}` dans cette plantation".format(valueItem, GF.get_idmoji(valueItem))
 					msg.add_field(name="Plntation n°{}".format(arg), value=desc, inline=False)
 				else:
 					while i <= nbplanting:
@@ -784,25 +807,29 @@ class GemsPlay(commands.Cog):
 						else:
 							valueTime = 0
 							valueItem = ""
-						PlantingItemValue = sql.valueAt(ID, "seed", "inventory")
+						PlantingItemValue = sql.valueAt(ID, arg, "inventory")
 						if PlantingItemValue != 0:
 							PlantingItemValue = PlantingItemValue[0]
+						if valueItem == "cacao":
+							couldown = "4h"
+						else:
+							couldown = "6h"
 						if valueTime == 0:
 							if PlantingItemValue >= 1:
 								data = []
 								data.append(str(t.time()))
-								data.append("seed")
+								data.append(arg)
 								sql.add(ID, i, data, "hothouse")
-								sql.add(ID, "seed", -1, "inventory")
-								desc = "<:gem_{0}:{1}>`{0}` plantée".format("seed", GF.get_idmoji("seed"))
+								sql.add(ID, arg, -1, "inventory")
+								desc = "<:gem_{0}:{1}>`{0}` plantée. Elle aura fini de pousser dans :clock2:`{2}`".format(arg, GF.get_idmoji(arg), couldown)
 							else:
-								desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format("seed", GF.get_idmoji("seed"))
+								desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format(arg, GF.get_idmoji(arg))
 								if i > 15:
 									await ctx.channel.send(embed = msg)
 									await ctx.channel.send(desc)
 									return 0
 						else:
-							desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
+							desc = "Tu as déjà planté une <:gem_{0}:{1}>`{0}` dans cette plantation".format(valueItem, GF.get_idmoji(valueItem))
 						if i % 10 == 0 and i != nbplanting:
 							if i // 10 == 1:
 								await ctx.channel.send(embed = msg)
@@ -1042,7 +1069,7 @@ class GemsPlay(commands.Cog):
 				for c in GF.objetItem:
 					if c.nom == "backpack":
 						p = c.poids * (-1)
-				msg += "\nEn trouvant ce <:gem_backpack:{0}>`backpack` tu gagne {1} points d'inventaire".format(GF.get_idmoji("backpack"),p)
+				msg += "\nEn trouvant ce <:gem_backpack:{0}>`backpack` tu gagnes {1} points d'inventaire".format(GF.get_idmoji("backpack"),p)
 
 			#Calcul du prix
 			prix = gain * mise
