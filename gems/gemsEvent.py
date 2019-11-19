@@ -99,12 +99,12 @@ class GemsEvent(commands.Cog):
 										if sql.valueAt(ID, "furnace", "durability") == 0:
 											for c in GF.objetOutil:
 												if c.nom == "furnace":
-													sql.add(ID, "furnace", c.durability, "durability")
+													sql.add(ID, "furnace", c.durabilite, "durability")
 										sql.add(ID, "furnace", -1, "durability")
 										if sql.valueAt(ID, "furnace", "durability")[0] <= 0:
 											for c in GF.objetOutil:
 												if c.nom == "furnace":
-													GF.addDurabilite(ID, c.nom, c.durabilite)
+													sql.add(ID, "furnace", c.durabilite, "durability")
 											sql.add(ID, "furnace", -1, "inventory")
 							else:
 								timeH = int(time / 60 / 60)

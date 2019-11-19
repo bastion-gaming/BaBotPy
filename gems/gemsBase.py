@@ -272,9 +272,9 @@ class GemsBase(commands.Cog):
 							else:
 								sql.add(ID, c.nom, nb, "inventory")
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
-								if c.nom == "planting_plan":
-									if sql.valueAt(ID, "planting_plan", "durability") == 0:
-										sql.add(ID, "planting_plan", c.durabilite, "durability")
+								if c.nom != "bank_upgrade":
+									if sql.valueAt(ID, c.nom, "durability") == 0:
+										sql.add(ID, c.nom, c.durabilite, "durability")
 						else :
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de {} en banque".format(argent)
 						break
@@ -395,7 +395,10 @@ class GemsBase(commands.Cog):
 					for x in inv:
 						if c.nom == str(x[1]):
 							if int(x[0]) > 0:
-								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom), GF.get_durabilite(ID, c.nom), c.durabilite)
+								d = sql.valueAt(ID, c.nom, "durability")
+								if d != 0:
+									d = d[0]
+								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom), d, c.durabilite)
 								tailletot += c.poids*int(x[0])
 
 				for c in GF.objetItem:
@@ -699,7 +702,7 @@ class GemsBase(commands.Cog):
 						# print(ID_recu)
 						sql.addGems(ID_recu, gain)
 						sql.addGems(ID,don)
-						msg = "{0} donne {1}:gem:`gems` à {2} !".format(name,gain,Nom_recu)
+						msg = "{0} donne {1} :gem:`gems` à {2} !".format(name,gain,Nom_recu)
 						# Message de réussite dans la console
 						print("Gems >> {} a donné {} Gems à {}".format(name,gain,Nom_recu))
 					else:

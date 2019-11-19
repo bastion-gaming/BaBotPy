@@ -62,18 +62,18 @@ async def on_ready():
 	print('\nBastionBot '+VERSION)
 	GF.setglobalguild(client.get_guild(wel.idServBot))
 	if DB.dbExist():
-		print("La DB "+ DB.DB_NOM +" existe, poursuite sans soucis.")
+		print("La DB {} existe, poursuite sans soucis.".format(DB.DB_NOM))
 	else :
 		print("La DB n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField("DB/bastionDB", "DB/fieldTemplate")
 	if flag == 0:
-		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
+		print("DB >> Aucun champ n'a été ajouté, supprimé ou modifié.")
 	elif "add" in flag:
-		print("Un ou plusieurs champs ont été ajoutés à la DB.")
+		print("DB >> Un ou plusieurs champs ont été ajoutés à la DB.")
 	elif "type" in flag:
-		print("Un ou plusieurs type ont été modifié sur la DB.")
+		print("DB >> Un ou plusieurs type ont été modifié sur la DB.")
 	elif "sup" in flag:
-		print("Un ou plusieurs champs ont été supprimés de la DB.")
+		print("DB >> Un ou plusieurs champs ont été supprimés de la DB.")
 
 	print('------')
 	print(sql.init())

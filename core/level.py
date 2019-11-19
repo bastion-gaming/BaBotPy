@@ -126,14 +126,15 @@ async def checklevel(message, nameDB = None):
 						if lvl3 != 0:
 							lvl3 = int(lvl3[0])
 						title += " | Get Gems"
-						if lvl3 >= 5:
-							nb = lvl3 - 4
-							sql.addSpinelles(ID, nb)
-							desc += "\nTu gagne {} <:spinelle:{}>`spinelles`".format(nb, GF.get_idmoji("spinelle"))
-						else:
-							gain = lvl3*20000
-							sql.addGems(ID, gain)
-							desc += "\nTu gagne {} :gem:".format(gain)
+						nbS = lvl3 // 5
+						nbG = lvl3 % 5
+						if nbS != 0:
+							sql.addSpinelles(ID, nbS)
+							desc += "\nTu gagne {} <:spinelle:{}>`spinelles`".format(nbS, GF.get_idmoji("spinelle"))
+						if nbG != 0:
+							nbG = nbG * 50000
+							sql.addGems(ID, nbG)
+							desc += "\nTu gagne {} :gem:`gems`".format(nbG)
 					msg = discord.Embed(title = title,color= 6466585, description = desc)
 					msg.set_thumbnail(url=message.author.avatar_url)
 					await message.channel.send(embed = msg)

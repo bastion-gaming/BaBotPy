@@ -591,7 +591,7 @@ def add(ID, nameElem, nbElem, nameDB = None):
 
 	old_value = valueAt(ID, nameElem, nameDB)
 	if old_value != 0:
-		if nameDB == "hothouse" or nameDB == "cooking":
+		if nameDB == "hothouse" or nameDB == "cooking" or nameDB == "daily":
 			updateField(ID, nameElem, nbElem, nameDB)
 		else:
 			new_value = int(old_value[0]) + int(nbElem)

@@ -191,7 +191,9 @@ def round(ctx, IDSession):
 
 	# Attaque vs Attaque
 	elif OwnerType == "attaque" and MemberType == "attaque":
-		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
+		OwnerDurabilite = sql.valueAt(userOwner.id, OwnerItem, "durability")
+		if OwnerDurabilite != 0:
+			OwnerDurabilite = OwnerDurabilite[0]
 		if OwnerDurabilite == None:
 			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:
@@ -214,7 +216,9 @@ def round(ctx, IDSession):
 					if c.nom == OwnerItem:
 						sql.add(userOwner.id, c.nom, c.durabilite-OwnerDurabilite-temp, "durability")
 
-		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
+		MemberDurabilite = sql.valueAt(userMember.id, MemberItem, "durability")
+		if MemberDurabilite != 0:
+			MemberDurabilite = MemberDurabilite[0]
 		if MemberDurabilite == None:
 			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			for c in GF.objetOutil:
@@ -247,7 +251,9 @@ def round(ctx, IDSession):
 		sql.add(userOwner.id, OwnerItem, -OwnerPuissance*OwnerNBperte, "inventory")
 		OwnerDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 
-		MemberDurabilite = GF.get_durabilite(userMember.id, MemberItem)
+		MemberDurabilite = sql.valueAt(userMember.id, MemberItem, "durability")
+		if MemberDurabilite != 0:
+			MemberDurabilite = MemberDurabilite[0]
 		if MemberDurabilite == None:
 			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			for c in GF.objetOutil:
@@ -285,7 +291,9 @@ def round(ctx, IDSession):
 		sql.add(userMember.id, MemberItem, -MemberPuissance*MemberNBperte, "inventory")
 		MemberDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 
-		OwnerDurabilite = GF.get_durabilite(userOwner.id, OwnerItem)
+		OwnerDurabilite = sql.valueAt(userOwner.id, OwnerItem, "durability")
+		if OwnerDurabilite != 0:
+			OwnerDurabilite = OwnerDurabilite[0]
 		if OwnerDurabilite == None:
 			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:

@@ -19,9 +19,9 @@ dbSessionTemplate = "gems/TemplateSession"
 def checkDB_Session():
 	"""Check l'existance et la conformité de la DB Session """
 	if DB.dbExist(dbSession):
-		print("La DB Gems Session existe, poursuite sans soucis.")
+		print("Gems >> La DB Session existe, poursuite sans soucis.")
 	else :
-		print("La DB Gems Session n'existait pas. Elle a été (re)créée.")
+		print("Gems >> La DB Session n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbSession, dbSessionTemplate)
 	print('------')
 
@@ -258,7 +258,8 @@ def loadItem(F = None):
 
 	global objetTrophy
 	objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:`gems au gamble`", "special", 10000)
-	,Trophy("Hyper Gamble Jackpot", "`Gagner plus de 100000`:gem:`gems au gamble`", "special", 100000)
+	,Trophy("Super Gamble Jackpot", "`Gagner plus de 100000`:gem:`gems au gamble`", "special", 100000)
+	,Trophy("Hyper Gamble Jackpot", "`Gagner plus de 1000000`:gem:`gems au gamble`", "special", 1000000)
 	,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 	,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:{}>`ruby`".format(get_idmoji("ruby")), "special", 0)
 	,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
