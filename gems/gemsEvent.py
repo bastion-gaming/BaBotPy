@@ -18,7 +18,7 @@ class GemsEvent(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def event(self, ctx):
-		"""Date des Evénements !!"""
+		"""Date des Événements !!"""
 		msg = discord.Embed(title = "Evénements",color= 13752280, description = "Date des Evénements !!")
 		desc = "26 Octobre :arrow_right: 10 Novembre"
 		msg.add_field(name="Halloween", value=desc, inline=False)
@@ -29,7 +29,7 @@ class GemsEvent(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def cooking(self, ctx, fct = None):
-		"""**Evénement** Cuisinons compagnons !!"""
+		"""**Événement** Cuisinons compagnons !!"""
 		ID = ctx.author.id
 		jour = dt.date.today()
 		item = ""

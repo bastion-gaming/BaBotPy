@@ -48,3 +48,4 @@ icons/spinelle.psd
 gems/guildes.json
 *.db
 *.bak
+*DB.json

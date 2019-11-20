@@ -438,6 +438,28 @@ def testInvTaille(ID):
 		return False
 
 
+def testGuildInvTaille(ID):
+	"""Verifie si ton coffre de guilde est plein """
+	inv = DB.valueAt(ID, "Coffre", "DB/guildesDB")
+	tailletot = 0
+	for c in objetOutil:
+		for x in inv:
+			if c.nom == str(x):
+				if inv[x] > 0:
+					tailletot += c.poids*int(inv[x])
+
+	for c in objetItem:
+		for x in inv:
+			if c.nom == str(x):
+				if inv[x] > 0:
+					tailletot += c.poids*int(inv[x])
+
+	if tailletot <= invMax:
+		return True
+	else:
+		return False
+
+
 
 def testTrophy(ID, nameElem):
 	"""

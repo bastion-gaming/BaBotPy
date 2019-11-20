@@ -1,0 +1,18 @@
+{
+	"ID":
+		0,
+	"Nom":
+		"",
+	"Chef":
+		0,
+	"Admins":
+		[],
+	"Membres":
+		[],
+	"Demandes":
+		[],
+	"Spinelles":
+		0,
+	"Coffre":
+		{}
+}
