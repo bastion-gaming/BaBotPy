@@ -2,7 +2,7 @@ import discord
 import random as r
 import time as t
 import datetime as dt
-from DB import TinyDB as DB
+from DB import TinyDB as DB, SQLite as sql
 import json
 from core import welcome as wel
 from gems import gemsItems as GI
@@ -12,12 +12,6 @@ from discord.utils import get
 from operator import itemgetter
 
 # Variables DBs
-dbGems = "gems/dbGems"
-dbGemsTemplate = "gems/TemplateGems"
-
-dbHH = "gems/dbHotHouse"
-dbHHTemplate = "gems/TemplateHotHouse"
-
 dbSession = "gems/dbSession"
 dbSessionTemplate = "gems/TemplateSession"
 
@@ -25,31 +19,25 @@ dbSessionTemplate = "gems/TemplateSession"
 def checkDB_Session():
 	"""Check l'existance et la conformité de la DB Session """
 	if DB.dbExist(dbSession):
-		print("La DB Gems Session existe, poursuite sans soucis.")
+		print("Gems >> La DB Session existe, poursuite sans soucis.")
 	else :
-		print("La DB Gems Session n'existait pas. Elle a été (re)créée.")
+		print("Gems >> La DB Session n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbSession, dbSessionTemplate)
-	print('------')
 
-
-def checkDB_Gems():
-	"""Check l'existance et la conformité de la DB Session """
-	if DB.dbExist(dbGems):
-		print("La DB Gems existe, poursuite sans soucis.")
+def checkDB_Guilde():
+	if DB.dbExist("DB/guildesDB"):
+		print("Guildes >> La DB existe, poursuite sans soucis.")
 	else :
-		print("La DB Gems n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField(dbGems, dbGemsTemplate)
-	print('------')
-
-def checkDB_GemsHH():
-	"""Check l'existance et la conformité de la DB Session """
-	if DB.dbExist(dbHH):
-		print("La DB Gems HotHouse existe, poursuite sans soucis.")
-	else :
-		print("La DB Gems HotHouse n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField(dbHH, dbHHTemplate)
-	print('------')
-
+		print("Guildes >> La DB n'existait pas. Elle a été (re)créée.")
+	flag = DB.checkField("DB/guildesDB", "DB/Templates/guildesTemplate")
+	if flag == 0:
+		print("DB >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("DB >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "type" in flag:
+		print("DB >> Un ou plusieurs type ont été modifié sur la DB.")
+	elif "sup" in flag:
+		print("DB >> Un ou plusieurs champs ont été supprimés de la DB.")
 
 # Array
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
@@ -91,7 +79,7 @@ def itemBourse(item, type):
 		pnow = temp["achat"]
 
 	#Verification pour l'actualisation de la bourse
-	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
+	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
 		# Gestion des exceptions
 		for y in GI.exception:
 			if item == y:
@@ -197,14 +185,17 @@ def loadItem(F = None):
 	,Item("spruce", itemBourse("spruce", "vente"), itemBourse("spruce", "achat"), 70, "plante")
 	,Item("palm", itemBourse("palm", "vente"), itemBourse("palm", "achat"), 60, "plante")
 	,Item("wheat", itemBourse("wheat", "vente"), itemBourse("wheat", "achat"), 3, "plante")
-	,Item("cookie", itemBourse("cookie", "vente"), itemBourse("cookie", "achat"), 1, "consommable")
-	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "consommable")
-	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "consommable")
+	,Item("cookie", itemBourse("cookie", "vente"), itemBourse("cookie", "achat"), 1, "emoji")
+	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "emoji")
+	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "emoji")
+	,Item("beer", itemBourse("beer", "vente"), itemBourse("beer", "achat"), 2, "emoji")
+	,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "consommable")
+	,Item("cacao", itemBourse("cacao", "vente"), itemBourse("cacao", "achat"), 1, "plante")
+	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "emoji")
+	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "emoji")
 	,Item("backpack", itemBourse("backpack", "vente"), itemBourse("backpack", "achat"), -200, "special")
 	,Item("hyperpack", itemBourse("hyperpack", "vente"), itemBourse("hyperpack", "achat"), -20000, "spinelle")
-	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")
-	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "consommable")
-	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "consommable")]
+	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")]
 
 	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 10):
 		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
@@ -216,15 +207,11 @@ def loadItem(F = None):
 		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
 
 	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
-		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
-		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
-		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
+		objetItem += [Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")]
 	elif jour.year >= 2020:
 		for one in GI.ObjetChristmas:
 			ObjetEventEnd.append(one)
-		objetItem += [Item("christmas", itemBourse("christmas", "vente"), itemBourse("christmas", "achat"), 80, "christmas")
-		,Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")
-		,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "christmas")]
+		objetItem += [Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")]
 
 	#========== Outils ==========
 	class Outil:
@@ -244,7 +231,8 @@ def loadItem(F = None):
 	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
 	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 50, "forge")
 	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 4, 4, "")
-	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 3, 3, "")
+	,Outil("barrel", itemBourse("barrel", "vente"), itemBourse("barrel", "achat"), 3, 3, "")
+	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 2, 2, "")
 	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente"), itemBourse("bank_upgrade", "achat"), 10000, None, "bank")]
 
 
@@ -284,7 +272,8 @@ def loadItem(F = None):
 
 	global objetTrophy
 	objetTrophy = [Trophy("Gamble Jackpot", "`Gagner plus de 10000`:gem:`gems au gamble`", "special", 10000)
-	,Trophy("Hyper Gamble Jackpot", "`Gagner plus de 100000`:gem:`gems au gamble`", "special", 100000)
+	,Trophy("Super Gamble Jackpot", "`Gagner plus de 100000`:gem:`gems au gamble`", "special", 100000)
+	,Trophy("Hyper Gamble Jackpot", "`Gagner plus de 1000000`:gem:`gems au gamble`", "special", 1000000)
 	,Trophy("Super Jackpot :seven::seven::seven:", "`Gagner le super jackpot sur la machine à sous`", "special", 0)
 	,Trophy("Mineur de Merveilles", "`Trouvez un `<:gem_ruby:{}>`ruby`".format(get_idmoji("ruby")), "special", 0)
 	,Trophy("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`", "special", 0)
@@ -316,9 +305,8 @@ def loadItem(F = None):
 	,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:{}>`ruby` trouvé".format(get_idmoji("ruby")))
 	,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
-	if DB.spam(wel.idBaBot,couldown_12h, "bourse", "DB/bastionDB"):
-		DB.updateComTime(wel.idBaBot, "bourse", "DB/bastionDB")
-		DB.updateComTime(wel.idGetGems, "bourse", "DB/bastionDB")
+	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
+		sql.updateComTime(wel.idBaBot, "bourse", "gems")
 # <<< def loadItem(F = None):
 
 ##############################################
@@ -446,7 +434,29 @@ def get_default_price(nameElem, type = None):
 
 def testInvTaille(ID):
 	"""Verifie si l'inventaire est plein """
-	inv = DB.valueAt(ID, "inventory", dbGems)
+	inv = sql.valueAt(ID, "all", "inventory")
+	tailletot = 0
+	for c in objetOutil:
+		for x in inv:
+			if c.nom == str(x[1]):
+				if int(x[0]) > 0:
+					tailletot += c.poids*int(int(x[0]))
+
+	for c in objetItem:
+		for x in inv:
+			if c.nom == str(x[1]):
+				if int(x[0]) > 0:
+					tailletot += c.poids*int(int(x[0]))
+
+	if tailletot <= invMax:
+		return True
+	else:
+		return False
+
+
+def testGuildInvTaille(ID):
+	"""Verifie si ton coffre de guilde est plein """
+	inv = DB.valueAt(ID, "Coffre", "DB/guildesDB")
 	tailletot = 0
 	for c in objetOutil:
 		for x in inv:
@@ -472,46 +482,24 @@ def testTrophy(ID, nameElem):
 	Permet de modifier le nombre de nameElem pour ID dans les trophées
 	Pour en retirer mettez nbElemn en négatif
 	"""
-	trophy = DB.valueAt(ID, "trophy", dbGems)
-	gems = DB.valueAt(ID, "gems", dbGems)
+	trophy = sql.valueAt(ID, "all", "trophy")
+	gems = sql.valueAtNumber(ID, "gems", "gems")
 	i = 2
 	for c in objetTrophy:
 		nbGemsNecessaire = c.mingem
 		if c.type == "unique":
-			if nameElem in trophy:
-				i = 0
-			elif gems >= nbGemsNecessaire:
-				i = 1
-				DB.add(ID, "trophy", c.nom, 1, dbGems)
-	return i
-
-
-
-def addDurabilite(ID, nameElem, nbElem):
-	"""Modifie la durabilité de l'outil nameElem"""
-	durabilite = DB.valueAt(ID, "durabilite", dbGems)
-	if DB.nbElements(ID, "inventory", nameElem, dbGems) > 0 and nbElem < 0:
-		durabilite[nameElem] += nbElem
-	elif nbElem >= 0:
-		durabilite[nameElem] = nbElem
-	else:
-		# print("On ne peut pas travailler des élements qu'il n'y a pas !")
-		return 404
-	DB.updateField(ID, "durabilite", durabilite, dbGems)
-
-
-
-def get_durabilite(ID, nameElem):
-	"""Permet de savoir la durabilite de nameElem dans l'inventaire de ID"""
-	nb = DB.nbElements(ID, "inventory", nameElem, dbGems)
-	if nb > 0:
-		durabilite = DB.valueAt(ID, "durabilite", dbGems)
-		for c in objetOutil:
 			if nameElem == c.nom:
-				if nameElem in durabilite:
-					return durabilite[nameElem]
-	else:
-		return -1
+				for x in trophy:
+					if nameElem == x[1]:
+						if sql.valueAtNumber(ID, c.nom, "trophy") > 1:
+							sql.updateField(ID, c.nom, 1, "trophy")
+						return 0
+				if int(gems) >= nbGemsNecessaire:
+					if sql.valueAtNumber(ID, c.nom, "trophy") < 1:
+						sql.add(ID, c.nom, 1, "trophy")
+					elif sql.valueAtNumber(ID, c.nom, "trophy") > 1:
+						sql.updateField(ID, c.nom, 1, "trophy")
+					return 1
 
 
 
@@ -547,11 +535,12 @@ def taxe(solde, pourcentage):
 
 
 def startKit(ID):
-	if DB.valueAt(ID, "gems", dbGems) == 0:
-		DB.add(ID, "inventory", "pickaxe", 1, dbGems)
-		DB.add(ID, "inventory", "fishingrod", 1, dbGems)
-		addDurabilite(ID, "pickaxe", 20)
-		addDurabilite(ID, "fishingrod", 20)
+	gems = sql.valueAtNumber(ID, "gems", "gems")
+	if gems == 0:
+		sql.add(ID, "pickaxe", 1, "inventory")
+		sql.add(ID, "fishingrod", 1, "inventory")
+		sql.add(ID, "pickaxe", 20, "durability")
+		sql.add(ID, "fishingrod", 20, "durability")
 
 
 
@@ -569,9 +558,7 @@ def gen_code():
 
 def checkCapability(ID):
 	"""Vérifie si ID à les aptitudes par defaut dans la poche Aptitudes de son inventaire """
-	supercheck = False
-	cap = DB.valueAt(ID, "capability", dbGems)
-	captemp = cap
+	cap = sql.valueAt(ID, "all", "capability")
 	for c in objetCapability:
 		if c.defaut == True:
 			check = False
@@ -579,13 +566,10 @@ def checkCapability(ID):
 				if "{}".format(c.ID) == str(x):
 					check = True
 			if check == False:
-				captemp.append("{}".format(c.ID))
-				supercheck = True
+				sql.add(ID, c.ID, 1, "capability")
 			else:
 				check == False
-	if supercheck:
-		DB.updateField(ID, "capability", captemp, dbGems)
-	return DB.valueAt(ID, "capability", dbGems)
+	return sql.valueAt(ID, "all", "capability")
 
 
 

@@ -61,21 +61,6 @@ async def on_ready():
 	print('PREFIX = '+str(PREFIX))
 	print('\nBastionBot '+VERSION)
 	GF.setglobalguild(client.get_guild(wel.idServBot))
-	if DB.dbExist():
-		print("La DB "+ DB.DB_NOM +" existe, poursuite sans soucis.")
-	else :
-		print("La DB n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField("DB/bastionDB", "DB/fieldTemplate")
-	if flag == 0:
-		print("Aucun champ n'a été ajouté, supprimé ou modifié.")
-	elif "add" in flag:
-		print("Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "type" in flag:
-		print("Un ou plusieurs type ont été modifié sur la DB.")
-	elif "sup" in flag:
-		print("Un ou plusieurs champs ont été supprimés de la DB.")
-
-	print('------')
 	print(sql.init())
 	flag = sql.checkField()
 	if flag == 0:
@@ -86,10 +71,24 @@ async def on_ready():
 		print("SQL >> Un ou plusieurs champs ont été supprimés de la DB.")
 	elif "type" in flag:
 		print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
+	print('------')
+	if DB.dbExist():
+		print("La DB {} existe, poursuite sans soucis.".format(DB.DB_NOM))
+	else :
+		print("La DB n'existait pas. Elle a été (re)créée.")
+	flag = DB.checkField("DB/bastionDB", "DB/fieldTemplate")
+	if flag == 0:
+		print("DB >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("DB >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "type" in flag:
+		print("DB >> Un ou plusieurs type ont été modifié sur la DB.")
+	elif "sup" in flag:
+		print("DB >> Un ou plusieurs champs ont été supprimés de la DB.")
+
+	# GF.checkDB_Session()
+	GF.checkDB_Guilde()
 	print('------\n')
-	GF.checkDB_Gems()
-	GF.checkDB_GemsHH()
-	GF.checkDB_Session()
 
 ####################### Commande help.py #######################
 
@@ -135,8 +134,11 @@ async def on_voice_state_update(member,before,after):
 		elif (after.channel == None or  after.channel.id == afkchannel) and  member.name in on_vocal :
 			time_on_vocal = round((time.time() - on_vocal[member.name])/60)
 			print('{} as passé {} minutes en vocal !'.format(member.name,time_on_vocal))
-			XP = int(DB.valueAt(member.id, "xp")) + int(time_on_vocal)
-			DB.updateField(member.id, "xp", XP)
+			balXP = sql.valueAt(ID, "xp", "bastion")
+			if balXP != 0:
+				balXP = int(balXP[0])
+			XP = balXP + int(time_on_vocal)
+			sql.updateField(member.id, "xp", XP, "bastion")
 			await lvl.checklevelvocal(member)
 			del on_vocal[member.name]
 
@@ -153,7 +155,7 @@ async def on_message(message):
 		else:
 			await client.process_commands(message)
 	else:
-		await lvl.checklevel(message, GF.dbGems)
+		await lvl.checklevel(message, "gems")
 		await client.process_commands(message)
 
 ####################### Commande stats.py #######################
@@ -218,7 +220,7 @@ async def looped_task():
 			GF.setglobalguild(client.get_guild(wel.idServBot))
 			GF.loadItem(True)
 		else:
-			if DB.spam(wel.idBaBot,GF.couldown_12h, "bourse", "DB/bastionDB"):
+			if sql.spam(wel.idBaBot,GF.couldown_12h, "bourse", "gems"):
 				GF.loadItem()
 		if first_startup or unresolved_ids:
 			users_url = await notif.make_users_url()

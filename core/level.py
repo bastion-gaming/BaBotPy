@@ -1,6 +1,6 @@
 import random as r
 import datetime as dt
-from DB import TinyDB as DB
+from DB import SQLite as sql
 from core import roles
 from gems import gemsFonctions as GF
 from discord.ext import commands, tasks
@@ -86,52 +86,63 @@ objetXPgems = [XP(0,100)
 ,XP(19,111111)]
 
 
-def addxp(ID, nb, linkDB = None):
-	if linkDB == None:
-		linkDB = "DB/bastionDB"
-	balXP = int(DB.valueAt(ID, "xp", linkDB))
+def addxp(ID, nb, nameDB = None):
+	if nameDB == None:
+		nameDB = "bastion"
+	balXP = sql.valueAt(ID, "xp", nameDB)
+	if balXP != 0:
+		balXP = int(balXP[0])
 	ns = balXP + int(nb)
 	if ns <= 0:
 		ns = 0
-	DB.updateField(ID, "xp", ns, linkDB)
+	sql.updateField(ID, "xp", ns, nameDB)
 
 
-async def checklevel(message, linkDB = None):
+async def checklevel(message, nameDB = None):
 	ID = message.author.id
 	Nom = message.author.name
 	member = message.guild.get_member(ID)
-	if linkDB == None:
-		linkDB = "DB/bastionDB"
+	if nameDB == None:
+		nameDB = "bastion"
 		objet = objetXP
 	else:
 		objet = objetXPgems
 	try:
-		lvl = DB.valueAt(ID, "lvl", linkDB)
-		xp = DB.valueAt(ID, "xp", linkDB)
+		lvl = sql.valueAt(ID, "lvl", nameDB)
+		if lvl != 0:
+			lvl = int(lvl[0])
+		xp = sql.valueAt(ID, "xp", nameDB)
+		if xp != 0:
+			xp = int(xp[0])
 		check = True
 		for x in objet:
 			if lvl == x.level and check:
 				if xp >= x.somMsg:
-					DB.updateField(ID, "lvl", lvl+1, linkDB)
+					sql.updateField(ID, "lvl", lvl+1, nameDB)
 					desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
 					title = "Level UP"
-					if linkDB == GF.dbGems:
-						lvl3 = DB.valueAt(ID, "lvl", linkDB)
+					if nameDB == "gems":
+						lvl3 = sql.valueAt(ID, "lvl", nameDB)
+						if lvl3 != 0:
+							lvl3 = int(lvl3[0])
 						title += " | Get Gems"
-						if lvl3 >= 5:
-							nb = lvl3 - 4
-							DB.updateField(ID, "spinelles", (DB.valueAt(ID, "spinelles", GF.dbGems))+nb, GF.dbGems)
-							desc += "\nTu gagne {} <:spinelle:{}>`spinelles`".format(nb, GF.get_idmoji("spinelle"))
-						else:
-							gain = lvl3*20000
-							DB.addGems(ID, gain)
-							desc += "\nTu gagne {} :gem:".format(gain)
+						nbS = lvl3 // 5
+						nbG = lvl3 % 5
+						if nbS != 0:
+							sql.addSpinelles(ID, nbS)
+							desc += "\nTu gagne {} <:spinelle:{}>`spinelles`".format(nbS, GF.get_idmoji("spinelle"))
+						if nbG != 0:
+							nbG = nbG * 50000
+							sql.addGems(ID, nbG)
+							desc += "\nTu gagne {} :gem:`gems`".format(nbG)
 					msg = discord.Embed(title = title,color= 6466585, description = desc)
 					msg.set_thumbnail(url=message.author.avatar_url)
 					await message.channel.send(embed = msg)
 					check = False
-		if linkDB != GF.dbGems:
-			lvl2 = DB.valueAt(ID, "lvl", linkDB)
+		if nameDB != "gems":
+			lvl2 = sql.valueAt(ID, "lvl", nameDB)
+			if lvl2 != 0:
+				lvl2 = int(lvl2[0])
 			if lvl == 0 and lvl2 == 1:
 				await roles.addrole(member, "Joueurs")
 				await roles.removerole(member, "Nouveau")
@@ -144,17 +155,20 @@ async def checklevelvocal(member):
 	Nom = member.name
 	channel_vocal = member.guild.get_channel(507679074362064916)
 	try:
-		lvl = DB.valueAt(ID, "lvl")
-		xp = DB.valueAt(ID, "xp")
+		lvl = sql.valueAt(ID, "lvl", nameDB)
+		lvl = int(lvl[0])
+		xp = sql.valueAt(ID, "xp", nameDB)
+		xp = int(xp[0])
 		check = True
 		for x in objet:
 			if lvl == x.level and check:
 				if xp >= x.somMsg:
-					DB.updateField(ID, "lvl", lvl+1)
+					sql.updateField(ID, "lvl", lvl+1, "bastion")
 					msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
 					await channel_vocal.send(msg)
 					check = False
-		lvl2 = DB.valueAt(ID, "lvl")
+		lvl2 = sql.valueAt(ID, "lvl", nameDB)
+		lvl2 = int(lvl2[0])
 		if lvl == 0 and lvl2 == 1:
 			roles.addrole(member, "Joueurs")
 			roles.removerole(member, "Nouveau")
@@ -187,8 +201,10 @@ class Level(commands.Cog):
 				return
 
 			if (ID != -1):
-				lvl = DB.valueAt(ID, "lvl")
-				xp = DB.valueAt(ID, "xp")
+				lvl = sql.valueAt(ID, "lvl", "bastion")
+				lvl = int(lvl[0])
+				xp = sql.valueAt(ID, "xp", "bastion")
+				xp = int(xp[0])
 				msg = "**Utilisateur:** {}".format(Nom)
 				emb = discord.Embed(title = "Informations",color= 13752280, description = msg)
 
@@ -204,17 +220,18 @@ class Level(commands.Cog):
 
 				try:
 					# Gems
-					msg = "{0} :gem:`gems`\n".format(DB.valueAt(ID,"gems", GF.dbGems))
-					if DB.valueAt(ID,"spinelles", GF.dbGems) > 0:
-						msg+= "{0} <:spinelle:{1}>`spinelles`".format(DB.valueAt(ID,"spinelles", GF.dbGems), GF.get_idmoji("spinelle"))
+					msg = "{0} :gem:`gems`\n".format(sql.valueAt(ID,"gems", "gems")[0])
+					soldeSpinelles = sql.valueAt(ID, "Spinelles", "gems")
+					if soldeSpinelles[0] > 0:
+						msg+= "{0} <:spinelle:{1}>`spinelles`".format(soldeSpinelles[0], GF.get_idmoji("spinelle"))
 					emb.add_field(name="**_Balance_**", value=msg, inline=False)
 
 					# Statistique de l'utilisateur pour le module Gems
-					statgems = DB.valueAt(ID, "StatGems", GF.dbGems)
+					statgems = sql.valueAt(ID, "all", "statgems")
 					msg = ""
 					for x in statgems:
-						if statgems[x] > 0:
-							msg += "\n• {}: `x{}`".format(str(x), statgems[x])
+						if x[0] > 0:
+							msg += "\n• {}: `x{}`".format(x[1], x[0])
 					if msg != "":
 						emb.add_field(name="**_Statistiques de Get Gems_**", value=msg, inline=False)
 				except:
@@ -222,11 +239,11 @@ class Level(commands.Cog):
 
 				if ctx.guild.id == wel.idBASTION:
 					# Parrainage
-					P = DB.valueAt(ID,"parrain")
-					F_li = DB.valueAt(ID, "filleul")
+					P = sql.valueAt(ID, "parrain", "bastion")
+					F_li = sql.valueAt(ID, "all", "filleuls")
 					msg=""
-					if P != 0:
-						msg+="\nParrain: <@{0}>".format(P)
+					if P[0] != 0:
+						msg+="\nParrain: <@{0}>".format(P[0])
 					else :
 						msg +="\nParain: `None`"
 
@@ -237,7 +254,7 @@ class Level(commands.Cog):
 							sV= ""
 						msg+="\nFilleul{1} `x{0}`:".format(len(F_li),sV)
 						for one in F_li:
-							msg+="\n<@"+str(one)+">"
+							msg+="\n<@{}>".format(one[0])
 
 					emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
 

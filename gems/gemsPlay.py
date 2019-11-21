@@ -2,7 +2,7 @@ import discord
 import random as r
 import time as t
 import datetime as dt
-from DB import TinyDB as DB
+from DB import TinyDB as DB, SQLite as sql
 from gems import gemsFonctions as GF
 from core import welcome as wel, level as lvl
 from discord.ext import commands
@@ -25,15 +25,15 @@ class GemsPlay(commands.Cog):
 		# Initialisation des variables générales de la fonction
 		#=======================================================================
 		ID = ctx.author.id
-		DailyTime = DB.daily_data(ID, "dailytime")
-		DailyMult = DB.daily_data(ID, "dailymult")
+		DailyTime = sql.valueAtNumber(ID, "DailyTime", "daily")
+		DailyMult = sql.valueAtNumber(ID, "DailyMult", "daily")
 		jour = dt.date.today()
 		#=======================================================================
 		# Détermination du daily
 		#=======================================================================
 		if DailyTime == str(jour - dt.timedelta(days=1)):
-			DB.updateDaily(ID, "dailytime", jour)
-			DB.updateDaily(ID, "dailymult", DailyMult + 1)
+			sql.updateField(ID, "DailyTime", str(jour), "daily")
+			sql.updateField(ID, "DailyMult", DailyMult + 1, "daily")
 			if DailyMult >= 60:
 				bonus = 500
 			elif DailyMult >= 30:
@@ -41,23 +41,22 @@ class GemsPlay(commands.Cog):
 			else:
 				bonus = 125
 			gain = 100 + bonus*DailyMult
-			DB.addGems(ID, gain)
+			sql.addGems(ID, gain)
 			msg = "Récompense journalière! Tu as gagné 100:gem:`gems`"
-			msg += "\nNouvelle série: `{}`, Bonus: {}:gem:`gems`".format(DailyMult, bonus*DailyMult)
-			lvl.addxp(ID, 10*(DailyMult/2), GF.dbGems)
+			msg += "\nNouvelle série: `{}`, Bonus: {} :gem:`gems`".format(DailyMult, bonus*DailyMult)
+			lvl.addxp(ID, 10*(DailyMult/2), "gems")
 			if DailyMult%30 == 0:
-				m = (DailyMult//30)*2
-				nbS = DB.valueAt(ID, "spinelles", GF.dbGems)
-				DB.updateField(ID, "spinelles", nbS + m, GF.dbGems)
+				m = (DailyMult//30)*5
+				sql.addSpinelles(ID, m)
 				msg+="\nBravo pour c'est {0} jours consécutifs :confetti_ball:! Tu as mérité {1}<:spinelle:{2}>`spinelles`".format(DailyMult, m, GF.get_idmoji("spinelle"))
 
 		elif DailyTime == str(jour):
 			msg = "Tu as déja reçu ta récompense journalière aujourd'hui. Reviens demain pour gagner plus de :gem:`gems`"
 		else:
-			DB.updateDaily(ID, "dailytime", jour)
-			DB.updateDaily(ID, "dailymult", 1)
+			sql.add(ID, "DailyMult", 1, "daily")
+			sql.add(ID, "DailyTime", str(jour), "daily")
 			msg = "Récompense journalière! Tu as gagné 100 :gem:`gems`"
-			lvl.addxp(ID, 10, GF.dbGems)
+			lvl.addxp(ID, 10, "gems")
 		await ctx.channel.send(msg)
 
 
@@ -73,26 +72,28 @@ class GemsPlay(commands.Cog):
 			mARG = ARG.lower()
 		else:
 			mARG = "bal"
-		msg = ""
 		for c in GF.objetOutil:
 			if c.type == "bank":
 				Taille = c.poids
 		msg = ""
+		solde = sql.valueAt(ID, "Solde", "bank")
+		if solde == 0:
+			sql.add(ID, "SoldeMax", Taille, "bank")
 		#=======================================================================
 		# Affiche le menu principal de la banque
 		# !bank bal <nom d'un joueur> permet de visualiser l'état de la banque de ce joueur
 		#=======================================================================
 		if mARG == "bal":
-			if DB.spam(ID,GF.couldown_4s, "bank_bal", GF.dbGems):
+			if sql.spam(ID,GF.couldown_4s, "bank_bal", "gems"):
 				if ARG2 != None:
-					ID = DB.nom_ID(ARG2)
+					ID = sql.nom_ID(ARG2)
 					nom = ctx.guild.get_member(ID)
 					ARG2 = nom.name
 					title = "Compte épargne de {}".format(ARG2)
 				else:
 					title = "Compte épargne de {}".format(ctx.author.name)
-				solde = DB.nbElements(ID, "banque", "solde", GF.dbGems)
-				soldeMax = DB.nbElements(ID, "banque", "soldeMax", GF.dbGems)
+				solde = sql.valueAtNumber(ID, "Solde", "bank")
+				soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 				if soldeMax == 0:
 					soldeMax = Taille
 				msg = discord.Embed(title = title,color= 13752280, description = "")
@@ -106,7 +107,7 @@ class GemsPlay(commands.Cog):
 
 				msg.add_field(name="Commandes", value=desc, inline=False)
 				await ctx.channel.send(embed = msg)
-				DB.updateComTime(ID, "bank_bal", GF.dbGems)
+				sql.updateComTime(ID, "bank_bal", "gems")
 				return
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
@@ -118,12 +119,12 @@ class GemsPlay(commands.Cog):
 		# un nombre négatif enlève des Gems
 		#=======================================================================
 		elif mARG == "add":
-			if DB.spam(ID,GF.couldown_4s, "bank_add", GF.dbGems):
+			if sql.spam(ID,GF.couldown_4s, "bank_add", "gems"):
 				if ARG2 != None:
 					ARG2 = int(ARG2)
-					gems = DB.valueAt(ID, "gems", GF.dbGems)
-					solde = DB.nbElements(ID, "banque", "solde", GF.dbGems)
-					soldeMax = DB.nbElements(ID, "banque", "soldeMax", GF.dbGems)
+					gems = sql.valueAtNumber(ID, "gems", "gems")
+					solde = sql.valueAtNumber(ID, "Solde", "bank")
+					soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 					if soldeMax == 0:
 						soldeMax = Taille
 
@@ -137,11 +138,11 @@ class GemsPlay(commands.Cog):
 							await ctx.channel.send(msg)
 							return
 						nbgm = -1*ARG2
-						DB.addGems(ID, nbgm)
-						DB.add(ID, "banque", "solde", ARG2, GF.dbGems)
+						sql.addGems(ID, nbgm)
+						sql.add(ID, "solde", ARG2, "bank")
 						msg += "Ton compte épargne a été crédité de {} :gem:`gems`".format(ARG2)
-						msg += "\nNouveau solde: {} :gem:`gems`".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
-						DB.updateComTime(ID, "bank_add", GF.dbGems)
+						msg += "\nNouveau solde: {} :gem:`gems`".format(sql.valueAtNumber(ID, "Solde", "bank"))
+						sql.updateComTime(ID, "bank_add", "gems")
 					else:
 						msg = "Tu n'as pas assez de :gem:`gems` pour épargner cette somme"
 				else:
@@ -155,12 +156,12 @@ class GemsPlay(commands.Cog):
 		# L'intéret est de 20% avec un bonus de 1% pour chanque bank_upgrade possédée
 		#=======================================================================
 		elif mARG == "saving":
-			if DB.spam(ID,GF.couldown_4h, "bank_saving", GF.dbGems):
+			if sql.spam(ID,GF.couldown_4h, "bank_saving", "gems"):
 				if ARG2 != None:
-					ID = DB.nom_ID(ARG2)
+					ID = sql.nom_ID(ARG2)
 				else:
-					solde = DB.nbElements(ID, "banque", "solde", GF.dbGems)
-					soldeMax = DB.nbElements(ID, "banque", "soldeMax", GF.dbGems)
+					solde = sql.valueAtNumber(ID, "Solde", "bank")
+					soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 					if soldeMax == 0:
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
@@ -168,38 +169,32 @@ class GemsPlay(commands.Cog):
 					soldeAdd = pourcentage*solde
 					soldeTaxe = GF.taxe(soldeAdd, 0.1)
 					soldeAdd = soldeTaxe[1]
-					DB.add(ID, "banque", "solde", int(soldeAdd), GF.dbGems)
+					sql.add(ID, "solde", int(soldeAdd), "bank")
 					msg = "Tu as épargné {} :gem:`gems`\n".format(int(soldeAdd))
 					soldeNew = solde + soldeAdd
 					if soldeNew > soldeMax:
 						soldeMove = soldeNew - soldeMax
 						nbgm = -1 * soldeMove
-						DB.addGems(ID, int(soldeMove))
-						DB.add(ID, "banque", "solde", int(nbgm), GF.dbGems)
+						sql.addGems(ID, int(soldeMove))
+						sql.add(ID, "solde", int(nbgm), "bank")
 						msg += "Plafond de {} :gem:`gems` du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
-
-					msg += "Nouveau solde: {} :gem:`gems`".format(DB.nbElements(ID, "banque", "solde", GF.dbGems))
+					msg += "Nouveau solde: {} :gem:`gems`".format(sql.valueAtNumber(ID, "Solde", "bank"))
 
 					D = r.randint(0,20)
 					if D == 20 or D == 0:
-						DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
+						sql.add(ID, "lootbox_raregems", 1, "inventory")
 						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 					elif D >= 9 and D <= 11:
-						DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
+						sql.add(ID, "lootbox_commongems", 1, "inventory")
 						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
-					if ctx.guild.id != wel.idBASTION:
-						DB.addGems(wel.idGetGems,int(soldeTaxe[0]))
-					elif ctx.guild.id == wel.idBASTION:
-						DB.addGems(wel.idBaBot,int(soldeTaxe[0]))
+					sql.addGems(wel.idBaBot,int(soldeTaxe[0]))
 
-				DB.updateComTime(ID, "bank_saving", GF.dbGems)
-				lvl.addxp(ID, 0.4, GF.dbGems)
+				sql.updateComTime(ID, "bank_saving", "gems")
+				lvl.addxp(ID, 0.4, "gems")
 			else:
-				ComTime = DB.valueAt(ID, "com_time", GF.dbGems)
-				if "bank_saving" in ComTime:
-					time = ComTime["bank_saving"]
-				time = time - (t.time()-GF.couldown_4h)
+				ComTime = sql.valueAtNumber(ID, "bank_saving", "gems_com_time")
+				time = ComTime - (t.time()-GF.couldown_4h)
 				timeH = int(time / 60 / 60)
 				time = time - timeH * 3600
 				timeM = int(time / 60)
@@ -215,11 +210,11 @@ class GemsPlay(commands.Cog):
 	async def crime(self, ctx):
 		"""Commets un crime et gagne des :gem:`gems` Attention au DiscordCop!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_6s, "crime", GF.dbGems):
+		if sql.spam(ID,GF.couldown_6s, "crime", "gems"):
 			# si 10 sec c'est écoulé depuis alors on peut en  faire une nouvelle
 			if r.randint(0,9) == 0:
-				DB.add(ID, "StatGems", "DiscordCop Arrestation", 1, GF.dbGems)
-				if int(DB.addGems(ID, -10)) >= 0:
+				sql.add(ID, "DiscordCop Arrestation", 1, "statgems")
+				if int(sql.addGems(ID, -10)) >= 0:
 					msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de 10 :gem:`gems`"
 				else:
 					msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem:`gems` pour payer une amende"
@@ -231,15 +226,15 @@ class GemsPlay(commands.Cog):
 					msg += GF.message_crime[r.randint(0,3)]+" "+str(gain)
 					if r.randint(0,1) == 0:
 						msg += " :candy:`candy`"
-						DB.add(ID, "inventory", "candy", gain, GF.dbGems)
+						sql.add(ID, "candy", gain, "inventory")
 					else:
 						msg += " :lollipop:`lollipop`"
-						DB.add(ID, "inventory", "lollipop", gain, GF.dbGems)
+						sql.add(ID, "lollipop", gain, "inventory")
 				else:
-					msg = GF.message_crime[r.randint(0,3)]+" "+str(gain)+" :gem:`gems`"
-					DB.addGems(ID, gain)
-			DB.updateComTime(ID, "crime", GF.dbGems)
-			lvl.addxp(ID, 1, GF.dbGems)
+					msg = "{1} {0} :gem:`gems`".format(gain, GF.message_crime[r.randint(0,3)])
+					sql.addGems(ID, gain)
+			sql.updateComTime(ID, "crime", "gems")
+			lvl.addxp(ID, 1, "gems")
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -251,53 +246,58 @@ class GemsPlay(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
-		gems = DB.valueAt(ID, "gems", GF.dbGems)
+		gems = sql.valueAtNumber(ID, "gems", "gems")
 		if valeur < 0:
-			msg = "Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
-			DB.add(ID, "StatGems", "DiscordCop Amende", 1, GF.dbGems)
+			msg = ":no_entry: Anti-cheat! Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
+			slq.add(ID, "DiscordCop Amende", 1, "statgems")
 			if gems > 100 :
-				DB.addGems(ID, -100)
+				sql.addGems(ID, -100)
 			else :
-				DB.addGems(ID, 0-DB.valueAt(ID, "gems", GF.dbGems))
+				sql.addGems(ID, -gems)
 			await ctx.channel.send(msg)
 			return
 		elif valeur > 0 and gems >= valeur:
-			if DB.spam(ID,GF.couldown_8s, "gamble", GF.dbGems):
+			if sql.spam(ID,GF.couldown_8s, "gamble", "gems"):
 				if r.randint(0,3) == 0:
 					gain = valeur*3
 					# l'espérence est de 0 sur la gamble
-					msg = GF.message_gamble[r.randint(0,4)]+" "+str(gain)+":gem:`gems`"
-					DB.add(ID, "StatGems", "Gamble Win", 1, GF.dbGems)
+					msg = "{1} {0} :gem:`gems`".format(gain, GF.message_gamble[r.randint(0,4)])
+					sql.add(ID, "Gamble Win", 1, "statgems")
 					for x in GF.objetTrophy:
 						if x.nom == "Gamble Jackpot":
 							jackpot = x.mingem
+						elif x.nom == "Super Gamble Jackpot":
+							superjackpot = x.mingem
 						elif x.nom == "Hyper Gamble Jackpot":
 							hyperjackpot = x.mingem
 					if gain >= jackpot:
-						DB.add(ID, "trophy", "Gamble Jackpot", 1, GF.dbGems)
+						sql.add(ID, "Gamble Jackpot", 1, "trophy")
 						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
+					elif gain >= superjackpot:
+						sql.add(ID, "Super Gamble Jackpot", 1, "trophy")
+						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy::trophy:`Super Gamble Jackpot`."
 					elif gain >= hyperjackpot:
-						DB.add(ID, "trophy", "Hyper Gamble Jackpot", 1, GF.dbGems)
-						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Hyper Gamble Jackpot`."
-					DB.addGems(ID, gain)
+						sql.add(ID, "Hyper Gamble Jackpot", 1, "trophy")
+						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy::trophy::trophy:`Hyper Gamble Jackpot`."
+					sql.addGems(ID, gain)
 					D = r.randint(0,20)
 					if D == 0:
-						DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
+						sql.add(ID, "lootbox_legendarygems", 1, "inventory")
 						msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 					elif D >= 19:
-						DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
+						sql.add(ID, "lootbox_raregems", 1, "inventory")
 						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 					elif D >= 8 and D <= 12:
-						DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
+						sql.add(ID, "lootbox_commongems", 1, "inventory")
 						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 				else:
 					val = 0-valeur
-					DB.addGems(ID,val)
-					DB.addGems(wel.idBaBot, int(valeur))
-					msg = "Dommage tu as perdu "+str(valeur)+":gem:`gems`"
+					sql.addGems(ID,val)
+					sql.addGems(wel.idBaBot, int(valeur))
+					msg = "Dommage tu as perdu {} :gem:`gems`".format(valeur)
 
-				DB.updateComTime(ID, "gamble", GF.dbGems)
-				lvl.addxp(ID, 1, GF.dbGems)
+				sql.updateComTime(ID, "gamble", "gems")
+				lvl.addxp(ID, 1, "gems")
 			else:
 				msg = "Il faut attendre "+str(GF.couldown_8s)+" secondes entre chaque commande !"
 		elif gems < valeur:
@@ -312,187 +312,177 @@ class GemsPlay(commands.Cog):
 	async def mine(self, ctx):
 		"""Minez compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_6s, "mine", GF.dbGems):
+		if sql.spam(ID,GF.couldown_6s, "mine", "gems"):
 			if GF.testInvTaille(ID):
-				#print(DB.nbElements(ID, "inventory", "pickaxe"))
 				nbrand = r.randint(0,99)
+				nbDP = sql.valueAtNumber(ID, "diamond_pickaxe", "inventory")
+				nbIP = sql.valueAtNumber(ID, "iron_pickaxe", "inventory")
+				nbP = sql.valueAtNumber(ID, "pickaxe", "inventory")
 				#----------------- Pioche en diamant -----------------
-				if DB.nbElements(ID, "inventory", "diamond_pickaxe", GF.dbGems) >= 1:
-					if GF.get_durabilite(ID, "diamond_pickaxe") == 0:
-						GF.addDurabilite(ID, "diamond_pickaxe", -1)
-						DB.add(ID, "inventory","diamond_pickaxe", -1, GF.dbGems)
-						if DB.nbElements(ID, "inventory", "diamond_pickaxe", GF.dbGems) > 0:
+				if nbDP >= 1:
+					Durability = sql.valueAtNumber(ID, "diamond_pickaxe", "durability")
+					if Durability == 0:
+						sql.add(ID, "diamond_pickaxe", -1, "inventory")
+						if nbDP > 1:
 							for c in GF.objetOutil:
 								if c.nom == "diamond_pickaxe":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
+									sql.add(ID, c.nom, c.durabilite, "durability")
 						msg = "Pas de chance tu as cassé ta <:gem_diamond_pickaxe:{}>`pioche en diamant` !".format(GF.get_idmoji("diamond_pickaxe"))
 					else :
-						if GF.get_durabilite(ID,"diamond_pickaxe") == None or GF.get_durabilite(ID,"diamond_pickaxe") < 0:
-							for c in GF.objetOutil:
-								if c.nom == "diamond_pickaxe":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
-						GF.addDurabilite(ID, "diamond_pickaxe", -1)
+						sql.add(ID, "diamond_pickaxe", -1, "durability")
 						if nbrand < 15:
 							nbrand = r.randint(1,2)
-							DB.add(ID, "inventory", "emerald", nbrand, GF.dbGems)
+							sql.add(ID, "emerald", nbrand, "inventory")
 							msg = "Tu as obtenu {} <:gem_emerald:{}>`émeraude`".format(nbrand, GF.get_idmoji("emerald"))
 							D = r.randint(0,20)
 							if D < 2:
-								DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_legendarygems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 							elif D >= 17:
-								DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_raregems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 
 						elif nbrand > 15 and nbrand < 25:
 							nbrand = r.randint(1,4)
-							DB.add(ID, "inventory", "diamond", nbrand, GF.dbGems)
+							sql.add(ID, "diamond", nbrand, "inventory")
 							msg = "Tu as obtenu {} <:gem_diamond:{}>`diamant brut`".format(nbrand, GF.get_idmoji("diamond"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 25 and nbrand < 50:
 							nbrand = r.randint(1,6)
-							DB.add(ID, "inventory", "gold", nbrand, GF.dbGems)
+							sql.add(ID, "gold", nbrand, "inventory")
 							msg = "Tu as obtenu {} <:gem_gold:{}>`lingot d'or`".format(nbrand, GF.get_idmoji("gold"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 50 and nbrand < 80:
 							nbrand = r.randint(1,10)
-							DB.add(ID, "inventory", "iron", nbrand, GF.dbGems)
+							sql.add(ID, "iron", nbrand, "inventory")
 							msg = "Tu as obtenu {} <:gem_iron:{}>`lingot de fer`".format(nbrand, GF.get_idmoji("iron"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand >= 90:
 							nbrand =  r.randint(0,10)
 							if nbrand >= 7:
-								DB.add(ID, "inventory", "ruby", 1, GF.dbGems)
-								DB.add(ID, "StatGems", "Mineur de Merveilles", 1, GF.dbGems)
-								DB.add(ID, "trophy", "Mineur de Merveilles", 1, GF.dbGems)
+								sql.add(ID, "ruby", 1, "inventory")
+								sql.add(ID, "Mineur de Merveilles", 1, "statgems")
+								sql.add(ID, "Mineur de Merveilles", 1, "trophy")
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							elif nbrand < 2:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 							else:
 								nbcobble = r.randint(1,20)
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								if nbcobble == 1 :
 									msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 								else :
 									msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
 						else:
 							nbcobble = r.randint(1,20)
-							DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+							sql.add(ID, "cobblestone", nbcobble, "inventory")
 							if nbcobble == 1 :
 								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 							else :
 								msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
 
 				#----------------- Pioche en fer -----------------
-				elif DB.nbElements(ID, "inventory", "iron_pickaxe", GF.dbGems) >= 1:
-					if GF.get_durabilite(ID, "iron_pickaxe") == 0:
-						GF.addDurabilite(ID, "iron_pickaxe", -1)
-						DB.add(ID, "inventory","iron_pickaxe", -1, GF.dbGems)
-						if DB.nbElements(ID, "inventory", "iron_pickaxe", GF.dbGems) > 0:
+				elif nbIP >= 1:
+					Durability = sql.valueAtNumber(ID, "iron_pickaxe", "durability")
+					if Durability == 0:
+						sql.add(ID, "iron_pickaxe", -1, "inventory")
+						if nbIP > 1:
 							for c in GF.objetOutil:
 								if c.nom == "iron_pickaxe":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
+									sql.add(ID, c.nom, c.durabilite, "durability")
 						msg = "Pas de chance tu as cassé ta <:gem_iron_pickaxe:{}>`pioche en fer` !".format(GF.get_idmoji("iron_pickaxe"))
 					else :
-						if GF.get_durabilite(ID,"iron_pickaxe") == None or GF.get_durabilite(ID,"iron_pickaxe") < 0:
-							for c in GF.objetOutil:
-								if c.nom == "iron_pickaxe":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
-						GF.addDurabilite(ID, "iron_pickaxe", -1)
+						sql.add(ID, "iron_pickaxe", -1, "durability")
 						if nbrand < 5:
-							DB.add(ID, "inventory", "emerald", 1, GF.dbGems)
+							sql.add(ID, "emerald", 1, "inventory")
 							msg = "Tu as obtenu 1 <:gem_emerald:{}>`émeraude`".format(GF.get_idmoji("emerald"))
 							D = r.randint(0,20)
 							if D == 0:
-								DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_legendarygems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 							elif D >= 19:
-								DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_raregems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 							elif D >= 8 and D <= 12:
-								DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_commongems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 						elif nbrand > 5 and nbrand < 15:
-							DB.add(ID, "inventory", "diamond", 1, GF.dbGems)
+							sql.add(ID, "diamond", 1, "inventory")
 							msg = "Tu as obtenu 1 <:gem_diamond:{}>`diamant brut`".format(GF.get_idmoji("diamond"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 15 and nbrand < 30:
 							nbrand = r.randint(1,2)
-							DB.add(ID, "inventory", "gold", nbrand, GF.dbGems)
+							sql.add(ID, "gold", nbrand, "inventory")
 							msg = "Tu as obtenu {} <:gem_gold:{}>`lingot d'or`".format(nbrand, GF.get_idmoji("gold"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand > 30 and nbrand < 60:
 							nbrand = r.randint(1,4)
-							DB.add(ID, "inventory", "iron", nbrand, GF.dbGems)
+							sql.add(ID, "iron", nbrand, "inventory")
 							msg = "Tu as obtenu {} <:gem_iron:{}>`lingot de fer`".format(nbrand, GF.get_idmoji("iron"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 
 						elif nbrand >= 95:
 							if r.randint(0,10) == 10:
-								DB.add(ID, "inventory", "ruby", 1, GF.dbGems)
-								DB.add(ID, "StatGems", "Mineur de Merveilles", 1, GF.dbGems)
-								DB.add(ID, "trophy", "Mineur de Merveilles", 1, GF.dbGems)
+								sql.add(ID, "ruby", 1, "inventory")
+								sql.add(ID, "Mineur de Merveilles", 1, "statgems")
+								sql.add(ID, "Mineur de Merveilles", 1, "trophy")
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							else:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
 						else:
 							nbcobble = r.randint(1,10)
-							DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+							sql.add(ID, "cobblestone", nbcobble, "inventory")
 							if nbcobble == 1 :
 								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 							else :
 								msg = "Tu as obtenu {} blocs de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble, GF.get_idmoji("cobblestone"))
 
 				#----------------- Pioche normal -----------------
-				elif DB.nbElements(ID, "inventory", "pickaxe", GF.dbGems) >= 1:
-					if GF.get_durabilite(ID, "pickaxe") == 0:
-						GF.addDurabilite(ID, "pickaxe", -1)
-						DB.add(ID, "inventory", "pickaxe", -1, GF.dbGems)
-						if DB.nbElements(ID, "inventory","pickaxe", GF.dbGems) > 0:
+				elif nbP >= 1:
+					Durability = sql.valueAtNumber(ID, "pickaxe", "durability")
+					if Durability == 0:
+						sql.add(ID, "pickaxe", -1, "inventory")
+						if nbP > 1:
 							for c in GF.objetOutil:
 								if c.nom == "pickaxe":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
+									sql.add(ID, c.nom, c.durabilite, "durability")
 						msg = "Pas de chance tu as cassé ta <:gem_pickaxe:{}>`pioche` !".format(GF.get_idmoji("pickaxe"))
 					else :
-						if GF.get_durabilite(ID,"pickaxe") == None or GF.get_durabilite(ID,"pickaxe") < 0:
-							for c in GF.objetOutil:
-								if c.nom == "pickaxe":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
-						GF.addDurabilite(ID, "pickaxe", -1)
+						sql.add(ID, "pickaxe", -1, "durability")
 						if nbrand < 20:
-							DB.add(ID, "inventory", "iron", 1, GF.dbGems)
+							sql.add(ID, "iron", 1, "inventory")
 							msg = "Tu as obtenu 1 <:gem_iron:{}>`lingot de fer`".format(GF.get_idmoji("iron"))
 							nbcobble = r.randint(0,5)
 							if nbcobble != 0 :
-								DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+								sql.add(ID, "cobblestone", nbcobble, "inventory")
 								msg += "\nTu as obtenu {} bloc de <:gem_cobblestone:{}>`cobblestone`".format(nbcobble,GF.get_idmoji("cobblestone"))
 						else:
 							nbcobble = r.randint(1,10)
-							DB.add(ID, "inventory", "cobblestone", nbcobble, GF.dbGems)
+							sql.add(ID, "cobblestone", nbcobble, "inventory")
 							if nbcobble == 1 :
 								msg = "Tu as obtenu 1 bloc de <:gem_cobblestone:{}>`cobblestone`".format(GF.get_idmoji("cobblestone"))
 							else :
@@ -500,8 +490,8 @@ class GemsPlay(commands.Cog):
 				else:
 					msg = "Il faut acheter ou forger une pioche pour miner!"
 
-				DB.updateComTime(ID, "mine", GF.dbGems)
-				lvl.addxp(ID, 1, GF.dbGems)
+				sql.updateComTime(ID, "mine", "gems")
+				lvl.addxp(ID, 1, "gems")
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -514,79 +504,76 @@ class GemsPlay(commands.Cog):
 	async def fish(self, ctx):
 		"""Péchons compagnons !!"""
 		ID = ctx.author.id
-		if DB.spam(ID,GF.couldown_6s, "fish", GF.dbGems):
+		if sql.spam(ID,GF.couldown_6s, "fish", "gems"):
 			if GF.testInvTaille(ID):
 				nbrand = r.randint(0,99)
-				if DB.nbElements(ID, "inventory", "fishingrod", GF.dbGems) >= 1:
-					if GF.get_durabilite(ID, "fishingrod") == 0:
-						GF.addDurabilite(ID, "fishingrod", -1)
-						DB.add(ID, "inventory", "fishingrod", -1, GF.dbGems)
-						if DB.nbElements(ID, "inventory", "fishingrod", GF.dbGems) > 0:
+				nbfishingrod = sql.valueAtNumber(ID, "fishingrod", "inventory")
+				if nbfishingrod >= 1:
+					Durability = sql.valueAtNumber(ID, "fishingrod", "durability")
+					if Durability == 0:
+						sql.add(ID, "fishingrod", -1, "inventory")
+						if nbfishingrod > 1:
 							for c in GF.objetOutil:
 								if c.nom == "fishingrod":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
+									sql.add(ID, c.nom, c.durabilite, "durability")
 						msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(GF.get_idmoji("fishingrod"))
 					else :
-						if GF.get_durabilite(ID,"fishingrod") == None or GF.get_durabilite(ID,"fishingrod") < 0:
-							for c in GF.objetOutil:
-								if c.nom == "fishingrod":
-									GF.addDurabilite(ID, c.nom, c.durabilite)
-						GF.addDurabilite(ID, "fishingrod", -1)
-
-						if DB.nbElements(ID, "inventory", "fishhook", GF.dbGems) >= 1:
+						sql.add(ID, "fishingrod", -1, "durability")
+						nbfishhook = sql.valueAtNumber(ID, "fishhook", "inventory")
+						if nbfishhook >= 1:
 							mult = r.randint(-1, 5)
 							if mult < 2:
 								mult = 2
-							DB.add(ID, "inventory", "fishhook", -1, GF.dbGems)
+							sql.add(ID, "fishhook", -1, "inventory")
 						else:
 							mult = 1
 
 						if nbrand < 15:
 							nb = mult*1
-							DB.add(ID, "inventory", "tropicalfish", nb, GF.dbGems)
+							sql.add(ID, "tropicalfish", nb, "inventory")
 							msg = "Tu as obtenu {} <:gem_tropicalfish:{}>`tropicalfish`".format(nb, GF.get_idmoji("tropicalfish"))
 							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
-								DB.add(ID, "inventory", "fish", nbfish, GF.dbGems)
+								sql.add(ID, "fish", nbfish, "inventory")
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 15 and nbrand < 30:
 							nb = mult*1
-							DB.add(ID, "inventory", "blowfish", nb, GF.dbGems)
+							sql.add(ID, "blowfish", nb, "inventory")
 							msg = "Tu as obtenu {} <:gem_blowfish:{}>`blowfish`".format(nb, GF.get_idmoji("blowfish"))
 							nbfish = r.randint(0,3)*mult
 							if nbfish != 0:
-								DB.add(ID, "inventory", "fish", nbfish, GF.dbGems)
+								sql.add(ID, "fish", nbfish, "inventory")
 								msg += "\nTu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 
 						elif nbrand >= 30 and nbrand < 40:
 							nb = mult*1
-							DB.add(ID, "inventory", "octopus", nb, GF.dbGems)
+							sql.add(ID, "octopus", nb, "inventory")
 							msg = "Tu as obtenu {} <:gem_octopus:{}>`octopus`".format(nb, GF.get_idmoji("octopus"))
 							D = r.randint(0,20)
 							if D == 0:
-								DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_legendarygems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 							elif D >= 19:
-								DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_raregems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 							elif D >= 8 and D <= 12:
-								DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
+								sql.add(ID, "lootbox_commongems", 1, "inventory")
 								msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
 						elif nbrand >= 40 and nbrand < 95:
 							nbfish = r.randint(1,7)*mult
-							DB.add(ID, "inventory", "fish", nbfish, GF.dbGems)
+							sql.add(ID, "fish", nbfish, "inventory")
 							msg = "Tu as obtenu {} <:gem_fish:{}>`fish`".format(nbfish, GF.get_idmoji("fish"))
 						else:
 							msg = "Pas de poisson pour toi aujourd'hui :cry: "
 							if mult >= 2:
-								DB.add(ID, "inventory", "fishhook", 1, GF.dbGems)
+								sql.add(ID, "fishhook", 1, "inventory")
 				else:
 					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(GF.get_idmoji("fishingrod"))
 
-				DB.updateComTime(ID, "fish", GF.dbGems)
-				lvl.addxp(ID, 1, GF.dbGems)
+				sql.updateComTime(ID, "fish", "gems")
+				lvl.addxp(ID, 1, "gems")
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -596,18 +583,18 @@ class GemsPlay(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def hothouse(self, ctx, fct = None, arg = None):
-		"""**[fonction]** {_n° plantation_} | Plantons compagnons !!"""
+	async def hothouse(self, ctx, fct = None, arg = None, arg2 = None):
+		"""**[harvest / plant]** {_n° plantation / item à planter_} | Plantons compagnons !!"""
 		ID = ctx.author.id
 		maxplanting = 200
-		if DB.spam(ID,GF.couldown_4s, "hothouse", GF.dbGems):
-			nbplanting = DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) + 1
+		if sql.spam(ID,GF.couldown_4s, "hothouse", "gems"):
+			nbplanting = int(sql.valueAtNumber(ID, "planting_plan", "inventory")) + 1
 			if nbplanting >= maxplanting:
 				nbplanting = maxplanting
-			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici vos plantations.\nUtilisé `hothouse plant` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
+			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici tes plantations.\nUtilisé `hothouse plant seed` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
 			desc = ""
 			i = 1
-			DB.updateComTime(ID, "hothouse", GF.dbGems)
+			sql.updateComTime(ID, "hothouse", "gems")
 			if fct == None or fct == "harvest":
 				if  arg != None:
 					if int(arg) <= nbplanting:
@@ -617,117 +604,179 @@ class GemsPlay(commands.Cog):
 						await ctx.channel.send(msg)
 						return 404
 				while i <= nbplanting:
-					if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbHH) == 0:
-						desc = "Aucune <:gem_seed:{0}>`seed` plantée.".format(GF.get_idmoji("seed"))
+					data = []
+					valuePlanting = sql.valueAt(ID, i, "hothouse")
+					if valuePlanting != 0:
+						valueTime = float(valuePlanting[0])
+						valueItem = valuePlanting[1]
 					else:
-						PlantingTime = DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbHH)
+						valueTime = 0
+						valueItem = ""
+					if valueItem == "cacao":
+						couldown = GF.couldown_4h
+					else:
+						couldown = GF.couldown_6h
+					if valueTime == 0:
+						desc = "Cette plantation est vide!"
+					else:
+						PlantingTime = float(valueTime)
 						InstantTime = t.time()
-						time = PlantingTime - (InstantTime-GF.couldown_6h)
+						time = PlantingTime - (InstantTime-couldown)
 						if time <= 0:
-							D10 = r.randint(1,10)
+							De = r.randint(1,15)
 							jour = dt.date.today()
-							if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
-								if D10 <= 3:
-									nbHarvest = 1
-									item = "oak"
-								elif D10 > 3 and D10 <= 7:
-									nbHarvest = r.randint(1, 2)
-									item = "pumpkin"
-								elif D10 > 7 and D10 <= 9:
-									nbHarvest = r.randint(3, 5)
-									item = "pumpkin"
-								elif D10 >= 10:
-									nbHarvest = r.randint(1,2)
-									item = "wheat"
-							else:
-								if D10 <= 4:
-									nbHarvest = 1
-									item = "oak"
-								elif D10 > 4 and D10 <= 7:
-									nbHarvest = 1
-									item = "spruce"
-								elif D10 > 7 and D10 <= 9:
-									nbHarvest = 1
-									item = "palm"
-								elif D10 >= 10:
-									nbHarvest = r.randint(1,3)
-									item = "wheat"
-							DB.add(ID, "inventory", item, nbHarvest, GF.dbGems)
-							DB.add(ID, "hothouse", "planting_{}".format(i), -1*PlantingTime, GF.dbHH)
-							desc = "Ta plantation à fini de pousser, en la coupant tu gagne {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
-							lvl.addxp(ID, 1, GF.dbGems)
+							if valueItem == "seed" or valueItem == "":
+								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
+									if De <= 2:
+										nbHarvest = 1
+										item = "oak"
+									elif De > 2 and De <= 7:
+										nbHarvest = r.randint(1, 2)
+										item = "pumpkin"
+									elif De > 7 and De <= 10:
+										nbHarvest = 1
+										item = "spruce"
+									elif De > 10 and De <= 12:
+										nbHarvest = 1
+										item = "palm"
+									elif De > 12 and De <= 14:
+										nbHarvest = r.randint(1,3)
+										item = "wheat"
+									elif De > 14:
+										nbHarvest = r.randint(3,9)
+										item = "grapes"
+								else:
+									if De <= 5:
+										nbHarvest = 1
+										item = "oak"
+									elif De > 5 and De <= 9:
+										nbHarvest = 1
+										item = "spruce"
+									elif De > 9 and De <= 12:
+										nbHarvest = 1
+										item = "palm"
+									elif De > 12 and De <= 14:
+										nbHarvest = r.randint(1,3)
+										item = "wheat"
+									elif De > 14:
+										nbHarvest = r.randint(3,9)
+										item = "grapes"
+							elif valueItem == "cacao":
+								nbHarvest = 1
+								item = "chocolate"
+							data = []
+							data.append(0)
+							data.append("")
+							sql.add(ID, item, nbHarvest, "inventory")
+							sql.updateField(ID, i, data, "hothouse")
+							desc = "Ta plantation à fini de pousser, en la coupant tu gagnes {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
+							lvl.addxp(ID, 1, "gems")
 							if i > 1:
-								if DB.nbElements(ID, "inventory", "planting_plan", GF.dbGems) > 0:
-									GF.addDurabilite(ID, "planting_plan", -1)
-									if GF.get_durabilite(ID, "planting_plan") == None:
+								if sql.valueAtNumber(ID, "planting_plan", "inventory") > 0:
+									if sql.valueAt(ID, "planting_plan", "durability") == 0:
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
-												GF.addDurabilite(ID, c.nom, c.durabilite)
-									elif GF.get_durabilite(ID, "planting_plan") <= 0:
+												sql.add(ID, "planting_plan", c.durabilite, "durability")
+									sql.add(ID, "planting_plan", -1, "durability")
+									if sql.valueAt(ID, "planting_plan", "durability")[0] <= 0:
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
-												GF.addDurabilite(ID, c.nom, c.durabilite)
-										DB.add(ID, "inventory", "planting_plan", -1, GF.dbGems)
+												sql.add(ID, "planting_plan", c.durabilite, "durability")
+										sql.add(ID, "planting_plan", -1, "inventory")
 
 						else:
 							timeH = int(time / 60 / 60)
 							time = time - timeH * 3600
 							timeM = int(time / 60)
 							timeS = int(time - timeM * 60)
-							desc = "Ta plantation aura fini de pousser dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
+							desc = "<:gem_{3}:{4}>`{3}` | Ta plantation aura fini de pousser dans :clock2:`{0}h {1}m {2}s`".format(timeH,timeM,timeS,valueItem,GF.get_idmoji(valueItem))
 					if i % 10 == 0 and i != nbplanting:
 						if i // 10 == 1:
 							await ctx.channel.send(embed = msg)
 						else:
 							await ctx.channel.send(embed = msg, delete_after = 90)
-						msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici vos plantation.".format(GF.get_idmoji("seed")))
+						msg = discord.Embed(title = "La serre | Partie {}".format((i//10)+1),color= 6466585, description = "Voici tes plantation.")
 						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 					else:
 						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 					i += 1
 			elif fct == "plant":
 				#await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
-				#return 404
-				if arg != None:
+				#return False
+				if arg != "seed" and arg != "cacao":
+					arg = "seed"
+				if arg2 != None:
 					try:
-						arg = int(arg)
+						arg2 = int(arg2)
 					except:
 						return 404
-					if arg > nbplanting:
+					if arg2 > nbplanting:
 						msg = "Tu n'as pas assez de plantations ou cette plantation n'est pas disponible!"
 						await ctx.channel.send(msg)
 						return 404
-					elif int(arg) < 0:
-						DB.addGems(ID, -100)
-						lvl.addxp(ID, -10, GF.dbGems)
+					elif int(arg2) < 0:
+						sql.addGems(ID, -100)
+						lvl.addxp(ID, -10, "gems")
 						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
 						await ctx.channel.send(msg)
 						return "anticheat"
-					if DB.nbElements(ID, "hothouse", "planting_{}".format(arg), GF.dbHH) == 0:
-						if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
-							DB.add(ID, "hothouse", "planting_{}".format(arg), t.time(), GF.dbHH)
-							DB.add(ID, "inventory", "seed", -1, GF.dbGems)
-							desc = "<:gem_{0}:{1}>`{0}` plantée".format("seed", GF.get_idmoji("seed"))
-						else:
-							desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format("seed", GF.get_idmoji("seed"))
+					data = []
+					valuePlanting = sql.valueAt(ID, i, "hothouse")
+					if valuePlanting != 0:
+						valueTime = float(valuePlanting[0])
+						valueItem = valuePlanting[1]
 					else:
-						desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
+						valueTime = 0
+						valueItem = ""
+					if valueItem == "cacao":
+						couldown = "4h"
+					else:
+						couldown = "6h"
+					if valueTime == 0:
+						PlantingItemValue = sql.valueAtNumber(ID, arg, "inventory")
+						if PlantingItemValue >= 1:
+							data = []
+							data.append(str(t.time()))
+							data.append(arg)
+							sql.add(ID, arg2, data, "hothouse")
+							sql.add(ID, arg, -1, "inventory")
+							desc = "<:gem_{0}:{1}>`{0}` plantée. Elle aura fini de pousser dans :clock2:`{2}`".format(arg, GF.get_idmoji(arg), couldown)
+						else:
+							desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format(arg, GF.get_idmoji(arg))
+					else:
+						desc = "Tu as déjà planté une <:gem_{0}:{1}>`{0}` dans cette plantation".format(valueItem, GF.get_idmoji(valueItem))
 					msg.add_field(name="Plntation n°{}".format(arg), value=desc, inline=False)
 				else:
 					while i <= nbplanting:
-						if DB.nbElements(ID, "hothouse", "planting_{}".format(i), GF.dbHH) == 0:
-							if DB.nbElements(ID, "inventory", "seed", GF.dbGems) >= 1:
-								DB.add(ID, "hothouse", "planting_{}".format(i), t.time(), GF.dbHH)
-								DB.add(ID, "inventory", "seed", -1, GF.dbGems)
-								desc = "<:gem_{0}:{1}>`{0}` plantée".format("seed", GF.get_idmoji("seed"))
+						data = []
+						valuePlanting = sql.valueAt(ID, i, "hothouse")
+						if valuePlanting != 0:
+							valueTime = float(valuePlanting[0])
+							valueItem = valuePlanting[1]
+						else:
+							valueTime = 0
+							valueItem = ""
+						PlantingItemValue = sql.valueAtNumber(ID, arg, "inventory")
+						if valueItem == "cacao":
+							couldown = "4h"
+						else:
+							couldown = "6h"
+						if valueTime == 0:
+							if PlantingItemValue >= 1:
+								data = []
+								data.append(str(t.time()))
+								data.append(arg)
+								sql.add(ID, i, data, "hothouse")
+								sql.add(ID, arg, -1, "inventory")
+								desc = "<:gem_{0}:{1}>`{0}` plantée. Elle aura fini de pousser dans :clock2:`{2}`".format(arg, GF.get_idmoji(arg), couldown)
 							else:
-								desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format("seed", GF.get_idmoji("seed"))
+								desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format(arg, GF.get_idmoji(arg))
 								if i > 15:
 									await ctx.channel.send(embed = msg)
 									await ctx.channel.send(desc)
 									return 0
 						else:
-							desc = "Tu as déjà planté une <:gem_seed:{}>`seed` dans cette plantation".format(GF.get_idmoji("seed"))
+							desc = "Tu as déjà planté une <:gem_{0}:{1}>`{0}` dans cette plantation".format(valueItem, GF.get_idmoji(valueItem))
 						if i % 10 == 0 and i != nbplanting:
 							if i // 10 == 1:
 								await ctx.channel.send(embed = msg)
@@ -753,19 +802,130 @@ class GemsPlay(commands.Cog):
 
 
 	@commands.command(pass_context=True)
+	async def ferment(self, ctx, item = None):
+		"""**{grapes/wheat}** | Cave de fermentation. Alcool illimité !!"""
+		ID = ctx.author.id
+		jour = dt.date.today()
+		gain = ""
+		i = 1
+		max = 100
+
+		if sql.spam(ID,GF.couldown_4s, "ferment", "gems"):
+			if item == "grapes":
+				nbitem = 10
+				gain = "wine_glass"
+				couldown = GF.couldown_3h
+				couldownMsg = "3h"
+			elif item == "wheat":
+				nbitem = 16
+				gain = "beer"
+				couldown = GF.couldown_8h
+				couldownMsg = "8h"
+			sql.updateComTime(ID, "ferment", "gems")
+			nbferment = sql.valueAtNumber(ID, "barrel", "inventory") + 1
+			if nbferment >= max:
+				nbferment = max
+			msg = discord.Embed(title = "La Cave",color= 14902529, description = "")
+			while i <= nbferment:
+				data = []
+				valueFerment = sql.valueAt(ID, i, "ferment")
+				if valueFerment != 0:
+					valueTime = float(valueFerment[0])
+					valueItem = valueFerment[1]
+				else:
+					valueTime = 0
+					valueItem = ""
+				fermentItem = sql.valueAtNumber(ID, item, "inventory")
+				if valueItem == "" and item == None:
+					desc = "Ce barril est vide."
+				elif item == "grapes" or item == "wheat":
+					if valueTime == 0:
+						if fermentItem >= nbitem:
+							data = []
+							data.append(str(t.time()))
+							data.append(item)
+							sql.add(ID, i, data, "ferment")
+							sql.add(ID, item, -nbitem, "inventory")
+							if item == "grapes":
+								desc = "Ton barril a été rempli de :{0}:`{0}`. L'alcool aura fini de fermenter dans :clock2:`{1}`".format(item, couldownMsg)
+							else:
+								desc = "Ton barril a été rempli de <:gem_{0}:{1}>`{0}`. L'alcool aura fini de fermenter dans :clock2:`{2}`".format(item, GF.get_idmoji(item), couldownMsg)
+						else:
+							if item == "grapes":
+								desc = "Tu n'as pas assez de :{0}:`{0}` dans ton inventaire! \nIl te faut {2} :{0}:`{0}` pour faire 1 :{1}:`{1}`".format(item, gain, nbitem)
+							else:
+								desc = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire! \nIl te faut {3} :{0}:`{0}` pour faire 1 :{2}:`{2}`".format(item, GF.get_idmoji(item), gain, nbitem)
+					else:
+						if valueItem == "grapes":
+							desc = "Fermentation de :{0}:`{0}` en cours.".format(valueItem)
+						else:
+							desc = "Fermentation de <:gem_{0}:{1}>`{0}` en cours.".format(valueItem, GF.get_idmoji(valueItem))
+				elif item == None:
+					if valueItem == "grapes":
+						gain = "wine_glass"
+						nbgain = r.randint(1,4)
+						couldown = GF.couldown_3h
+					elif valueItem == "wheat":
+						gain = "beer"
+						nbgain = r.randint(2,6)
+						couldown = GF.couldown_8h
+					CookedTime = float(valueTime)
+					InstantTime = t.time()
+					time = CookedTime - (InstantTime-couldown)
+					if time <= 0:
+						data = []
+						data.append(0)
+						data.append("")
+						sql.add(ID, gain, nbgain, "inventory")
+						sql.updateField(ID, i, data, "ferment")
+						desc = "Ton alcool à fini de fermenter, en ouvrant le barril tu gagnes {2} :{0}:`{0}`".format(gain, GF.get_idmoji(gain), nbgain)
+						lvl.addxp(ID, 1, "gems")
+						if i > 1:
+							nbbarrel = int(sql.valueAtNumber(ID, "barrel", "inventory"))
+							if nbbarrel > 0:
+								if sql.valueAtNumber(ID, "barrel", "durability") == 0:
+									for c in GF.objetOutil:
+										if c.nom == "barrel":
+											sql.add(ID, "barrel", c.durabilite, "durability")
+								sql.add(ID, "barrel", -1, "durability")
+								if sql.valueAtNumber(ID, "barrel", "durability") <= 0:
+									for c in GF.objetOutil:
+										if c.nom == "barrel":
+											sql.add(ID, "barrel", c.durabilite, "durability")
+									sql.add(ID, "barrel", -1, "inventory")
+					else:
+						timeH = int(time / 60 / 60)
+						time = time - timeH * 3600
+						timeM = int(time / 60)
+						timeS = int(time - timeM * 60)
+						if valueItem == "grapes":
+							desc = "Fermentation de :{0}:`{0}` en cours.".format(valueItem)
+						else:
+							desc = "Fermentation de <:gem_{0}:{1}>`{0}` en cours.".format(valueItem, GF.get_idmoji(valueItem))
+						desc += "\nTon alcool aura fini de fermenter dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
+				msg.add_field(name="Barril n°{}".format(i), value=desc, inline=False)
+				i += 1
+			await ctx.channel.send(embed = msg)
+		else:
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
+			await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
 	async def slots(self, ctx, imise = None):
 		"""**[mise]** | La machine à sous, la mise minimum est de 10 :gem:`gems`"""
 		ID = ctx.author.id
-
+		gems = sql.valueAtNumber(ID, "gems", "gems")
 		if imise != None:
 			if int(imise) < 0:
-				msg = "Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
-				lvl.addxp(ID, -10, GF.dbGems)
-				DB.add(ID, "StatGems", "DiscordCop Amende", 1, GF.dbGems)
-				if DB.valueAt(ID, "gems", GF.dbGems) > 100 :
-					DB.addGems(ID, -100)
+				msg = ":no_entry: Anti-cheat! Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
+				lvl.addxp(ID, -10, "gems")
+				sql.add(ID, "DiscordCop Amende", 1, "statgems")
+				if gems > 100 :
+					sql.addGems(ID, -100)
 				else :
-					DB.addGems(ID, 0-DB.valueAt(ID, "gems"))
+					sql.addGems(ID, -gems)
 				await ctx.channel.send(msg)
 				return
 			elif int(imise) < 10:
@@ -777,7 +937,7 @@ class GemsPlay(commands.Cog):
 		else:
 			mise = 10
 
-		if DB.spam(ID,GF.couldown_8s, "slots", GF.dbGems):
+		if sql.spam(ID,GF.couldown_8s, "slots", "gems"):
 			tab = []
 			result = []
 			msg = "Votre mise: {} :gem:`gems`\n\n".format(mise)
@@ -845,27 +1005,27 @@ class GemsPlay(commands.Cog):
 			#===================================================================
 			#Ruby (hyper rare)
 			if result[3] == "ruby" or result[4] == "ruby" or result[5] == "ruby":
-				DB.add(ID, "inventory", "ruby", 1, GF.dbGems)
-				DB.add(ID, "StatGems", "Mineur de Merveilles", 1, GF.dbGems)
-				DB.add(ID, "trophy", "Mineur de Merveilles", 1, GF.dbGems)
+				sql.add(ID, "ruby", 1, "inventory")
+				sql.add(ID, "Mineur de Merveilles", 1, "statgems")
+				sql.add(ID, "Mineur de Merveilles", 1, "trophy")
 				gain = 42
 				msg += "\nEn trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 				D = r.randint(0,20)
 				if D == 0:
-					DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
+					sql.add(ID, "lootbox_legendarygems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 				elif D >= 19:
-					DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
+					sql.add(ID, "lootbox_raregems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 				elif D >= 8 and D <= 12:
-					DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
+					sql.add(ID, "lootbox_commongems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 			#===================================================================
 			#Super gain, 3 chiffres identique
 			elif result[3] == "seven" and result[4] == "seven" and result[5] == "seven":
 				gain = 1000
-				DB.add(ID, "StatGems", "Super Jackpot :seven::seven::seven:", 1, GF.dbGems)
-				DB.add(ID, "trophy", "Super Jackpot :seven::seven::seven:", 1, GF.dbGems)
+				sql.add(ID, "Super Jackpot :seven::seven::seven:", 1, "statgems")
+				sql.add(ID, "Super Jackpot :seven::seven::seven:", 1, "trophy")
 				botplayer = discord.utils.get(ctx.guild.roles, id=532943340392677436)
 				msg += "\n{} Bravo <@{}>! Le Super Jackpot :seven::seven::seven: est tombé :tada: ".format(botplayer.mention,ID)
 			elif result[3] == "one" and result[4] == "one" and result[5] == "one":
@@ -889,8 +1049,8 @@ class GemsPlay(commands.Cog):
 			#===================================================================
 			#Beer
 			elif (result[3] == "beer" and result[4] == "beer") or (result[4] == "beer" and result[5] == "beer") or (result[3] == "beer" and result[5] == "beer"):
-				DB.add(ID, "StatGems", "La Squelatitude", 1, GF.dbGems)
-				DB.add(ID, "trophy", "La Squelatitude", 1, GF.dbGems)
+				sql.add(ID, "La Squelatitude", 1, "statgems")
+				sql.add(ID, "La Squelatitude", 1, "trophy")
 				gain = 4
 				msg += "\n<@{}> paye sa tournée :beer:".format(ID)
 			#===================================================================
@@ -931,18 +1091,18 @@ class GemsPlay(commands.Cog):
 			if nbCookie != 0:
 				if GF.testInvTaille(ID):
 					msg += "\nTu a trouvé {} :cookie:`cookie`".format(nbCookie)
-					DB.add(ID, "inventory", "cookie", nbCookie, GF.dbGems)
+					sql.add(ID, "cookie", nbCookie, "inventory")
 				else:
 					msg += "\nTon inventaire est plein"
 				D = r.randint(0,20)
 				if D == 0:
-					DB.add(ID, "inventory", "lootbox_legendarygems", 1, GF.dbGems)
+					sql.add(ID, "lootbox_legendarygems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Légendaire**! Utilise la commande `boxes open legendarygems` pour l'ouvrir"
 				elif D >= 19:
-					DB.add(ID, "inventory", "lootbox_raregems", 1, GF.dbGems)
+					sql.add(ID, "lootbox_raregems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
 				elif D >= 8 and D <= 12:
-					DB.add(ID, "inventory", "lootbox_commongems", 1, GF.dbGems)
+					sql.add(ID, "lootbox_commongems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 			#===================================================================
 			#grappe
@@ -956,18 +1116,18 @@ class GemsPlay(commands.Cog):
 			if nbGrapes != 0:
 				if GF.testInvTaille(ID):
 					msg += "\nTu a trouvé {} :grapes:`grapes`".format(nbGrapes)
-					DB.add(ID, "inventory", "grapes", nbGrapes, GF.dbGems)
+					sql.add(ID, "grapes", nbGrapes, "inventory")
 				else:
 					msg += "\nTon inventaire est plein"
 			#===================================================================
 			#Backpack (hyper rare)
 			if result[3] == "backpack" or result[4] == "backpack" or result[5] == "backpack":
-				DB.add(ID, "inventory", "backpack", 1, GF.dbGems)
+				sql.add(ID, "backpack", 1, "inventory")
 				p = 0
 				for c in GF.objetItem:
 					if c.nom == "backpack":
 						p = c.poids * (-1)
-				msg += "\nEn trouvant ce <:gem_backpack:{0}>`backpack` tu gagne {1} points d'inventaire".format(GF.get_idmoji("backpack"),p)
+				msg += "\nEn trouvant ce <:gem_backpack:{0}>`backpack` tu gagnes {1} points d'inventaire".format(GF.get_idmoji("backpack"),p)
 
 			#Calcul du prix
 			prix = gain * mise
@@ -978,15 +1138,15 @@ class GemsPlay(commands.Cog):
 					msg += "\nBravo, tu viens de gagner {} :gem:`gems`".format(prix)
 				else:
 					msg += "\nLa machine viens d'exploser :boom:\nTu as perdu {} :gem:`gems`".format(-1*prix)
-				DB.addGems(ID, prix)
+				sql.addGems(ID, prix)
 			elif gain == 1:
 				msg += "\nBravo, voici un ticket gratuit pour relancer la machine à sous"
-				DB.addGems(ID, prix)
+				sql.addGems(ID, prix)
 			else:
 				msg += "\nLa machine à sous ne paya rien ..."
-				DB.addGems(ID, val)
-			DB.updateComTime(ID, "slots", GF.dbGems)
-			lvl.addxp(ID, gain, GF.dbGems)
+				sql.addGems(ID, val)
+			sql.updateComTime(ID, "slots", "gems")
+			lvl.addxp(ID, gain, "gems")
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_8s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
@@ -1003,17 +1163,17 @@ class GemsPlay(commands.Cog):
 				for lootbox in GF.objetBox:
 					if name == "lootbox_{}".format(lootbox.nom):
 						name = lootbox.nom
-				if DB.nbElements(ID, "inventory", "lootbox_{}".format(name), GF.dbGems) > 0:
+				if sql.valueAtNumber(ID, "lootbox_{}".format(name), "inventory") > 0:
 					for lootbox in GF.objetBox:
 						if name == lootbox.nom:
 							gain = r.randint(lootbox.min, lootbox.max)
 							titre = lootbox.titre
 
-							DB.addGems(ID, gain)
-							DB.add(ID, "inventory", "lootbox_{}".format(lootbox.nom), -1, GF.dbGems)
-							desc = "{}:gem:`gems`".format(gain)
+							sql.addGems(ID, gain)
+							sql.add(ID, "lootbox_{}".format(lootbox.nom), -1, "inventory")
+							desc = "{} :gem:`gems`".format(gain)
 							msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
-							DB.updateComTime(ID, "boxes", GF.dbGems)
+							sql.updateComTime(ID, "boxes", "gems")
 							print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))
 							await ctx.channel.send(embed = msg)
 							return True

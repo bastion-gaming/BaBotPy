@@ -5,7 +5,7 @@ from discord.utils import get
 import datetime as dt
 from datetime import datetime
 
-from DB import TinyDB as DB
+from DB import SQLite as sql
 from gems import gemsFonctions as GF
 from core import welcome as wel
 
@@ -38,7 +38,6 @@ async def on_ready():
 	GF.setglobalguild(client.get_guild(wel.idServBot))
 	print('\nBastionBot '+VERSION)
 	print('------\n')
-	GF.checkDB_Gems()
 	# GF.checkDB_Session()
 	GF.loadItem(True)
 
@@ -86,7 +85,7 @@ async def looped_task():
 			GF.setglobalguild(client.get_guild(wel.idServBot))
 			GF.loadItem(True)
 		else:
-			if DB.spam(wel.idGetGems,GF.couldown_12h, "bourse", "DB/bastionDB"):
+			if sql.spam(wel.idGetGems,GF.couldown_12h, "bourse", "gems"):
 				GF.loadItem()
 		print(counter)
 		counter += 1

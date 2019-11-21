@@ -1,4 +1,4 @@
-from DB import TinyDB as DB
+from DB import TinyDB as DB, SQLite as sql
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from discord.utils import get
@@ -23,16 +23,14 @@ class Parrain(commands.Cog):
 		if ctx.guild.id == wel.idBASTION:
 			ID = ctx.author.id
 			if nom != None :
-				ID_p = DB.nom_ID(nom)
-				if DB.userExist(ID_p) == True and DB.valueAt(ID, "parrain") == 0 and ID_p != ID:
-					DB.updateField(ID, "parrain", ID_p)
+				ID_p = sql.nom_ID(nom)
+				if sql.get_PlayerID(ID_p, "bastion") != "Error 404" and sql.valueAt(ID, "parrain", "bastion") == 0 and ID_p != ID:
+					sql.updateField(ID, "parrain", ID_p, "bastion")
 					print("Parrain ajouté")
-					fil_L = DB.valueAt(ID_p, "filleul")
-					fil_L.append(ID)
-					DB.updateField(ID_p, "filleul", fil_L)
-					DB.addGems(ID, 50)
+					sql.add(ID_p, ID, 1, "filleuls")
+					sql.addGems(ID, 50)
 					gain_p = 100 * len(fil_L)
-					DB.addGems(ID_p, gain_p)
+					sql.addGems(ID_p, gain_p)
 					msg = "Votre parrain a bien été ajouté ! Vous empochez 50 :gem: et lui "+str(gain_p)+" :gem:."
 				else :
 					print("Impossible d'ajouter ce joueur comme parrain")
@@ -52,13 +50,13 @@ class Parrain(commands.Cog):
 				ID = ctx.author.id
 				Nom = ctx.author.name
 			else :
-				ID = DB.nom_ID(nom)
+				ID = sql.nom_ID(nom)
 				if ID == -1:
 					msg = "Ce joueur n'existe pas !"
 					await ctx.channel.send(msg)
 					return
 
-			F_li = DB.valueAt(ID, "filleul")
+			F_li = sql.valueAt(ID, "all", "filleuls")
 			if len(F_li) > 0:
 				if len(F_li)>1:
 					sV = "s"
@@ -66,7 +64,7 @@ class Parrain(commands.Cog):
 					sV= ""
 				msg="Filleul{1} `x{0}`:".format(len(F_li),sV)
 				for one in F_li:
-					msg+="\n<@"+str(one)+">"
+					msg+="\n<@{}>".format(one[0])
 				emb = discord.Embed(title = "Informations :",color= 13752280, description = msg)
 				await ctx.channel.send(embed = emb)
 			else:

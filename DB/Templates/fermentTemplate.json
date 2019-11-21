@@ -1,0 +1,10 @@
+{
+  "idgems":
+    "link_gems",
+  "idBarrel":
+    "PRIMARYKEY_INTEGER",
+  "Time":
+    "TEXT",
+  "Alcool":
+    "TEXT"
+}

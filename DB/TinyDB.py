@@ -241,6 +241,17 @@ def userID(i, linkDB = None):
 	return ID
 
 #-------------------------------------------------------------------------------
+def get_endDocID(linkDB = None):
+	if linkDB != None:
+		db = TinyDB("{}.json".format(linkDB))
+	else:
+		db = TinyDB("DB/{}.json".format(DB_NOM))
+	el = db.all()[taille(linkDB)-1]
+	IDi = el.doc_id
+	db.close()
+	return IDi
+
+#-------------------------------------------------------------------------------
 def userExist(ID, linkDB = None):
 	if linkDB != None:
 		db = TinyDB("{}.json".format(linkDB))

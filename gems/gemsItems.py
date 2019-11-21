@@ -17,7 +17,7 @@ PrixItem = [Item("cobblestone", 30, 50)
 ,Item("gold", 110, 200)
 ,Item("diamond", 190, 350)
 ,Item("emerald", 320, 555)
-,Item("ruby", 2000, 3000)
+,Item("ruby", 4000, 5000)
 ,Item("fish", 20, 50)
 ,Item("tropicalfish", 55, 120)
 ,Item("blowfish", 65, 140)
@@ -30,6 +30,9 @@ PrixItem = [Item("cobblestone", 30, 50)
 ,Item("cookie", 30, 40)
 ,Item("grapes", 15, 30)
 ,Item("wine_glass", 120, 210)
+,Item("beer", 1664, 2500)
+,Item("chocolate", 242, 353)
+,Item("cacao", 50, 60)
 ,Item("candy", 1, 2)
 ,Item("lollipop", 5, 12)
 ,Item("backpack", 3000, 3000)
@@ -37,13 +40,11 @@ PrixItem = [Item("cobblestone", 30, 50)
 ,Item("fishhook", 46, 64)]
 
 ObjetHalloween = ["pumpkin", "pumpkinpie"]
-PrixItem += [Item("pumpkin", 220, 330)
-,Item("pumpkinpie", 1000, 1200)]
+PrixItem += [Item("pumpkin", 120, 330)
+,Item("pumpkinpie", 1800, 2200)]
 
-ObjetChristmas = ["christmas", "cupcake", "chocolate"]
-PrixItem += [Item("christmas", 800, 1000)
-,Item("cupcake", 950, 1234)
-,Item("chocolate", 70, 110)]
+ObjetChristmas = ["chocolate", "cacao", "cupcake"]
+PrixItem += [Item("cupcake", 2500, 3000)]
 
 #========== Outils ==========
 class Outil:
@@ -60,6 +61,7 @@ PrixOutil = [Outil("pickaxe", 40, 80)
 ,Outil("fishingrod", 35, 70)
 ,Outil("sword", 100, 400)
 ,Outil("planting_plan", 1500, 1500)
+,Outil("barrel", 1100, 1100)
 ,Outil("furnace", 800, 800)
 ,Outil("bank_upgrade", 0, 10000)]
 
@@ -87,17 +89,24 @@ def initBourse():
 def checkItemBourse(value, item):
 	check = False
 	key = value.keys()
+	# print("## {} ##".format(item))
 	for x in PrixItem:
 		if x.nom == item:
 			for one in key:
 				if item == one:
+					# print(">> {}".format(x.nom))
 					check = True
+		# else:
+		# 	print(x.nom)
 	for x in PrixOutil:
 		if x.nom == item:
 			for one in key:
 				if item == one:
+					# print(">> {}".format(x.nom))
 					check = True
-
+	# 	else:
+	# 		print(x.nom)
+	# print("===============")
 	if not check:
 		for x in PrixItem:
 			if x.nom == item:

@@ -24,13 +24,17 @@ def permission(ctx,grade,author = None):
 		roles = ctx.author.roles
 		for role in roles :
 			if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
-				return(True)
+				return True
+			if (grade == 0 or grade == 1) and role.permissions.administrator:
+				return True
 	else :
 		roles = author.roles
 		for role in roles :
 			if role.name in perm[grade] or ctx.guild.id == 478003352551030796:
-				return(True)
-	return(False)
+				return True
+			if (grade == 0 or grade == 1) and role.permissions.administrator:
+				return True
+	return False
 
 class Gestion(commands.Cog):
 
@@ -55,7 +59,7 @@ class Gestion(commands.Cog):
 			if permission(ctx,Inquisiteur):
 				members = ctx.guild.members
 				for member in members:
-					DB.newPlayer(member.id)
+					sql.newPlayer(member.id)
 				await ctx.channel.send("la bdd est remplis !")
 			else:
 				ctx.send("tu n'as pas les droits")
