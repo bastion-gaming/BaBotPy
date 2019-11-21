@@ -472,12 +472,18 @@ def testTrophy(ID, nameElem):
 	for c in objetTrophy:
 		nbGemsNecessaire = c.mingem
 		if c.type == "unique":
-			for x in trophy:
-				if nameElem == x[1]:
-					return 0
-			if int(gems) >= nbGemsNecessaire:
-				sql.add(ID, c.nom, 1, "trophy")
-				return 1
+			if nameElem == c.nom:
+				for x in trophy:
+					if nameElem == x[1]:
+						if sql.valueAtNumber(ID, c.nom, "trophy") > 1:
+							sql.updateField(ID, c.nom, 1, "trophy")
+						return 0
+				if int(gems) >= nbGemsNecessaire:
+					if sql.valueAtNumber(ID, c.nom, "trophy") < 1:
+						sql.add(ID, c.nom, 1, "trophy")
+					elif sql.valueAtNumber(ID, c.nom, "trophy") > 1:
+						sql.updateField(ID, c.nom, 1, "trophy")
+					return 1
 
 
 
