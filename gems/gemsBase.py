@@ -172,7 +172,7 @@ class GemsBase(commands.Cog):
 				msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
 				await ctx.channel.send(msg)
 				return "anticheat"
-			if item == "capability" or item == "capabilities" or item == "capacité" or item == "capacités" or item == "aptitude" or item == "aptitudes":
+			elif item == "capability" or item == "capabilities" or item == "capacité" or item == "capacités" or item == "aptitude" or item == "aptitudes":
 				IDCap = nb
 				CapList = sql.valueAt(ID, "all", "capability")
 				check = False
