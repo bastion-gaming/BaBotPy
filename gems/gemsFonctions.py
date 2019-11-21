@@ -230,9 +230,9 @@ def loadItem(F = None):
 	,Outil("diamond_pickaxe", itemBourse("diamond_pickaxe", "vente"), itemBourse("diamond_pickaxe", "achat"), 150, 450, "forge")
 	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
 	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 50, "forge")
-	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 4, 4, "")
-	,Outil("barrel", itemBourse("barrel", "vente"), itemBourse("barrel", "achat"), 3, 3, "")
-	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 2, 2, "")
+	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 4, 4, "consommable")
+	,Outil("barrel", itemBourse("barrel", "vente"), itemBourse("barrel", "achat"), 3, 3, "consommable")
+	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 2, 2, "consommable")
 	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente"), itemBourse("bank_upgrade", "achat"), 10000, None, "bank")]
 
 

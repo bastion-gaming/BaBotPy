@@ -492,6 +492,7 @@ class GemsBase(commands.Cog):
 				timeS = int(time - timeM * 60)
 				d_market+="Actualisation de la bourse dans :clock2:`{}h {}m {}s`\n".format(timeH,timeM,timeS)
 				d_marketOutils = ""
+				d_marketOutilsS = ""
 				d_marketItems = ""
 				d_marketItemsMinerai = ""
 				d_marketItemsPoisson = ""
@@ -516,22 +517,33 @@ class GemsBase(commands.Cog):
 							else:
 								pourcentageA = 0
 
-					d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,GF.get_idmoji(c.nom))
-					if c.vente != 0:
-						d_marketOutils += "Vente **{}** ".format(c.vente)
+					if c.type == "consommable":
+						d_marketOutilsS += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
 						if pourcentageV != 0:
-							d_marketOutils += "_{}%_ | ".format(pourcentageV)
-						else:
-							d_marketOutils += "| "
-					if c.nom == "bank_upgrade":
-						d_marketOutils += "Achat **Le plafond du compte épargne** "
-					else:
-						d_marketOutils += "Achat **{}** ".format(c.achat)
+							d_marketOutilsS += "_{}%_ ".format(pourcentageV)
+						d_marketOutilsS += "| Achat **{}** ".format(c.achat)
 						if pourcentageA != 0:
-							d_marketOutils += "_{}%_ ".format(pourcentageA)
-					if c.durabilite != None:
-						d_marketOutils += "| Durabilité: **{}** ".format(c.durabilite)
-					d_marketOutils += "| Poids **{}**\n".format(c.poids)
+							d_marketOutilsS += "_{}%_ ".format(pourcentageA)
+						if c.durabilite != None:
+							d_marketOutilsS += "| Durabilité: **{}** ".format(c.durabilite)
+						d_marketOutilsS += "| Poids **{}**\n".format(c.poids)
+					else:
+						d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,GF.get_idmoji(c.nom))
+						if c.vente != 0:
+							d_marketOutils += "Vente **{}** ".format(c.vente)
+							if pourcentageV != 0:
+								d_marketOutils += "_{}%_ | ".format(pourcentageV)
+							else:
+								d_marketOutils += "| "
+						if c.nom == "bank_upgrade":
+							d_marketOutils += "Achat **Le plafond du compte épargne** "
+						else:
+							d_marketOutils += "Achat **{}** ".format(c.achat)
+							if pourcentageA != 0:
+								d_marketOutils += "_{}%_ ".format(pourcentageA)
+						if c.durabilite != None:
+							d_marketOutils += "| Durabilité: **{}** ".format(c.durabilite)
+						d_marketOutils += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetItem :
 					for y in GI.PrixItem:
@@ -617,6 +629,7 @@ class GemsBase(commands.Cog):
 
 				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
+				msg.add_field(name="Spéciaux", value=d_marketOutilsS, inline=False)
 				if d_marketItems != "":
 					msg.add_field(name="Items", value=d_marketItems, inline=False)
 				msg.add_field(name="Minerais", value=d_marketItemsMinerai, inline=False)
