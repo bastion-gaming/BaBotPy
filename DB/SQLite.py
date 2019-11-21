@@ -1,5 +1,5 @@
 import discord
-import sqlite3 as sql
+import pysqlite3 as sql
 import datetime as dt
 import time as t
 import json
