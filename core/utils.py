@@ -9,7 +9,7 @@ import discord
 import json
 import os
 from core import welcome as wel
-
+import subprocess
 from DB import SQLite as sql, ConversionDB as cdb
 
 client = discord.Client()
@@ -117,7 +117,29 @@ class Utils(commands.Cog):
 				await ctx.channel.send("Changelog Erreur 404 | Version not found")
 				return 404
 		await ctx.channel.send(embed = msg, delete_after = 90)
+		@commands.command(pass_context=True)
 
+	async def run(self, ctx,ldp,*,args):
+		"""utilisable uniquement en python pour la version test."""
+		args = args.replace("import os",'')
+		args = args.replace("__import__('os')","")
+		if (ldp=="python"):
+			f = open("cache/script.py","w")
+			f.write(args)
+			f.close()
+			x = subprocess.Popen(["python3", "cache/script.py"],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		else:
+			f = open("cache/script.cpp","w")
+			f.write(args)
+			f.close()
+			os.system("g++ -o cache/script.o cache/script.cpp")
+			x = subprocess.Popen(["./cache/script.o"],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		# if (x.stderr.read().decode('utf-8')!=""):
+		# 	erreur = "no no no no no"
+		# else:
+		erreur = "aucune erreur"
+		msg = "\nsortie standard :\n"+x.stdout.read().decode('utf-8')+"\nerreur(s):\n"+erreur
+		await ctx.send(msg)
 
 class UtilsSecret(commands.Cog):
 
