@@ -272,13 +272,13 @@ class GemsPlay(commands.Cog):
 							hyperjackpot = x.mingem
 					if gain >= jackpot:
 						sql.add(ID, "Gamble Jackpot", 1, "trophy")
-						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
+						msg += "\nFélicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
 					elif gain >= superjackpot:
 						sql.add(ID, "Super Gamble Jackpot", 1, "trophy")
-						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy::trophy:`Super Gamble Jackpot`."
+						msg += "\nFélicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy::trophy:`Super Gamble Jackpot`."
 					elif gain >= hyperjackpot:
 						sql.add(ID, "Hyper Gamble Jackpot", 1, "trophy")
-						msg += "Félicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy::trophy::trophy:`Hyper Gamble Jackpot`."
+						msg += "\nFélicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy::trophy::trophy:`Hyper Gamble Jackpot`."
 					sql.addGems(ID, gain)
 					D = r.randint(0,20)
 					if D == 0:
