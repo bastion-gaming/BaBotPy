@@ -245,14 +245,14 @@ class GemsBase(commands.Cog):
 								i+=1
 							prix = int(prix)
 						else:
-							prix = -1 * (c.achat*nb)
+							prix = c.achat*nb
 						if c.type != "spinelle":
-							if solde[0] >= prix:
+							if solde >= prix:
 								sql.addGems(ID, -prix)
 								check = True
 							argent = ":gem:`gems`"
 						else:
-							if soldeSpinelles[0] >= prix:
+							if soldeSpinelles >= prix:
 								sql.addSpinelles(ID, -prix)
 								check = True
 							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
@@ -329,10 +329,6 @@ class GemsBase(commands.Cog):
 							msg ="Tu as vendu {0} :{1}:`{1}` pour {2} {3} !".format(nb, item, gain, argent)
 							# Message de réussite dans la console
 							print("Gems >> {} a vendu {} {}".format(ctx.author.name, nb, item))
-							if c.nom == "grapes" and int (nb/10) >= 1:
-								nbwine = int(nb/10)
-								sql.add(ID, "wine_glass", nbwine, "inventory")
-								msg+="\nTu gagnes {}:wine_glass:`verre de vin`".format(nbwine)
 
 				for c in GF.objetOutil:
 					if item == c.nom:

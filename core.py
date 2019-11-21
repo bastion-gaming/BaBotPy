@@ -61,6 +61,17 @@ async def on_ready():
 	print('PREFIX = '+str(PREFIX))
 	print('\nBastionBot '+VERSION)
 	GF.setglobalguild(client.get_guild(wel.idServBot))
+	print(sql.init())
+	flag = sql.checkField()
+	if flag == 0:
+		print("SQL >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("SQL >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "sup" in flag:
+		print("SQL >> Un ou plusieurs champs ont été supprimés de la DB.")
+	elif "type" in flag:
+		print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
+	print('------')
 	if DB.dbExist():
 		print("La DB {} existe, poursuite sans soucis.".format(DB.DB_NOM))
 	else :
@@ -75,19 +86,9 @@ async def on_ready():
 	elif "sup" in flag:
 		print("DB >> Un ou plusieurs champs ont été supprimés de la DB.")
 
-	print('------')
-	print(sql.init())
-	flag = sql.checkField()
-	if flag == 0:
-		print("SQL >> Aucun champ n'a été ajouté, supprimé ou modifié.")
-	elif "add" in flag:
-		print("SQL >> Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "sup" in flag:
-		print("SQL >> Un ou plusieurs champs ont été supprimés de la DB.")
-	elif "type" in flag:
-		print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
+	# GF.checkDB_Session()
+	GF.checkDB_Guilde()
 	print('------\n')
-	GF.checkDB_Session()
 
 ####################### Commande help.py #######################
 

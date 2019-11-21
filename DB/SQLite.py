@@ -344,7 +344,7 @@ def taille(nameDB = None):
 # Fonctions
 #===============================================================================
 # Liste des tables dont l'enregistrement des données est spécifique
-nameDBexcept = ["inventory", "durability", "hothouse", "cooking", "trophy", "statgems", "filleuls", "bastion_com_time", "gems_com_time", "capability"]
+nameDBexcept = ["inventory", "durability", "hothouse", "cooking", "ferment", "trophy", "statgems", "filleuls", "bastion_com_time", "gems_com_time", "capability"]
 
 #-------------------------------------------------------------------------------
 def updateField(ID, fieldName, fieldValue, nameDB = None):
@@ -400,6 +400,8 @@ def updateField(ID, fieldName, fieldValue, nameDB = None):
 						script = "UPDATE {0} SET Time = '{2}', Plante = '{5}' WHERE idPlantation = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
 					elif x == "cooking":
 						script = "UPDATE {0} SET Time = '{2}', Plat = '{5}'  WHERE idFour = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
+					elif x == "ferment":
+						script = "UPDATE {0} SET Time = '{2}', Alcool = '{5}'  WHERE idBarrel = '{1}' and idgems = '{3}'".format(nameDB, fieldName, fieldValue[0], PlayerID, IDname, fieldValue[1])
 					else:
 						return "202"
 			# print("==== updateField ====")
@@ -468,6 +470,9 @@ def valueAt(ID, fieldName, nameDB = None):
 						elif x == "cooking":
 							fieldName2 = "idFour"
 							fieldName3 = "Time, Plat, idFour"
+						elif x == "ferment":
+							fieldName2 = "idBarrel"
+							fieldName3 = "Time, Alcool, idBarrel"
 						elif x == "gems_com_time":
 							fieldName2 = "Commande"
 							fieldName3 = "Com_time, Commande"
@@ -601,7 +606,7 @@ def add(ID, nameElem, nbElem, nameDB = None):
 
 	old_value = valueAt(ID, nameElem, nameDB)
 	if old_value != 0:
-		if nameDB == "hothouse" or nameDB == "cooking" or nameDB == "daily":
+		if nameDB == "hothouse" or nameDB == "cooking" or nameDB == "daily" or nameDB == "ferment":
 			updateField(ID, nameElem, nbElem, nameDB)
 		else:
 			new_value = int(old_value[0]) + int(nbElem)
@@ -637,7 +642,7 @@ def add(ID, nameElem, nbElem, nameDB = None):
 		else:
 			if nameDB == "inventory" or nameDB == "durability" or nameDB == "trophy" or nameDB == "statgems" or nameDB == "bastion_com_time" or nameDB == "gems_com_time":
 				values = "'{2}', '{0}', '{1}'".format(nameElem, nbElem, PlayerID)
-			elif nameDB == "hothouse" or nameDB == "cooking":
+			elif nameDB == "hothouse" or nameDB == "cooking" or nameDB == "ferment":
 				values = "'{3}', '{0}', '{1}', '{2}'".format(nameElem, nbElem[0], nbElem[1], PlayerID)
 			elif nameDB == "capability" or nameDB == "filleuls":
 				values = "{1}, {0}".format(nameElem, PlayerID)

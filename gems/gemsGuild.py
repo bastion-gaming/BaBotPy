@@ -21,21 +21,6 @@ except:
 	with open('gems/guildes.json', 'w') as fp:
 		json.dump(dict, fp, indent=4)
 
-if DB.dbExist("DB/guildesDB"):
-	print("Guildes >> La DB existe, poursuite sans soucis.")
-else :
-	print("Guildes >> La DB n'existait pas. Elle a été (re)créée.")
-flag = DB.checkField("DB/guildesDB", "DB/Templates/guildesTemplate")
-if flag == 0:
-	print("DB >> Aucun champ n'a été ajouté, supprimé ou modifié.")
-elif "add" in flag:
-	print("DB >> Un ou plusieurs champs ont été ajoutés à la DB.")
-elif "type" in flag:
-	print("DB >> Un ou plusieurs type ont été modifié sur la DB.")
-elif "sup" in flag:
-	print("DB >> Un ou plusieurs champs ont été supprimés de la DB.")
-print('------')
-
 
 def guild_create(ctx, guilde):
 	ID = ctx.author.id

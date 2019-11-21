@@ -23,7 +23,21 @@ def checkDB_Session():
 	else :
 		print("Gems >> La DB Session n'existait pas. Elle a été (re)créée.")
 	flag = DB.checkField(dbSession, dbSessionTemplate)
-	print('------')
+
+def checkDB_Guilde():
+	if DB.dbExist("DB/guildesDB"):
+		print("Guildes >> La DB existe, poursuite sans soucis.")
+	else :
+		print("Guildes >> La DB n'existait pas. Elle a été (re)créée.")
+	flag = DB.checkField("DB/guildesDB", "DB/Templates/guildesTemplate")
+	if flag == 0:
+		print("DB >> Aucun champ n'a été ajouté, supprimé ou modifié.")
+	elif "add" in flag:
+		print("DB >> Un ou plusieurs champs ont été ajoutés à la DB.")
+	elif "type" in flag:
+		print("DB >> Un ou plusieurs type ont été modifié sur la DB.")
+	elif "sup" in flag:
+		print("DB >> Un ou plusieurs champs ont été supprimés de la DB.")
 
 # Array
 message_crime = ["Vous avez volé la Société Eltamar et vous êtes retrouvé dans un lac, mais vous avez quand même réussi à voler" #You robbed the Society of Schmoogaloo and ended up in a lake,but still managed to steal
@@ -174,6 +188,7 @@ def loadItem(F = None):
 	,Item("cookie", itemBourse("cookie", "vente"), itemBourse("cookie", "achat"), 1, "emoji")
 	,Item("grapes", itemBourse("grapes", "vente"), itemBourse("grapes", "achat"), 1, "emoji")
 	,Item("wine_glass", itemBourse("wine_glass", "vente"), itemBourse("wine_glass", "achat"), 2, "emoji")
+	,Item("beer", itemBourse("beer", "vente"), itemBourse("beer", "achat"), 2, "emoji")
 	,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "consommable")
 	,Item("cacao", itemBourse("cacao", "vente"), itemBourse("cacao", "achat"), 1, "plante")
 	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "emoji")
@@ -216,7 +231,8 @@ def loadItem(F = None):
 	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
 	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 50, "forge")
 	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 4, 4, "")
-	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 3, 3, "")
+	,Outil("barrel", itemBourse("barrel", "vente"), itemBourse("barrel", "achat"), 3, 3, "")
+	,Outil("furnace", itemBourse("furnace", "vente"), itemBourse("furnace", "achat"), 2, 2, "")
 	,Outil("bank_upgrade", itemBourse("bank_upgrade", "vente"), itemBourse("bank_upgrade", "achat"), 10000, None, "bank")]
 
 
