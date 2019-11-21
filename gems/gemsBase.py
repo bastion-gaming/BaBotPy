@@ -125,7 +125,7 @@ class GemsBase(commands.Cog):
 				j = 0
 				for one in UserList: # affichage des données trié
 					baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(one[0], one[1], j+1, one[3])
-					if UserList[i][2] != 0:
+					if one[2] != 0:
 						baltop+=" | {0}<:spinelle:{1}>\n".format(one[2], GF.get_idmoji("spinelle"))
 					else:
 						baltop+="\n"
