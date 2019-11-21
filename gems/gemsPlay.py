@@ -25,12 +25,8 @@ class GemsPlay(commands.Cog):
 		# Initialisation des variables générales de la fonction
 		#=======================================================================
 		ID = ctx.author.id
-		DailyTime = sql.valueAt(ID, "DailyTime", "daily")
-		if DailyTime != 0:
-			DailyTime = DailyTime[0]
-		DailyMult = sql.valueAt(ID, "DailyMult", "daily")
-		if DailyMult != 0:
-			DailyMult = DailyMult[0]
+		DailyTime = sql.valueAtNumber(ID, "DailyTime", "daily")
+		DailyMult = sql.valueAtNumber(ID, "DailyMult", "daily")
 		jour = dt.date.today()
 		#=======================================================================
 		# Détermination du daily
@@ -96,12 +92,8 @@ class GemsPlay(commands.Cog):
 					title = "Compte épargne de {}".format(ARG2)
 				else:
 					title = "Compte épargne de {}".format(ctx.author.name)
-				solde = sql.valueAt(ID, "Solde", "bank")
-				if solde != 0:
-					solde = solde[0]
-				soldeMax = sql.valueAt(ID, "SoldeMax", "bank")
-				if soldeMax != 0:
-					soldeMax = soldeMax[0]
+				solde = sql.valueAtNumber(ID, "Solde", "bank")
+				soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 				if soldeMax == 0:
 					soldeMax = Taille
 				msg = discord.Embed(title = title,color= 13752280, description = "")
@@ -130,13 +122,9 @@ class GemsPlay(commands.Cog):
 			if sql.spam(ID,GF.couldown_4s, "bank_add", "gems"):
 				if ARG2 != None:
 					ARG2 = int(ARG2)
-					gems = sql.valueAt(ID, "gems", "gems")[0]
-					solde = sql.valueAt(ID, "Solde", "bank")
-					if solde != 0:
-						solde = solde[0]
-					soldeMax = sql.valueAt(ID, "SoldeMax", "bank")
-					if soldeMax != 0:
-						soldeMax = soldeMax[0]
+					gems = sql.valueAtNumber(ID, "gems", "gems")
+					solde = sql.valueAtNumber(ID, "Solde", "bank")
+					soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 					if soldeMax == 0:
 						soldeMax = Taille
 
@@ -152,11 +140,8 @@ class GemsPlay(commands.Cog):
 						nbgm = -1*ARG2
 						sql.addGems(ID, nbgm)
 						sql.add(ID, "solde", ARG2, "bank")
-						solde = sql.valueAt(ID, "Solde", "bank")
-						if solde != 0:
-							solde = solde[0]
 						msg += "Ton compte épargne a été crédité de {} :gem:`gems`".format(ARG2)
-						msg += "\nNouveau solde: {} :gem:`gems`".format(solde)
+						msg += "\nNouveau solde: {} :gem:`gems`".format(sql.valueAtNumber(ID, "Solde", "bank"))
 						sql.updateComTime(ID, "bank_add", "gems")
 					else:
 						msg = "Tu n'as pas assez de :gem:`gems` pour épargner cette somme"
@@ -175,12 +160,8 @@ class GemsPlay(commands.Cog):
 				if ARG2 != None:
 					ID = sql.nom_ID(ARG2)
 				else:
-					solde = sql.valueAt(ID, "Solde", "bank")
-					if solde != 0:
-						solde = solde[0]
-					soldeMax = sql.valueAt(ID, "SoldeMax", "bank")
-					if soldeMax != 0:
-						soldeMax = soldeMax[0]
+					solde = sql.valueAtNumber(ID, "Solde", "bank")
+					soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 					if soldeMax == 0:
 						soldeMax = Taille
 					soldeMult = soldeMax/Taille
@@ -197,10 +178,7 @@ class GemsPlay(commands.Cog):
 						sql.addGems(ID, int(soldeMove))
 						sql.add(ID, "solde", int(nbgm), "bank")
 						msg += "Plafond de {} :gem:`gems` du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
-					solde = sql.valueAt(ID, "Solde", "bank")
-					if solde != 0:
-						solde = solde[0]
-					msg += "Nouveau solde: {} :gem:`gems`".format(solde)
+					msg += "Nouveau solde: {} :gem:`gems`".format(sql.valueAtNumber(ID, "Solde", "bank"))
 
 					D = r.randint(0,20)
 					if D == 20 or D == 0:
@@ -215,9 +193,7 @@ class GemsPlay(commands.Cog):
 				sql.updateComTime(ID, "bank_saving", "gems")
 				lvl.addxp(ID, 0.4, "gems")
 			else:
-				ComTime = sql.valueAt(ID, "bank_saving", "gems_com_time")
-				if ComTime != 0:
-					ComTime = float(ComTime[0])
+				ComTime = sql.valueAtNumber(ID, "bank_saving", "gems_com_time")
 				time = ComTime - (t.time()-GF.couldown_4h)
 				timeH = int(time / 60 / 60)
 				time = time - timeH * 3600
@@ -270,7 +246,7 @@ class GemsPlay(commands.Cog):
 		"""**[valeur]** | Avez vous l'ame d'un parieur ?"""
 		valeur = int(valeur)
 		ID = ctx.author.id
-		gems = sql.valueAt(ID, "gems", "gems")[0]
+		gems = sql.valueAtNumber(ID, "gems", "gems")
 		if valeur < 0:
 			msg = ":no_entry: Anti-cheat! Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
 			slq.add(ID, "DiscordCop Amende", 1, "statgems")
@@ -339,20 +315,12 @@ class GemsPlay(commands.Cog):
 		if sql.spam(ID,GF.couldown_6s, "mine", "gems"):
 			if GF.testInvTaille(ID):
 				nbrand = r.randint(0,99)
-				nbDP = sql.valueAt(ID, "diamond_pickaxe", "inventory")
-				if nbDP != 0:
-					nbDP = nbDP[0]
-				nbIP = sql.valueAt(ID, "iron_pickaxe", "inventory")
-				if nbIP != 0:
-					nbIP = nbIP[0]
-				nbP = sql.valueAt(ID, "pickaxe", "inventory")
-				if nbP != 0:
-					nbP = nbP[0]
+				nbDP = sql.valueAtNumber(ID, "diamond_pickaxe", "inventory")
+				nbIP = sql.valueAtNumber(ID, "iron_pickaxe", "inventory")
+				nbP = sql.valueAtNumber(ID, "pickaxe", "inventory")
 				#----------------- Pioche en diamant -----------------
 				if nbDP >= 1:
-					Durability = sql.valueAt(ID, "diamond_pickaxe", "durability")
-					if Durability != 0:
-						Durability = Durability[0]
+					Durability = sql.valueAtNumber(ID, "diamond_pickaxe", "durability")
 					if Durability == 0:
 						sql.add(ID, "diamond_pickaxe", -1, "inventory")
 						if nbDP > 1:
@@ -427,9 +395,7 @@ class GemsPlay(commands.Cog):
 
 				#----------------- Pioche en fer -----------------
 				elif nbIP >= 1:
-					Durability = sql.valueAt(ID, "iron_pickaxe", "durability")
-					if Durability != 0:
-						Durability = Durability[0]
+					Durability = sql.valueAtNumber(ID, "iron_pickaxe", "durability")
 					if Durability == 0:
 						sql.add(ID, "iron_pickaxe", -1, "inventory")
 						if nbIP > 1:
@@ -497,9 +463,7 @@ class GemsPlay(commands.Cog):
 
 				#----------------- Pioche normal -----------------
 				elif nbP >= 1:
-					Durability = sql.valueAt(ID, "pickaxe", "durability")
-					if Durability != 0:
-						Durability = Durability[0]
+					Durability = sql.valueAtNumber(ID, "pickaxe", "durability")
 					if Durability == 0:
 						sql.add(ID, "pickaxe", -1, "inventory")
 						if nbP > 1:
@@ -543,13 +507,9 @@ class GemsPlay(commands.Cog):
 		if sql.spam(ID,GF.couldown_6s, "fish", "gems"):
 			if GF.testInvTaille(ID):
 				nbrand = r.randint(0,99)
-				nbfishingrod = sql.valueAt(ID, "fishingrod", "inventory")
-				if nbfishingrod != 0:
-					nbfishingrod = nbfishingrod[0]
+				nbfishingrod = sql.valueAtNumber(ID, "fishingrod", "inventory")
 				if nbfishingrod >= 1:
-					Durability = sql.valueAt(ID, "fishingrod", "durability")
-					if Durability != 0:
-						Durability = Durability[0]
+					Durability = sql.valueAtNumber(ID, "fishingrod", "durability")
 					if Durability == 0:
 						sql.add(ID, "fishingrod", -1, "inventory")
 						if nbfishingrod > 1:
@@ -559,9 +519,7 @@ class GemsPlay(commands.Cog):
 						msg = "Pas de chance tu as cassé ta <:gem_fishingrod:{}>`canne à peche` !".format(GF.get_idmoji("fishingrod"))
 					else :
 						sql.add(ID, "fishingrod", -1, "durability")
-						nbfishhook = sql.valueAt(ID, "fishhook", "inventory")
-						if nbfishhook != 0:
-							nbfishhook = nbfishhook[0]
+						nbfishhook = sql.valueAtNumber(ID, "fishhook", "inventory")
 						if nbfishhook >= 1:
 							mult = r.randint(-1, 5)
 							if mult < 2:
@@ -630,11 +588,7 @@ class GemsPlay(commands.Cog):
 		ID = ctx.author.id
 		maxplanting = 200
 		if sql.spam(ID,GF.couldown_4s, "hothouse", "gems"):
-			nbplanting = sql.valueAt(ID, "planting_plan", "inventory")
-			if nbplanting != 0:
-				nbplanting = int(nbplanting[0]) + 1
-			else:
-				nbplanting = 1
+			nbplanting = int(sql.valueAtNumber(ID, "planting_plan", "inventory")) + 1
 			if nbplanting >= maxplanting:
 				nbplanting = maxplanting
 			msg = discord.Embed(title = "La serre",color= 6466585, description = "Voici tes plantations.\nUtilisé `hothouse plant seed` pour planter une <:gem_seed:{0}>`seed`".format(GF.get_idmoji("seed")))
@@ -718,10 +672,7 @@ class GemsPlay(commands.Cog):
 							desc = "Ta plantation à fini de pousser, en la coupant tu gagnes {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
 							lvl.addxp(ID, 1, "gems")
 							if i > 1:
-								nbPlan = sql.valueAt(ID, "planting_plan", "inventory")
-								if nbPlan != 0:
-									nbPlan = int(nbPlan[0])
-								if nbPlan > 0:
+								if sql.valueAtNumber(ID, "planting_plan", "inventory") > 0:
 									if sql.valueAt(ID, "planting_plan", "durability") == 0:
 										for c in GF.objetOutil:
 											if c.nom == "planting_plan":
@@ -782,9 +733,7 @@ class GemsPlay(commands.Cog):
 					else:
 						couldown = "6h"
 					if valueTime == 0:
-						PlantingItemValue = sql.valueAt(ID, arg, "inventory")
-						if PlantingItemValue != 0:
-							PlantingItemValue = PlantingItemValue[0]
+						PlantingItemValue = sql.valueAtNumber(ID, arg, "inventory")
 						if PlantingItemValue >= 1:
 							data = []
 							data.append(str(t.time()))
@@ -807,9 +756,7 @@ class GemsPlay(commands.Cog):
 						else:
 							valueTime = 0
 							valueItem = ""
-						PlantingItemValue = sql.valueAt(ID, arg, "inventory")
-						if PlantingItemValue != 0:
-							PlantingItemValue = PlantingItemValue[0]
+						PlantingItemValue = sql.valueAtNumber(ID, arg, "inventory")
 						if valueItem == "cacao":
 							couldown = "4h"
 						else:
@@ -858,7 +805,7 @@ class GemsPlay(commands.Cog):
 	async def slots(self, ctx, imise = None):
 		"""**[mise]** | La machine à sous, la mise minimum est de 10 :gem:`gems`"""
 		ID = ctx.author.id
-		gems = sql.valueAt(ID, "gems", "gems")[0]
+		gems = sql.valueAtNumber(ID, "gems", "gems")
 		if imise != None:
 			if int(imise) < 0:
 				msg = ":no_entry: Anti-cheat! Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
@@ -1105,10 +1052,7 @@ class GemsPlay(commands.Cog):
 				for lootbox in GF.objetBox:
 					if name == "lootbox_{}".format(lootbox.nom):
 						name = lootbox.nom
-				nbLB = sql.valueAt(ID, "lootbox_{}".format(name), "inventory")
-				if nbLB != 0:
-					nbLB = nbLB[0]
-				if nbLB > 0:
+				if sql.valueAtNumber(ID, "lootbox_{}".format(name), "inventory") > 0:
 					for lootbox in GF.objetBox:
 						if name == lootbox.nom:
 							gain = r.randint(lootbox.min, lootbox.max)

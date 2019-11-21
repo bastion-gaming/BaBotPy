@@ -467,8 +467,7 @@ def testTrophy(ID, nameElem):
 	Pour en retirer mettez nbElemn en négatif
 	"""
 	trophy = sql.valueAt(ID, "all", "trophy")
-	gems = sql.valueAt(ID, "gems", "gems")
-	gems = gems[0]
+	gems = sql.valueAtNumber(ID, "gems", "gems")
 	i = 2
 	for c in objetTrophy:
 		nbGemsNecessaire = c.mingem
@@ -514,8 +513,7 @@ def taxe(solde, pourcentage):
 
 
 def startKit(ID):
-	gems = sql.valueAt(ID, "gems", "gems")
-	gems = gems[0]
+	gems = sql.valueAtNumber(ID, "gems", "gems")
 	if gems == 0:
 		sql.add(ID, "pickaxe", 1, "inventory")
 		sql.add(ID, "fishingrod", 1, "inventory")

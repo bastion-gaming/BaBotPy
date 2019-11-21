@@ -499,6 +499,16 @@ def valueAt(ID, fieldName, nameDB = None):
 				return value[0]
 
 #-------------------------------------------------------------------------------
+def valueAtNumber(ID, fieldName, nameDB = None):
+	if fieldName != "all":
+		VAN = valueAt(ID, fieldName, nameDB)
+		if VAN != 0:
+			VAN = VAN[0]
+		return VAN
+	else:
+		return 0
+
+#-------------------------------------------------------------------------------
 def addGems(ID, nb):
 	"""
 	Permet d'ajouter un nombre de gems à quelqu'un. Il nous faut son ID et le nombre de gems.

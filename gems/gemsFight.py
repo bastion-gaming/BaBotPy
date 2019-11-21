@@ -55,9 +55,7 @@ async def action(ctx, IDaction, P, type):
 				for c in GF.objetCapability:
 					if "{}".format(c.ID) == IDaction:
 						ActionItem = c.item
-				nbActionItem = sql.valueAt(ID, ActionItem, "inventory")
-				if nbActionItem != 0:
-					nbActionItem = nbActionItem[0]
+				nbActionItem = sql.valueAtNumber(ID, ActionItem, "inventory")
 				if nbActionItem >= 1:
 					action = []
 					action.append(IDaction)
@@ -128,9 +126,7 @@ async def checklife(ctx, IDSession):
 		msg = discord.Embed(title = "Defis {}".format(DB.valueAt(IDSession, "ID", GF.dbSession)),color= 13752280, description = desc)
 		await ctx.channel.send(embed = msg)
 		sql.addGems(winID, mise)
-		lost_nbGems = sql.valueAt(lostID, "gems", "gems")
-		if lost_nbGems != 0:
-			lost_nbGems = lost_nbGems[0]
+		lost_nbGems = sql.valueAtNumber(lostID, "gems", "gems")
 		if lost_nbGems < mise:
 			sql.addGems(lostID, -lost_nbGems)
 		else:
@@ -191,9 +187,7 @@ def round(ctx, IDSession):
 
 	# Attaque vs Attaque
 	elif OwnerType == "attaque" and MemberType == "attaque":
-		OwnerDurabilite = sql.valueAt(userOwner.id, OwnerItem, "durability")
-		if OwnerDurabilite != 0:
-			OwnerDurabilite = OwnerDurabilite[0]
+		OwnerDurabilite = sql.valueAtNumber(userOwner.id, OwnerItem, "durability")
 		if OwnerDurabilite == None:
 			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:
@@ -208,17 +202,12 @@ def round(ctx, IDSession):
 			OwnerDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
 			sql.add(userOwner.id, OwnerItem, -1, "inventory")
-			temp1 = sql.valueAt(userOwner.id, OwnerItem, "inventory")
-			if temp1 != 0:
-				temp1 = temp1[0]
-			if temp1 > 0:
+			if sql.valueAtNumber(userOwner.id, OwnerItem, "inventory") > 0:
 				for c in GF.objetOutil:
 					if c.nom == OwnerItem:
 						sql.add(userOwner.id, c.nom, c.durabilite-OwnerDurabilite-temp, "durability")
 
-		MemberDurabilite = sql.valueAt(userMember.id, MemberItem, "durability")
-		if MemberDurabilite != 0:
-			MemberDurabilite = MemberDurabilite[0]
+		MemberDurabilite = sql.valueAtNumber(userMember.id, MemberItem, "durability")
 		if MemberDurabilite == None:
 			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			for c in GF.objetOutil:
@@ -232,10 +221,7 @@ def round(ctx, IDSession):
 			MemberDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
 			temp = MemberPuissance - MemberDurabilite
 			sql.add(userMember.id, MemberItem, -1, "inventory")
-			temp1 = sql.valueAt(userMember.id, MemberItem, "inventory")
-			if temp1 != 0:
-				temp1 = temp1[0]
-			if temp1 > 0:
+			if sql.valueAtNumber(userMember.id, MemberItem, "inventory") > 0:
 				for c in GF.objetOutil:
 					if c.nom == MemberItem:
 						sql.add(userMember.id, c.nom, c.durabilite-MemberDurabilite-temp, "durability")
@@ -251,9 +237,7 @@ def round(ctx, IDSession):
 		sql.add(userOwner.id, OwnerItem, -OwnerPuissance*OwnerNBperte, "inventory")
 		OwnerDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userOwner.name, OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 
-		MemberDurabilite = sql.valueAt(userMember.id, MemberItem, "durability")
-		if MemberDurabilite != 0:
-			MemberDurabilite = MemberDurabilite[0]
+		MemberDurabilite = sql.valueAtNumber(userMember.id, MemberItem, "durability")
 		if MemberDurabilite == None:
 			MemberDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 			for c in GF.objetOutil:
@@ -268,10 +252,7 @@ def round(ctx, IDSession):
 			MemberDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(MemberItem, GF.get_idmoji(MemberItem))
 			temp = MemberPuissance - MemberDurabilite
 			sql.add(userMember.id, MemberItem, -1, "inventory")
-			temp1 = sql.valueAt(userMember.id, MemberItem, "inventory")
-			if temp1 != 0:
-				temp1 = temp1[0]
-			if temp1 > 0:
+			if sql.valueAtNumber(userMember.id, MemberItem, "inventory") > 0:
 				for c in GF.objetOutil:
 					if c.nom == MemberItem:
 						sql.add(userMember.id, c.nom, c.durabilite-MemberDurabilite-temp, "durability")
@@ -291,9 +272,7 @@ def round(ctx, IDSession):
 		sql.add(userMember.id, MemberItem, -MemberPuissance*MemberNBperte, "inventory")
 		MemberDesc += "\n**{0}** a perdu {3}<:gem_{1}:{2}>`{1}`\n".format(userMember.name, MemberItem, GF.get_idmoji(MemberItem), MemberPuissance)
 
-		OwnerDurabilite = sql.valueAt(userOwner.id, OwnerItem, "durability")
-		if OwnerDurabilite != 0:
-			OwnerDurabilite = OwnerDurabilite[0]
+		OwnerDurabilite = sql.valueAtNumber(userOwner.id, OwnerItem, "durability")
 		if OwnerDurabilite == None:
 			OwnerDesc += "\n**-{2}** de durabilité pour ta <:gem_{0}:{1}>`{0}`".format(OwnerItem, GF.get_idmoji(OwnerItem), OwnerPuissance)
 			for c in GF.objetOutil:
@@ -308,10 +287,7 @@ def round(ctx, IDSession):
 			OwnerDesc += "\n:cry: Pas de chance tu as cassé ta <:gem_{0}:{1}>`{0}` !".format(OwnerItem, GF.get_idmoji(OwnerItem))
 			temp = OwnerPuissance - OwnerDurabilite
 			sql.add(userOwner.id, OwnerItem, -1, "inventory")
-			temp1 = sql.valueAt(userOwner.id, OwnerItem, "inventory")
-			if temp1 != 0:
-				temp1 = temp1[0]
-			if temp1 > 0:
+			if sql.valueAtNumber(userOwner.id, OwnerItem, "inventory") > 0:
 				for c in GF.objetOutil:
 					if c.nom == OwnerItem:
 						sql.add(userOwner.id, c.nom, c.durabilite-OwnerDurabilite-temp, "durability")
@@ -364,12 +340,8 @@ class GemsFight(commands.Cog):
 			else:
 				await ctx.channel.send("Il manque la mise pour lancer ce défis")
 				return False
-			soldeOwner = sql.valueAt(ID, "gems", "gems")
-			if soldeOwner != 0:
-				soldeOwner = soldeOwner[0]
-			soldeMember = sql.valueAt(IDmember, "gems", "gems")
-			if soldeMember != 0:
-				soldeMember = soldeMember[0]
+			soldeOwner = sql.valueAtNumber(ID, "gems", "gems")
+			soldeMember = sql.valueAtNumber(IDmember, "gems", "gems")
 			if soldeOwner >= imise and soldeMember >= imise:
 				# arg1 >> utilisateur à défier
 				if DB.OwnerSessionExist(ID, GF.dbSession) == False:

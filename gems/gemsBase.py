@@ -64,21 +64,21 @@ class GemsBase(commands.Cog):
 				nom = nom.name
 			else:
 				nom = ctx.author.name
-			solde = sql.valueAt(ID, "gems", "gems")
+			solde = sql.valueAtNumber(ID, "gems", "gems")
 			title = "Compte principal de {}".format(nom)
 			msg = discord.Embed(title = title,color= 13752280, description = "")
-			desc = "{} :gem:`gems`\n".format(solde[0])
-			soldeSpinelles = sql.valueAt(ID,"spinelles", "gems")
-			if soldeSpinelles[0] > 0:
-				desc+= "{0} <:spinelle:{1}>`spinelles`".format(soldeSpinelles[0], GF.get_idmoji("spinelle"))
+			desc = "{} :gem:`gems`\n".format(solde)
+			soldeSpinelles = sql.valueAtNumber(ID,"spinelles", "gems")
+			if soldeSpinelles > 0:
+				desc+= "{0} <:spinelle:{1}>`spinelles`".format(soldeSpinelles, GF.get_idmoji("spinelle"))
 			msg.add_field(name="**_Balance_**", value=desc, inline=False)
-			lvlValue = sql.valueAt(ID, "lvl", "gems")
-			xp = sql.valueAt(ID, "xp", "gems")
+			lvlValue = sql.valueAtNumber(ID, "lvl", "gems")
+			xp = sql.valueAtNumber(ID, "xp", "gems")
 			# Niveaux part
 			for x in lvl.objetXPgems:
-				if lvlValue[0] == x.level:
-					desc = "XP: `{0}/{1}`".format(xp[0],x.somMsg)
-			msg.add_field(name="**_Niveau_: {0}**".format(lvlValue[0]), value=desc, inline=False)
+				if lvlValue == x.level:
+					desc = "XP: `{0}/{1}`".format(xp,x.somMsg)
+			msg.add_field(name="**_Niveau_: {0}**".format(lvlValue), value=desc, inline=False)
 			sql.updateComTime(ID, "bal", "gems")
 			await ctx.channel.send(embed = msg)
 			# Message de réussite dans la console
@@ -116,10 +116,10 @@ class GemsBase(commands.Cog):
 				t = sql.taille("gems")
 				while i <= t:
 					user = sql.userID(i, "gems")
-					gems = sql.valueAt(user, "gems", "gems")
-					spinelles = sql.valueAt(user, "spinelles", "gems")
-					guilde = sql.valueAt(user, "guilde", "gems")
-					UserList.append((user, gems[0], spinelles[0], guilde[0]))
+					gems = sql.valueAtNumber(user, "gems", "gems")
+					spinelles = sql.valueAtNumber(user, "spinelles", "gems")
+					guilde = sql.valueAtNumber(user, "guilde", "gems")
+					UserList.append((user, gems, spinelles, guilde))
 					i = i + 1
 				UserList = sorted(UserList, key=itemgetter(1),reverse=True)
 				j = 0
@@ -180,12 +180,12 @@ class GemsBase(commands.Cog):
 					if IDCap == c.ID:
 						check = True
 						prix = c.achat
-						mygems = sql.valueAt(ID, "spinelles", "gems")
+						mygems = sql.valueAtNumber(ID, "spinelles", "gems")
 						for one in CapList:
 							if str(one[0]) == "{}".format(c.ID):
 								await ctx.channel.send("Tu pocèdes déjà cette aptitude!")
 								return False
-						if mygems[0] >= prix:
+						if mygems >= prix:
 							CapList.append("{}".format(c.ID))
 							sql.add(ID, IDCap, 1, "capability")
 							sql.addSpinelles(ID, -prix)
@@ -197,8 +197,8 @@ class GemsBase(commands.Cog):
 			elif GF.testInvTaille(ID) or item == "backpack" or item == "hyperpack" or item == "bank_upgrade":
 				test = True
 				nb = int(nb)
-				solde = sql.valueAt(ID, "gems", "gems")
-				soldeSpinelles = sql.valueAt(ID, "spinelles", "gems")
+				solde = sql.valueAtNumber(ID, "gems", "gems")
+				soldeSpinelles = sql.valueAtNumber(ID, "spinelles", "gems")
 				for c in GF.objetItem :
 					if item == c.nom :
 						test = False
@@ -206,12 +206,12 @@ class GemsBase(commands.Cog):
 						if c.achat != 0:
 							prix = (c.achat*nb)
 							if c.type != "spinelle":
-								if solde[0] >= prix:
+								if solde >= prix:
 									sql.addGems(ID, -prix)
 									check = True
 								argent = ":gem:`gems`"
 							else:
-								if soldeSpinelles[0] >= prix:
+								if soldeSpinelles >= prix:
 									sql.addSpinelles(ID, -prix)
 									check = True
 								argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
@@ -232,8 +232,7 @@ class GemsBase(commands.Cog):
 					if item == c.nom :
 						test = False
 						if c.type == "bank":
-							soldeMax = sql.valueAt(ID, "SoldeMax", "bank")
-							soldeMax = soldeMax[0]
+							soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 							if soldeMax == 0:
 								soldeMax = c.poids
 								sql.add(ID, "soldeMax", c.poids, "bank")
@@ -269,7 +268,7 @@ class GemsBase(commands.Cog):
 								sql.add(ID, c.nom, nb, "inventory")
 								msg = "Tu viens d'acquérir {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 								if c.nom != "bank_upgrade":
-									if sql.valueAt(ID, c.nom, "durability") == 0:
+									if sql.valueAtNumber(ID, c.nom, "durability") == 0:
 										sql.add(ID, c.nom, c.durabilite, "durability")
 						else :
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de {} en banque".format(argent)
@@ -306,9 +305,7 @@ class GemsBase(commands.Cog):
 		# print(nb)
 		# print(type(nb))
 		if sql.spam(ID,GF.couldown_4s, "sell", "gems"):
-			nbItem = sql.valueAt(ID, item, "inventory")
-			if nbItem != 0:
-				nbItem = nbItem[0]
+			nbItem = sql.valueAtNumber(ID, item, "inventory")
 			if int(nb) == -1:
 				nb = nbItem
 			nb = int(nb)
@@ -360,7 +357,7 @@ class GemsBase(commands.Cog):
 					msg = "Cette objet n'existe pas"
 			else:
 				#print("Pas assez d'élement")
-				msg = "Tu n'as pas assez de `{0}`. Il t'en reste : {1}".format(str(item),str(sql.valueAt(ID, item, "inventory")[0]))
+				msg = "Tu n'as pas assez de `{0}`. Il t'en reste : {1}".format(str(item),str(sql.valueAtNumber(ID, item, "inventory")))
 
 			sql.updateComTime(ID, "sell", "gems")
 		else:
@@ -390,10 +387,7 @@ class GemsBase(commands.Cog):
 					for x in inv:
 						if c.nom == str(x[1]):
 							if int(x[0]) > 0:
-								d = sql.valueAt(ID, c.nom, "durability")
-								if d != 0:
-									d = d[0]
-								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom), d, c.durabilite)
+								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom), sql.valueAtNumber(ID, c.nom, "durability"), c.durabilite)
 								tailletot += c.poids*int(x[0])
 
 				for c in GF.objetItem:
@@ -493,8 +487,8 @@ class GemsBase(commands.Cog):
 				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 				if sql.spam(wel.idBaBot, GF.couldown_10s, "bourse", "gems"):
 					GF.loadItem()
-				ComTime = sql.valueAt(wel.idBaBot, "bourse", "gems_com_time")
-				time = float(ComTime[0])
+				ComTime = sql.valueAtNumber(wel.idBaBot, "bourse", "gems_com_time")
+				time = float(ComTime)
 				time = time - (t.time()-GF.couldown_12h)
 				timeH = int(time / 60 / 60)
 				time = time - timeH * 3600
@@ -690,8 +684,7 @@ class GemsBase(commands.Cog):
 					don = -gain
 					ID_recu = sql.nom_ID(nom)
 					Nom_recu = ctx.guild.get_member(ID_recu).name
-					solde = sql.valueAt(ID, "gems", "gems")
-					solde = int(solde[0])
+					solde = int(sql.valueAtNumber(ID, "gems", "gems"))
 					if solde >= 0:
 						# print(ID_recu)
 						sql.addGems(ID_recu, gain)
@@ -742,8 +735,7 @@ class GemsBase(commands.Cog):
 							checkLB = True
 							itemLB = lootbox.nom
 							item = "lootbox_{}".format(lootbox.nom)
-					nbItem = sql.valueAt(ID, item, "inventory")
-					nbItem = int(nbItem[0])
+					nbItem = int(sql.valueAtNumber(ID, item, "inventory"))
 					if nbItem >= nb and nb > 0:
 						if GF.testInvTaille(ID_recu):
 							sql.add(ID, item, -nb, "inventory")
@@ -764,8 +756,7 @@ class GemsBase(commands.Cog):
 				elif nb == -1:
 					ID_recu = sql.nom_ID(nom)
 					Nom_recu = ctx.guild.get_member(ID_recu).name
-					nbItem = sql.valueAt(ID, item, "inventory")
-					nb = int(nbItem[0])
+					nbItem = int(sql.valueAtNumber(ID, item, "inventory"))
 					if nb > 0:
 						if GF.testInvTaille(ID_recu):
 							sql.add(ID, item, -nb, "inventory")
@@ -817,7 +808,7 @@ class GemsBase(commands.Cog):
 							nb3 = nb*c.nb3
 							nb4 = nb*c.nb4
 							if c.item1 != "" and c.item2 != "" and c.item3 != "" and c.item4 != "":
-								if sql.valueAt(ID, c.item1, "inventory")[0] >= nb1 and sql.valueAt(ID, c.item2, "inventory")[0] >= nb2 and sql.valueAt(ID, c.item3, "inventory")[0] >= nb3 and sql.valueAt(ID, c.item4, "inventory")[0] >= nb4:
+								if sql.valueAtNumber(ID, c.item1, "inventory") >= nb1 and sql.valueAtNumber(ID, c.item2, "inventory") >= nb2 and sql.valueAtNumber(ID, c.item3, "inventory") >= nb3 and sql.valueAtNumber(ID, c.item4, "inventory") >= nb4:
 									sql.add(ID, c.nom, nb, "inventory")
 									sql.add(ID, c.item1, -1*nb1, "inventory")
 									sql.add(ID, c.item2, -1*nb2, "inventory")
@@ -827,21 +818,21 @@ class GemsBase(commands.Cog):
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
-									if sql.valueAt(ID, c.item1, "inventory")[0] < nb1:
-										nbmissing = (sql.valueAt(ID, c.item1, "inventory")[0] - nb1)*-1
+									if sql.valueAtNumber(ID, c.item1, "inventory") < nb1:
+										nbmissing = (sql.valueAtNumber(ID, c.item1, "inventory") - nb1)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
-									if sql.valueAt(ID, c.item2, "inventory")[0] < nb2:
-										nbmissing = (sql.valueAt(ID, c.item2, "inventory")[0] - nb2)*-1
+									if sql.valueAtNumber(ID, c.item2, "inventory") < nb2:
+										nbmissing = (sql.valueAtNumber(ID, c.item2, "inventory") - nb2)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
-									if sql.valueAt(ID, c.item3, "inventory")[0] < nb3:
-										nbmissing = (sql.valueAt(ID, c.item3, "inventory")[0] - nb3)*-1
+									if sql.valueAtNumber(ID, c.item3, "inventory") < nb3:
+										nbmissing = (sql.valueAtNumber(ID, c.item3, "inventory") - nb3)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmoji(c.item3))
-									if sql.valueAt(ID, c.item4, "inventory")[0] < nb4:
-										nbmissing = (sql.valueAt(ID, c.item4, "inventory")[0] - nb4)*-1
+									if sql.valueAtNumber(ID, c.item4, "inventory") < nb4:
+										nbmissing = (sql.valueAtNumber(ID, c.item4, "inventory") - nb4)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item4, GF.get_idmoji(c.item4))
 
 							elif c.item1 != "" and c.item2 != "" and c.item3 != "":
-								if sql.valueAt(ID, c.item1, "inventory")[0] >= nb1 and sql.valueAt(ID, c.item2, "inventory")[0] >= nb2 and sql.valueAt(ID, c.item3, "inventory")[0] >= nb3:
+								if sql.valueAtNumber(ID, c.item1, "inventory") >= nb1 and sql.valueAtNumber(ID, c.item2, "inventory") >= nb2 and sql.valueAtNumber(ID, c.item3, "inventory") >= nb3:
 									sql.add(ID, c.nom, nb, "inventory")
 									sql.add(ID, c.item1, -1*nb1, "inventory")
 									sql.add(ID, c.item2, -1*nb2, "inventory")
@@ -850,18 +841,18 @@ class GemsBase(commands.Cog):
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
-									if sql.valueAt(ID, c.item1, "inventory")[0] < nb1:
-										nbmissing = (sql.valueAt(ID, c.item1, "inventory")[0] - nb1)*-1
+									if sql.valueAtNumber(ID, c.item1, "inventory") < nb1:
+										nbmissing = (sql.valueAtNumber(ID, c.item1, "inventory") - nb1)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
-									if sql.valueAt(ID, c.item2, "inventory")[0] < nb2:
-										nbmissing = (sql.valueAt(ID, c.item2, "inventory")[0] - nb2)*-1
+									if sql.valueAtNumber(ID, c.item2, "inventory") < nb2:
+										nbmissing = (sql.valueAtNumber(ID, c.item2, "inventory") - nb2)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
-									if sql.valueAt(ID, c.item3, "inventory")[0] < nb3:
-										nbmissing = (sql.valueAt(ID, c.item3, "inventory")[0] - nb3)*-1
+									if sql.valueAtNumber(ID, c.item3, "inventory") < nb3:
+										nbmissing = (sql.valueAtNumber(ID, c.item3, "inventory") - nb3)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item3, GF.get_idmoji(c.item3))
 
 							elif c.item1 != "" and c.item2 != "":
-								if sql.valueAt(ID, c.item1, "inventory")[0] >= nb1 and sql.valueAt(ID, c.item2, "inventory")[0] >= nb2:
+								if sql.valueAtNumber(ID, c.item1, "inventory") >= nb1 and sql.valueAtNumber(ID, c.item2, "inventory") >= nb2:
 									sql.add(ID, c.nom, nb, "inventory")
 									sql.add(ID, c.item1, -1*nb1, "inventory")
 									sql.add(ID, c.item2, -1*nb2, "inventory")
@@ -869,21 +860,21 @@ class GemsBase(commands.Cog):
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
 									msg = ""
-									if sql.valueAt(ID, c.item1, "inventory")[0] < nb1:
-										nbmissing = (sql.valueAt(ID, c.item1, "inventory")[0] - nb1)*-1
+									if sql.valueAtNumber(ID, c.item1, "inventory") < nb1:
+										nbmissing = (sql.valueAtNumber(ID, c.item1, "inventory") - nb1)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
-									if sql.valueAt(ID, c.item2, "inventory")[0] < nb2:
-										nbmissing = (sql.valueAt(ID, c.item2, "inventory")[0] - nb2)*-1
+									if sql.valueAtNumber(ID, c.item2, "inventory") < nb2:
+										nbmissing = (sql.valueAtNumber(ID, c.item2, "inventory") - nb2)*-1
 										msg += "Il te manque {0} <:gem_{1}:{2}>`{1}`\n".format(nbmissing, c.item2, GF.get_idmoji(c.item2))
 
 							elif c.item1 != "":
-								if sql.valueAt(ID, c.item1, "inventory") >= nb1:
+								if sql.valueAtNumber(ID, c.item1, "inventory") >= nb1:
 									sql.add(ID, c.nom, nb, "inventory")
 									sql.add(ID, c.item1, -1*nb1, "inventory")
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
 								else:
-									nbmissing = (sql.valueAt(ID, c.item1, "inventory")[0] - nb1)*-1
+									nbmissing = (sql.valueAtNumber(ID, c.item1, "inventory") - nb1)*-1
 									msg = "Il te manque {0} <:gem_{1}:{2}>`{1}`".format(nbmissing, c.item1, GF.get_idmoji(c.item1))
 							await ctx.channel.send(msg)
 							return True

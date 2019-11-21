@@ -51,11 +51,7 @@ class GemsEvent(commands.Cog):
 			if fct == None:
 				sql.updateComTime(ID, "cooking", "gems")
 				if item != "":
-					nbcooking = sql.valueAt(ID, "furnace", "inventory")
-					if nbcooking != 0:
-						nbcooking = int(nbcooking[0]) + 1
-					else:
-						nbcooking = 1
+					nbcooking = sql.valueAtNumber(ID, "furnace", "inventory") + 1
 					if nbcooking >= maxcooking:
 						nbcooking = maxcooking
 					msg = discord.Embed(title = "La Cuisine",color= 14902529, description = "")
@@ -68,9 +64,7 @@ class GemsEvent(commands.Cog):
 						else:
 							valueTime = 0
 							valueItem = ""
-						cookingItem = sql.valueAt(ID, item, "inventory")
-						if cookingItem != 0:
-							cookingItem = cookingItem[0]
+						cookingItem = sql.valueAtNumber(ID, item, "inventory")
 						if valueTime == 0:
 							if cookingItem >= nbitem:
 								data.append(str(t.time()))
@@ -98,16 +92,14 @@ class GemsEvent(commands.Cog):
 								desc = "Ton plat à fini de cuire, en le sortant du four tu gagnes {2} <:gem_{0}:{1}>`{0}`".format(gain, GF.get_idmoji(gain), nbgain)
 								lvl.addxp(ID, 1, "gems")
 								if i > 1:
-									nbfurnace = sql.valueAt(ID, "furnace", "inventory")
-									if nbfurnace != 0:
-										nbfurnace = int(nbfurnace[0])
+									nbfurnace = int(sql.valueAtNumber(ID, "furnace", "inventory"))
 									if nbfurnace > 0:
-										if sql.valueAt(ID, "furnace", "durability") == 0:
+										if sql.valueAtNumber(ID, "furnace", "durability") == 0:
 											for c in GF.objetOutil:
 												if c.nom == "furnace":
 													sql.add(ID, "furnace", c.durabilite, "durability")
 										sql.add(ID, "furnace", -1, "durability")
-										if sql.valueAt(ID, "furnace", "durability")[0] <= 0:
+										if sql.valueAtNumber(ID, "furnace", "durability") <= 0:
 											for c in GF.objetOutil:
 												if c.nom == "furnace":
 													sql.add(ID, "furnace", c.durabilite, "durability")

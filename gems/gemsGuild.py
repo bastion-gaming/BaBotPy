@@ -191,7 +191,7 @@ def guild_add(ctx, guilde, name):
 				if one != IDmember:
 					temp.append(one)
 			DB.updateField(IDGuild, "Demandes", temp, "DB/guildesDB")
-			if sql.valueAt(IDmember, "guilde", "gems")[0] == "":
+			if sql.valueAtNumber(IDmember, "guilde", "gems") == "":
 				MemberList.append(IDmember)
 				sql.updateField(IDmember, "guilde", guilde, "gems")
 			else:
@@ -299,7 +299,7 @@ class GemsGuild(commands.Cog):
 		"""**_{nom de la guilde}_** | Affiche les informations d'une Guilde"""
 		ID = ctx.author.id
 		if guilde == None:
-			guilde = sql.valueAt(ID, "guilde", "gems")[0]
+			guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		i = 1
 		while i <= DB.get_endDocID("DB/guildesDB"):
 			try:
@@ -348,7 +348,7 @@ class GemsGuild(commands.Cog):
 	async def guildpromote(self, ctx, name):
 		"""**[pseudo]** | Promouvoir un Membre de la guilde au grade Admin"""
 		ID = ctx.author.id
-		guilde = sql.valueAt(ID, "guilde", "gems")[0]
+		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		if guilde != "":
 			msg = guild_promotion(ctx, guilde, name)
 		else:
@@ -360,7 +360,7 @@ class GemsGuild(commands.Cog):
 	async def guilddisplacement(self, ctx, name):
 		"""**[pseudo]** | Destituer un Admin de la guilde au grade de Membre"""
 		ID = ctx.author.id
-		guilde = sql.valueAt(ID, "guilde", "gems")[0]
+		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		if guilde != "":
 			msg = guild_destitution(ctx, guilde, name)
 		else:
@@ -372,7 +372,7 @@ class GemsGuild(commands.Cog):
 	async def guildcreate(self, ctx, guilde):
 		"""**[nom de la guilde]** | Création d'une Guilde"""
 		ID = ctx.author.id
-		if sql.valueAt(ID, "guilde", "gems")[0] == "":
+		if sql.valueAtNumber(ID, "guilde", "gems") == "":
 			msg = guild_create(ctx, guilde)
 		else:
 			msg = "Tu fais déjà partie d'une guilde!"
@@ -383,7 +383,7 @@ class GemsGuild(commands.Cog):
 	async def guildsupp(self, ctx):
 		"""Suppression de ta Guilde"""
 		ID = ctx.author.id
-		guilde = sql.valueAt(ID, "guilde", "gems")[0]
+		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		msg = guild_remove(ctx, guilde)
 		await ctx.channel.send(msg)
 
@@ -393,7 +393,7 @@ class GemsGuild(commands.Cog):
 		"""**[pseudo]** | Ajout d'un Membre à la Guilde"""
 		ID = ctx.author.id
 		check = False
-		guilde = sql.valueAt(ID, "guilde", "gems")[0]
+		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		msg = guild_add(ctx, guilde, name)
 		await ctx.channel.send(msg)
 
@@ -402,7 +402,7 @@ class GemsGuild(commands.Cog):
 	async def guildrequest(self, ctx, guilde):
 		"""**[nom de la guilde]** | Ajout d'un Membre à la Guilde"""
 		ID = ctx.author.id
-		if sql.valueAt(ID, "guilde", "gems")[0] == "":
+		if sql.valueAtNumber(ID, "guilde", "gems") == "":
 			try:
 				i = 1
 				while i <= DB.get_endDocID("DB/guildesDB"):
@@ -441,7 +441,7 @@ class GemsGuild(commands.Cog):
 		ID = ctx.author.id
 		if name == None:
 			name = ctx.author.mention
-		guilde = sql.valueAt(ID, "guilde", "gems")[0]
+		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		msg = guild_leave(ctx, guilde, name)
 		await ctx.channel.send(msg)
 
@@ -450,7 +450,7 @@ class GemsGuild(commands.Cog):
 	async def guildchest(self, ctx, fct = None, fct2 = None, n = None, n2 = None):
 		"""**[spinelles/inv] [add/bal] [nombre]** | Gestion du coffre de Guilde"""
 		ID = ctx.author.id
-		guilde = sql.valueAt(ID, "guilde", "gems")[0]
+		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		i = 1
 		while i <= DB.get_endDocID("DB/guildesDB"):
 			try:
@@ -467,7 +467,7 @@ class GemsGuild(commands.Cog):
 					n = int(n)
 				if n == 0:
 					return "STOP"
-				if sql.valueAt(ID, "spinelles", "gems")[0] >= n:
+				if sql.valueAtNumber(ID, "spinelles", "gems") >= n:
 					if n < 0:
 						if DB.valueAt(IDGuild, "Spinelles", "DB/guildesDB") < -n:
 							msg = "Il n'y a pas assez de <:spinelle:{}>`spinelles` dans le coffre de Guilde".format(GF.get_idmoji("spinelle"))
@@ -634,8 +634,8 @@ class GemsGuild(commands.Cog):
 		"""**[Nombre de spinelle]** | Convertisseur :gem:`gems` :left_right_arrow: `spinelles` (250 000 pour 1)"""
 		n = 250000
 		ID = ctx.author.id
-		balGems = sql.valueAt(ID, "gems", "gems")[0]
-		balspinelle = sql.valueAt(ID, "spinelles", "gems")[0]
+		balGems = sql.valueAtNumber(ID, "gems", "gems")
+		balspinelle = sql.valueAtNumber(ID, "spinelles", "gems")
 		max = balGems // n
 		if nb != None:
 			try:
