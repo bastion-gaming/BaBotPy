@@ -2,7 +2,7 @@ import discord
 import random as r
 import time as t
 import datetime as dt
-from DB import SQLite as sql
+from DB import SQLite as sql, TinyDB as DB
 from core import welcome as wel, level as lvl
 from gems import gemsFonctions as GF, gemsItems as GI
 from discord.ext import commands
@@ -121,37 +121,33 @@ class GemsBase(commands.Cog):
 					guilde = sql.valueAt(user, "guilde", "gems")
 					UserList.append((user, gems[0], spinelles[0], guilde[0]))
 					i = i + 1
-				UserList = sorted(UserList, key=itemgetter(1),reverse=False)
-				i = t - 1
+				UserList = sorted(UserList, key=itemgetter(1),reverse=True)
 				j = 0
-				while i >= 0 and j != n : # affichage des données trié
-					baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(UserList[i][0], UserList[i][1], j+1, UserList[i][3])
+				for one in UserList: # affichage des données trié
+					baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(one[0], one[1], j+1, one[3])
 					if UserList[i][2] != 0:
-						baltop+=" | {0}<:spinelle:{1}>\n".format(UserList[i][2], GF.get_idmoji("spinelle"))
+						baltop+=" | {0}<:spinelle:{1}>\n".format(one[2], GF.get_idmoji("spinelle"))
 					else:
 						baltop+="\n"
-					i = i - 1
-					j = j + 1
+					j += 1
 				msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,n))
 			else:
 				if n == "guild":
 					GuildList = []
-					with open('gems/guildes.json', 'r') as fp:
-						dict = json.load(fp)
-					GuildKey = dict.keys()
-					for one in GuildKey:
-						name = one
-						coffre = dict[one]["Coffre"]
-						GuildList.append((name, coffre))
-					GuildList = sorted(GuildList, key=itemgetter(1),reverse=False)
-					i = len(GuildKey) - 1
+					i = 1
+					while i <= DB.get_endDocID("DB/guildesDB"):
+						try:
+							GuildList.append((DB.valueAt(i, "Nom", "DB/guildesDB"), DB.valueAt(i, "Spinelles", "DB/guildesDB")))
+							i += 1
+						except:
+							i += 1
+					GuildList = sorted(GuildList, key=itemgetter(1),reverse=True)
 					j = 0
-					while i >= 0 and j != m : # affichage des données trié
-						baltop += "{2} | {0} {1} <:spinelle:{3}>\n".format(GuildList[i][0], GuildList[i][1], j+1, GF.get_idmoji("spinelle"))
-						i = i - 1
-						j = j + 1
+					for one in GuildList:
+						baltop += "{2} | {0} {1} <:spinelle:{3}>\n".format(one[0], one[1], j+1, GF.get_idmoji("spinelle"))
+						j += 1
 					msg = discord.Embed(title = "Classement des guildes",color= 13752280, description = baltop)
 					# Message de réussite dans la console
 					print("Gems >> {} a afficher le classement des {} premières guildes".format(ctx.author.name,m))

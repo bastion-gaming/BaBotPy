@@ -463,6 +463,8 @@ class GemsGuild(commands.Cog):
 			if fct2 == "add":
 				if n == None:
 					n = 1
+				else:
+					n = int(n)
 				if n == 0:
 					return "STOP"
 				if sql.valueAt(ID, "spinelles", "gems")[0] >= n:
@@ -526,6 +528,10 @@ class GemsGuild(commands.Cog):
 										for c in GF.objetItem:
 											if c.type == "emoji" and c.nom == item:
 												msg = "{0} :{1}:`{1}` {2} été ajouté au coffre de Guilde".format(n, item, a)
+												check = True
+										for c in GF.objetBox :
+											if c.nom == item:
+												msg = "{0} <:gem_lootbox:{3}>`{1}` {2} été ajouté au coffre de Guilde".format(n, item, a, GF.get_idmoji("lootbox"))
 												check = True
 										if not check:
 											msg = "{0} <:{1}:{2}>`{1}` {3} été ajouté au coffre de Guilde".format(n, item, GF.get_idmoji(item), a)
