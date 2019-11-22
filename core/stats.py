@@ -109,16 +109,21 @@ class Stats(commands.Cog):
 				connexion["deco local"] = 0
 				with open(co, 'w') as f:
 					f.write(json.dumps(connexion, indent=4))
-				with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'r') as f:
-					t = json.load(f)
+				try:
+					with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'r') as f:
+						t = json.load(f)
+						t[str(dt.date.today()-dt.timedelta(days = 1))] = nouveau_jour
+						f.close()
+				except:
+					t = {}
 					t[str(dt.date.today()-dt.timedelta(days = 1))] = nouveau_jour
-					f.close()
 				with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'w') as f:
 					f.write(json.dumps(t, indent=4))
 				self.day = dt.date.today()
 
 			hourCount()
 			self.hour = dt.datetime.now().hour
+
 
 	@commands.command(pass_context=True)
 	async def totalMsg(self, ctx):
