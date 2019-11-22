@@ -669,7 +669,10 @@ class GemsPlay(commands.Cog):
 							data.append("")
 							sql.add(ID, item, nbHarvest, "inventory")
 							sql.updateField(ID, i, data, "hothouse")
-							desc = "Ta plantation à fini de pousser, en la coupant tu gagnes {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
+							if item == "grapes":
+								desc = "Ta plantation à fini de pousser, en la coupant tu gagnes {2} :{1}:`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
+							else:
+								desc = "Ta plantation à fini de pousser, en la coupant tu gagnes {2} <:gem_{1}:{0}>`{1}`".format(GF.get_idmoji(item), item, nbHarvest)
 							lvl.addxp(ID, 1, "gems")
 							if i > 1:
 								if sql.valueAtNumber(ID, "planting_plan", "inventory") > 0:

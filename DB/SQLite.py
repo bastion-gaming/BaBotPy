@@ -556,7 +556,7 @@ def spam(ID, couldown, nameElem, nameDB = None):
 		nameDB = "{}_com_time".format(nameDB)
 
 	ComTime = valueAt(ID, nameElem, nameDB)
-	if ComTime == 0:
+	if ComTime == 0 or ComTime == None:
 		return True
 	elif ComTime[0] != 0:
 		time = ComTime[0]
@@ -616,6 +616,7 @@ def add(ID, nameElem, nbElem, nameDB = None):
 		return 100
 	else:
 		cursor = conn.cursor()
+		data = []
 		with open("DB/Templates/{}Template.json".format(nameDB), "r") as f:
 			t = json.load(f)
 		for x in t:
