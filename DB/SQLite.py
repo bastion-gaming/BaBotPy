@@ -622,19 +622,19 @@ def add(ID, nameElem, nbElem, nameDB = None):
 		for x in t:
 			if x == "idgems" or x == "idbastion":
 				data = "{}".format(x)
-			else:
+		for x in t:
+			if x != "idgems" or x != "idbastion":
 				data += ",{}".format(x)
 
 		if not nameDB in nameDBexcept:
+			values = "{}".format(PlayerID)
 			for x in t:
 				y = t[x].split("_")
 				if len(y) > 1:
 					y2 = y[1]
 				else:
 					y2 = y[0]
-				if x == "idgems" or x == "idbastion":
-					values = "{}".format(PlayerID)
-				elif x == nameElem:
+				if x == nameElem:
 					values += ",'{}'".format(nbElem)
 				elif y2 == "INTEGER":
 					values = ",'0'"
