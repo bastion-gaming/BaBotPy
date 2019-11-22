@@ -812,6 +812,7 @@ class GemsPlay(commands.Cog):
 		gain = ""
 		i = 1
 		max = 100
+		msg = discord.Embed(title = "La Cave | Partie {}".format((i//10)+1),color= 14902529, description = "Voici vos barrils.")
 
 		if sql.spam(ID,GF.couldown_4s, "ferment", "gems"):
 			if item == "grapes":
