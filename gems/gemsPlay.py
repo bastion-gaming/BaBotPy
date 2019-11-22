@@ -756,7 +756,7 @@ class GemsPlay(commands.Cog):
 							valueTime = 0
 							valueItem = ""
 						PlantingItemValue = sql.valueAtNumber(ID, arg, "inventory")
-						if valueItem == "cacao":
+						if valueItem == "cacao" or (valueItem == "" and arg == "cacao"):
 							couldown = "4h"
 						else:
 							couldown = "6h"
