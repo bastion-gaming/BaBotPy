@@ -157,39 +157,35 @@ class GemsPlay(commands.Cog):
 		#=======================================================================
 		elif mARG == "saving":
 			if sql.spam(ID,GF.couldown_4h, "bank_saving", "gems"):
-				if ARG2 != None:
-					ID = sql.nom_ID(ARG2)
-				else:
-					solde = sql.valueAtNumber(ID, "Solde", "bank")
-					soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
-					if soldeMax == 0:
-						soldeMax = Taille
-					soldeMult = soldeMax/Taille
-					pourcentage = 0.200 + soldeMult*0.002
-					soldeAdd = pourcentage*solde
-					soldeTaxe = GF.taxe(soldeAdd, 0.1)
-					soldeAdd = soldeTaxe[1]
-					sql.add(ID, "solde", int(soldeAdd), "bank")
-					msg = "Tu as épargné {} :gem:`gems`\n".format(int(soldeAdd))
-					soldeNew = solde + soldeAdd
-					if soldeNew > soldeMax:
-						soldeMove = soldeNew - soldeMax
-						nbgm = -1 * soldeMove
-						sql.addGems(ID, int(soldeMove))
-						sql.add(ID, "solde", int(nbgm), "bank")
-						msg += "Plafond de {} :gem:`gems` du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
-					msg += "Nouveau solde: {} :gem:`gems`".format(sql.valueAtNumber(ID, "Solde", "bank"))
+				solde = sql.valueAtNumber(ID, "Solde", "bank")
+				soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
+				if soldeMax == 0:
+					soldeMax = Taille
+				soldeMult = soldeMax/Taille
+				pourcentage = 0.200 + soldeMult*0.002
+				soldeAdd = pourcentage*solde
+				soldeTaxe = GF.taxe(soldeAdd, 0.1)
+				soldeAdd = soldeTaxe[1]
+				sql.add(ID, "solde", int(soldeAdd), "bank")
+				msg = "Tu as épargné {} :gem:`gems`\n".format(int(soldeAdd))
+				soldeNew = solde + soldeAdd
+				if soldeNew > soldeMax:
+					soldeMove = soldeNew - soldeMax
+					nbgm = -1 * soldeMove
+					sql.addGems(ID, int(soldeMove))
+					sql.add(ID, "solde", int(nbgm), "bank")
+					msg += "Plafond de {} :gem:`gems` du compte épargne atteint\nTon épargne a été tranférée sur ton compte principal\n\n".format(soldeMax)
+				msg += "Nouveau solde: {} :gem:`gems`".format(sql.valueAtNumber(ID, "Solde", "bank"))
 
-					D = r.randint(0,20)
-					if D == 20 or D == 0:
-						sql.add(ID, "lootbox_raregems", 1, "inventory")
-						msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
-					elif D >= 9 and D <= 11:
-						sql.add(ID, "lootbox_commongems", 1, "inventory")
-						msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
+				D = r.randint(0,20)
+				if D == 20 or D == 0:
+					sql.add(ID, "lootbox_raregems", 1, "inventory")
+					msg += "\nTu as trouvé une **Loot Box Gems Rare**! Utilise la commande `boxes open raregems` pour l'ouvrir"
+				elif D >= 9 and D <= 11:
+					sql.add(ID, "lootbox_commongems", 1, "inventory")
+					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
 
-					sql.addGems(wel.idBaBot,int(soldeTaxe[0]))
-
+				sql.addGems(wel.idBaBot,int(soldeTaxe[0]))
 				sql.updateComTime(ID, "bank_saving", "gems")
 				lvl.addxp(ID, 0.4, "gems")
 			else:
