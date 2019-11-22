@@ -623,7 +623,7 @@ def add(ID, nameElem, nbElem, nameDB = None):
 			if x == "idgems" or x == "idbastion":
 				data = "{}".format(x)
 		for x in t:
-			if x != "idgems" or x != "idbastion":
+			if x != "idgems" and x != "idbastion":
 				data += ",{}".format(x)
 
 		if not nameDB in nameDBexcept:
