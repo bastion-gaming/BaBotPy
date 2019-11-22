@@ -828,7 +828,6 @@ class GemsPlay(commands.Cog):
 			nbferment = sql.valueAtNumber(ID, "barrel", "inventory") + 1
 			if nbferment >= max:
 				nbferment = max
-			msg = discord.Embed(title = "La Cave",color= 14902529, description = "")
 			while i <= nbferment:
 				data = []
 				valueFerment = sql.valueAt(ID, i, "ferment")
@@ -906,9 +905,20 @@ class GemsPlay(commands.Cog):
 						else:
 							desc = "Fermentation de <:gem_{0}:{1}>`{0}` en cours.".format(valueItem, GF.get_idmoji(valueItem))
 						desc += "\nTon alcool aura fini de fermenter dans :clock2:`{}h {}m {}s`".format(timeH,timeM,timeS)
-				msg.add_field(name="Barril n°{}".format(i), value=desc, inline=False)
+				if i % 10 == 0 and i != nbferment:
+					if i // 10 == 1:
+						await ctx.channel.send(embed = msg)
+					else:
+						await ctx.channel.send(embed = msg, delete_after = 90)
+					msg = discord.Embed(title = "La Cave | Partie {}".format((i//10)+1),color= 14902529, description = "Voici vos barrils.")
+					msg.add_field(name="Barril n°{}".format(i), value=desc, inline=False)
+				else:
+					msg.add_field(name="Barril n°{}".format(i), value=desc, inline=False)
 				i += 1
-			await ctx.channel.send(embed = msg)
+			if nbferment // 10 == 0:
+				await ctx.channel.send(embed = msg)
+			else:
+				await ctx.channel.send(embed = msg, delete_after = 90)
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
