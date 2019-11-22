@@ -194,7 +194,7 @@ class GemsPlay(commands.Cog):
 				lvl.addxp(ID, 0.4, "gems")
 			else:
 				ComTime = sql.valueAtNumber(ID, "bank_saving", "gems_com_time")
-				time = ComTime - (t.time()-GF.couldown_4h)
+				time = float(ComTime) - (t.time()-GF.couldown_4h)
 				timeH = int(time / 60 / 60)
 				time = time - timeH * 3600
 				timeM = int(time / 60)
