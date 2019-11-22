@@ -649,8 +649,8 @@ def add(ID, nameElem, nbElem, nameDB = None):
 				values = "{1}, {0}".format(nameElem, PlayerID)
 		try:
 			script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
-			# print("==== add ====")
-			# print(script)
+			print("==== add ====")
+			print(script)
 			cursor.execute(script)
 			conn.commit()
 			return 101
