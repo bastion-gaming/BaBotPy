@@ -553,6 +553,7 @@ class GemsGuild(commands.Cog):
 				msg_invItemsPlante = ""
 				msg_invItemsEvent = ""
 				msg_invBox = ""
+				tailleMax = GF.invMax
 				inv = DB.valueAt(IDGuild, "Coffre", "DB/guildesDB")
 				tailletot = 0
 				for c in GF.objetOutil:
@@ -579,7 +580,10 @@ class GemsGuild(commands.Cog):
 								else:
 									msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 
-								tailletot += c.poids*int(inv[x])
+								if c.nom == "backpack" or c.nom == "hyperpack":
+									tailleMax += -1 * c.poids * int(x[0])
+								else:
+									tailletot += c.poids*int(inv[x])
 
 				for c in GF.objetBox :
 					for x in inv:
@@ -588,7 +592,7 @@ class GemsGuild(commands.Cog):
 							if inv[x] > 0:
 								msg_invBox += "<:gem_lootbox:{2}>`{0}`: `x{1}`\n".format(c.nom, str(inv[x]), GF.get_idmoji("lootbox"))
 
-				msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),GF.invMax)
+				msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),tailleMax)
 				msg_titre = "Coffre de la guilde {}".format(guilde)
 				msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
 				if msg_invOutils != "":

@@ -383,6 +383,7 @@ class GemsBase(commands.Cog):
 				msg_invItemsPlante = ""
 				msg_invItemsEvent = ""
 				msg_invBox = ""
+				tailleMax = GF.invMax
 				inv = sql.valueAt(ID, "all", "inventory")
 				tailletot = 0
 				for c in GF.objetOutil:
@@ -411,8 +412,10 @@ class GemsBase(commands.Cog):
 										msg_invItems += ":{0}:`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]))
 									else:
 										msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
-
-								tailletot += c.poids*int(x[0])
+								if c.nom == "backpack" or c.nom == "hyperpack":
+									tailleMax += -1 * c.poids * int(x[0])
+								else:
+									tailletot += c.poids*int(x[0])
 
 				for c in GF.objetBox :
 					for x in inv:
@@ -421,7 +424,7 @@ class GemsBase(commands.Cog):
 							if int(x[0]) > 0:
 								msg_invBox += "<:gem_lootbox:{2}>`{0}`: `x{1}`\n".format(c.nom, str(x[0]), GF.get_idmoji("lootbox"))
 
-				msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),GF.invMax)
+				msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),tailleMax)
 				msg_titre = "Inventaire de {} | Poche principale".format(nom)
 				msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
 				if msg_invOutils != "":
