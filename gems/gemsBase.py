@@ -150,7 +150,7 @@ class GemsBase(commands.Cog):
 					j = 0
 					i = 0
 					for one in GuildList:
-						if i <= n:
+						if i <= m:
 							baltop += "{2} | {0} {1} <:spinelle:{3}>\n".format(one[0], one[1], j+1, GF.get_idmoji("spinelle"))
 						j += 1
 						i += 1
