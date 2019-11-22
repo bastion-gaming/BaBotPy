@@ -622,7 +622,7 @@ def add(ID, nameElem, nbElem, nameDB = None):
 		for x in t:
 			if x == "idgems" or x == "idbastion":
 				data = "{}".format(x)
-			elif x != "idgems" and x != "idbastion":
+			else:
 				data += ",{}".format(x)
 
 		if not nameDB in nameDBexcept:
@@ -641,15 +641,31 @@ def add(ID, nameElem, nbElem, nameDB = None):
 					values = ",''"
 		else:
 			if nameDB == "inventory" or nameDB == "durability" or nameDB == "trophy" or nameDB == "statgems" or nameDB == "bastion_com_time" or nameDB == "gems_com_time":
+				if nameDB == "inventory":
+					data = "idgems, Item, Stock"
+				elif nameDB == "durability":
+					data = "idgems, Item, Durability"
+				elif nameDB == "trophy" or nameDB == "statgems":
+					data = "idgems, Nom, Stock"
+				elif nameDB == "bastion_com_time":
+					data = "idbastion, Commandes, Time"
+				elif nameDB == "gems_com_time":
+					data = "idgems, Commandes, Time"
 				values = "'{2}', '{0}', '{1}'".format(nameElem, nbElem, PlayerID)
 			elif nameDB == "hothouse" or nameDB == "cooking" or nameDB == "ferment":
+				if nameDB == "ferment":
+					data = "idgems, idBarrel, Time, Alcool"
+				elif nameDB == "cooking":
+					data = "idgems, idFour, Time, Plat"
+				elif nameDB == "hothouse":
+					data = "idgems, idPlantation, Time, Plante"
 				values = "'{3}', '{0}', '{1}', '{2}'".format(nameElem, nbElem[0], nbElem[1], PlayerID)
 			elif nameDB == "capability" or nameDB == "filleuls":
 				values = "{1}, {0}".format(nameElem, PlayerID)
 		try:
 			script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
-			print("==== add ====")
-			print(script)
+			# print("==== add ====")
+			# print(script)
 			cursor.execute(script)
 			conn.commit()
 			return 101
