@@ -478,6 +478,7 @@ class GemsGuild(commands.Cog):
 			else:
 				msg = "Commande mal formulée"
 		elif fct == "inv":
+			return await ctx.channel.send("Commande en maintenance")
 			if fct2 == "add":
 				if n == 1:
 					msg = "Commande mal formulée"
