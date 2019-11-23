@@ -478,7 +478,7 @@ class GemsGuild(commands.Cog):
 			else:
 				msg = "Commande mal formulée"
 		elif fct == "inv":
-			return await ctx.channel.send("Commande en maintenance")
+			# return await ctx.channel.send("Commande en maintenance")
 			if fct2 == "add":
 				if n == 1:
 					msg = "Commande mal formulée"
@@ -488,18 +488,21 @@ class GemsGuild(commands.Cog):
 							n2 = 1
 						item = str(n)
 						n = int(n2)
+						# print("### {} x{}###".format(item, n))
 						msg = ""
 					except:
 						msg = "Commande mal formulée"
 					if msg != "Commande mal formulée":
 						GuildInv = DB.valueAt(IDGuild, "Coffre", "DB/guildesDB")
+						# print(GuildInv)
 						GuildItemValue = 0
 						for x in GuildInv:
 							if x == item:
 								GuildItemValue = int(GuildInv[x])
-						if GuildItemValue == 0:
-							msg = "Cette item n'est pas présent dans le coffre de guilde!"
-							return await ctx.channel.send(msg)
+						# print("x{}".format(GuildItemValue))
+						# if GuildItemValue == 0 and n < 0:
+						# 	msg = "Cette item n'est pas présent dans le coffre de guilde!"
+						# 	return await ctx.channel.send(msg)
 						UserInv = sql.valueAt(ID, item, "inventory")
 						if UserInv != 0:
 							UserInv = UserInv[0]
@@ -509,10 +512,15 @@ class GemsGuild(commands.Cog):
 								a = "a"
 							if n > 0:
 								if UserInv >= n:
-									if item == "bank_upgrade":
+									check1 = False
+									for y in GF.objetOutil:
+										if y.nom == item:
+											check1 = True
+									if item == "bank_upgrade" or check1:
 										msg = "Action impossible!"
 									elif GF.testGuildInvTaille(IDGuild) or item == "backpack" or item == "hyperpack":
 										sql.add(ID, item, -n, "inventory")
+										# print("IDGuild: {}".format(IDGuild))
 										DB.add(IDGuild, "Coffre", item, n, "DB/guildesDB")
 										check = False
 										for c in GF.objetItem:
@@ -528,10 +536,18 @@ class GemsGuild(commands.Cog):
 									else:
 										msg = "Le coffre de ta guilde est plein"
 								else:
-									msg = "Tu n'as pas assez de `{}` dans ton inventaire.".format(item)
+									for c in GF.objetItem:
+										if c.type == "emoji" and c.nom == item:
+											msg = "Tu n'as pas assez de :{0}:`{0}` dans ton inventaire.".format(item)
+										elif c.nom == item:
+											msg = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire.".format(item, GF.get_idmoji(item))
 							elif n < 0:
-								if GuildItemValue >= n:
-									if item == "bank_upgrade":
+								if GuildItemValue >= -n:
+									check1 = False
+									for y in GF.objetOutil:
+										if y.nom == item:
+											check1 = True
+									if item == "bank_upgrade" or check1:
 										msg = "Action impossible!"
 									elif GF.testInvTaille(ID) or item == "backpack" or item == "hyperpack":
 										sql.add(ID, item, -n, "inventory")
@@ -546,7 +562,11 @@ class GemsGuild(commands.Cog):
 									else:
 										msg = "Ton inventaire est plein"
 								else:
-									msg = "Il n'y a pas assez de `{}` dans ton coffre de guilde.".format(item)
+									for c in GF.objetItem:
+										if c.type == "emoji" and c.nom == item:
+											msg = "Il n'y a pas assez de :{0}:`{0}` dans ton coffre de guilde.".format(item)
+										elif c.nom == item:
+											msg = "Il n'y a pas assez de <:gem_{0}:{1}>`{0}` dans ton coffre de guilde.".format(item, GF.get_idmoji(item))
 						else:
 							msg = "Tu n'as pas de `{}` dans ton inventaire.".format(item)
 			elif fct2 == None or fct2 == "bal":
@@ -566,7 +586,7 @@ class GemsGuild(commands.Cog):
 					for x in inv:
 						if c.nom == str(x):
 							if inv[x] > 0:
-								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom), GF.get_durabilite(ID, c.nom), c.durabilite)
+								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 								tailletot += c.poids*int(inv[x])
 
 				for c in GF.objetItem:
@@ -587,7 +607,7 @@ class GemsGuild(commands.Cog):
 									msg_invItems += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x), str(inv[x]), GF.get_idmoji(c.nom))
 
 								if c.nom == "backpack" or c.nom == "hyperpack":
-									tailleMax += -1 * c.poids * int(x[0])
+									tailleMax += -1 * c.poids * int(inv[x])
 								else:
 									tailletot += c.poids*int(inv[x])
 
@@ -597,8 +617,10 @@ class GemsGuild(commands.Cog):
 						if name == str(x):
 							if inv[x] > 0:
 								msg_invBox += "<:gem_lootbox:{2}>`{0}`: `x{1}`\n".format(c.nom, str(inv[x]), GF.get_idmoji("lootbox"))
-
-				msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),tailleMax)
+				if int(tailletot) >= tailleMax:
+					msg_inv += "\nTaille: `{}/{}` :bangbang:".format(int(tailletot),tailleMax)
+				else:
+					msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),tailleMax)
 				msg_titre = "Coffre de la guilde {}".format(guilde)
 				msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
 				if msg_invOutils != "":

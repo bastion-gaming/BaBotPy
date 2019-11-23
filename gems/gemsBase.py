@@ -424,7 +424,10 @@ class GemsBase(commands.Cog):
 							if int(x[0]) > 0:
 								msg_invBox += "<:gem_lootbox:{2}>`{0}`: `x{1}`\n".format(c.nom, str(x[0]), GF.get_idmoji("lootbox"))
 
-				msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),tailleMax)
+				if int(tailletot) >= tailleMax:
+					msg_inv += "\nTaille: `{}/{}` :bangbang:".format(int(tailletot),tailleMax)
+				else:
+					msg_inv += "\nTaille: `{}/{}`".format(int(tailletot),tailleMax)
 				msg_titre = "Inventaire de {} | Poche principale".format(nom)
 				msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
 				if msg_invOutils != "":
