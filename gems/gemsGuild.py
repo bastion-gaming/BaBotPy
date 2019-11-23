@@ -549,6 +549,7 @@ class GemsGuild(commands.Cog):
 						else:
 							msg = "Tu n'as pas de `{}` dans ton inventaire.".format(item)
 			elif fct2 == None or fct2 == "bal":
+				nom = ctx.author.name
 				msg_inv = ""
 				msg_invOutils = ""
 				msg_invItems = ""
