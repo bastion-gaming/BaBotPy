@@ -492,9 +492,13 @@ class GemsGuild(commands.Cog):
 						msg = "Commande mal formulée"
 					if msg != "Commande mal formulée":
 						GuildInv = DB.valueAt(IDGuild, "Coffre", "DB/guildesDB")
+						GuildItemValue = 0
 						for x in GuildInv:
 							if x == item:
-								GuildItemValue = GuildInv[x]
+								GuildItemValue = int(GuildInv[x])
+						if GuildItemValue == 0:
+							msg = "Cette item n'est pas présent dans le coffre de guilde!"
+							return await ctx.channel.send(msg)
 						UserInv = sql.valueAt(ID, item, "inventory")
 						if UserInv != 0:
 							UserInv = UserInv[0]
