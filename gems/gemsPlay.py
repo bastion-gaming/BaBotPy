@@ -1296,6 +1296,83 @@ class GemsPlay(commands.Cog):
 		await ctx.channel.send(msg)
 
 
+class GemsPlayTest(commands.Cog):
+
+	def __init__(self,ctx):
+		return(None)
+
+	@commands.command(pass_context=True)
+	async def market2 (self, ctx, fct = None, type = None):
+		"""Permet de voir tout les objets que l'on peux acheter ou vendre !"""
+		ID = ctx.author.id
+		jour = dt.date.today()
+		if sql.spam(ID,GF.couldown_4s, "market", "gems"):
+			if fct == None:
+				d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
+				if sql.spam(wel.idBaBot, GF.couldown_10s, "bourse", "gems"):
+					GF.loadItem()
+				ComTime = sql.valueAtNumber(wel.idBaBot, "bourse", "gems_com_time")
+				time = float(ComTime)
+				time = time - (t.time()-GF.couldown_12h)
+				timeH = int(time / 60 / 60)
+				time = time - timeH * 3600
+				timeM = int(time / 60)
+				timeS = int(time - timeM * 60)
+				d_market+="Actualisation de la bourse dans :clock2:`{}h {}m {}s`\n".format(timeH,timeM,timeS)
+				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
+
+				dmMinerai = ""
+				dmMineraiVente = ""
+				dmMineraiAchat = ""
+
+				# récupération du fichier de sauvegarde de la bourse
+				with open('gems/bourse.json', 'r') as fp:
+					dict = json.load(fp)
+
+				for c in GF.objetItem:
+					for y in GI.PrixItem:
+						if y.nom == c.nom:
+							temp = dict[c.nom]
+							if y.vente != 0:
+								try:
+									pourcentageV = ((c.vente*100)//temp["precVente"])-100
+								except:
+									pourcentageV = 404
+							else:
+								pourcentageV = 0
+							if y.achat != 0:
+								try:
+									pourcentageA = ((c.achat*100)//temp["precAchat"])-100
+								except:
+									pourcentageA = 404
+							else:
+								pourcentageA = 0
+					#=======================================================================================
+					if c.type == "minerai":
+						dmMinerai += "\n<:gem_{nom}:{idmoji}>`{nom}`".format(nom=c.nom, idmoji=GF.get_idmoji(c.nom))
+						dmMineraiVente += "\n`{}`:gem:".format(c.vente)
+						if pourcentageV != 0:
+							dmMineraiVente += " _{}%_ ".format(pourcentageV)
+						dmMineraiAchat += "\n`{}`:gem:".format(c.achat)
+						if pourcentageA != 0:
+							dmMineraiAchat += " _{}%_ ".format(pourcentageA)
+
+				msg.add_field(name="Minerais", value=dmMinerai, inline=True)
+				msg.add_field(name="Vente", value=dmMineraiVente, inline=True)
+				msg.add_field(name="Achat", value=dmMineraiAchat, inline=True)
+
+				sql.updateComTime(ID, "market", "gems")
+				await ctx.channel.send(embed = msg)
+				# Message de réussite dans la console
+				print("Gems >> {} a afficher le marché".format(ctx.author.name))
+			else:
+				msg = "Ce marché n'existe pas"
+				await ctx.channel.send(msg)
+		else:
+			msg = "Il faut attendre "+str(GF.couldown_4s)+" secondes entre chaque commande !"
+			await ctx.channel.send(msg)
+
+
 def setup(bot):
 	bot.add_cog(GemsPlay(bot))
 	open("help/cogs.txt","a").write("GemsPlay\n")
