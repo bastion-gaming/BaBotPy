@@ -12,7 +12,10 @@ class Item:
 		self.vente = vente
 		self.achat = achat
 
-PrixItem = [Item("cobblestone", 30, 50)
+PrixItem = [Item("backpack", 3000, 3000)
+,Item("hyperpack", 1, 1)
+,Item("fishhook", 46, 64)
+,Item("cobblestone", 30, 50)
 ,Item("iron", 70, 100)
 ,Item("gold", 110, 200)
 ,Item("diamond", 190, 350)
@@ -34,16 +37,13 @@ PrixItem = [Item("cobblestone", 30, 50)
 ,Item("chocolate", 242, 353)
 ,Item("cacao", 50, 60)
 ,Item("candy", 1, 2)
-,Item("lollipop", 5, 12)
-,Item("backpack", 3000, 3000)
-,Item("hyperpack", 1, 1)
-,Item("fishhook", 46, 64)]
+,Item("lollipop", 5, 12)]
 
 ObjetHalloween = ["pumpkin", "pumpkinpie"]
 PrixItem += [Item("pumpkin", 120, 330)
 ,Item("pumpkinpie", 1800, 2200)]
 
-ObjetChristmas = ["chocolate", "cacao", "cupcake"]
+ObjetChristmas = ["cupcake"]
 PrixItem += [Item("cupcake", 2500, 3000)]
 
 #========== Outils ==========

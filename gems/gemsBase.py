@@ -280,17 +280,18 @@ class GemsBase(commands.Cog):
 							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de {} en banque".format(argent)
 						break
 				for c in GF.objetBox :
-					if item == "lootbox_{}".format(c.nom) or item == c.nom :
-						test = False
-						prix = 0 - (c.achat*nb)
-						if sql.addGems(ID, prix) >= "0":
-							sql.add(ID, "lootbox_{}".format(c.nom), nb, "inventory")
-							msg = "Tu viens d'acquérir {0} <:gem_lootbox:630698430313922580>`{1}` !".format(nb, c.titre)
-							# Message de réussite dans la console
-							print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
-						else :
-							msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem:`gems` en banque"
-						break
+					if item == "lootbox_{}".format(c.nom) or item == c.nom:
+						if c.nom != "gift" and c.nom != "gift_heart":
+							test = False
+							prix = 0 - (c.achat*nb)
+							if sql.addGems(ID, prix) >= "0":
+								sql.add(ID, "lootbox_{}".format(c.nom), nb, "inventory")
+								msg = "Tu viens d'acquérir {0} <:gem_lootbox:630698430313922580>`{1}` !".format(nb, c.titre)
+								# Message de réussite dans la console
+								print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
+							else :
+								msg = "Désolé, nous ne pouvons pas executer cet achat, tu n'as pas assez de :gem:`gems` en banque"
+							break
 				if test :
 					msg = "Cet item n'est pas vendu au marché !"
 
@@ -422,7 +423,10 @@ class GemsBase(commands.Cog):
 						name = "lootbox_{}".format(c.nom)
 						if name == str(x[1]):
 							if int(x[0]) > 0:
-								msg_invBox += "<:gem_lootbox:{2}>`{0}`: `x{1}`\n".format(c.nom, str(x[0]), GF.get_idmoji("lootbox"))
+								if c.nom != "gift" and c.nom != "gift_heart":
+									msg_invBox += "<:gem_lootbox:{2}>`{0}`: `x{1}`\n".format(c.nom, str(x[0]), GF.get_idmoji("lootbox"))
+								else:
+									msg_invBox += ":{0}:`{0}`: `x{1}`\n".format(c.nom, str(x[0]))
 
 				if int(tailletot) >= tailleMax:
 					msg_inv += "\nTaille: `{}/{}` :bangbang:".format(int(tailletot),tailleMax)
@@ -614,9 +618,18 @@ class GemsBase(commands.Cog):
 						d_marketItemsEvent += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
 					elif c.type == "spinelle":
-						d_marketItems += "<:gem_{0}:{2}>`{0}`: Vente **{1}**<:spinelle:{3}> ".format(c.nom,c.vente,GF.get_idmoji(c.nom), GF.get_idmoji("spinelle"))
-						d_marketItems += "| Achat **{}**<:spinelle:{}> ".format(c.achat, GF.get_idmoji("spinelle"))
-						d_marketItems += "| Poids **{}**\n".format(c.poids)
+						d_marketOutilsS += "<:gem_{0}:{2}>`{0}`: Vente **{1}**<:spinelle:{3}> ".format(c.nom,c.vente,GF.get_idmoji(c.nom), GF.get_idmoji("spinelle"))
+						d_marketOutilsS += "| Achat **{}**<:spinelle:{}> ".format(c.achat, GF.get_idmoji("spinelle"))
+						d_marketOutilsS += "| Poids **{}**\n".format(c.poids)
+					#=======================================================================================
+					elif c.type == "special":
+						d_marketOutilsS += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
+						if pourcentageV != 0:
+							d_marketOutilsS += "_{}%_ ".format(pourcentageV)
+						d_marketOutilsS += "| Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketOutilsS += "_{}%_ ".format(pourcentageA)
+						d_marketOutilsS += "| Poids **{}**\n".format(c.poids)
 					#=======================================================================================
 					else:
 						if c.type == "emoji":
@@ -637,16 +650,18 @@ class GemsBase(commands.Cog):
 							d_marketItems += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
-					d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem:`gems` \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
+					if c.nom != "gift" and c.nom != "gift_heart":
+						d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem:`gems` \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
+
 
 				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
 				msg.add_field(name="Spéciaux", value=d_marketOutilsS, inline=False)
-				if d_marketItems != "":
-					msg.add_field(name="Items", value=d_marketItems, inline=False)
 				msg.add_field(name="Minerais", value=d_marketItemsMinerai, inline=False)
 				msg.add_field(name="Poissons", value=d_marketItemsPoisson, inline=False)
 				msg.add_field(name="Plantes", value=d_marketItemsPlante, inline=False)
+				if d_marketItems != "":
+					msg.add_field(name="Items", value=d_marketItems, inline=False)
 				if d_marketItemsEvent != "":
 					msg.add_field(name="Événement", value=d_marketItemsEvent, inline=False)
 				if d_marketSpinelle != "":
@@ -763,10 +778,19 @@ class GemsBase(commands.Cog):
 							sql.add(ID_recu, item, nb, "inventory")
 							if checkLB:
 								msg = "{0} donne {1} <:gem_lootbox:{3}>`{2}` à {4} !".format(name,nb,itemLB,GF.get_idmoji(itemLB),Nom_recu)
-							elif item != "cookie" and item != "grapes" and item != "wine_glass" and item != "candy" and item != "lollipop":
-								msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
 							else:
-								msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+								for c in GF.objetItem:
+									if c.nom == item:
+										if c.type == "emoji":
+											msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+										else:
+											msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
+								for c in GF.objetOutil:
+									if c.nom == item:
+										if c.type == "emoji":
+											msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+										else:
+											msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
 							# Message de réussite dans la console
 							print("Gems >> {0} a donné {1} {2} à {3}".format(name, nb, item, Nom_recu))
 						else:
@@ -782,10 +806,18 @@ class GemsBase(commands.Cog):
 						if GF.testInvTaille(ID_recu):
 							sql.add(ID, item, -nb, "inventory")
 							sql.add(ID_recu, item, nb, "inventory")
-							if item != "cookie" and item != "grapes" and item != "wine_glass" and item != "candy" and item != "lollipop":
-								msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
-							else:
-								msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+							for c in GF.objetItem:
+								if c.nom == item:
+									if c.type == "emoji":
+										msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+									else:
+										msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
+							for c in GF.objetOutil:
+								if c.nom == item:
+									if c.type == "emoji":
+										msg = "{0} donne {1} :{2}:`{2}` à {3} !".format(name, nb, item, Nom_recu)
+									else:
+										msg = "{0} donne {1} <:gem_{2}:{3}>`{2}` à {4} !".format(name,nb,item,GF.get_idmoji(item),Nom_recu)
 							# Message de réussite dans la console
 							print("Gems >> {0} a donné {1} {2} à {3}".format(name, nb, item, Nom_recu))
 						else:
