@@ -94,9 +94,9 @@ def itemBourse(item, type):
 		for c in GI.PrixOutil:
 			if c.nom == item:
 				if type == "vente":
-					pmini = c.vente - (c.vente*(70/100))
+					pmini = c.vente - (c.vente*(85/100))
 				elif type == "achat":
-					pmini = c.achat - (c.achat*(70/100))
+					pmini = c.achat - (c.achat*(85/100))
 		pmini = int(pmini)
 		print("{} {} >> {}".format(type, item, pmini))
 
