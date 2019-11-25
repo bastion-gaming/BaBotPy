@@ -189,6 +189,10 @@ class GemsPlay(commands.Cog):
 					nbgift = 1
 					sql.add(ID, "lootbox_gift", nbgift, "inventory")
 					msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+				elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+					nbgift = 1
+					sql.add(ID, "lootbox_gift", nbgift, "inventory")
+					msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 
 				sql.addGems(wel.idBaBot,int(soldeTaxe[0]))
 				sql.updateComTime(ID, "bank_saving", "gems")
@@ -239,6 +243,11 @@ class GemsPlay(commands.Cog):
 							nbgift = r.randint(1,3)
 							sql.add(ID, "lootbox_gift", nbgift, "inventory")
 							msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+					elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+						if r.randint(0,10) == 0:
+							nbgift = r.randint(1,3)
+							sql.add(ID, "lootbox_gift", nbgift, "inventory")
+							msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 			sql.updateComTime(ID, "crime", "gems")
 			lvl.addxp(ID, 1, "gems")
 		else:
@@ -389,6 +398,10 @@ class GemsPlay(commands.Cog):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
 									msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+								elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+									nbgift = r.randint(1,3)
+									sql.add(ID, "lootbox_gift", nbgift, "inventory")
+									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 							else:
 								nbcobble = r.randint(1,20)
 								sql.add(ID, "cobblestone", nbcobble, "inventory")
@@ -468,6 +481,10 @@ class GemsPlay(commands.Cog):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
 									msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+								elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+									nbgift = r.randint(1,3)
+									sql.add(ID, "lootbox_gift", nbgift, "inventory")
+									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 						else:
 							nbcobble = r.randint(1,10)
 							sql.add(ID, "cobblestone", nbcobble, "inventory")
@@ -589,6 +606,10 @@ class GemsPlay(commands.Cog):
 								nbgift = r.randint(1,3)
 								sql.add(ID, "lootbox_gift", nbgift, "inventory")
 								msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+							elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+								nbgift = r.randint(1,3)
+								sql.add(ID, "lootbox_gift", nbgift, "inventory")
+								msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 				else:
 					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(GF.get_idmoji("fishingrod"))
 
@@ -841,7 +862,7 @@ class GemsPlay(commands.Cog):
 				couldown = GF.couldown_3h
 				couldownMsg = "3h"
 			elif item == "wheat":
-				nbitem = 16
+				nbitem = 8
 				gain = "beer"
 				couldown = GF.couldown_8h
 				couldownMsg = "8h"

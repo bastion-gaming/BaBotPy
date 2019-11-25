@@ -236,134 +236,134 @@ async def looped_task():
 			first_startup = 0
 
 		else:
-			counter += 1
-			live_counter = 0
-			live_streams = []
-			print('\n------\nCheck #' + str(counter) + '\nTime: ' + str(datetime.now()))
-
-			streams_url = await notif.make_streams_url()
-			async with aiohttp.ClientSession() as session:
-				api = await notif.get_streams(c_id, session, streams_url, 'json')
-
-			# Check for streams in local['streams'] that are not in any of the channels' subscriptions and remove those
-			all_subscriptions = []
-			for channel_index in local['channels']:
-				for subscribed in channel_index['subscribed']:
-					if subscribed not in all_subscriptions:
-						all_subscriptions.append(subscribed)
-
-			for i, stream in enumerate(local['streams']):
-				if stream['login'] not in all_subscriptions:
-					# print('\nTime: ' + str(datetime.now()) + '\nAucun channel souscrit pour diffuser:\nSUPPRESSION: ' +
-					# 	  stream['login'] + ' de local["streams"]\n')
-					stream_list = local['streams']
-					stream_list.pop(i)
-
-					await notif.dump_json()
-
-			# Check for streams in channel subscriptions that are not in the user_response
-			for channel in local['channels']:
-				channel_id = channel['id']
-				for subscription in channel['subscribed']:
-					exists = 0
-					for user in users_response['data']:
-						if subscription == user['login']:
-							exists = 1
-
-					if exists == 0:
-						sub_list = channel['subscribed']
-						sub_list.remove(subscription)
-
-						# print('\nTime: ' + str(datetime.now()))
-						# print("Le flux Twitch n'existe pas: ")
-						# print('SUPPRESSION STREAM: ' + subscription + '\nCHANNEL ID: ' + str(channel_id))
-						msg = subscription + " n'existe pas, suppression du channel de la liste de notification."
-
-						channel_to_send = client.get_channel(channel_id)
-						await channel_to_send.send(msg)
-
-						await notif.dump_json()
-
-			# Loop through api response and set offline stream's 'sent' key value to false
-			# If stream is offline, set 'sent' key value to false, then save and reload the local JSON file
-			for index in local['streams']:
-
-				# print('\nSTREAM NAME: ' + index['login'])
-				# print('STREAM ID: ' + index['id'])
-
-				found_match = 0
-				for api_index in api['data']:
-					if api_index['user_id'] == index['id']:
-						# print("ID CORRESPONDANT DE L'API: " + api_index['user_id'])
-						found_match = 1
-						live_counter += 1
-						live_streams.append(index['login'])
-
-				if found_match == 0:
-					# print('ID CORRESPONDANT NON TROUVÉ')
-					index['sent'] = 'false'
-					index['status'] = 'offline'
-					await notif.dump_json()
-
-				else:
-					index['status'] = 'live'
-
-				# print('')
-
-			streams_sent = []
-
-			# Loop through channels and send out messages
-			for channel in local['channels']:
-				channel_id = channel['id']
-				for subscribed_stream in channel['subscribed']:
-
-					# Get correct id from local JSON
-					for stream_index in local['streams']:
-						local_id = ''
-						if stream_index['login'] == subscribed_stream:
-							local_id = stream_index['id']
-
-						for api_index in api['data']:
-							if api_index['user_id'] == local_id:
-
-								status = api_index['type']
-
-								# If live, checks whether stream is live or vodcast, sets msg accordingly
-								# Sends message to channel, then saves sent status to json
-								if status == 'live' and stream_index['sent'] == 'false' and stream_index['login'] != "bastionlivetv":
-									msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\n{0} est en live !!!\nAllez voir -> https://www.twitch.tv/{0}".format(stream_index['login'])
-
-									channel_to_send = client.get_channel(channel_id)
-									await channel_to_send.send(msg)
-
-								elif status == 'live' and stream_index['sent'] == 'false' and stream_index['login'] == "bastionlivetv":
-									msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\nNous sommes en live sur BastionLiveTv !\nRegardez nous ici : https://www.twitch.tv/{0}\nPour voir les dates => http://www.bastion-gaming.fr/agenda.html".format(stream_index['login'])
-
-									channel_to_send = client.get_channel(channel_id)
-									await channel_to_send.send(msg)
-
-								elif status == 'vodcast' and stream_index['sent'] == 'false':
-									msg = stream_index['login'] + ' VODCAST est en LIVE!\nhttps://www.twitch.tv/' + stream_index['login']
-									await client.send_message(client.get_channel(channel_id), msg)
-
-								# Loop through streams_sent[], if stream is not there, then add it
-								add_sent = 1
-								for stream in streams_sent:
-									if stream == stream_index['login']:
-										add_sent = 0
-								if add_sent:
-									streams_sent.append(stream_index['login'])
-
-			for login in local['streams']:
-				for stream in streams_sent:
-					if login['login'] == stream:
-						login['sent'] = 'true'
-
-			await notif.dump_json()
-
-			print('Live Channels: ' + str(live_counter))
-			for stream in live_streams:
-				print(stream)
+			# counter += 1
+			# live_counter = 0
+			# live_streams = []
+			# print('\n------\nCheck #' + str(counter) + '\nTime: ' + str(datetime.now()))
+			#
+			# streams_url = await notif.make_streams_url()
+			# async with aiohttp.ClientSession() as session:
+			# 	api = await notif.get_streams(c_id, session, streams_url, 'json')
+			#
+			# # Check for streams in local['streams'] that are not in any of the channels' subscriptions and remove those
+			# all_subscriptions = []
+			# for channel_index in local['channels']:
+			# 	for subscribed in channel_index['subscribed']:
+			# 		if subscribed not in all_subscriptions:
+			# 			all_subscriptions.append(subscribed)
+			#
+			# for i, stream in enumerate(local['streams']):
+			# 	if stream['login'] not in all_subscriptions:
+			# 		# print('\nTime: ' + str(datetime.now()) + '\nAucun channel souscrit pour diffuser:\nSUPPRESSION: ' +
+			# 		# 	  stream['login'] + ' de local["streams"]\n')
+			# 		stream_list = local['streams']
+			# 		stream_list.pop(i)
+			#
+			# 		await notif.dump_json()
+			#
+			# # Check for streams in channel subscriptions that are not in the user_response
+			# for channel in local['channels']:
+			# 	channel_id = channel['id']
+			# 	for subscription in channel['subscribed']:
+			# 		exists = 0
+			# 		for user in users_response['data']:
+			# 			if subscription == user['login']:
+			# 				exists = 1
+			#
+			# 		if exists == 0:
+			# 			sub_list = channel['subscribed']
+			# 			sub_list.remove(subscription)
+			#
+			# 			# print('\nTime: ' + str(datetime.now()))
+			# 			# print("Le flux Twitch n'existe pas: ")
+			# 			# print('SUPPRESSION STREAM: ' + subscription + '\nCHANNEL ID: ' + str(channel_id))
+			# 			msg = subscription + " n'existe pas, suppression du channel de la liste de notification."
+			#
+			# 			channel_to_send = client.get_channel(channel_id)
+			# 			await channel_to_send.send(msg)
+			#
+			# 			await notif.dump_json()
+			#
+			# # Loop through api response and set offline stream's 'sent' key value to false
+			# # If stream is offline, set 'sent' key value to false, then save and reload the local JSON file
+			# for index in local['streams']:
+			#
+			# 	# print('\nSTREAM NAME: ' + index['login'])
+			# 	# print('STREAM ID: ' + index['id'])
+			#
+			# 	found_match = 0
+			# 	for api_index in api['data']:
+			# 		if api_index['user_id'] == index['id']:
+			# 			# print("ID CORRESPONDANT DE L'API: " + api_index['user_id'])
+			# 			found_match = 1
+			# 			live_counter += 1
+			# 			live_streams.append(index['login'])
+			#
+			# 	if found_match == 0:
+			# 		# print('ID CORRESPONDANT NON TROUVÉ')
+			# 		index['sent'] = 'false'
+			# 		index['status'] = 'offline'
+			# 		await notif.dump_json()
+			#
+			# 	else:
+			# 		index['status'] = 'live'
+			#
+			# 	# print('')
+			#
+			# streams_sent = []
+			#
+			# # Loop through channels and send out messages
+			# for channel in local['channels']:
+			# 	channel_id = channel['id']
+			# 	for subscribed_stream in channel['subscribed']:
+			#
+			# 		# Get correct id from local JSON
+			# 		for stream_index in local['streams']:
+			# 			local_id = ''
+			# 			if stream_index['login'] == subscribed_stream:
+			# 				local_id = stream_index['id']
+			#
+			# 			for api_index in api['data']:
+			# 				if api_index['user_id'] == local_id:
+			#
+			# 					status = api_index['type']
+			#
+			# 					# If live, checks whether stream is live or vodcast, sets msg accordingly
+			# 					# Sends message to channel, then saves sent status to json
+			# 					if status == 'live' and stream_index['sent'] == 'false' and stream_index['login'] != "bastionlivetv":
+			# 						msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\n{0} est en live !!!\nAllez voir -> https://www.twitch.tv/{0}".format(stream_index['login'])
+			#
+			# 						channel_to_send = client.get_channel(channel_id)
+			# 						await channel_to_send.send(msg)
+			#
+			# 					elif status == 'live' and stream_index['sent'] == 'false' and stream_index['login'] == "bastionlivetv":
+			# 						msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\nNous sommes en live sur BastionLiveTv !\nRegardez nous ici : https://www.twitch.tv/{0}\nPour voir les dates => http://www.bastion-gaming.fr/agenda.html".format(stream_index['login'])
+			#
+			# 						channel_to_send = client.get_channel(channel_id)
+			# 						await channel_to_send.send(msg)
+			#
+			# 					elif status == 'vodcast' and stream_index['sent'] == 'false':
+			# 						msg = stream_index['login'] + ' VODCAST est en LIVE!\nhttps://www.twitch.tv/' + stream_index['login']
+			# 						await client.send_message(client.get_channel(channel_id), msg)
+			#
+			# 					# Loop through streams_sent[], if stream is not there, then add it
+			# 					add_sent = 1
+			# 					for stream in streams_sent:
+			# 						if stream == stream_index['login']:
+			# 							add_sent = 0
+			# 					if add_sent:
+			# 						streams_sent.append(stream_index['login'])
+			#
+			# for login in local['streams']:
+			# 	for stream in streams_sent:
+			# 		if login['login'] == stream:
+			# 			login['sent'] = 'true'
+			#
+			# await notif.dump_json()
+			#
+			# print('Live Channels: ' + str(live_counter))
+			# for stream in live_streams:
+			# 	print(stream)
 
 			await asyncio.sleep(30)  # task runs every x second(s)
 #---------------------------------------------------------------

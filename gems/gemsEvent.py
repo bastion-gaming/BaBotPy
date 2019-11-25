@@ -5,6 +5,7 @@ import datetime as dt
 from DB import TinyDB as DB, SQLite as sql
 from gems import gemsFonctions as GF
 from core import level as lvl
+from multimedia import images
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -43,6 +44,21 @@ class GemsEvent(commands.Cog):
 		desc = "7 Juillet :arrow_right: 21 Juillet"
 		msg.add_field(name="Fête Nationale", value=desc, inline=False)
 		await ctx.channel.send(embed = msg)
+
+
+	@commands.command(pass_context=True)
+	async def happy(self, ctx, new, year):
+		"""**new year** | Bonne année !!"""
+		jour = dt.date.today()
+		if jour.day == 1 and jour.mouth == 1:
+			if new.lower() == "new" and year.lower() == "year":
+				await ctx.channel.send(":tada: Bonne année {} ! :confetti_ball: {}".format(jour.year, ctx.author.mention))
+				choise_nbfile=r.randint(0, 19)
+				keyword = "happy new year {}".format(jour.year)
+				url = images.images_url(keyword, 20)
+				url2 = url[0][keyword]
+				print(keyword)
+				await ctx.channel.send(url2[choise_nbfile])
 
 
 	@commands.command(pass_context=True)
