@@ -68,6 +68,7 @@ class GemsPlay(commands.Cog):
 		# Initialistation des variables générales de la fonction
 		#=======================================================================
 		ID = ctx.author.id
+		jour = dt.date.today()
 		if ARG != None:
 			mARG = ARG.lower()
 		else:
@@ -184,6 +185,14 @@ class GemsPlay(commands.Cog):
 				elif D >= 9 and D <= 11:
 					sql.add(ID, "lootbox_commongems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
+				elif (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+					nbgift = 1
+					sql.add(ID, "lootbox_gift", nbgift, "inventory")
+					msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+				elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+					nbgift = 1
+					sql.add(ID, "lootbox_gift", nbgift, "inventory")
+					msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 
 				sql.addGems(wel.idBaBot,int(soldeTaxe[0]))
 				sql.updateComTime(ID, "bank_saving", "gems")
@@ -229,6 +238,16 @@ class GemsPlay(commands.Cog):
 				else:
 					msg = "{1} {0} :gem:`gems`".format(gain, GF.message_crime[r.randint(0,3)])
 					sql.addGems(ID, gain)
+					if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+						if r.randint(0,10) == 0:
+							nbgift = r.randint(1,3)
+							sql.add(ID, "lootbox_gift", nbgift, "inventory")
+							msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+					elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+						if r.randint(0,10) == 0:
+							nbgift = r.randint(1,3)
+							sql.add(ID, "lootbox_gift", nbgift, "inventory")
+							msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 			sql.updateComTime(ID, "crime", "gems")
 			lvl.addxp(ID, 1, "gems")
 		else:
@@ -308,6 +327,7 @@ class GemsPlay(commands.Cog):
 	async def mine(self, ctx):
 		"""Minez compagnons !!"""
 		ID = ctx.author.id
+		jour = dt.date.today()
 		if sql.spam(ID,GF.couldown_6s, "mine", "gems"):
 			if GF.testInvTaille(ID):
 				nbrand = r.randint(0,99)
@@ -374,6 +394,14 @@ class GemsPlay(commands.Cog):
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							elif nbrand < 2:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
+								if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+									nbgift = r.randint(1,3)
+									sql.add(ID, "lootbox_gift", nbgift, "inventory")
+									msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+								elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+									nbgift = r.randint(1,3)
+									sql.add(ID, "lootbox_gift", nbgift, "inventory")
+									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 							else:
 								nbcobble = r.randint(1,20)
 								sql.add(ID, "cobblestone", nbcobble, "inventory")
@@ -449,6 +477,14 @@ class GemsPlay(commands.Cog):
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							else:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
+								if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+									nbgift = r.randint(1,3)
+									sql.add(ID, "lootbox_gift", nbgift, "inventory")
+									msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+								elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+									nbgift = r.randint(1,3)
+									sql.add(ID, "lootbox_gift", nbgift, "inventory")
+									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 						else:
 							nbcobble = r.randint(1,10)
 							sql.add(ID, "cobblestone", nbcobble, "inventory")
@@ -500,6 +536,7 @@ class GemsPlay(commands.Cog):
 	async def fish(self, ctx):
 		"""Péchons compagnons !!"""
 		ID = ctx.author.id
+		jour = dt.date.today()
 		if sql.spam(ID,GF.couldown_6s, "fish", "gems"):
 			if GF.testInvTaille(ID):
 				nbrand = r.randint(0,99)
@@ -565,6 +602,14 @@ class GemsPlay(commands.Cog):
 							msg = "Pas de poisson pour toi aujourd'hui :cry: "
 							if mult >= 2:
 								sql.add(ID, "fishhook", 1, "inventory")
+							if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+								nbgift = r.randint(1,3)
+								sql.add(ID, "lootbox_gift", nbgift, "inventory")
+								msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+							elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+								nbgift = r.randint(1,3)
+								sql.add(ID, "lootbox_gift", nbgift, "inventory")
+								msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
 				else:
 					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(GF.get_idmoji("fishingrod"))
 
@@ -636,7 +681,7 @@ class GemsPlay(commands.Cog):
 										nbHarvest = 1
 										item = "palm"
 									elif De > 12 and De <= 14:
-										nbHarvest = r.randint(1,3)
+										nbHarvest = r.randint(1,6)
 										item = "wheat"
 									elif De > 14:
 										nbHarvest = r.randint(3,9)
@@ -652,13 +697,13 @@ class GemsPlay(commands.Cog):
 										nbHarvest = 1
 										item = "palm"
 									elif De > 12 and De <= 14:
-										nbHarvest = r.randint(1,3)
+										nbHarvest = r.randint(1,6)
 										item = "wheat"
 									elif De > 14:
 										nbHarvest = r.randint(3,9)
 										item = "grapes"
 							elif valueItem == "cacao":
-								nbHarvest = 1
+								nbHarvest = r.randint(1,3)
 								item = "chocolate"
 							data = []
 							data.append(0)
@@ -817,7 +862,7 @@ class GemsPlay(commands.Cog):
 				couldown = GF.couldown_3h
 				couldownMsg = "3h"
 			elif item == "wheat":
-				nbitem = 16
+				nbitem = 8
 				gain = "beer"
 				couldown = GF.couldown_8h
 				couldownMsg = "8h"
@@ -853,7 +898,11 @@ class GemsPlay(commands.Cog):
 							if item == "grapes":
 								desc = "Tu n'as pas assez de :{0}:`{0}` dans ton inventaire! \nIl te faut {2} :{0}:`{0}` pour faire 1 :{1}:`{1}`".format(item, gain, nbitem)
 							else:
-								desc = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire! \nIl te faut {3} :{0}:`{0}` pour faire 1 :{2}:`{2}`".format(item, GF.get_idmoji(item), gain, nbitem)
+								desc = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire! \nIl te faut {3} <:gem_{0}:{1}>`{0}` pour faire 1 :{2}:`{2}`".format(item, GF.get_idmoji(item), gain, nbitem)
+							if i > 15:
+								await ctx.channel.send(embed = msg)
+								await ctx.channel.send(desc)
+								return 0
 					else:
 						if valueItem == "grapes":
 							desc = "Fermentation de :{0}:`{0}` en cours.".format(valueItem)
@@ -1164,29 +1213,75 @@ class GemsPlay(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def boxes(self, ctx, type = None, name = None):
+	async def boxes(self, ctx, fct = None, name = None):
 		"""**open [nom]** | Ouverture de Loot Box"""
 		ID = ctx.author.id
 
-		if type == "open":
+		if fct == "open":
 			if name != None:
 				for lootbox in GF.objetBox:
 					if name == "lootbox_{}".format(lootbox.nom):
 						name = lootbox.nom
 				if sql.valueAtNumber(ID, "lootbox_{}".format(name), "inventory") > 0:
-					for lootbox in GF.objetBox:
-						if name == lootbox.nom:
-							gain = r.randint(lootbox.min, lootbox.max)
-							titre = lootbox.titre
+					if name == "gift":
+						for lootbox in GF.objetBox:
+							if name == lootbox.nom:
+								titre = lootbox.titre
+								gain = r.randint(lootbox.min, lootbox.max)
+								sql.add(ID, "lootbox_{}".format(lootbox.nom), -1, "inventory")
 
-							sql.addGems(ID, gain)
-							sql.add(ID, "lootbox_{}".format(lootbox.nom), -1, "inventory")
-							desc = "{} :gem:`gems`".format(gain)
-							msg = discord.Embed(title = "Lot Box | {}".format(titre),color= 13752280, description = desc)
-							sql.updateComTime(ID, "boxes", "gems")
-							print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))
-							await ctx.channel.send(embed = msg)
-							return True
+								sql.addGems(ID, gain)
+								desc = "{} :gem:`gems`\n".format(gain)
+								if r.randint(0,6) == 0:
+									sql.addSpinelles(ID, 1)
+									desc += "1 <:spinelle:{}>`spinelle`\n".format(GF.get_idmoji("spinelle"))
+								for x in GF.objetItem:
+									if r.randint(0,10) <= 1:
+										if x.nom == "hyperpack":
+											nbgain = 1
+										else:
+											nbgain = r.randint(3, 8)
+										sql.add(ID, x.nom, nbgain, "inventory")
+										if x.type != "emoji":
+											desc += "\n<:gem_{0}:{2}>`{0}` x{1}".format(x.nom, nbgain, GF.get_idmoji(x.nom))
+										else:
+											desc += "\n:{0}:`{0}` x{1}".format(x.nom, nbgain)
+								msg = discord.Embed(title = "Loot Box | {}".format(titre),color= 13752280, description = desc)
+								print("Gems >> {} a ouvert une Loot Box de Noel".format(ctx.author.name))
+								await ctx.channel.send(embed = msg)
+								return True
+					elif name == "gift_heart":
+						for lootbox in GF.objetBox:
+							if name == lootbox.nom:
+								titre = lootbox.titre
+								for x in GF.objetItem:
+									if r.randint(0,15) >= 14:
+										if x.nom == "hyperpack":
+											nbgain = r.randint(1,2)
+										else:
+											nbgain = r.randint(4, 10)
+										sql.add(ID, x.nom, nbgain, "inventory")
+										if x.type != "emoji":
+											desc += "\n<:gem_{0}:{2}>`{0}` x{1}".format(x.nom, nbgain, GF.get_idmoji(x.nom))
+										else:
+											desc += "\n:{0}:`{0}` x{1}".format(x.nom, nbgain)
+								msg = discord.Embed(title = "Loot Box | {}".format(titre),color= 13752280, description = desc)
+								print("Gems >> {} a ouvert une Loot Box de la Saint Valentin".format(ctx.author.name))
+								await ctx.channel.send(embed = msg)
+								return True
+					else:
+						for lootbox in GF.objetBox:
+							if name == lootbox.nom:
+								gain = r.randint(lootbox.min, lootbox.max)
+								titre = lootbox.titre
+
+								sql.addGems(ID, gain)
+								sql.add(ID, "lootbox_{}".format(lootbox.nom), -1, "inventory")
+								desc = "{} :gem:`gems`".format(gain)
+								msg = discord.Embed(title = "Loot Box | {}".format(titre),color= 13752280, description = desc)
+								print("Gems >> {} a ouvert une Loot Box".format(ctx.author.name))
+								await ctx.channel.send(embed = msg)
+								return True
 
 					await ctx.chennel.send("Cette box n'existe pas!")
 					return False
@@ -1194,7 +1289,7 @@ class GemsPlay(commands.Cog):
 					msg = "Tu ne possèdes pas cette Loot Box"
 			else:
 				msg = "Commande `boxes open` incomplète"
-		elif type == None:
+		elif fct == None:
 			msg = "Commande `boxes` incomplète"
 		else:
 			msg = "Commande `boxes` invalide"

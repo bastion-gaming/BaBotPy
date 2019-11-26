@@ -67,7 +67,7 @@ def setglobalguild(guild):
 
 
 def itemBourse(item, type):
-	"""Version 2.2 | Attribue les prix de la bourse """
+	"""Version 2.3 | Attribue les prix de la bourse """
 	# récupération du fichier de sauvegarde de la bourse
 	with open('gems/bourse.json', 'r') as fp:
 		dict = json.load(fp)
@@ -81,21 +81,33 @@ def itemBourse(item, type):
 	#Verification pour l'actualisation de la bourse
 	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
 		# Gestion des exceptions
-		for y in GI.exception:
-			if item == y:
-				return pnow
+		if item in GI.exception:
+			return pnow
+
+		#Calcul du prix mini
+		for c in GI.PrixItem:
+			if c.nom == item:
+				if type == "vente":
+					pmini = c.vente - (c.vente*(85/100))
+				elif type == "achat":
+					pmini = c.achat - (c.achat*(85/100))
+		for c in GI.PrixOutil:
+			if c.nom == item:
+				if type == "vente":
+					pmini = c.vente - (c.vente*(85/100))
+				elif type == "achat":
+					pmini = c.achat - (c.achat*(85/100))
+		pmini = int(pmini)
+		# print("{} {} >> {}".format(type, item, pmini))
 
 		# Fonctionnement de la bourse
 		DcrackB = r.randint(1, 1000)
 		# crack boursier négatif
-		if DcrackB == 1:
-			if pnow > 1000:
-				Prix = pnow - 500
-			else:
-				Prix = 10
+		if DcrackB <= 5:
+			Prix = pnow - (pnow*(50//100))
 		# crack boursier positif
-		elif DcrackB == 1000:
-			Prix = pnow + 500
+		elif DcrackB >= 995:
+			Prix = pnow + (pnow*(50//100))
 		# évolution de la bourse normale (entre -10% et +10% de la valeur courante)
 		else:
 			D21 = r.randint(0,20)
@@ -116,7 +128,9 @@ def itemBourse(item, type):
 					Prix = pnow + ((pnow*pourcentage)//100)
 				else:
 					Prix = pnow
-				if Prix <= 10:
+				if Prix < pmini:
+					Prix = pmini
+				elif Prix <= 10:
 					Prix = 10
 		#objet evenementiels
 		zE = False
@@ -170,7 +184,10 @@ def loadItem(F = None):
 			self.type = type
 
 	global objetItem
-	objetItem = [Item("cobblestone", itemBourse("cobblestone", "vente"), itemBourse("cobblestone", "achat"), 4, "minerai")
+	objetItem = [Item("backpack", itemBourse("backpack", "vente"), itemBourse("backpack", "achat"), -200, "special")
+	,Item("hyperpack", itemBourse("hyperpack", "vente"), itemBourse("hyperpack", "achat"), -20000, "spinelle")
+	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")
+	,Item("cobblestone", itemBourse("cobblestone", "vente"), itemBourse("cobblestone", "achat"), 4, "minerai")
 	,Item("iron", itemBourse("iron", "vente"), itemBourse("iron", "achat"), 10, "minerai")
 	,Item("gold", itemBourse("gold", "vente"), itemBourse("gold", "achat"), 20, "minerai")
 	,Item("diamond", itemBourse("diamond", "vente"), itemBourse("diamond", "achat"), 40, "minerai")
@@ -192,26 +209,19 @@ def loadItem(F = None):
 	,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "consommable")
 	,Item("cacao", itemBourse("cacao", "vente"), itemBourse("cacao", "achat"), 1, "plante")
 	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "emoji")
-	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "emoji")
-	,Item("backpack", itemBourse("backpack", "vente"), itemBourse("backpack", "achat"), -200, "special")
-	,Item("hyperpack", itemBourse("hyperpack", "vente"), itemBourse("hyperpack", "achat"), -20000, "spinelle")
-	,Item("fishhook", itemBourse("fishhook", "vente"), itemBourse("fishhook", "achat"), 1, "special")]
+	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "emoji")]
 
-	if (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 10):
-		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
-		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
-	elif jour.year >= 2019:
+	if not (jour.month == 10 and jour.day >= 22) or (jour.month == 11 and jour.day <= 10):
 		for one in GI.ObjetHalloween:
 			ObjetEventEnd.append(one)
-		objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
-		,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
-
-	if (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
-		objetItem += [Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")]
-	elif jour.year >= 2020:
+	if not (jour.month == 12 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
 		for one in GI.ObjetChristmas:
 			ObjetEventEnd.append(one)
-		objetItem += [Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")]
+
+	objetItem += [Item("pumpkin", itemBourse("pumpkin", "vente"), itemBourse("pumpkin", "achat"), 5, "halloween")
+	,Item("pumpkinpie", itemBourse("pumpkinpie", "vente"), itemBourse("pumpkinpie", "achat"), 5, "halloween")]
+
+	objetItem += [Item("cupcake", itemBourse("cupcake", "vente"), itemBourse("cupcake", "achat"), 4, "christmas")]
 
 	#========== Outils ==========
 	class Outil:
@@ -305,26 +315,34 @@ def loadItem(F = None):
 	,StatGems("Mineur de Merveilles", "`Nombre de `<:gem_ruby:{}>`ruby` trouvé".format(get_idmoji("ruby")))
 	,StatGems("La Squelatitude", "`Avoir 2`:beer:` sur la machine à sous`")]
 
+
+	#========== Loot Box ==========
+	class Box:
+
+		def __init__(self,nom, titre, achat , min, max):
+			self.nom = nom
+			self.titre = titre
+			self.achat = achat
+			self.min = min
+			self.max = max
+
+	global objetBox
+	objetBox = [Box("commongems", "Gems Common", 300, 100, 500)
+	,Box("raregems", "Gems Rare", 3000, 1000, 5000)
+	,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000)]
+
+	if (jour.month == 11 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
+		objetBox += [Box("gift", "Cadeau de Noël", 0, 100, 10000)]
+
+	if (jour.month == 2 and jour.day >= 9) or (jour.month == 2 and jour.day <= 17):
+		objetBox += [Box("gift_heart", "Cadeau de la Saint Valentin", 0, 100000, 500000)]
+
+
 	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
 		sql.updateComTime(wel.idBaBot, "bourse", "gems")
 # <<< def loadItem(F = None):
 
 ##############################################
-#========== Loot Box ==========
-class Box:
-
-	def __init__(self,nom, titre, achat , min, max):
-		self.nom = nom
-		self.titre = titre
-		self.achat = achat
-		self.min = min
-		self.max = max
-
-objetBox = [Box("commongems", "Gems Common", 300, 100, 500)
-,Box("raregems", "Gems Rare", 3000, 1000, 5000)
-,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000)]
-
-
 #========== Recettes ==========
 class Recette:
 

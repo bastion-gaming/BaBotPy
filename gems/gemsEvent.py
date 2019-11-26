@@ -5,6 +5,7 @@ import datetime as dt
 from DB import TinyDB as DB, SQLite as sql
 from gems import gemsFonctions as GF
 from core import level as lvl
+from multimedia import images
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -21,10 +22,43 @@ class GemsEvent(commands.Cog):
 		"""Date des Événements !!"""
 		msg = discord.Embed(title = "Evénements",color= 13752280, description = "Date des Evénements !!")
 		desc = "26 Octobre :arrow_right: 10 Novembre"
+		for one in GF.objetItem:
+			if one.type == "halloween":
+				desc += "\n<:gem_{0}:{1}>`{0}`".format(one.nom, GF.get_idmoji(one.nom))
 		msg.add_field(name="Halloween", value=desc, inline=False)
+
 		desc = "14 Décembre :arrow_right: 5 Janvier"
+		for one in GF.objetItem:
+			if one.type == "christmas":
+				desc += "\n<:gem_{0}:{1}>`{0}`".format(one.nom, GF.get_idmoji(one.nom))
+		desc += ":gift:`gift`"
 		msg.add_field(name="Noël", value=desc, inline=False)
+
+		desc = "10 Février :arrow_right: 17 Février"
+		for one in GF.objetItem:
+			if one.type == "saint valentin":
+				desc += "\n<:gem_{0}:{1}>`{0}`".format(one.nom, GF.get_idmoji(one.nom))
+		desc += ":gift_heart:`gift_heart`"
+		msg.add_field(name="Saint Valentin", value=desc, inline=False)
+
+		desc = "7 Juillet :arrow_right: 21 Juillet"
+		msg.add_field(name="Fête Nationale", value=desc, inline=False)
 		await ctx.channel.send(embed = msg)
+
+
+	@commands.command(pass_context=True)
+	async def happy(self, ctx, new, year):
+		"""**new year** | Bonne année !!"""
+		jour = dt.date.today()
+		if jour.day == 1 and jour.mouth == 1:
+			if new.lower() == "new" and year.lower() == "year":
+				await ctx.channel.send(":tada: Bonne année {} ! :confetti_ball: {}".format(jour.year, ctx.author.mention))
+				choise_nbfile=r.randint(0, 19)
+				keyword = "happy new year {}".format(jour.year)
+				url = images.images_url(keyword, 20)
+				url2 = url[0][keyword]
+				print(keyword)
+				await ctx.channel.send(url2[choise_nbfile])
 
 
 	@commands.command(pass_context=True)
@@ -45,7 +79,7 @@ class GemsEvent(commands.Cog):
 			if (jour.month == 10 and jour.day >= 26) or (jour.month == 11 and jour.day <= 10):
 				item = "pumpkin"
 				nbitem = 12
-			elif (jour.month == 10 and jour.day >= 14) or (jour.month == 1 and jour.day <= 5):
+			elif (jour.month == 12 and jour.day >= 14) or (jour.month == 1 and jour.day <= 5):
 				item = "chocolate"
 				nbitem = 8
 			if fct == None:
