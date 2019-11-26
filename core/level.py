@@ -247,7 +247,7 @@ class Level(commands.Cog):
 					else :
 						msg +="\nParain: `None`"
 
-					if len(F_li) > 0:
+					if F_li != 0:
 						if len(F_li)>1:
 							sV = "s"
 						else:
