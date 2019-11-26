@@ -122,17 +122,15 @@ class GemsBase(commands.Cog):
 					UserList.append((user, gems, spinelles, guilde))
 					i = i + 1
 				UserList = sorted(UserList, key=itemgetter(1),reverse=True)
-				j = 0
-				i = 0
+				j = 1
 				for one in UserList: # affichage des données trié
-					if i <= n:
-						baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(one[0], one[1], j+1, one[3])
+					if j <= n:
+						baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(one[0], one[1], j, one[3])
 						if one[2] != 0:
 							baltop+=" | {0}<:spinelle:{1}>\n".format(one[2], GF.get_idmoji("spinelle"))
 						else:
 							baltop+="\n"
 					j += 1
-					i += 1
 				msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,n))
@@ -147,13 +145,11 @@ class GemsBase(commands.Cog):
 						except:
 							i += 1
 					GuildList = sorted(GuildList, key=itemgetter(1),reverse=True)
-					j = 0
-					i = 0
+					j = 1
 					for one in GuildList:
-						if i <= m:
-							baltop += "{2} | {0} {1} <:spinelle:{3}>\n".format(one[0], one[1], j+1, GF.get_idmoji("spinelle"))
+						if j <= m:
+							baltop += "{2} | {0} {1} <:spinelle:{3}>\n".format(one[0], one[1], j, GF.get_idmoji("spinelle"))
 						j += 1
-						i += 1
 					msg = discord.Embed(title = "Classement des guildes",color= 13752280, description = baltop)
 					# Message de réussite dans la console
 					print("Gems >> {} a afficher le classement des {} premières guildes".format(ctx.author.name,m))
