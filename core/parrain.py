@@ -32,6 +32,7 @@ class Parrain(commands.Cog):
 					print("Parrain ajouté")
 					sql.add(ID_p, ID, 1, "filleuls")
 					sql.addGems(ID, 50)
+					fil_L = sql.valueAt(ID, "all", "filleuls")
 					gain_p = 100 * len(fil_L)
 					sql.addGems(ID_p, gain_p)
 					msg = "Votre parrain a bien été ajouté ! Vous empochez 50 :gem: et lui "+str(gain_p)+" :gem:."
