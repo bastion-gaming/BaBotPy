@@ -24,7 +24,10 @@ class Parrain(commands.Cog):
 			ID = ctx.author.id
 			if nom != None :
 				ID_p = sql.nom_ID(nom)
-				if sql.get_PlayerID(ID_p, "bastion") != "Error 404" and sql.valueAt(ID, "parrain", "bastion") == 0 and ID_p != ID:
+				print(ID_p)
+				print(sql.get_PlayerID(ID_p, "bastion"))
+				print(sql.valueAt(ID, "parrain", "bastion"))
+				if sql.get_PlayerID(ID_p, "bastion") != "Error 404" and sql.valueAtNumber(ID, "parrain", "bastion") == 0 and ID_p != ID:
 					sql.updateField(ID, "parrain", ID_p, "bastion")
 					print("Parrain ajouté")
 					sql.add(ID_p, ID, 1, "filleuls")
@@ -57,7 +60,7 @@ class Parrain(commands.Cog):
 					return
 
 			F_li = sql.valueAt(ID, "all", "filleuls")
-			if len(F_li) > 0:
+			if F_li != 0:
 				if len(F_li)>1:
 					sV = "s"
 				else:
