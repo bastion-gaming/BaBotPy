@@ -98,7 +98,7 @@ def itemBourse(item, type):
 				elif type == "achat":
 					pmini = c.achat - (c.achat*(85/100))
 		pmini = int(pmini)
-		print("{} {} >> {}".format(type, item, pmini))
+		# print("{} {} >> {}".format(type, item, pmini))
 
 		# Fonctionnement de la bourse
 		DcrackB = r.randint(1, 1000)
