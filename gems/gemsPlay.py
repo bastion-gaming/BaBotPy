@@ -238,6 +238,7 @@ class GemsPlay(commands.Cog):
 				else:
 					msg = "{1} {0} :gem:`gems`".format(gain, GF.message_crime[r.randint(0,3)])
 					sql.addGems(ID, gain)
+					sql.addGems(wel.idBaBot, -gain)
 					if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
 						if r.randint(0,10) == 0:
 							nbgift = r.randint(1,3)
@@ -1198,6 +1199,7 @@ class GemsPlay(commands.Cog):
 				else:
 					msg += "\nLa machine viens d'exploser :boom:\nTu as perdu {} :gem:`gems`".format(-1*prix)
 				sql.addGems(ID, prix)
+				sql.addGems(wel.idBaBot, -prix)
 			elif gain == 1:
 				msg += "\nBravo, voici un ticket gratuit pour relancer la machine à sous"
 				sql.addGems(ID, prix)
