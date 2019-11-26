@@ -681,7 +681,7 @@ class GemsPlay(commands.Cog):
 										nbHarvest = 1
 										item = "palm"
 									elif De > 12 and De <= 14:
-										nbHarvest = r.randint(1,3)
+										nbHarvest = r.randint(1,6)
 										item = "wheat"
 									elif De > 14:
 										nbHarvest = r.randint(3,9)
@@ -697,7 +697,7 @@ class GemsPlay(commands.Cog):
 										nbHarvest = 1
 										item = "palm"
 									elif De > 12 and De <= 14:
-										nbHarvest = r.randint(1,3)
+										nbHarvest = r.randint(1,6)
 										item = "wheat"
 									elif De > 14:
 										nbHarvest = r.randint(3,9)
