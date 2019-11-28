@@ -39,9 +39,7 @@ def countDeco():
 async def countMsg(message):
 	ID = message.author.id
 	try:
-		value = sql.valueAt(ID, "nbmsg", "bastion")
-		if value != 0:
-			value = value[0]
+		value = sql.valueAtNumber(ID, "nbmsg", "bastion")
 		sql.updateField(ID, "nbmsg", value+1, "bastion")
 		lvl.addxp(ID, 1, "bastion")
 	except:
@@ -149,9 +147,7 @@ class Stats(commands.Cog):
 				ID = -1
 
 			if (ID != -1):
-				res = sql.valueAt(ID, "nbmsg", "bastion")
-				if res == 0:
-					res = res[0]
+				res = sql.valueAtNumber(ID, "nbmsg", "bastion")
 				msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(sql.valueAt(ID, "arrival", "bastion")[:10])
 			await ctx.channel.send(msg)
 		else:
@@ -278,9 +274,7 @@ class Stats(commands.Cog):
 			i = 1
 			while i <= taille:
 				IDi = sql.userID(i, "bastion")
-				nbMsg = sql.valueAt(IDi, "nbmsg", "bastion")
-				if nbMsg != 0:
-					nbMsg = nbMsg[0]
+				nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
 				a.append([nbMsg,IDi])
 				i += 1
 			a.sort(reverse = True)
@@ -329,9 +323,7 @@ class Stats(commands.Cog):
 		i = 1
 		while i <= taille:
 			IDi = sql.userID(i, "gems")
-			nbMsg = sql.valueAt(IDi, "gems", "gems")
-			if nbMsg != 0:
-				nbMsg = nbMsg[0]
+			nbMsg = sql.valueAtNumber(IDi, "gems", "gems")
 			a.append([nbMsg,IDi])
 			i += 1
 		a.sort(reverse = True)
