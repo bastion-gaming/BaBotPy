@@ -148,7 +148,7 @@ class Stats(commands.Cog):
 
 			if (ID != -1):
 				res = sql.valueAtNumber(ID, "nbmsg", "bastion")
-				msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(sql.valueAt(ID, "arrival", "bastion")[:10])
+				msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(sql.valueAtNumber(ID, "arrival", "bastion")[:10])
 			await ctx.channel.send(msg)
 		else:
 			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
