@@ -366,21 +366,44 @@ objetRecette = [Recette("iron_pickaxe", "forge", 10, "iron", 1, "pickaxe", 0, ""
 
 
 #========== Couldown pour la fonction antispam ==========
-couldown_12h = 86400/2 # 12h
-couldown_8h = 86400/3 # 8h
-couldown_6h = 86400/4 # 6h
-couldown_4h = 86400/6 # 4h
-couldown_3h = 86400/8 # 3h
-couldown_2h = 86400/12 # 2h
-couldown_1h = 86400/24 # 1h
-couldown_30m = 86400/48 # 30 min
-couldown_10m = couldown_30m/3 # 10 min
-couldown_30s = 30 # 30s
-couldown_15s = 15 # 15s
-couldown_10s = 10 # 10s
-couldown_8s = 8 # 8s
-couldown_6s = 6 # 6s
-couldown_4s = 4 # 4s
+couldown_72h = 86400*3
+couldown_48h = 86400*2
+couldown_36h = 86400 + 86400/2
+couldown_24h = 86400
+couldown_23h = 3600*23
+couldown_22h = 3600*22
+couldown_21h = 3600*21
+couldown_20h = 3600*20
+couldown_19h = 3600*19
+couldown_18h = 3600*18
+couldown_17h = 3600*17
+couldown_16h = 3600*16
+couldown_15h = 3600*15
+couldown_14h = 3600*14
+couldown_13h = 3600*13
+couldown_12h = 3600*12
+couldown_11h = 3600*11
+couldown_10h = 3600*10
+couldown_9h = 3600*9
+couldown_8h = 3600*8
+couldown_7h = 3600*7
+couldown_6h = 3600*6
+couldown_5h = 3600*5
+couldown_4h = 3600*4
+couldown_3h = 3600*3
+couldown_2h = 3600*2
+couldown_1h = 3600
+couldown_30m = 3600/2
+couldown_20m = 3600/3
+couldown_15m = 3600/4
+couldown_10m = 3600/6
+couldown_5m = 3600/12
+couldown_30s = 30
+couldown_15s = 15
+couldown_10s = 10
+couldown_8s = 8
+couldown_6s = 6
+couldown_4s = 4
 # nb de sec nécessaire entre 2 commandes
 
 
