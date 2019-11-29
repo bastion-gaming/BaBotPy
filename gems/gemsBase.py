@@ -131,7 +131,7 @@ class GemsBase(commands.Cog):
 						else:
 							baltop+="\n"
 					j += 1
-				msg = discord.Embed(title = "Classement des joueurs",color= 13752280, description = baltop)
+				msg = discord.Embed(title = "Classement des joueurs | :gem:`gems`",color= 13752280, description = baltop)
 				# Message de réussite dans la console
 				print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,n))
 			else:
@@ -153,6 +153,31 @@ class GemsBase(commands.Cog):
 					msg = discord.Embed(title = "Classement des guildes",color= 13752280, description = baltop)
 					# Message de réussite dans la console
 					print("Gems >> {} a afficher le classement des {} premières guildes".format(ctx.author.name,m))
+				elif n == "spinelle" or n == "spinelles":
+					UserList = []
+					i = 1
+					t = sql.taille("gems")
+					while i <= t:
+						user = sql.userID(i, "gems")
+						gems = sql.valueAtNumber(user, "gems", "gems")
+						spinelles = sql.valueAtNumber(user, "spinelles", "gems")
+						guilde = sql.valueAtNumber(user, "guilde", "gems")
+						UserList.append((user, gems, spinelles, guilde))
+						i = i + 1
+					UserList = sorted(UserList, key=itemgetter(1),reverse=True)
+					UserList = sorted(UserList, key=itemgetter(2),reverse=True)
+					j = 1
+					for one in UserList: # affichage des données trié
+						if j <= m:
+							baltop += "{2} | _{3} _<@{0}> {1}:gem:".format(one[0], one[1], j, one[3])
+							if one[2] != 0:
+								baltop+=" | {0}<:spinelle:{1}>\n".format(one[2], GF.get_idmoji("spinelle"))
+							else:
+								baltop+="\n"
+						j += 1
+					msg = discord.Embed(title = "Classement des joueurs | <:spinelle:{idmoji}>`spinelles`".format(idmoji=GF.get_idmoji("spinelle")),color= 13752280, description = baltop)
+					# Message de réussite dans la console
+					print("Gems >> {} a afficher le classement des {} premiers joueurs".format(ctx.author.name,m))
 				else:
 					msg = discord.Embed(title = "Classement",color= 13752280, description = "Erreur! Commande incorrect")
 			await ctx.channel.send(embed = msg)
