@@ -322,7 +322,7 @@ class GemsBase(commands.Cog):
 							sql.addGems(ID, gain)
 							argent = ":gem:`gems`"
 						else:
-							slq.addSpinelles(ID, gain)
+							sql.addSpinelles(ID, gain)
 							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 						if c.type != "emoji":
 							msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} {4} !".format(nb, item, gain, GF.get_idmoji(c.nom), argent)
@@ -341,7 +341,7 @@ class GemsBase(commands.Cog):
 							sql.addGems(ID, gain)
 							argent = ":gem:`gems`"
 						else:
-							slq.addSpinelles(ID, gain)
+							sql.addSpinelles(ID, gain)
 							argent = "<:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle"))
 						msg ="Tu as vendu {0} <:gem_{1}:{3}>`{1}` pour {2} {4} !".format(nb, item, gain, GF.get_idmoji(c.nom), argent)
 						if nbItem == 1:

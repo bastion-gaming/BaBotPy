@@ -578,14 +578,14 @@ def updateComTime(ID, nameElem, nameDB = None):
 	else:
 		return "Error 404"
 
-	old_value = valueAt(ID, nameElem, nameDB)
+	old_value = valueAtNumber(ID, nameElem, nameDB)
 	try:
-		if old_value[0] != 0:
+		if old_value != 0:
 			new_value = t.time()
 			updateField(ID, nameElem, new_value, nameDB)
 			return 100
 		else:
-			add(ID, nameElem, t.time(), nameDB)
+			print(add(ID, nameElem, t.time(), nameDB))
 			return 101
 	except:
 		return 404
@@ -648,9 +648,9 @@ def add(ID, nameElem, nbElem, nameDB = None):
 				elif nameDB == "trophy" or nameDB == "statgems":
 					data = "idgems, Nom, Stock"
 				elif nameDB == "bastion_com_time":
-					data = "idbastion, Commandes, Time"
+					data = "idbastion, Commande, Com_time"
 				elif nameDB == "gems_com_time":
-					data = "idgems, Commandes, Time"
+					data = "idgems, Commande, Com_time"
 				values = "'{2}', '{0}', '{1}'".format(nameElem, nbElem, PlayerID)
 			elif nameDB == "hothouse" or nameDB == "cooking" or nameDB == "ferment":
 				if nameDB == "ferment":

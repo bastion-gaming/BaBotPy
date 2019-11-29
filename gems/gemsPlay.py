@@ -196,7 +196,7 @@ class GemsPlay(commands.Cog):
 
 				sql.addGems(wel.idBaBot,int(soldeTaxe[0]))
 				sql.updateComTime(ID, "bank_saving", "gems")
-				lvl.addxp(ID, 0.4, "gems")
+				lvl.addxp(ID, 4, "gems")
 			else:
 				ComTime = sql.valueAtNumber(ID, "bank_saving", "gems_com_time")
 				time = float(ComTime) - (t.time()-GF.couldown_4h)
@@ -207,6 +207,42 @@ class GemsPlay(commands.Cog):
 				msg = "Il te faut attendre :clock2:`{}h {}m {}s` avant d'épargner à nouveau !".format(timeH,timeM,timeS)
 			await ctx.channel.send(msg)
 			return
+
+
+
+	@commands.command(pass_context=True)
+	async def stealing(self, ctx, name = None):
+		"""**[nom]** | Vole des :gem:`gems` aux autres joueurs!"""
+		ID = ctx.author.id
+		if sql.spam(ID, GF.couldown_14h, "stealing", "gems") and name != None:
+			sql.updateComTime(ID, "stealing", "gems")
+			lvl.addxp(ID, 1, "gems")
+			ID_Vol = sql.nom_ID(name)
+			# Calcul du pourcentage
+			R = r.randint(1,3)
+			P = float("0.0{}".format(R))
+			try:
+				Solde = sql.valueAtNumber(ID_Vol, "gems", "gems")
+				gain = int(Solde*P)
+				sql.addGems(ID, gain)
+				sql.addGems(ID_Vol, -gain)
+
+				# Message
+				msg = "Tu viens de voler {n} :gem:`gems` à {nom}".format(n=gain, nom=name)
+				print("Gems >> {author} viens de voler {n} gems à {nom}".format(n=gain, nom=name, author=ctx.author.name))
+			except:
+				msg = "Ce joueur est introuvable!"
+		else:
+			ComTime = sql.valueAtNumber(ID, "stealing", "gems_com_time")
+			time = float(ComTime) - (t.time()-GF.couldown_14h)
+			timeH = int(time / 60 / 60)
+			time = time - timeH * 3600
+			timeM = int(time / 60)
+			timeS = int(time - timeM * 60)
+			msg = "Il te faut attendre :clock2:`{}h {}m {}s` avant de pourvoir voler des :gem:`gems` à nouveau!".format(timeH,timeM,timeS)
+			if sql.spam(ID, GF.couldown_14h, "stealing", "gems"):
+				msg = "Tu peux voler des :gem:`gems`"
+		await ctx.channel.send(msg)
 
 
 
