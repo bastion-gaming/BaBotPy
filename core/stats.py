@@ -360,6 +360,54 @@ class Stats(commands.Cog):
 			os.remove('cache/piegraph.png')
 
 
+	@commands.command(pass_context=True)
+	async def graphspinelles(self, ctx, r = 6):
+		if os.path.isfile("cache/piegraph.png"):
+			os.remove('cache/piegraph.png')
+			print('removed old graphe file')
+		total = sql.countTotalGems()
+		a = []
+		taille = sql.taille("gems")
+		i = 1
+		while i <= taille:
+			IDi = sql.userID(i, "gems")
+			nbMsg = sql.valueAtNumber(IDi, "spinelles", "gems")
+			a.append([nbMsg,IDi])
+			i += 1
+		a.sort(reverse = True)
+		richest = a[:r]
+		sous_total = 0
+		for i in range (r):
+			sous_total += richest[i][0]
+		labels = []
+		sizes = []
+		for i in range (r):
+			try:
+				nom = ctx.guild.get_member(richest[i][1])
+				labels.append(nom.name)
+				sizes.append(richest[i][0])
+			except:
+				labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
+				sizes.append(richest[i][0])
+		labels.append("autre")
+		sizes.append(total - sous_total)
+		explode = ()
+		i = 0
+		while i <= r:
+			if i < r:
+				explode = explode + (0,)
+			else:
+				explode = explode + (0.2,)
+			i += 1
+		plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
+		plt.axis('equal')
+		plt.savefig('cache/piegraph.png')
+		await ctx.send(file=discord.File("cache/piegraph.png"))
+		plt.clf()
+		if os.path.isfile("cache/piegraph.png"):
+			os.remove('cache/piegraph.png')
+
+
 
 def setup(bot):
 	bot.add_cog(Stats(bot))

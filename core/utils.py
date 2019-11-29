@@ -49,7 +49,7 @@ class Utils(commands.Cog):
 			"""
 			Permet d'avoir le lien du twitch.
 			"""
-			msg = "Notre chaine twitch --> **https://www.twitch.tv/bastionlivetv/**."
+			msg = "Notre chaine twitch :arrow_right: **https://www.twitch.tv/bastionlivetv/**."
 			await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
@@ -57,7 +57,7 @@ class Utils(commands.Cog):
 			"""
 			Permet d'avoir le lien de l'agenda.
 			"""
-			msg = "Notre agenda --> **http://www.bastion-gaming.fr/agenda.html**."
+			msg = "Notre agenda :arrow_right: **http://www.bastion-gaming.fr/agenda.html**."
 			await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
@@ -65,7 +65,7 @@ class Utils(commands.Cog):
 			"""
 			Permet d'avoir le lien du github.
 			"""
-			msg = "Le github du Bot --> **https://github.com/bastion-gaming/bot-discord**."
+			msg = "Le github du Bot :arrow_right: **https://github.com/bastion-gaming/bot-discord**."
 			await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
