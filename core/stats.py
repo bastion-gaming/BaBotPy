@@ -365,7 +365,7 @@ class Stats(commands.Cog):
 		if os.path.isfile("cache/piegraph.png"):
 			os.remove('cache/piegraph.png')
 			print('removed old graphe file')
-		total = sql.countTotalGems()
+		total = sql.countTotalSpinelles()
 		a = []
 		taille = sql.taille("gems")
 		i = 1
