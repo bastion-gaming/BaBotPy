@@ -258,6 +258,7 @@ class GemsBase(commands.Cog):
 				for c in GF.objetOutil :
 					if item == c.nom :
 						test = False
+						check = False
 						if c.type == "bank":
 							soldeMax = sql.valueAtNumber(ID, "SoldeMax", "bank")
 							if soldeMax == 0:
