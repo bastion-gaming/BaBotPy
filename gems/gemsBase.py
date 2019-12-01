@@ -704,7 +704,7 @@ class GemsBase(commands.Cog):
 						dmItemInfo += "\n`Poids:` {}".format(c.poids)
 
 				for c in GF.objetBox :
-					if c.nom != "gift" and c.nom != "gift_heart":
+					if c.achat != 0:
 						dmBox += "\n<:gem_lootbox:{idmoji}>`{nom}`".format(nom=c.nom, idmoji=GF.get_idmoji("lootbox"))
 						dmBoxPrix += "\n`{}`:gem:".format(c.achat)
 						dmBoxInfo += "\n`{} ▶ {}`:gem:`gems`".format(c.min, c.max)
