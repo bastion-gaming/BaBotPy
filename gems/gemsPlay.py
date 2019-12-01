@@ -1321,7 +1321,7 @@ class GemsPlay(commands.Cog):
 								await ctx.channel.send(embed = msg)
 								return True
 
-					await ctx.chennel.send("Cette box n'existe pas!")
+					await ctx.channel.send("Cette box n'existe pas!")
 					return False
 				else:
 					msg = "Tu ne possèdes pas cette Loot Box"
