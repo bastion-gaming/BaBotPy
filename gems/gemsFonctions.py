@@ -329,13 +329,9 @@ def loadItem(F = None):
 	global objetBox
 	objetBox = [Box("commongems", "Gems Common", 300, 100, 500)
 	,Box("raregems", "Gems Rare", 3000, 1000, 5000)
-	,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000)]
-
-	if (jour.month == 11 and jour.day >= 13) or (jour.month == 1 and jour.day <= 5):
-		objetBox += [Box("gift", "Cadeau de Noël", 0, 100, 10000)]
-
-	if (jour.month == 2 and jour.day >= 9) or (jour.month == 2 and jour.day <= 17):
-		objetBox += [Box("gift_heart", "Cadeau de la Saint Valentin", 0, 100000, 500000)]
+	,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000)
+	,Box("gift", "Cadeau de Noël", 0, 100, 10000)
+	,Box("gift_heart", "Cadeau de la Saint Valentin", 0, 100000, 500000)]
 
 
 	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):

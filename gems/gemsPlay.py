@@ -185,14 +185,14 @@ class GemsPlay(commands.Cog):
 				elif D >= 9 and D <= 11:
 					sql.add(ID, "lootbox_commongems", 1, "inventory")
 					msg += "\nTu as trouvé une **Loot Box Gems Common**! Utilise la commande `boxes open commongems` pour l'ouvrir"
-				elif (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+				elif (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
 					nbgift = 1
 					sql.add(ID, "lootbox_gift", nbgift, "inventory")
-					msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+					msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël (gift)`".format(nbgift)
 				elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
 					nbgift = 1
 					sql.add(ID, "lootbox_gift", nbgift, "inventory")
-					msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
+					msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année (gift)`:confetti_ball:".format(nbgift)
 
 				sql.addGems(wel.idBaBot,int(soldeTaxe[0]))
 				sql.updateComTime(ID, "bank_saving", "gems")
@@ -275,16 +275,16 @@ class GemsPlay(commands.Cog):
 					msg = "{1} {0} :gem:`gems`".format(gain, GF.message_crime[r.randint(0,3)])
 					sql.addGems(ID, gain)
 					sql.addGems(wel.idBaBot, -gain)
-					if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+					if (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
 						if r.randint(0,10) == 0:
 							nbgift = r.randint(1,3)
 							sql.add(ID, "lootbox_gift", nbgift, "inventory")
-							msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+							msg += "\n\nTu as trouvé {} :gift:`cadeau de Noël (gift)`".format(nbgift)
 					elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
 						if r.randint(0,10) == 0:
 							nbgift = r.randint(1,3)
 							sql.add(ID, "lootbox_gift", nbgift, "inventory")
-							msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
+							msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année (gift)`:confetti_ball:".format(nbgift)
 			sql.updateComTime(ID, "crime", "gems")
 			lvl.addxp(ID, 1, "gems")
 		else:
@@ -431,14 +431,14 @@ class GemsPlay(commands.Cog):
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							elif nbrand < 2:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
-								if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+								if (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
-									msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+									msg = "Tu as trouvé {} :gift:`cadeau de Noël (gift)`".format(nbgift)
 								elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
-									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
+									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année (gift)`:confetti_ball:".format(nbgift)
 							else:
 								nbcobble = r.randint(1,20)
 								sql.add(ID, "cobblestone", nbcobble, "inventory")
@@ -514,14 +514,14 @@ class GemsPlay(commands.Cog):
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							else:
 								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
-								if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+								if (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
-									msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+									msg = "Tu as trouvé {} :gift:`cadeau de Noël (gift)`".format(nbgift)
 								elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
-									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
+									msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année (gift)`:confetti_ball:".format(nbgift)
 						else:
 							nbcobble = r.randint(1,10)
 							sql.add(ID, "cobblestone", nbcobble, "inventory")
@@ -639,14 +639,14 @@ class GemsPlay(commands.Cog):
 							msg = "Pas de poisson pour toi aujourd'hui :cry: "
 							if mult >= 2:
 								sql.add(ID, "fishhook", 1, "inventory")
-							if (jour.month == 12 and jour.day >= 22) or (jour.month == 12 and jour.day <= 25):
+							if (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
 								nbgift = r.randint(1,3)
 								sql.add(ID, "lootbox_gift", nbgift, "inventory")
-								msg = "Tu as trouvé {} :gift:`cadeau de Noël`".format(nbgift)
+								msg = "Tu as trouvé {} :gift:`cadeau de Noël (gift)`".format(nbgift)
 							elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
 								nbgift = r.randint(1,3)
 								sql.add(ID, "lootbox_gift", nbgift, "inventory")
-								msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année`:confetti_ball:".format(nbgift)
+								msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année (gift)`:confetti_ball:".format(nbgift)
 				else:
 					msg = "Il te faut une <:gem_fishingrod:{}>`canne à pèche` pour pécher, tu en trouvera une au marché !".format(GF.get_idmoji("fishingrod"))
 
@@ -1322,7 +1322,7 @@ class GemsPlay(commands.Cog):
 								await ctx.channel.send(embed = msg)
 								return True
 
-					await ctx.chennel.send("Cette box n'existe pas!")
+					await ctx.channel.send("Cette box n'existe pas!")
 					return False
 				else:
 					msg = "Tu ne possèdes pas cette Loot Box"
