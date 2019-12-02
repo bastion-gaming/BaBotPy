@@ -50,3 +50,4 @@ gems/guildes.json
 *.bak
 *DB.json
 core/co.json
+gems/bourse/*

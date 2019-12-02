@@ -5,7 +5,7 @@ import datetime as dt
 from DB import TinyDB as DB, SQLite as sql
 import json
 from core import welcome as wel
-from gems import gemsItems as GI
+from gems import gemsItems as GI, gemsStats as GS
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
@@ -336,6 +336,10 @@ def loadItem(F = None):
 
 	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
 		sql.updateComTime(wel.idBaBot, "bourse", "gems")
+		for x in objetItem:
+			GS.csv_add(x.nom)
+		for x in objetOutil:
+			GS.csv_add(x.nom)
 # <<< def loadItem(F = None):
 
 ##############################################
