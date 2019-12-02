@@ -163,7 +163,9 @@ class GemsPlay(commands.Cog):
 				if soldeMax == 0:
 					soldeMax = Taille
 				soldeMult = soldeMax/Taille
-				pourcentage = 0.200 + soldeMult*0.002
+				pourcentage = 0.150 + soldeMult*0.002
+				if pourcentage > 0.6:
+					pourcentage = 0.6
 				soldeAdd = pourcentage*solde
 				soldeTaxe = GF.taxe(soldeAdd, 0.1)
 				soldeAdd = soldeTaxe[1]
