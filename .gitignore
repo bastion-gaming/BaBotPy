@@ -49,4 +49,4 @@ gems/guildes.json
 *.db
 *.bak
 *DB.json
-co.json
+core/co.json
