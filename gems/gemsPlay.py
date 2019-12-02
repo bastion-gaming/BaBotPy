@@ -798,7 +798,8 @@ class GemsPlay(commands.Cog):
 					elif int(arg2) < 0:
 						sql.addGems(ID, -100)
 						lvl.addxp(ID, -10, "gems")
-						msg = ":no_entry: Anti-cheat! Tu viens de perdre 100 :gem:`gems`"
+						msg = ":no_entry: Anti-cheat! Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
+						slq.add(ID, "DiscordCop Amende", 1, "statgems")
 						await ctx.channel.send(msg)
 						return "anticheat"
 					data = []

@@ -27,15 +27,6 @@ async def memberjoin(member, channel):
 		ID = member.id
 		if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			cap = sql.valueAt(ID, "all", "capability")
-			for c in GF.objetCapability:
-				if c.defaut == True:
-					check = False
-					for x in cap:
-						if c.ID == x[0]:
-							check = True
-					if not check:
-						sql.add(ID, c.ID, 1, "capability")
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
 		else:
 			await roles.addrole(member, "Nouveau")
@@ -49,8 +40,8 @@ async def memberjoin(member, channel):
 
 def memberremove(member):
 	ID = member.id
-	gems = sql.valueAt(ID, "gems", "gems")
-	BotGems = sql.valueAt(idBaBot, "gems", "gems")
+	gems = sql.valueAtNumber(ID, "gems", "gems")
+	BotGems = sql.valueAtNumber(idBaBot, "gems", "gems")
 	idBot = idBaBot
 	pourcentage = 0.3
 	if member.guild.id == idBASTION:
@@ -58,8 +49,8 @@ def memberremove(member):
 		sql.updateField(ID, "lvl", 0, "bastion")
 		sql.updateField(ID, "xp", 0, "bastion")
 	transfert = gems * pourcentage
-	sql.addGems(idBot, "gems", int(transfert))
-	sql.updateField(ID, "gems", gems - int(transfert), "gems")
+	sql.addGems(idBot, int(transfert))
+	sql.addGems(ID, int(-tranfert))
 	print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
 
 

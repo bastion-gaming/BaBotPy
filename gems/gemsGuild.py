@@ -35,6 +35,7 @@ def guild_create(ctx, guilde):
 	DB.newPlayer(i, "DB/guildesDB", "DB/Templates/guildesTemplate")
 	DB.updateField(i, "Nom", guilde, "DB/guildesDB")
 	DB.updateField(i, "Chef", ID, "DB/guildesDB")
+	sql.addSpinelles(ID, -1)
 	sql.updateField(ID, "guilde", guilde, "gems")
 	return "Guilde `{}` créé".format(guilde)
 
@@ -258,25 +259,27 @@ class GemsGuild(commands.Cog):
 	def __init__(self,ctx):
 		return(None)
 
-
-	@commands.command(pass_context=True)
-	async def guildlist(self, ctx):
-		"""Liste des guildes"""
-		ID = ctx.author.id
-		desc = "Liste des guildes\n"
-		i = 1
-		list = []
-		while i <= DB.get_endDocID("DB/guildesDB"):
-			try:
-				list.append(DB.valueAt(i, "Nom", "DB/guildesDB"))
-				i += 1
-			except:
-				i += 1
-		list = sorted(list, key=itemgetter(0),reverse=False)
-		for one in list:
-			desc += "\n• {}".format(one)
-		msg = discord.Embed(title = "Guildes",color= 13752280, description = desc)
-		await ctx.channel.send(embed = msg)
+	#-----------------------------------------------------
+	# Commande désactivée
+	#-----------------------------------------------------
+	# @commands.command(pass_context=True)
+	# async def guildlist(self, ctx):
+	# 	"""Liste des guildes"""
+	# 	ID = ctx.author.id
+	# 	desc = "Liste des guildes\n"
+	# 	i = 1
+	# 	list = []
+	# 	while i <= DB.get_endDocID("DB/guildesDB"):
+	# 		try:
+	# 			list.append(DB.valueAt(i, "Nom", "DB/guildesDB"))
+	# 			i += 1
+	# 		except:
+	# 			i += 1
+	# 	list = sorted(list, key=itemgetter(0),reverse=False)
+	# 	for one in list:
+	# 		desc += "\n• {}".format(one)
+	# 	msg = discord.Embed(title = "Guildes",color= 13752280, description = desc)
+	# 	await ctx.channel.send(embed = msg)
 
 
 	@commands.command(pass_context=True)
@@ -331,7 +334,7 @@ class GemsGuild(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def guildpromote(self, ctx, name):
-		"""**[pseudo]** | Promouvoir un Membre de la guilde au grade Admin"""
+		"""**[pseudo]** | Promouvoir un Membre de la guilde"""
 		ID = ctx.author.id
 		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		if guilde != "":
@@ -343,7 +346,7 @@ class GemsGuild(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def guilddisplacement(self, ctx, name):
-		"""**[pseudo]** | Destituer un Admin de la guilde au grade de Membre"""
+		"""**[pseudo]** | Destituer un Admin de la guilde"""
 		ID = ctx.author.id
 		guilde = sql.valueAtNumber(ID, "guilde", "gems")
 		if guilde != "":
@@ -357,10 +360,13 @@ class GemsGuild(commands.Cog):
 	async def guildcreate(self, ctx, guilde):
 		"""**[nom de la guilde]** | Création d'une Guilde"""
 		ID = ctx.author.id
-		if sql.valueAtNumber(ID, "guilde", "gems") == "":
-			msg = guild_create(ctx, guilde)
+		if sql.valueAtNumber(ID, "spinelle", "gems") > 0:
+			if sql.valueAtNumber(ID, "guilde", "gems") == "":
+				msg = guild_create(ctx, guilde)
+			else:
+				msg = "Tu fais déjà partie d'une guilde!"
 		else:
-			msg = "Tu fais déjà partie d'une guilde!"
+			msg = "Pour créer une guilde tu as besoin d'1 <:spinelle:{idmoji}>`spinelles`".format(idmoji=GF.get_idmoji("spinelle"))
 		await ctx.channel.send(msg)
 
 
@@ -385,7 +391,7 @@ class GemsGuild(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def guildrequest(self, ctx, guilde):
-		"""**[nom de la guilde]** | Ajout d'un Membre à la Guilde"""
+		"""**[nom de la guilde]** | Demande d'ajout à une Guilde"""
 		ID = ctx.author.id
 		if sql.valueAtNumber(ID, "guilde", "gems") == "":
 			try:
@@ -500,9 +506,6 @@ class GemsGuild(commands.Cog):
 							if x == item:
 								GuildItemValue = int(GuildInv[x])
 						# print("x{}".format(GuildItemValue))
-						# if GuildItemValue == 0 and n < 0:
-						# 	msg = "Cette item n'est pas présent dans le coffre de guilde!"
-						# 	return await ctx.channel.send(msg)
 						UserInv = sql.valueAt(ID, item, "inventory")
 						if UserInv != 0:
 							UserInv = UserInv[0]
@@ -658,13 +661,13 @@ class GemsGuild(commands.Cog):
 			try:
 				nb = int(nb)
 			except:
-				await ctx.channel.send("Erreur! Nombre de <:spinelle:{}>`spinelles` incorrect".format(GF.get_idmoji("spinelle")))
+				await ctx.channel.send("Erreur! Nombre de <:spinelle:{idmoji}>`spinelles` incorrect".format(idmoji=GF.get_idmoji("spinelle")))
 				return 404
 			if nb < 0:
 				if balspinelle >= -nb:
 					max = nb
 				else:
-					await ctx.channel.send("Tu n'as pas assez de <:spinelle:{}>`spinelles`".format(GF.get_idmoji("spinelle")))
+					await ctx.channel.send("Tu n'as pas assez de <:spinelle:{idmoji}>`spinelles`".format(idmoji=GF.get_idmoji("spinelle")))
 					return False
 			elif nb <= max:
 				max = nb
@@ -677,7 +680,12 @@ class GemsGuild(commands.Cog):
 				return False
 		sql.addGems(ID, -(max*n))
 		sql.addSpinelles(ID, max)
-		await ctx.channel.send("Convertion terminée! Ton solde a été crédité de {0} <:spinelle:{1}>`spinelles`".format(max, GF.get_idmoji("spinelle")))
+		if max > 0:
+			await ctx.channel.send("Convertion terminée! Ton compte a été crédité de {nb} <:spinelle:{idmoji}>`spinelles`".format(nb=max, idmoji=GF.get_idmoji("spinelle")))
+		elif max < 0:
+			await ctx.channel.send("Convertion terminée! Ton compte a été débité de {nb} <:spinelle:{idmoji}>`spinelles`".format(nb=-max, idmoji=GF.get_idmoji("spinelle")))
+		else:
+			await ctx.channel.send("Aucune convertion effectuée")
 
 
 

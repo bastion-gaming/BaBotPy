@@ -188,7 +188,7 @@ client.load_extension('gems.gemsPlay')
 
 client.load_extension('gems.gemsGuild')
 
-# client.load_extension('gems.gemsFight')
+client.load_extension('gems.gemsFight')
 
 client.load_extension('gems.gemsEvent')
 

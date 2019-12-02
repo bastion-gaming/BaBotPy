@@ -69,18 +69,19 @@ class Gestion(commands.Cog):
 	@commands.command(pass_context=True)
 	async def supp(self, ctx, nb):
 		"""**[nombre]** | Supprime [nombre] de message dans le channel """
+		suppMax = 40
 		if permission(ctx,Inquisiteur):
 			try :
 				nb = int(nb)
-				if nb <= 20 :
+				if nb <= suppMax :
 					await ctx.channel.purge(limit =nb)
 					msg ='{0} messages on été éffacé !'.format(nb)
 				else:
-					msg = "on ne peut pas supprimer plus de 20 message à la fois"
+					msg = "On ne peut pas supprimer plus de {} messages à la fois".format(suppMax)
 			except ValueError:
-				msg = "commande mal remplis"
+				msg = "Commande mal remplis"
 		else :
-			msg = "tu ne remplis pas les conditions"
+			msg = "Tu ne remplis pas les conditions"
 		await ctx.channel.send(msg)
 
 	@client.command(pass_context=True)

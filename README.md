@@ -90,6 +90,7 @@ Liste des commandes:
 - fish
 - slots
 - hothouse
+- ferment
 - boxes open
 
 **Gems Guild**: Commandes permettant la gestion des guildes.
@@ -108,6 +109,8 @@ Liste des commandes:
 **Gems Event**: Commandes relative aux évènements (limité dans le temps).
 
 Liste des commandes:
+- event
+- happy new year
 - cooking
 
 ### Module Help

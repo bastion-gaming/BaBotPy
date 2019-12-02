@@ -134,38 +134,42 @@ class UtilsSecret(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def sql(self, ctx, fct = None, arg2 = None, arg3 = None, arg4 = None):
-		if ge.permission(ctx,ge.admin):# or ctx.author.id == 129362501187010561:
+	async def sql(self, ctx, fct = None, ID = None, arg2 = None, arg3 = None, arg4 = None):
+		if ID == None:
+			ID = ctx.author.id
+		else:
+			ID = sql.nom_ID(ID)
+		if ge.permission(ctx,ge.admin):
 			if fct == "init":
 				sql.init()
 			elif fct == "begin":
 				if arg2 == "bastion" or arg2 == "gems":
-					msg = sql.newPlayer(ctx.author.id, arg2)
+					msg = sql.newPlayer(ID, arg2)
 				else:
 					msg = "DB inconnu"
 				await ctx.channel.send(msg)
 			elif fct == "update":
-				msg = sql.updateField(ctx.author.id, arg3, arg4, arg2)
+				msg = sql.updateField(ID, arg3, arg4, arg2)
 				await ctx.channel.send(msg)
 			elif fct == "value":
-				msg = sql.valueAt(ctx.author.id, arg3, arg2)
+				msg = sql.valueAt(ID, arg3, arg2)
 				await ctx.channel.send(msg)
 			elif fct == "gems":
-				msg = sql.addGems(ctx.author.id, arg2)
+				msg = sql.addGems(ID, arg2)
 				await ctx.channel.send(msg)
 			elif fct == "spinelles":
-				msg = sql.addSpinelles(ctx.author.id, arg2)
+				msg = sql.addSpinelles(ID, arg2)
 				await ctx.channel.send(msg)
 			elif fct == "add":
-				msg = sql.add(ctx.author.id, arg3, arg4, arg2)
+				msg = sql.add(ID, arg3, arg4, arg2)
 				await ctx.channel.send(msg)
 			elif fct == "taille":
 				msg = sql.taille(arg2)
 				await ctx.channel.send(msg)
-			elif fct == "conv":
-				# arg2 = bastion ou gems
-				cdb.conversionBastion(arg2)
-				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
+			# elif fct == "conv":
+			# 	# arg2 = bastion ou gems
+			# 	cdb.conversionBastion(arg2)
+			# 	await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 			else:
 				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 		else:
