@@ -23,11 +23,11 @@ idcategory_admin = 417453424402235407
 async def memberjoin(member, channel):
 	if member.guild.id == idBASTION:
 		channel_regle = member.guild.get_channel(417454223224209408)
-		time = dt.time()
 		ID = member.id
 		if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
 			await roles.addrole(member, "Nouveau")
-			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté ! \nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
+			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !".format(member.mention)
+			# msg += "\nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
 		else:
 			await roles.addrole(member, "Nouveau")
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
