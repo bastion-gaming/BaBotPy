@@ -138,7 +138,10 @@ class UtilsSecret(commands.Cog):
 		if ID == None:
 			ID = ctx.author.id
 		else:
-			ID = sql.nom_ID(ID)
+			try:
+				ID = int(ID)
+			except:
+				ID = sql.nom_ID(ID)
 		if ge.permission(ctx,ge.admin):
 			if fct == "init":
 				sql.init()
