@@ -229,12 +229,19 @@ class GemsPlay(commands.Cog):
 			try:
 				Solde = sql.valueAtNumber(ID_Vol, "gems", "gems")
 				gain = int(Solde*P)
-				sql.addGems(ID, gain)
-				sql.addGems(ID_Vol, -gain)
-
-				# Message
-				msg = "Tu viens de voler {n} :gem:`gems` à {nom}".format(n=gain, nom=name)
-				print("Gems >> {author} viens de voler {n} gems à {nom}".format(n=gain, nom=name, author=ctx.author.name))
+				if r.randint(0,9) == 0:
+					sql.add(ID, "DiscordCop Arrestation", 1, "statgems")
+					if int(sql.addGems(ID, int(gain/4))) >= 100:
+						msg = "Vous avez été attrapés par un DiscordCop vous avez donc payé une amende de **{}** :gem:`gems`".format(int(gain/4))
+					else:
+						sql.updateField(ID, "gems", 100, "gems")
+						msg = "Vous avez été attrapés par un DiscordCop mais vous avez trop peu de :gem:`gems` pour payer l'intégralité de l'amende! Votre compte est maintenant de 100 :gem:`gems`"
+				else:
+					sql.addGems(ID, gain)
+					sql.addGems(ID_Vol, -gain)
+					# Message
+					msg = "Tu viens de voler {n} :gem:`gems` à {nom}".format(n=gain, nom=name)
+					print("Gems >> {author} viens de voler {n} gems à {nom}".format(n=gain, nom=name, author=ctx.author.name))
 			except:
 				msg = "Ce joueur est introuvable!"
 		else:
