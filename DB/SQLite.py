@@ -507,7 +507,7 @@ def valueAt(ID, fieldName, nameDB = None):
 def valueAtNumber(ID, fieldName, nameDB = None):
 	if fieldName != "all":
 		VAN = valueAt(ID, fieldName, nameDB)
-		if VAN != 0:
+		if VAN != 0 and VAN != None:
 			VAN = VAN[0]
 		return VAN
 	else:

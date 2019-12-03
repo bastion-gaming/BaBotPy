@@ -104,22 +104,20 @@ client.load_extension('core.utils')
 async def on_member_join(member):
 	guild = client.get_guild(member.guild.id)
 	if guild.system_channel != None:
-		systemchannel = guild.system_channel.id
+		systemchannel = guild.system_channel
 	else:
 		systemchannel = 0
-	channel = client.get_channel(systemchannel)
-	await wel.memberjoin(member, channel)
+	await wel.memberjoin(member, systemchannel)
 
 @client.event
 async def on_member_remove(member):
 	guild = client.get_guild(member.guild.id)
 	if guild.system_channel != None:
-		systemchannel = guild.system_channel.id
+		systemchannel = guild.system_channel
 	else:
 		systemchannel = 0
 	wel.memberremove(member)
-	channel = client.get_channel(systemchannel)
-	await channel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
+	await systemchannel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
 
 @client.event
 async def on_voice_state_update(member,before,after):

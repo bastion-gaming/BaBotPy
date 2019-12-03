@@ -25,12 +25,12 @@ async def memberjoin(member, channel):
 		channel_regle = member.guild.get_channel(417454223224209408)
 		ID = member.id
 		if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
-			await roles.addrole(member, "Nouveau")
 			msg = ":black_small_square:Bienvenue {0} sur Bastion!:black_small_square: \n\n\nNous sommes ravis que tu aies rejoint notre communauté !".format(member.mention)
-			# msg += "\nTu es attendu : \n\n:arrow_right: Sur {1}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(member.mention,channel_regle.mention)
-		else:
+			msg += "\nTu es attendu : \n\n:arrow_right: Sur {0}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n\n=====================".format(channel_regle.mention)
 			await roles.addrole(member, "Nouveau")
+		else:
 			msg = "===================== Bon retour parmis nous ! {0} =====================".format(member.mention)
+			await roles.addrole(member, "Nouveau")
 		stat.countCo()
 	else:
 		msg = "Bienvenue {} sur {}".format(member.mention, member.guild.name)
@@ -48,10 +48,13 @@ def memberremove(member):
 		stat.countDeco()
 		sql.updateField(ID, "lvl", 0, "bastion")
 		sql.updateField(ID, "xp", 0, "bastion")
-	transfert = gems * pourcentage
-	sql.addGems(idBot, int(transfert))
-	sql.addGems(ID, int(-tranfert))
 	print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
+	try:
+		transfert = gems * pourcentage
+		sql.addGems(idBot, int(transfert))
+		sql.addGems(ID, int(-tranfert))
+	except:
+		print("Welcome >> Echec du transfert de gems")
 
 
 

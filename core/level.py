@@ -89,9 +89,7 @@ objetXPgems = [XP(0,100)
 def addxp(ID, nb, nameDB = None):
 	if nameDB == None:
 		nameDB = "bastion"
-	balXP = sql.valueAt(ID, "xp", nameDB)
-	if balXP != 0:
-		balXP = int(balXP[0])
+	balXP = sql.valueAtNumber(ID, "xp", nameDB)
 	ns = balXP + int(nb)
 	if ns <= 0:
 		ns = 0
@@ -108,12 +106,8 @@ async def checklevel(message, nameDB = None):
 	else:
 		objet = objetXPgems
 	try:
-		lvl = sql.valueAt(ID, "lvl", nameDB)
-		if lvl != 0:
-			lvl = int(lvl[0])
-		xp = sql.valueAt(ID, "xp", nameDB)
-		if xp != 0:
-			xp = int(xp[0])
+		lvl = sql.valueAtNumber(ID, "lvl", nameDB)
+		xp = sql.valueAtNumber(ID, "xp", nameDB)
 		check = True
 		for x in objet:
 			if lvl == x.level and check:
@@ -122,9 +116,7 @@ async def checklevel(message, nameDB = None):
 					desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
 					title = "Level UP"
 					if nameDB == "gems":
-						lvl3 = sql.valueAt(ID, "lvl", nameDB)
-						if lvl3 != 0:
-							lvl3 = int(lvl3[0])
+						lvl3 = sql.valueAtNumber(ID, "lvl", nameDB)
 						title += " | Get Gems"
 						nbS = lvl3 // 5
 						nbG = lvl3 % 5
@@ -140,9 +132,7 @@ async def checklevel(message, nameDB = None):
 					await message.channel.send(embed = msg)
 					check = False
 		if nameDB != "gems":
-			lvl2 = sql.valueAt(ID, "lvl", nameDB)
-			if lvl2 != 0:
-				lvl2 = int(lvl2[0])
+			lvl2 = sql.valueAtNumber(ID, "lvl", nameDB)
 			if lvl == 0 and lvl2 == 1:
 				await roles.addrole(member, "Joueurs")
 				await roles.removerole(member, "Nouveau")
@@ -155,10 +145,10 @@ async def checklevelvocal(member):
 	Nom = member.name
 	channel_vocal = member.guild.get_channel(507679074362064916)
 	try:
-		lvl = sql.valueAt(ID, "lvl", nameDB)
-		lvl = int(lvl[0])
-		xp = sql.valueAt(ID, "xp", nameDB)
-		xp = int(xp[0])
+		lvl = sql.valueAtNumber(ID, "lvl", nameDB)
+		lvl = int(lvl)
+		xp = sql.valueAtNumber(ID, "xp", nameDB)
+		xp = int(xp)
 		check = True
 		for x in objet:
 			if lvl == x.level and check:
@@ -167,8 +157,7 @@ async def checklevelvocal(member):
 					msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
 					await channel_vocal.send(msg)
 					check = False
-		lvl2 = sql.valueAt(ID, "lvl", nameDB)
-		lvl2 = int(lvl2[0])
+		lvl2 = sql.valueAtNumber(ID, "lvl", nameDB)
 		if lvl == 0 and lvl2 == 1:
 			roles.addrole(member, "Joueurs")
 			roles.removerole(member, "Nouveau")
@@ -201,10 +190,8 @@ class Level(commands.Cog):
 				return
 
 			if (ID != -1):
-				lvl = sql.valueAt(ID, "lvl", "bastion")
-				lvl = int(lvl[0])
-				xp = sql.valueAt(ID, "xp", "bastion")
-				xp = int(xp[0])
+				lvl = sql.valueAtNumber(ID, "lvl", "bastion")
+				xp = sql.valueAtNumber(ID, "xp", "bastion")
 				msg = "**Utilisateur:** {}".format(Nom)
 				emb = discord.Embed(title = "Informations",color= 13752280, description = msg)
 
@@ -220,10 +207,10 @@ class Level(commands.Cog):
 
 				try:
 					# Gems
-					msg = "{0} :gem:`gems`\n".format(sql.valueAt(ID,"gems", "gems")[0])
-					soldeSpinelles = sql.valueAt(ID, "Spinelles", "gems")
-					if soldeSpinelles[0] > 0:
-						msg+= "{0} <:spinelle:{1}>`spinelles`".format(soldeSpinelles[0], GF.get_idmoji("spinelle"))
+					msg = "{0} :gem:`gems`\n".format(sql.valueAtNumber(ID,"gems", "gems"))
+					soldeSpinelles = sql.valueAtNumber(ID, "Spinelles", "gems")
+					if soldeSpinelles > 0:
+						msg+= "{0} <:spinelle:{1}>`spinelles`".format(soldeSpinelles, GF.get_idmoji("spinelle"))
 					emb.add_field(name="**_Balance_**", value=msg, inline=False)
 
 					# Statistique de l'utilisateur pour le module Gems
