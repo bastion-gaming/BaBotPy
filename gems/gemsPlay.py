@@ -221,7 +221,10 @@ class GemsPlay(commands.Cog):
 			lvl.addxp(ID, 1, "gems")
 			ID_Vol = sql.nom_ID(name)
 			# Calcul du pourcentage
-			R = r.randint(1,3)
+			if ID_Vol == wel.idBaBot or ID_Vol == wel.idGetGems:
+				R = r.randint(1,6)
+			else:
+				R = 1
 			P = float("0.0{}".format(R))
 			try:
 				Solde = sql.valueAtNumber(ID_Vol, "gems", "gems")
