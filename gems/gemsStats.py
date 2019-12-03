@@ -13,8 +13,11 @@ def csv_add(name):
 			achat = x.achat
 	for x in GF.objetOutil:
 		if x.nom == name:
-			vente = x.vente
-			achat = x.achat
+			if c.type == "bank":
+				return True
+			else:
+				vente = x.vente
+				achat = x.achat
 	now = dt.datetime.now()
 	try:
 		with open('gems/bourse/{item}-{year}-{month}.csv'.format(item=name, year=now.year, month=now.month), 'r', newline='') as csvfile:
