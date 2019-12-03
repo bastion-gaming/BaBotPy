@@ -224,7 +224,7 @@ class GemsPlay(commands.Cog):
 			if ID_Vol == wel.idBaBot or ID_Vol == wel.idGetGems:
 				R = r.randint(1,6)
 			else:
-				R = 1
+				R = "05"
 			P = float("0.0{}".format(R))
 			try:
 				Solde = sql.valueAtNumber(ID_Vol, "gems", "gems")
