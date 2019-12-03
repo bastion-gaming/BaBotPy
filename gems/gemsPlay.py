@@ -666,7 +666,7 @@ class GemsPlay(commands.Cog):
 	async def hothouse(self, ctx, fct = None, arg = None, arg2 = None):
 		"""**[harvest / plant]** {_n° plantation / item à planter_} | Plantons compagnons !!"""
 		ID = ctx.author.id
-		maxplanting = 200
+		maxplanting = 50
 		if sql.spam(ID,GF.couldown_4s, "hothouse", "gems"):
 			nbplanting = int(sql.valueAtNumber(ID, "planting_plan", "inventory")) + 1
 			if nbplanting >= maxplanting:
@@ -708,41 +708,41 @@ class GemsPlay(commands.Cog):
 							if valueItem == "seed" or valueItem == "":
 								if (jour.month == 10 and jour.day >= 23) or (jour.month == 11 and jour.day <= 10): #Special Halloween
 									if De <= 2:
-										nbHarvest = 1
+										nbHarvest = r.randint(1, 2)
 										item = "oak"
 									elif De > 2 and De <= 7:
-										nbHarvest = r.randint(1, 2)
+										nbHarvest = r.randint(2, 4)
 										item = "pumpkin"
 									elif De > 7 and De <= 10:
-										nbHarvest = 1
+										nbHarvest = r.randint(1, 2)
 										item = "spruce"
 									elif De > 10 and De <= 12:
-										nbHarvest = 1
+										nbHarvest = r.randint(1, 2)
 										item = "palm"
 									elif De > 12 and De <= 14:
-										nbHarvest = r.randint(1,6)
+										nbHarvest = r.randint(4,10)
 										item = "wheat"
 									elif De > 14:
-										nbHarvest = r.randint(3,9)
+										nbHarvest = r.randint(6,12)
 										item = "grapes"
 								else:
 									if De <= 5:
-										nbHarvest = 1
+										nbHarvest = r.randint(1, 2)
 										item = "oak"
 									elif De > 5 and De <= 9:
-										nbHarvest = 1
+										nbHarvest = r.randint(1, 2)
 										item = "spruce"
 									elif De > 9 and De <= 12:
-										nbHarvest = 1
+										nbHarvest = r.randint(1, 2)
 										item = "palm"
 									elif De > 12 and De <= 14:
-										nbHarvest = r.randint(1,6)
+										nbHarvest = r.randint(4,10)
 										item = "wheat"
 									elif De > 14:
-										nbHarvest = r.randint(3,9)
+										nbHarvest = r.randint(6,12)
 										item = "grapes"
 							elif valueItem == "cacao":
-								nbHarvest = r.randint(1,3)
+								nbHarvest = r.randint(1,4)
 								item = "chocolate"
 							data = []
 							data.append(0)
@@ -892,7 +892,7 @@ class GemsPlay(commands.Cog):
 		jour = dt.date.today()
 		gain = ""
 		i = 1
-		max = 100
+		max = 20
 		msg = discord.Embed(title = "La Cave | Partie {}".format((i//10)+1),color= 14902529, description = "Voici vos barrils.")
 
 		if sql.spam(ID,GF.couldown_4s, "ferment", "gems"):
@@ -936,9 +936,9 @@ class GemsPlay(commands.Cog):
 								desc = "Ton barril a été rempli de <:gem_{0}:{1}>`{0}`. L'alcool aura fini de fermenter dans :clock2:`{2}`".format(item, GF.get_idmoji(item), couldownMsg)
 						else:
 							if item == "grapes":
-								desc = "Tu n'as pas assez de :{0}:`{0}` dans ton inventaire! \nIl te faut {2} :{0}:`{0}` pour faire 1 :{1}:`{1}`".format(item, gain, nbitem)
+								desc = "Tu n'as pas assez de :{0}:`{0}` dans ton inventaire! \nIl te faut {2} :{0}:`{0}` pour faire des :{1}:`{1}`".format(item, gain, nbitem)
 							else:
-								desc = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire! \nIl te faut {3} <:gem_{0}:{1}>`{0}` pour faire 1 :{2}:`{2}`".format(item, GF.get_idmoji(item), gain, nbitem)
+								desc = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire! \nIl te faut {3} <:gem_{0}:{1}>`{0}` pour faire des :{2}:`{2}`".format(item, GF.get_idmoji(item), gain, nbitem)
 							if i > 15:
 								await ctx.channel.send(embed = msg)
 								await ctx.channel.send(desc)
@@ -1016,6 +1016,7 @@ class GemsPlay(commands.Cog):
 		"""**[mise]** | La machine à sous, la mise minimum est de 10 :gem:`gems`"""
 		ID = ctx.author.id
 		gems = sql.valueAtNumber(ID, "gems", "gems")
+		misemax = 200
 		if imise != None:
 			if int(imise) < 0:
 				msg = ":no_entry: Anti-cheat! Je vous met un amende de 100 :gem:`gems` pour avoir essayé de tricher !"
@@ -1029,8 +1030,8 @@ class GemsPlay(commands.Cog):
 				return
 			elif int(imise) < 10:
 				mise = 10
-			elif int(imise) > 100:
-				mise = 100
+			elif int(imise) > misemax:
+				mise = misemax
 			else:
 				mise = int(imise)
 		else:
