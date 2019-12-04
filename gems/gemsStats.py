@@ -73,4 +73,5 @@ def create_graph(item, year, month):
 	plt.margins(x=0.1, y=0.2)
 	plt.legend()
 	plt.savefig("cache/{}".format(namegraph))
+	plt.clf()
 	return namegraph
