@@ -12,6 +12,7 @@ from core import welcome as wel
 
 from DB import SQLite as sql, ConversionDB as cdb
 from gems import gemsStats as GS
+import GGsocket as s
 
 client = discord.Client()
 VERSION = open("core/version.txt").read().replace("\n","")
@@ -130,6 +131,8 @@ class UtilsSecret(commands.Cog):
 	async def test(self, ctx, ID = None, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
 		if ID == "check":
 			await ctx.channel.send("Check!")
+		elif ID == "socket":
+			await ctx.channel.send(s.get_data(arg1, arg2))
 		# elif ID == "stat":
 		# 	if arg1 == "write":
 		# 		await ctx.channel.send(GS.csv_add(arg2))
