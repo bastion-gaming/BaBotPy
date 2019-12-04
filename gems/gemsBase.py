@@ -1,10 +1,11 @@
+import os
 import discord
 import random as r
 import time as t
 import datetime as dt
 from DB import SQLite as sql, TinyDB as DB
 from core import welcome as wel, level as lvl
-from gems import gemsFonctions as GF, gemsItems as GI
+from gems import gemsFonctions as GF, gemsItems as GI, gemsStats as GS
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.utils import get
@@ -1233,6 +1234,19 @@ class GemsBase(commands.Cog):
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
 			await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def graphbourse(self, ctx, item, mois, annee):
+		"""**[item] [mois] [année]** | Historique de la bourse par item"""
+		ID = ctx.author.id
+		graph = GS.create_graph(item, annee, mois)
+		if graph == "404":
+			await ctx.send("Aucune données n'a été trouvée!")
+		else:
+			await ctx.send(file=discord.File("cache/{}".format(graph)))
+			os.remove("cache/{}".format(graph))
 
 
 def setup(bot):
