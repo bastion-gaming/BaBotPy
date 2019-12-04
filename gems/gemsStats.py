@@ -13,7 +13,7 @@ def csv_add(name):
 			achat = x.achat
 	for x in GF.objetOutil:
 		if x.nom == name:
-			if c.type == "bank":
+			if x.type == "bank":
 				return True
 			else:
 				vente = x.vente
