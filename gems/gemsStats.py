@@ -59,8 +59,8 @@ def create_graph(item, year, month):
 	for data in dataitem:
 		date_time_obj = dt.datetime.strptime(data[0], '%Y-%m-%d %H:%M:%S.%f')
 		axeX.append("{day}-{month}\n{h}:{m}".format(day=date_time_obj.day, h=date_time_obj.hour, m=date_time_obj.minute, month=date_time_obj.month))
-		axeY1.append(data[1])
-		axeY2.append(data[2])
+		axeY1.append(int(data[1]))
+		axeY2.append(int(data[2]))
 	namegraph = "bourse_{item} {year}-{month}-{day} {h}_{m}_{s}.png".format(item=item, year=now.year, month=now.month, day=now.day, h=now.hour, m=now.minute, s=now.second)
 	plt.subplot(2, 1, 1)
 	plt.plot(axeX, axeY2, color='tab:blue', label='Achat', marker='8')
