@@ -62,6 +62,7 @@ def create_graph(item, year, month):
 		axeY1.append(int(data[1]))
 		axeY2.append(int(data[2]))
 	namegraph = "bourse_{item} {year}-{month}-{day} {h}_{m}_{s}.png".format(item=item, year=now.year, month=now.month, day=now.day, h=now.hour, m=now.minute, s=now.second)
+	plt.figure()
 	plt.subplot(2, 1, 1)
 	plt.plot(axeX, axeY2, color='tab:blue', label='Achat', marker='8')
 	plt.title(item)
@@ -71,19 +72,5 @@ def create_graph(item, year, month):
 	plt.plot(axeX, axeY1, color='tab:red', label='Vente', marker='8')
 	plt.margins(x=0.1, y=0.2)
 	plt.legend()
-
-	# fig, axs = plt.subplots(2, 1, sharex=True)
-	# # Remove horizontal space between axes
-	# fig.subplots_adjust(hspace=0)
-	#
-	# # Plot each graph, and manually set the y tick values
-	# axs[0].plot(axeX, axeY2, color='tab:blue', label='Achat', marker='8')
-	# plt.margins(x=0.1, y=0.1)
-	# axs[0].set_ylim(-1, 1)
-	#
-	# axs[1].plot(axeX, axeY1, color='tab:red', label='Vente', marker='8')
-	# plt.margins(x=0.1, y=0.1)
-	# axs[1].set_ylim(0, 1)
-
 	plt.savefig("cache/{}".format(namegraph))
 	return namegraph
