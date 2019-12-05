@@ -116,8 +116,7 @@ async def on_member_remove(member):
 		systemchannel = guild.system_channel
 	else:
 		systemchannel = 0
-	wel.memberremove(member)
-	await systemchannel.send("{0} nous a quitté, pourtant si jeune...".format(member.name))
+	await systemchannel.send(wel.memberremove(member))
 
 @client.event
 async def on_voice_state_update(member,before,after):

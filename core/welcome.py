@@ -55,6 +55,8 @@ def memberremove(member):
 		sql.addGems(ID, int(-tranfert))
 	except:
 		print("Welcome >> Echec du transfert de gems")
+	msg = "**{0}** nous a quitté, pourtant si jeune...".format(member.name)
+	return msg
 
 
 
