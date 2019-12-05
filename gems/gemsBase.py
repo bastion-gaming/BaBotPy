@@ -100,7 +100,7 @@ class GemsBase(commands.Cog):
 				n = 10
 			else:
 				n = int(n)
-			filtre = "gems"
+			filtre = "spinelles"
 		except:
 			if m == None:
 				filtre = n
