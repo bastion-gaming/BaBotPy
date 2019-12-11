@@ -368,7 +368,7 @@ async def looped_task():
 
 ###################### Commande vocal.py ########################
 
-client.load_extension('multimedia.vocal')
+# client.load_extension('multimedia.vocal')
 
 ##################### Commande images.py #####################
 
