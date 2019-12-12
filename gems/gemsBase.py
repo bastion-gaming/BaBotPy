@@ -1260,7 +1260,7 @@ class GemsBase(commands.Cog):
 						await ctx.send(file=discord.File("cache/{}".format(graph)))
 						os.remove("cache/{}".format(graph))
 			elif type == "outil" or type == "outils":
-				for c in GF.objetItem:
+				for c in GF.objetOutil:
 					graph = GS.create_graph(c.nom, annee, mois)
 					if graph == "404":
 						await ctx.send("Aucune données n'a été trouvée!")
