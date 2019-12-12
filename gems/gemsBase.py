@@ -1258,7 +1258,7 @@ class GemsBase(commands.Cog):
 						if x == c.nom:
 							check = True
 					for x in GF.ObjetEventEnd:
-						if x.nom == c.nom:
+						if x == c.nom:
 							check = True
 					if not check:
 						graph = GS.create_graph(c.nom, annee, mois)
