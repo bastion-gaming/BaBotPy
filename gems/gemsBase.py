@@ -1253,20 +1253,33 @@ class GemsBase(commands.Cog):
 			mois = temp
 			if type == "item" or type == "items":
 				for c in GF.objetItem:
-					graph = GS.create_graph(c.nom, annee, mois)
-					if graph == "404":
-						await ctx.send("Aucune données n'a été trouvée!")
-					else:
-						await ctx.send(file=discord.File("cache/{}".format(graph)))
-						os.remove("cache/{}".format(graph))
+					check = False
+					for x in GI.exception:
+						if x.nom == c.nom:
+							check = True
+					for x in GF.ObjetEventEnd:
+						if x.nom == c.nom:
+							check = True
+					if not check:
+						graph = GS.create_graph(c.nom, annee, mois)
+						if graph == "404":
+							await ctx.send("Aucune données n'a été trouvée!")
+						else:
+							await ctx.send(file=discord.File("cache/{}".format(graph)))
+							os.remove("cache/{}".format(graph))
 			elif type == "outil" or type == "outils":
 				for c in GF.objetOutil:
-					graph = GS.create_graph(c.nom, annee, mois)
-					if graph == "404":
-						await ctx.send("Aucune données n'a été trouvée!")
-					else:
-						await ctx.send(file=discord.File("cache/{}".format(graph)))
-						os.remove("cache/{}".format(graph))
+					check = False
+					for x in GI.exception:
+						if x.nom == c.nom:
+							check = True
+					if c.type != "bank" and check == False:
+						graph = GS.create_graph(c.nom, annee, mois)
+						if graph == "404":
+							await ctx.send("Aucune données n'a été trouvée!")
+						else:
+							await ctx.send(file=discord.File("cache/{}".format(graph)))
+							os.remove("cache/{}".format(graph))
 			else:
 				await ctx.send("Commande mal formulée")
 		else:
