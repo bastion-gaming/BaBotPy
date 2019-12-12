@@ -1238,15 +1238,48 @@ class GemsBase(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def graphbourse(self, ctx, item, mois, annee):
+	async def graphbourse(self, ctx, item, mois = None, annee = None, type = None):
 		"""**[item] [mois] [année]** | Historique de la bourse par item"""
 		ID = ctx.author.id
-		graph = GS.create_graph(item, annee, mois)
-		if graph == "404":
-			await ctx.send("Aucune données n'a été trouvée!")
+		now = dt.datetime.now()
+
+		if item.lower() == "all":
+			if type == None:
+				type = str(now.month)
+			if annee == None:
+				annee = str(now.year)
+			temp = type
+			type = mois.lower()
+			mois = temp
+			if type == "item" or type == "items":
+				for c in GF.objetItem:
+					graph = GS.create_graph(c.nom, annee, mois)
+					if graph == "404":
+						await ctx.send("Aucune données n'a été trouvée!")
+					else:
+						await ctx.send(file=discord.File("cache/{}".format(graph)))
+						os.remove("cache/{}".format(graph))
+			elif type == "outil" or type == "outils":
+				for c in GF.objetItem:
+					graph = GS.create_graph(c.nom, annee, mois)
+					if graph == "404":
+						await ctx.send("Aucune données n'a été trouvée!")
+					else:
+						await ctx.send(file=discord.File("cache/{}".format(graph)))
+						os.remove("cache/{}".format(graph))
+			else:
+				await ctx.send("Commande mal formulée")
 		else:
-			await ctx.send(file=discord.File("cache/{}".format(graph)))
-			os.remove("cache/{}".format(graph))
+			if mois == None:
+				mois = str(now.month)
+			if annee == None:
+				annee = str(now.year)
+			graph = GS.create_graph(item, annee, mois)
+			if graph == "404":
+				await ctx.send("Aucune données n'a été trouvée!")
+			else:
+				await ctx.send(file=discord.File("cache/{}".format(graph)))
+				os.remove("cache/{}".format(graph))
 
 
 def setup(bot):
