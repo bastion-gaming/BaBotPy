@@ -1255,7 +1255,7 @@ class GemsBase(commands.Cog):
 				for c in GF.objetItem:
 					check = False
 					for x in GI.exception:
-						if x.nom == c.nom:
+						if x == c.nom:
 							check = True
 					for x in GF.ObjetEventEnd:
 						if x.nom == c.nom:
@@ -1271,7 +1271,7 @@ class GemsBase(commands.Cog):
 				for c in GF.objetOutil:
 					check = False
 					for x in GI.exception:
-						if x.nom == c.nom:
+						if x == c.nom:
 							check = True
 					if c.type != "bank" and check == False:
 						graph = GS.create_graph(c.nom, annee, mois)
