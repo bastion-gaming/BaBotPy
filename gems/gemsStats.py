@@ -65,7 +65,7 @@ def create_graph(item, year, month):
 	plt.figure()
 	plt.subplot(2, 1, 1)
 	plt.plot(axeX, axeY2, color='tab:blue', label='Achat', marker='8')
-	plt.title("{m}/{y} | {i}".format(i=item, m=mouth, y=year))
+	plt.title("{m}/{y} | {i}".format(i=item, m=month, y=year))
 	plt.margins(x=0.1, y=0.05)
 	plt.legend()
 	plt.subplot(2, 1, 2)
