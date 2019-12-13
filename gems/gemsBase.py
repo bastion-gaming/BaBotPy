@@ -468,22 +468,18 @@ class GemsBase(commands.Cog):
 				cap = GF.checkCapability(ID)
 				msg_invCapAtt = ""
 				msg_invCapDef = ""
+				desc = "Voici la liste de tes aptitudes.\n\nD'autres aptitudes sont disponible sur le marché `!market capabilities`\n"
+				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)
 				for c in GF.objetCapability:
 					for x in cap:
 						if "{}".format(c.ID) == str(x[0]):
 							if c.type == "attaque" and type != "defense":
-								msg_invCapAtt += "• ID: _{3}_ | **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
+								msg_invCapAtt = "**{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax)
+								msg.add_field(name="Attaque | ID: _{0}_".format(c.ID), value=msg_invCapAtt, inline=False)
 							elif c.type == "defense" and (type != "attaque" and type != "attack"):
-								msg_invCapDef += "• ID: _{3}_ | **{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.ID)
+								msg_invCapDef = "**{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax)
+								msg.add_field(name="Defense | ID: _{0}_".format(c.ID), value=msg_invCapAtt, inline=False)
 
-				desc = "Voici la liste de tes aptitudes.\n\nD'autres aptitudes sont disponible sur le marché `!market capabilities`\n"
-				msg = discord.Embed(title = "Inventaire de {} | Poche Aptitudes".format(nom),color= 6466585, description = desc)
-				if msg_invCapAtt != "" and msg_invCapDef != "":
-					msg_invCapAtt += "••••••••••"
-				if msg_invCapAtt != "":
-					msg.add_field(name="Attaque", value=msg_invCapAtt, inline=False)
-				if msg_invCapDef != "":
-					msg.add_field(name="Défense", value=msg_invCapDef, inline=False)
 				sql.updateComTime(ID, "inv", "gems")
 				await ctx.channel.send(embed = msg)
 				# Message de réussite dans la console
