@@ -786,7 +786,7 @@ class GemsBase(commands.Cog):
 								dmOutilsPrix += "\n`Le plafond du compte épargne`"
 								dmOutilsInfo += "\n`Taille:` {}".format(c.poids)
 
-				if fct == None or fct == "item" or fct == "items" or fct == "minerai" or fct == "minerais" or fct == "poissons" or fct == "fish" or fct == "plantes" or fct == "plants" or fct == "event" or fct == "événements"
+				if fct == None or fct == "item" or fct == "items" or fct == "minerai" or fct == "minerais" or fct == "poissons" or fct == "fish" or fct == "plantes" or fct == "plants" or fct == "event" or fct == "événements":
 					for c in GF.objetItem:
 						for y in GI.PrixItem:
 							if y.nom == c.nom:
