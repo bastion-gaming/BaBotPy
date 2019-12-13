@@ -478,7 +478,7 @@ class GemsBase(commands.Cog):
 								msg.add_field(name="Attaque | ID: _{0}_".format(c.ID), value=msg_invCapAtt, inline=False)
 							elif c.type == "defense" and (type != "attaque" and type != "attack"):
 								msg_invCapDef = "**{0}**\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax)
-								msg.add_field(name="Defense | ID: _{0}_".format(c.ID), value=msg_invCapAtt, inline=False)
+								msg.add_field(name="Defense | ID: _{0}_".format(c.ID), value=msg_invCapDef, inline=False)
 
 				sql.updateComTime(ID, "inv", "gems")
 				await ctx.channel.send(embed = msg)
