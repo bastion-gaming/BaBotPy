@@ -506,7 +506,8 @@ class GemsBase(commands.Cog):
 		"""**[stand]** | Permet de voir tout les objets que l'on peux acheter ou vendre !"""
 		ID = ctx.author.id
 		jour = dt.date.today()
-		fct = fct.lower()
+		if fct != None:
+			fct = fct.lower()
 		if sql.spam(ID,GF.couldown_4s, "market", "gems"):
 			d_market="Permet de voir tout les objets que l'on peux acheter ou vendre !\n\n"
 			if sql.spam(wel.idBaBot, GF.couldown_10s, "bourse", "gems"):
