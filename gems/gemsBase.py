@@ -516,7 +516,10 @@ class GemsBase(commands.Cog):
 			timeM = int(time / 60)
 			timeS = int(time - timeM * 60)
 			d_market+="Actualisation de la bourse dans :clock2:`{}h {}m {}s`\n".format(timeH,timeM,timeS)
-			msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
+			if fct != None:
+				msg = discord.Embed(title = "Le marché | {name}".format(name=fct),color= 2461129, description = d_market)
+			else:
+				msg = discord.Embed(title = "Le marché",color= 2461129, description = d_market)
 			if fct == "mobile":
 				d_marketOutils = ""
 				d_marketOutilsS = ""
