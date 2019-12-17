@@ -687,6 +687,7 @@ class GemsBase(commands.Cog):
 				descCapAtt = ""
 				descCapDef = ""
 				CapList = sql.valueAt(ID, "all", "capability")
+				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
 				for c in GF.objetCapability:
 					if c.defaut != True:
 						checkCap = False
@@ -695,16 +696,12 @@ class GemsBase(commands.Cog):
 								checkCap = True
 						if not checkCap:
 							if c.type == "attaque" and type != "defense":
-								descCapAtt += "• ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:spinelle:{5}>`spinelles`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("spinelle"))
+								descCapAtt += "**{0}**\n___Achat__:_ {3} <:spinelle:{4}>`spinelles`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, GF.get_idmoji("spinelle"))
+								msg.add_field(name="• Attaque | ID: _{0}_".format(c.ID), value=descCapAtt, inline=False)
 							elif c.type == "defense" and (type != "attaque" and type != "attack"):
-								descCapDef += "• ID: _{4}_ | **{0}**\n___Achat__:_ {3} <:spinelle:{5}>`spinelles`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, c.ID, GF.get_idmoji("spinelle"))
-				msg = discord.Embed(title = "Le marché | Aptitudes",color= 2461129, description = desc)
-				if descCapAtt != "" and descCapDef != "":
-					descCapAtt += "••••••••••"
-				if descCapAtt != "":
-					msg.add_field(name="Attaque", value=descCapAtt, inline=False)
-				if descCapDef != "":
-					msg.add_field(name="Défense", value=descCapDef, inline=False)
+								descCapDef += "**{0}**\n___Achat__:_ {3} <:spinelle:{4}>`spinelles`\n___Utilisation_:__ {1}\n___Puissance max_:__ **{2}**\n\n".format(c.nom, c.desc, c.puissancemax, c.achat, GF.get_idmoji("spinelle"))
+								msg.add_field(name="• Defense | ID: _{0}_".format(c.ID), value=descCapDef, inline=False)
+
 				sql.updateComTime(ID, "market", "gems")
 				await ctx.channel.send(embed = msg)
 				# Message de réussite dans la console
