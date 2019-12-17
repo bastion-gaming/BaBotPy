@@ -208,6 +208,7 @@ def loadItem(F = None):
 	,Item("beer", itemBourse("beer", "vente"), itemBourse("beer", "achat"), 2, "emoji")
 	,Item("chocolate", itemBourse("chocolate", "vente"), itemBourse("chocolate", "achat"), 2, "consommable")
 	,Item("cacao", itemBourse("cacao", "vente"), itemBourse("cacao", "achat"), 1, "plante")
+	,Item("potato", itemBourse("potato", "vente"), itemBourse("potato", "achat"), 0.5, "consommable")
 	,Item("candy", itemBourse("candy", "vente"), itemBourse("candy", "achat"), 1, "emoji")
 	,Item("lollipop", itemBourse("lollipop", "vente"), itemBourse("lollipop", "achat"), 2, "emoji")]
 
@@ -238,6 +239,9 @@ def loadItem(F = None):
 	objetOutil = [Outil("pickaxe", itemBourse("pickaxe", "vente"), itemBourse("pickaxe", "achat"), 15, 75, "")
 	,Outil("iron_pickaxe", itemBourse("iron_pickaxe", "vente"), itemBourse("iron_pickaxe", "achat"), 70, 200, "forge")
 	,Outil("diamond_pickaxe", itemBourse("diamond_pickaxe", "vente"), itemBourse("diamond_pickaxe", "achat"), 150, 450, "forge")
+	,Outil("shovel", itemBourse("shovel", "vente"), itemBourse("shovel", "achat"), 10, 35, "")
+	,Outil("iron_shovel", itemBourse("iron_shovel", "vente"), itemBourse("iron_shovel", "achat"), 60, 100, "forge")
+	,Outil("diamond_shovel", itemBourse("diamond_shovel", "vente"), itemBourse("diamond_shovel", "achat"), 120, 240, "forge")
 	,Outil("fishingrod", itemBourse("fishingrod", "vente"), itemBourse("fishingrod", "achat"), 25, 100, "")
 	,Outil("sword", itemBourse("sword", "vente"), itemBourse("sword", "achat"), 55, 50, "forge")
 	,Outil("planting_plan", itemBourse("planting_plan", "vente"), itemBourse("planting_plan", "achat"), 4, 4, "consommable")
@@ -319,19 +323,20 @@ def loadItem(F = None):
 	#========== Loot Box ==========
 	class Box:
 
-		def __init__(self,nom, titre, achat , min, max):
+		def __init__(self,nom, titre, achat , min, max, type):
 			self.nom = nom
 			self.titre = titre
 			self.achat = achat
 			self.min = min
 			self.max = max
+			self.type = type
 
 	global objetBox
-	objetBox = [Box("commongems", "Gems Common", 300, 100, 500)
-	,Box("raregems", "Gems Rare", 3000, 1000, 5000)
-	,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000)
-	,Box("gift", "Cadeau de Noël", 0, 100, 10000)
-	,Box("gift_heart", "Cadeau de la Saint Valentin", 0, 100000, 500000)]
+	objetBox = [Box("commongems", "Gems Common", 300, 100, 500, "gems")
+	,Box("raregems", "Gems Rare", 3000, 1000, 5000, "gems")
+	,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000, "gems")
+	,Box("gift", "Cadeau de Noël", 5, 100, 10000, "spinelle")
+	,Box("gift_heart", "Cadeau de la Saint Valentin", 0, 100000, 500000, "")]
 
 
 	if sql.spam(wel.idBaBot, couldown_12h, "bourse", "gems"):
@@ -360,6 +365,8 @@ class Recette:
 
 objetRecette = [Recette("iron_pickaxe", "forge", 10, "iron", 1, "pickaxe", 0, "", 0, "")
 ,Recette("diamond_pickaxe", "forge", 25, "diamond", 1, "iron_pickaxe", 0, "", 0, "")
+,Recette("iron_shovel", "forge", 4, "iron", 1, "shovel", 0, "", 0, "")
+,Recette("diamond_shovel", "forge", 10, "diamond", 1, "iron_shovel", 0, "", 0, "")
 ,Recette("sword", "forge", 6, "iron", 1, "oak", 0, "", 0, "")]
 
 

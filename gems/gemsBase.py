@@ -285,12 +285,17 @@ class GemsBase(commands.Cog):
 						break
 				for c in GF.objetBox :
 					if item == "lootbox_{}".format(c.nom) or item == c.nom:
-						if c.nom != "gift" and c.nom != "gift_heart":
+						if c.nom != "gift_heart":
 							test = False
 							prix = 0 - (c.achat*nb)
-							if sql.addGems(ID, prix) >= "0":
+							if c.type == "gems" and sql.addGems(ID, prix) >= "0":
 								sql.add(ID, "lootbox_{}".format(c.nom), nb, "inventory")
 								msg = "Tu viens d'acquérir {0} <:gem_lootbox:630698430313922580>`{1}` !".format(nb, c.titre)
+								# Message de réussite dans la console
+								print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
+							elif c.type == "spinelle" and sql.addSpinelles(ID, prix) >= "0":
+								sql.add(ID, "lootbox_{}".format(c.nom), nb, "inventory")
+								msg = "Tu viens d'acquérir {nb} :{nom}:`{nom}` !".format(nb=nb, nom=c.titre)
 								# Message de réussite dans la console
 								print("Gems >> {} a acheté {} Loot Box {}".format(ctx.author.name,nb,c.nom))
 							else :
@@ -390,6 +395,7 @@ class GemsBase(commands.Cog):
 			if fct == None or fct == "principale" or fct == "main":
 				msg_inv = ""
 				msg_invOutils = ""
+				msg_invSpeciaux = ""
 				msg_invItems = ""
 				msg_invItemsMinerai = ""
 				msg_invItemsPoisson = ""
@@ -403,7 +409,10 @@ class GemsBase(commands.Cog):
 					for x in inv:
 						if c.nom == str(x[1]):
 							if int(x[0]) > 0:
-								msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom), sql.valueAtNumber(ID, c.nom, "durability"), c.durabilite)
+								if c.type == "consommable":
+									msg_invSpeciaux += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom), sql.valueAtNumber(ID, c.nom, "durability"), c.durabilite)
+								else:
+									msg_invOutils += "<:gem_{0}:{2}>`{0}`: `x{1}` | Durabilité: `{3}/{4}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom), sql.valueAtNumber(ID, c.nom, "durability"), c.durabilite)
 								tailletot += c.poids*int(x[0])
 
 				for c in GF.objetItem:
@@ -420,6 +429,8 @@ class GemsBase(commands.Cog):
 									msg_invItems += ":{0}:`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]))
 								elif c.type == "halloween" or c.type == "christmas" or c.type == "event":
 									msg_invItemsEvent += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
+								elif c.type == "spinelle" or c.type == "special":
+									msg_invSpeciaux += "<:gem_{0}:{2}>`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]), GF.get_idmoji(c.nom))
 								else:
 									if c.type == "emoji":
 										msg_invItems += ":{0}:`{0}`: `x{1}`\n".format(str(x[1]), str(x[0]))
@@ -448,6 +459,8 @@ class GemsBase(commands.Cog):
 				msg = discord.Embed(title = msg_titre,color= 6466585, description = msg_inv)
 				if msg_invOutils != "":
 					msg.add_field(name="Outils", value=msg_invOutils, inline=False)
+				if msg_invSpeciaux != "":
+					msg.add_field(name="Spéciaux", value=msg_invSpeciaux, inline=False)
 				if msg_invItems != "":
 					msg.add_field(name="Items", value=msg_invItems, inline=False)
 				if msg_invItemsMinerai != "":
@@ -664,8 +677,10 @@ class GemsBase(commands.Cog):
 							d_marketItems += "| Poids **{}**\n".format(c.poids)
 
 				for c in GF.objetBox :
-					if c.nom != "gift" and c.nom != "gift_heart":
+					if c.type == "gems":
 						d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem:`gems` \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
+					elif c.type == "spinelle":
+						d_marketBox += ":{nom}:`{nom}`: Achat **{prix}<:gem_spinelle:{idmoji}>**\n".format(nom=c.nom,prix=c.achat, idmoji=GF.get_idmoji("spinelle"))
 
 
 				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
@@ -887,9 +902,14 @@ class GemsBase(commands.Cog):
 				if fct == None or fct == "lootbox":
 					for c in GF.objetBox :
 						if c.achat != 0:
-							dmBox += "\n<:gem_lootbox:{idmoji}>`{nom}`".format(nom=c.nom, idmoji=GF.get_idmoji("lootbox"))
-							dmBoxPrix += "\n`{}`:gem:".format(c.achat)
-							dmBoxInfo += "\n`{} ▶ {}`:gem:`gems`".format(c.min, c.max)
+							if c.type == "gems":
+								dmBox += "\n<:gem_lootbox:{idmoji}>`{nom}`".format(nom=c.nom, idmoji=GF.get_idmoji("lootbox"))
+								dmBoxPrix += "\n`{}`:gem:".format(c.achat)
+								dmBoxInfo += "\n`{} ▶ {}`:gem:`gems`".format(c.min, c.max)
+							elif c.type == "spinelle":
+								dmBox += "\n:{nom}:`{nom}`".format(nom=c.nom)
+								dmBoxPrix += "\n`{prix}`<:gem_spinelle:{idmoji}>".format(prix=c.achat,idmoji=GF.get_idmoji("spinelle"))
+								dmBoxInfo += "\n"
 
 				if fct == None or fct == "outil" or fct == "outils":
 					msg.add_field(name="Outils", value=dmOutils, inline=True)
@@ -1107,6 +1127,11 @@ class GemsBase(commands.Cog):
 									sql.add(ID, c.item4, -1*nb4, "inventory")
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+									Durability = sql.valueAtNumber(ID, c.nom, "durability")
+									if Durability == 0:
+										for x in GF.objetOutil:
+											if x.nom == c.nom:
+												sql.add(ID, x.nom, x.durabilite, "durability")
 								else:
 									msg = ""
 									if sql.valueAtNumber(ID, c.item1, "inventory") < nb1:
@@ -1130,6 +1155,11 @@ class GemsBase(commands.Cog):
 									sql.add(ID, c.item3, -1*nb3, "inventory")
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+									Durability = sql.valueAtNumber(ID, c.nom, "durability")
+									if Durability == 0:
+										for x in GF.objetOutil:
+											if x.nom == c.nom:
+												sql.add(ID, x.nom, x.durabilite, "durability")
 								else:
 									msg = ""
 									if sql.valueAtNumber(ID, c.item1, "inventory") < nb1:
@@ -1149,6 +1179,11 @@ class GemsBase(commands.Cog):
 									sql.add(ID, c.item2, -1*nb2, "inventory")
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+									Durability = sql.valueAtNumber(ID, c.nom, "durability")
+									if Durability == 0:
+										for x in GF.objetOutil:
+											if x.nom == c.nom:
+												sql.add(ID, x.nom, x.durabilite, "durability")
 								else:
 									msg = ""
 									if sql.valueAtNumber(ID, c.item1, "inventory") < nb1:
@@ -1164,6 +1199,11 @@ class GemsBase(commands.Cog):
 									sql.add(ID, c.item1, -1*nb1, "inventory")
 									msg = "Bravo, tu as réussi à forger {0} <:gem_{1}:{2}>`{1}` !".format(nb, c.nom, GF.get_idmoji(c.nom))
 									print("Gems >> {0} a forgé {1} {2}".format(ctx.author.name, nb, c.nom))
+									Durability = sql.valueAtNumber(ID, c.nom, "durability")
+									if Durability == 0:
+										for x in GF.objetOutil:
+											if x.nom == c.nom:
+												sql.add(ID, x.nom, x.durabilite, "durability")
 								else:
 									nbmissing = (sql.valueAtNumber(ID, c.item1, "inventory") - nb1)*-1
 									msg = "Il te manque {0} <:gem_{1}:{2}>`{1}`".format(nbmissing, c.item1, GF.get_idmoji(c.item1))

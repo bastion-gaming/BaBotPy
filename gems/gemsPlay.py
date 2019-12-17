@@ -442,7 +442,7 @@ class GemsPlay(commands.Cog):
 								sql.add(ID, "Mineur de Merveilles", 1, "trophy")
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							elif nbrand < 2:
-								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
+								msg = "La pioche n'est pas très efficace pour miner la terre"
 								if (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
@@ -525,7 +525,7 @@ class GemsPlay(commands.Cog):
 								sql.add(ID, "Mineur de Merveilles", 1, "trophy")
 								msg = "En trouvant ce <:gem_ruby:{}>`ruby` tu deviens un Mineur de Merveilles".format(GF.get_idmoji("ruby"))
 							else:
-								msg = "La pioche n'est pas très efficace pour miner la `dirt`"
+								msg = "La pioche n'est pas très efficace pour miner la terre"
 								if (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
 									nbgift = r.randint(1,3)
 									sql.add(ID, "lootbox_gift", nbgift, "inventory")
@@ -573,6 +573,97 @@ class GemsPlay(commands.Cog):
 
 				sql.updateComTime(ID, "mine", "gems")
 				lvl.addxp(ID, 1, "gems")
+			else:
+				msg = "Ton inventaire est plein"
+		else:
+			msg = "Il faut attendre "+str(GF.couldown_6s)+" secondes entre chaque commande !"
+		await ctx.channel.send(msg)
+
+
+
+	@commands.command(pass_context=True)
+	async def dig(self, ctx):
+		"""Creusons compagnons !!"""
+		ID = ctx.author.id
+		jour = dt.date.today()
+		if sql.spam(ID,GF.couldown_6s, "dig", "gems"):
+			if GF.testInvTaille(ID):
+				nbrand = r.randint(0,99)
+				nbDS = sql.valueAtNumber(ID, "diamond_shovel", "inventory")
+				nbIS = sql.valueAtNumber(ID, "iron_shovel", "inventory")
+				nbS = sql.valueAtNumber(ID, "shovel", "inventory")
+
+				# Gestion de la durabilité des pelles
+				if nbDS >= 1:
+					Durability = sql.valueAtNumber(ID, "diamond_shovel", "durability")
+					if Durability == 0:
+						sql.add(ID, "diamond_shovel", -1, "inventory")
+						if nbDS > 1:
+							for c in GF.objetOutil:
+								if c.nom == "diamond_shovel":
+									sql.add(ID, c.nom, c.durabilite, "durability")
+						msg = "Pas de chance tu as cassé ta <:gem_diamond_shovel:{}>`pelle en diamant` !".format(GF.get_idmoji("diamond_shovel"))
+						mult = 0
+					else :
+						sql.add(ID, "diamond_shovel", -1, "durability")
+						mult = 4
+				elif nbIS >= 1:
+					Durability = sql.valueAtNumber(ID, "iron_shovel", "durability")
+					if Durability == 0:
+						sql.add(ID, "iron_shovel", -1, "inventory")
+						if nbIS > 1:
+							for c in GF.objetOutil:
+								if c.nom == "iron_shovel":
+									sql.add(ID, c.nom, c.durabilite, "durability")
+						msg = "Pas de chance tu as cassé ta <:gem_iron_shovel:{}>`pelle en fer` !".format(GF.get_idmoji("iron_shovel"))
+						mult = 0
+					else :
+						sql.add(ID, "iron_shovel", -1, "durability")
+						mult = 2
+				elif nbS >= 1:
+					Durability = sql.valueAtNumber(ID, "shovel", "durability")
+					if Durability == 0:
+						sql.add(ID, "shovel", -1, "inventory")
+						if nbS > 1:
+							for c in GF.objetOutil:
+								if c.nom == "shovel":
+									sql.add(ID, c.nom, c.durabilite, "durability")
+						msg = "Pas de chance tu as cassé ta <:gem_shovel:{}>`pelle` !".format(GF.get_idmoji("shovel"))
+						mult = 0
+					else :
+						sql.add(ID, "shovel", -1, "durability")
+						mult = 1
+				else:
+					msg = "Il faut acheter ou forger une pelle pour creuser!"
+					mult = 0
+
+				# Résultat de l'excavation
+				if mult != 0:
+					if nbrand < 25:
+						nbrand = r.randint(1,3)*mult
+						sql.add(ID, "cacao", nbrand, "inventory")
+						msg = "En creusant tu as obtenu {nb} <:gem_cacao:{idmoji}>`cacao`".format(idmoji=GF.get_idmoji("cacao"), nb=nbrand)
+					elif nbrand > 35 and nbrand < 70:
+						nbrand = r.randint(1,6)*mult
+						sql.add(ID, "seed", nbrand, "inventory")
+						msg = "En creusant tu as obtenu {nb} <:gem_seed:{idmoji}>`seed`".format(idmoji=GF.get_idmoji("seed"), nb=nbrand)
+					elif nbrand >= 70 and nbrand < 90:
+						nbrand = r.randint(2,5)*mult
+						sql.add(ID, "potato", nbrand, "inventory")
+						msg = "En creusant tu as obtenu {nb} <:gem_potato:{idmoji}>`potato`".format(idmoji=GF.get_idmoji("potato"), nb=nbrand)
+					else:
+						msg = "Tu as creusé toute la journée pour ne trouver que de la terre."
+						if r.randint(0,5) == 0:
+							if (jour.month == 12 and jour.day >= 22) and (jour.month == 12 and jour.day <= 25):
+								nbgift = r.randint(1,3)
+								sql.add(ID, "lootbox_gift", nbgift, "inventory")
+								msg = "Tu as trouvé {} :gift:`cadeau de Noël (gift)`".format(nbgift)
+							elif (jour.month == 12 and jour.day >= 30) or (jour.month == 1 and jour.day <= 2):
+								nbgift = r.randint(1,3)
+								sql.add(ID, "lootbox_gift", nbgift, "inventory")
+								msg += "\n\nTu as trouvé {} :gift:`cadeau de la nouvelle année (gift)`:confetti_ball:".format(nbgift)
+					sql.updateComTime(ID, "dig", "gems")
+					lvl.addxp(ID, 1, "gems")
 			else:
 				msg = "Ton inventaire est plein"
 		else:
@@ -794,8 +885,9 @@ class GemsPlay(commands.Cog):
 						msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 					i += 1
 			elif fct == "plant":
-				#await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite\n\nHalloween approche, prépare toi pour l'événement d'halloween dès demain! <:gem_pumpkin:{}>".format(GF.get_idmoji("pumpkin")))
-				#return False
+				if sql.valueAtNumber(wel.idBaBot, "DailyMult", "daily") == 1:
+					await ctx.channel.send("Plantations endommagées! Un violent orage :cloud_lightning: à détruit tes plantations\nTes plantations seront réparrées au plus vite")
+					return False
 				if arg != "seed" and arg != "cacao":
 					arg = "seed"
 				if arg2 != None:
@@ -841,6 +933,7 @@ class GemsPlay(commands.Cog):
 						desc = "Tu as déjà planté une <:gem_{0}:{1}>`{0}` dans cette plantation".format(valueItem, GF.get_idmoji(valueItem))
 					msg.add_field(name="Plntation n°{}".format(arg), value=desc, inline=False)
 				else:
+					j = 0
 					while i <= nbplanting:
 						data = []
 						valuePlanting = sql.valueAt(ID, i, "hothouse")
@@ -865,7 +958,13 @@ class GemsPlay(commands.Cog):
 								desc = "<:gem_{0}:{1}>`{0}` plantée. Elle aura fini de pousser dans :clock2:`{2}`".format(arg, GF.get_idmoji(arg), couldown)
 							else:
 								desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format(arg, GF.get_idmoji(arg))
-								if i > 15:
+								if j == 0:
+									j = -1
+									if arg == "seed":
+										arg = "cacao"
+									else:
+										arg = "seed"
+								if i > 15 and j == 1:
 									await ctx.channel.send(embed = msg)
 									await ctx.channel.send(desc)
 									return 0
@@ -880,7 +979,10 @@ class GemsPlay(commands.Cog):
 							msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
 						else:
 							msg.add_field(name="Plantation n°{}".format(i), value=desc, inline=False)
-						i += 1
+						if j == -1:
+							j = 1
+						else:
+							i += 1
 			else:
 				msg = "Fonction inconnu"
 				await ctx.channel.send(msg)
