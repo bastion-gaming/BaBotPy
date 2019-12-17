@@ -1257,7 +1257,8 @@ class GemsPlay(commands.Cog):
 				msg += "\nLa machine à sous ne paya rien ..."
 				sql.addGems(ID, val)
 			sql.updateComTime(ID, "slots", "gems")
-			lvl.addxp(ID, gain, "gems")
+			if gain > 0:
+				lvl.addxp(ID, gain, "gems")
 		else:
 			msg = "Il faut attendre "+str(GF.couldown_8s)+" secondes entre chaque commande !"
 		await ctx.channel.send(msg)
