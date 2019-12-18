@@ -1388,8 +1388,11 @@ class GemsPlay(commands.Cog):
 								sql.addGems(ID, gain)
 								desc = "{} :gem:`gems`\n".format(gain)
 								if r.randint(0,6) == 0:
-									sql.addSpinelles(ID, 1)
-									desc += "1 <:spinelle:{}>`spinelle`\n".format(GF.get_idmoji("spinelle"))
+									nb = r.randint(-2, 3)
+									if nb < 1:
+										nb = 1
+									sql.addSpinelles(ID, nb)
+									desc += "{nombre} <:spinelle:{idmoji}>`spinelle`\n".format(idmoji=GF.get_idmoji("spinelle"), nombre=nb)
 								for x in GF.objetItem:
 									if r.randint(0,10) <= 1:
 										if x.nom == "hyperpack":

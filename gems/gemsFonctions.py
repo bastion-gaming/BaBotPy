@@ -335,7 +335,7 @@ def loadItem(F = None):
 	objetBox = [Box("commongems", "Gems Common", 300, 100, 500, "gems")
 	,Box("raregems", "Gems Rare", 3000, 1000, 5000, "gems")
 	,Box("legendarygems", "Gems Legendary", 30000, 10000, 50000, "gems")
-	,Box("gift", "Cadeau de Noël", 5, 100, 10000, "spinelle")
+	,Box("gift", "Cadeau de Noël", 2, 100, 100000, "spinelle")
 	,Box("gift_heart", "Cadeau de la Saint Valentin", 0, 100000, 500000, "")]
 
 

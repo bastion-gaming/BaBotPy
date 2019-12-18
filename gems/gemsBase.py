@@ -560,16 +560,19 @@ class GemsBase(commands.Cog):
 							else:
 								pourcentageA = 0
 
-					if c.type == "consommable":
+					if c.type == "consommable" or c.type == "bank":
 						d_marketOutilsS += "<:gem_{0}:{2}>`{0}`: Vente **{1}** ".format(c.nom,c.vente,GF.get_idmoji(c.nom))
 						if pourcentageV != 0:
 							d_marketOutilsS += "_{}%_ ".format(pourcentageV)
-						d_marketOutilsS += "| Achat **{}** ".format(c.achat)
-						if pourcentageA != 0:
-							d_marketOutilsS += "_{}%_ ".format(pourcentageA)
+						if c.nom == "bank_upgrade":
+							d_marketOutilsS += "| Achat **Le plafond du compte épargne** "
+						else:
+							d_marketOutilsS += "| Achat **{}** ".format(c.achat)
+							if pourcentageA != 0:
+								d_marketOutilsS += "_{}%_ ".format(pourcentageA)
 						if c.durabilite != None:
-							d_marketOutilsS += "| Durabilité: **{}** ".format(c.durabilite)
-						d_marketOutilsS += "| Poids **{}**\n".format(c.poids)
+							d_marketOutilsS += "| Durabilité: **{}**".format(c.durabilite)
+						d_marketOutilsS += "\n"
 					else:
 						d_marketOutils += "<:gem_{0}:{1}>`{0}`: ".format(c.nom,GF.get_idmoji(c.nom))
 						if c.vente != 0:
@@ -578,15 +581,12 @@ class GemsBase(commands.Cog):
 								d_marketOutils += "_{}%_ | ".format(pourcentageV)
 							else:
 								d_marketOutils += "| "
-						if c.nom == "bank_upgrade":
-							d_marketOutils += "Achat **Le plafond du compte épargne** "
-						else:
-							d_marketOutils += "Achat **{}** ".format(c.achat)
-							if pourcentageA != 0:
-								d_marketOutils += "_{}%_ ".format(pourcentageA)
+						d_marketOutils += "Achat **{}** ".format(c.achat)
+						if pourcentageA != 0:
+							d_marketOutils += "_{}%_ ".format(pourcentageA)
 						if c.durabilite != None:
-							d_marketOutils += "| Durabilité: **{}** ".format(c.durabilite)
-						d_marketOutils += "| Poids **{}**\n".format(c.poids)
+							d_marketOutils += "| Durabilité: **{}**".format(c.durabilite)
+						d_marketOutils += "\n"
 
 				for c in GF.objetItem :
 					for y in GI.PrixItem:
@@ -680,7 +680,7 @@ class GemsBase(commands.Cog):
 					if c.type == "gems":
 						d_marketBox += "<:gem_lootbox:{4}>`{0}`: Achat **{1}** | Gain: `{2} ▶ {3}`:gem:`gems` \n".format(c.nom,c.achat,c.min,c.max,GF.get_idmoji("lootbox"))
 					elif c.type == "spinelle":
-						d_marketBox += ":{nom}:`{nom}`: Achat **{prix}<:gem_spinelle:{idmoji}>**\n".format(nom=c.nom,prix=c.achat, idmoji=GF.get_idmoji("spinelle"))
+						d_marketBox += ":{nom}:`{nom}`: Achat **{prix}<:gem_spinelle:{idmoji}>** | Gain: Items en folie!\n".format(nom=c.nom,prix=c.achat, idmoji=GF.get_idmoji("spinelle"))
 
 
 				msg.add_field(name="Outils", value=d_marketOutils, inline=False)
@@ -774,29 +774,29 @@ class GemsBase(commands.Cog):
 								else:
 									pourcentageA = 0
 						#=======================================================================================
-						if c.type == "consommable":
+						if c.type == "consommable" or c.type == "bank":
 							dmSpeciaux += "\n<:gem_{nom}:{idmoji}>`{nom}`".format(nom=c.nom, idmoji=GF.get_idmoji(c.nom))
-							dmSpeciauxPrix += "\n`{}`:gem:".format(c.vente)
-							if pourcentageV != 0:
-								dmSpeciauxPrix += " _{}%_ ".format(pourcentageV)
-							dmSpeciauxPrix += " | `{}`:gem:".format(c.achat)
-							if pourcentageA != 0:
-								dmSpeciauxPrix += " _{}%_ ".format(pourcentageA)
-							dmSpeciauxInfo += "\n`Durabilité: `{}".format(c.durabilite)
+							if c.type != "bank":
+								dmSpeciauxPrix += "\n`{}`:gem:".format(c.vente)
+								if pourcentageV != 0:
+									dmSpeciauxPrix += " _{}%_ ".format(pourcentageV)
+								dmSpeciauxPrix += " | `{}`:gem:".format(c.achat)
+								if pourcentageA != 0:
+									dmSpeciauxPrix += " _{}%_ ".format(pourcentageA)
+								dmSpeciauxInfo += "\n`Durabilité: `{}".format(c.durabilite)
+							else:
+								dmSpeciauxPrix += "\n`Le plafond du compte épargne`"
+								dmSpeciauxInfo += "\n`Taille:` {}".format(c.poids)
 						#=======================================================================================
 						else:
 							dmOutils += "\n<:gem_{nom}:{idmoji}>`{nom}`".format(nom=c.nom, idmoji=GF.get_idmoji(c.nom))
-							if c.nom != "bank_upgrade":
-								dmOutilsPrix += "\n`{}`:gem:".format(c.vente)
-								if pourcentageV != 0:
-									dmOutilsPrix += " _{}%_ ".format(pourcentageV)
-								dmOutilsPrix += " | `{}`:gem:".format(c.achat)
-								if pourcentageA != 0:
-									dmOutilsPrix += " _{}%_ ".format(pourcentageA)
-								dmOutilsInfo += "\n`Durabilité:` {}".format(c.durabilite)
-							else:
-								dmOutilsPrix += "\n`Le plafond du compte épargne`"
-								dmOutilsInfo += "\n`Taille:` {}".format(c.poids)
+							dmOutilsPrix += "\n`{}`:gem:".format(c.vente)
+							if pourcentageV != 0:
+								dmOutilsPrix += " _{}%_ ".format(pourcentageV)
+							dmOutilsPrix += " | `{}`:gem:".format(c.achat)
+							if pourcentageA != 0:
+								dmOutilsPrix += " _{}%_ ".format(pourcentageA)
+							dmOutilsInfo += "\n`Durabilité:` {}".format(c.durabilite)
 
 				if fct == None or fct == "item" or fct == "items" or fct == "minerai" or fct == "minerais" or fct == "poissons" or fct == "fish" or fct == "plantes" or fct == "plants" or fct == "event" or fct == "événements":
 					for c in GF.objetItem:
@@ -909,7 +909,7 @@ class GemsBase(commands.Cog):
 							elif c.type == "spinelle":
 								dmBox += "\n:{nom}:`{nom}`".format(nom=c.nom)
 								dmBoxPrix += "\n`{prix}`<:gem_spinelle:{idmoji}>".format(prix=c.achat,idmoji=GF.get_idmoji("spinelle"))
-								dmBoxInfo += "\n"
+								dmBoxInfo += "\nItems en folie!"
 
 				if fct == None or fct == "outil" or fct == "outils":
 					msg.add_field(name="Outils", value=dmOutils, inline=True)
