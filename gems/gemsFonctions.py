@@ -585,10 +585,13 @@ def taxe(solde, pourcentage):
 def startKit(ID):
 	gems = sql.valueAtNumber(ID, "gems", "gems")
 	if gems == 0:
+		sql.addGems(ID, 100)
 		sql.add(ID, "pickaxe", 1, "inventory")
 		sql.add(ID, "fishingrod", 1, "inventory")
+		sql.add(ID, "shovel", 1, "inventory")
 		sql.add(ID, "pickaxe", 20, "durability")
 		sql.add(ID, "fishingrod", 20, "durability")
+		sql.add(ID, "shovel", 20, "durability")
 
 
 
