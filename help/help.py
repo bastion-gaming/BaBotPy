@@ -50,6 +50,7 @@ class Helpme(commands.Cog):
 						await ctx.send(embed = msg, delete_after = 60)
 						return
 		else:
+			msg.add_field(name="GitHub", value="https://github.com/bastion-gaming/bot-discord/blob/master/help/Help.md", inline=False)
 			for COG in COGS:
 				cog = self.bot.get_cog(COG)
 				coms = cog.get_commands()
