@@ -78,9 +78,11 @@ class GemsEvent(commands.Cog):
 		if sql.spam(ID,GF.couldown_4s, "cooking", "gems"):
 			if (jour.month == 10 and jour.day >= 26) or (jour.month == 11 and jour.day <= 10):
 				item = "pumpkin"
+				gain = gainHallowwen
 				nbitem = 12
 			elif (jour.month == 12 and jour.day >= 14) or (jour.month == 1 and jour.day <= 5):
 				item = "chocolate"
+				gain = gainChristmas
 				nbitem = 8
 			if fct == None:
 				sql.updateComTime(ID, "cooking", "gems")
