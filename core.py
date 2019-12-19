@@ -72,21 +72,8 @@ async def on_ready():
 	elif "type" in flag:
 		print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
 	print('------')
-	if DB.dbExist():
-		print("La DB {} existe, poursuite sans soucis.".format(DB.DB_NOM))
-	else :
-		print("La DB n'existait pas. Elle a été (re)créée.")
-	flag = DB.checkField("DB/bastionDB", "DB/fieldTemplate")
-	if flag == 0:
-		print("DB >> Aucun champ n'a été ajouté, supprimé ou modifié.")
-	elif "add" in flag:
-		print("DB >> Un ou plusieurs champs ont été ajoutés à la DB.")
-	elif "type" in flag:
-		print("DB >> Un ou plusieurs type ont été modifié sur la DB.")
-	elif "sup" in flag:
-		print("DB >> Un ou plusieurs champs ont été supprimés de la DB.")
 
-	# GF.checkDB_Session()
+	GF.checkDB_Session()
 	GF.checkDB_Guilde()
 	print('------\n')
 

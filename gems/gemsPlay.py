@@ -606,7 +606,7 @@ class GemsPlay(commands.Cog):
 						mult = 0
 					else :
 						sql.add(ID, "diamond_shovel", -1, "durability")
-						mult = 4
+						mult = r.randint(3,5)
 				elif nbIS >= 1:
 					Durability = sql.valueAtNumber(ID, "iron_shovel", "durability")
 					if Durability == 0:
@@ -619,7 +619,7 @@ class GemsPlay(commands.Cog):
 						mult = 0
 					else :
 						sql.add(ID, "iron_shovel", -1, "durability")
-						mult = 2
+						mult = r.randint(1,3)
 				elif nbS >= 1:
 					Durability = sql.valueAtNumber(ID, "shovel", "durability")
 					if Durability == 0:
@@ -931,7 +931,7 @@ class GemsPlay(commands.Cog):
 							desc = "Tu n'as pas de <:gem_{0}:{1}>`{0}` à planter dans ton inventaire".format(arg, GF.get_idmoji(arg))
 					else:
 						desc = "Tu as déjà planté une <:gem_{0}:{1}>`{0}` dans cette plantation".format(valueItem, GF.get_idmoji(valueItem))
-					msg.add_field(name="Plntation n°{}".format(arg), value=desc, inline=False)
+					msg.add_field(name="Plantation n°{}".format(arg2), value=desc, inline=False)
 				else:
 					j = 0
 					while i <= nbplanting:
