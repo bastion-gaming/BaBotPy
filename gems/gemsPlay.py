@@ -334,10 +334,10 @@ class GemsPlay(commands.Cog):
 							superjackpot = x.mingem
 						elif x.nom == "Hyper Gamble Jackpot":
 							hyperjackpot = x.mingem
-					if gain >= jackpot:
+					if gain >= jackpot and gain < superjackpot:
 						sql.add(ID, "Gamble Jackpot", 1, "trophy")
 						msg += "\nFélicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy:`Gamble Jackpot`."
-					elif gain >= superjackpot:
+					elif gain >= superjackpot and gain < hyperjackpot:
 						sql.add(ID, "Super Gamble Jackpot", 1, "trophy")
 						msg += "\nFélicitation! Tu as l'ame d'un parieur, nous t'offrons le prix :trophy::trophy:`Super Gamble Jackpot`."
 					elif gain >= hyperjackpot:
