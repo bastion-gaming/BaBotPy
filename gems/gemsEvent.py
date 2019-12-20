@@ -109,6 +109,10 @@ class GemsEvent(commands.Cog):
 								sql.add(ID, item, -nbitem, "inventory")
 								desc = "Ton plat a été mis au four. Il aura fini de cuire dans :clock2:`2h`"
 							else:
+								if item == itemHalloween:
+									gain = gainHallowwen
+								elif item == itemChristmas:
+									gain = gainChristmas
 								desc = "Tu n'as pas assez de <:gem_{0}:{1}>`{0}` dans ton inventaire! \nIl te faut {4} <:gem_{0}:{1}>`{0}` pour faire des <:gem_{2}:{3}>`{2}`".format(item, GF.get_idmoji(item), gain, GF.get_idmoji(gain), nbitem)
 						else:
 							CookedTime = float(valueTime)
