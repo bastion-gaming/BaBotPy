@@ -217,8 +217,6 @@ class GemsPlay(commands.Cog):
 		"""**[nom]** | Vole des :gem:`gems` aux autres joueurs!"""
 		ID = ctx.author.id
 		if sql.spam(ID, GF.couldown_14h, "stealing", "gems") and name != None:
-			sql.updateComTime(ID, "stealing", "gems")
-			lvl.addxp(ID, 1, "gems")
 			ID_Vol = sql.nom_ID(name)
 			# Calcul du pourcentage
 			if ID_Vol == wel.idBaBot or ID_Vol == wel.idGetGems:
@@ -242,6 +240,8 @@ class GemsPlay(commands.Cog):
 					# Message
 					msg = "Tu viens de voler {n} :gem:`gems` à {nom}".format(n=gain, nom=name)
 					print("Gems >> {author} viens de voler {n} gems à {nom}".format(n=gain, nom=name, author=ctx.author.name))
+				sql.updateComTime(ID, "stealing", "gems")
+				lvl.addxp(ID, 1, "gems")
 			except:
 				msg = "Ce joueur est introuvable!"
 		else:
