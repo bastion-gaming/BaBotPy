@@ -1,0 +1,54 @@
+{
+  "channels": [
+    {
+      "id": 640509940154499072,
+      "guild_name": "Bastion Twitch",
+      "channel_name": "pub",
+      "added_by_name": "Azerxim",
+      "added_by_id": 129362501187010561,
+      "subscribed": [
+        "bastionlivetv",
+        "pimousse_",
+        "luwyjitv"
+      ]
+    },
+    {
+      "id": 559795899987918869,
+      "guild_name": "Bastion",
+      "channel_name": "twitch",
+      "added_by_name": "Azerxim",
+      "added_by_id": 129362501187010561,
+      "subscribed": [
+        "bastionlivetv",
+        "pimousse_",
+        "luwyjitv"
+      ]
+    }
+  ],
+  "streams": [
+    {
+      "login": "bastionlivetv",
+      "sent": "false",
+      "id": "425113214",
+      "status": ""
+    },
+    {
+      "login": "azerxim",
+      "sent": "false",
+      "id": "39666820",
+      "status": ""
+    },
+    {
+      "login": "pimousse_",
+      "sent": "false",
+      "id": "137541781",
+      "status": ""
+    },
+    {
+      "login": "luwyjitv",
+      "sent": "false",
+      "id": "",
+      "status": ""
+    }
+  ]
+}
