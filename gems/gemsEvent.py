@@ -34,15 +34,15 @@ class GemsEvent(commands.Cog):
 		desc += "\n:gift:`gift`"
 		msg.add_field(name="Noël", value=desc, inline=False)
 
-		desc = "10 Février :arrow_right: 17 Février"
-		for one in GF.objetItem:
-			if one.type == "saint valentin":
-				desc += "\n<:gem_{0}:{1}>`{0}`".format(one.nom, GF.get_idmoji(one.nom))
-		desc += "\n:gift_heart:`gift_heart`"
-		msg.add_field(name="Saint Valentin", value=desc, inline=False)
-
-		desc = "7 Juillet :arrow_right: 21 Juillet"
-		msg.add_field(name="Fête Nationale", value=desc, inline=False)
+		# desc = "10 Février :arrow_right: 17 Février"
+		# for one in GF.objetItem:
+		# 	if one.type == "saint valentin":
+		# 		desc += "\n<:gem_{0}:{1}>`{0}`".format(one.nom, GF.get_idmoji(one.nom))
+		# desc += "\n:gift_heart:`gift_heart`"
+		# msg.add_field(name="Saint Valentin", value=desc, inline=False)
+		#
+		# desc = "7 Juillet :arrow_right: 21 Juillet"
+		# msg.add_field(name="Fête Nationale", value=desc, inline=False)
 		await ctx.channel.send(embed = msg)
 
 
