@@ -621,21 +621,3 @@ def checkCapability(ID):
 			else:
 				check == False
 	return sql.valueAt(ID, "all", "capability")
-
-
-
-class GemsTest(commands.Cog):
-
-	def __init__(self,ctx):
-		return(None)
-
-
-	@commands.command(pass_context=True)
-	async def gemstest(self, ctx):
-		"""Commande de test """
-		await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
-
-
-
-def setup(bot):
-	bot.add_cog(GemsTest(bot))

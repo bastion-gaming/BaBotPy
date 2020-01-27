@@ -10,7 +10,7 @@ import json
 import os
 from core import welcome as wel
 
-from DB import SQLite as sql, ConversionDB as cdb
+from DB import SQLite as sql
 from gems import gemsStats as GS
 import GGsocket as s
 
@@ -54,13 +54,13 @@ class Utils(commands.Cog):
 			msg = "Notre chaine twitch :arrow_right: **https://www.twitch.tv/bastionlivetv/**."
 			await ctx.channel.send(msg)
 
-	@commands.command(pass_context=True)
-	async def agenda(self, ctx):
-			"""
-			Permet d'avoir le lien de l'agenda.
-			"""
-			msg = "Notre agenda :arrow_right: **http://www.bastion-gaming.fr/agenda.html**."
-			await ctx.channel.send(msg)
+	# @commands.command(pass_context=True)
+	# async def agenda(self, ctx):
+	# 		"""
+	# 		Permet d'avoir le lien de l'agenda.
+	# 		"""
+	# 		msg = "Notre agenda :arrow_right: **http://www.bastion-gaming.fr/agenda.html**."
+	# 		await ctx.channel.send(msg)
 
 	@commands.command(pass_context=True)
 	async def github(self, ctx):
@@ -84,41 +84,41 @@ class Utils(commands.Cog):
 		else:
 			await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
-	@commands.command(pass_context=True)
-	async def changelog(self, ctx, version = None):
-		"""
-		Affiche le changelog
-		"""
-		if version == None:
-			listfiles=os.listdir("changelog")
-			i = 0
-			for thisItem in listfiles:
-				listfiles[i] = os.path.splitext(thisItem)[0]
-				i=i+1
-			sorted(listfiles, reverse=True)
-			desc = ""
-			taille = len(listfiles)
-			i = 0
-			while i < taille:
-				desc += "\n• {}".format(listfiles[i])
-				i += 1
-			msg = discord.Embed(title = "Liste des versions",color= 12745742, description = desc)
-		else:
-			a = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09]
-			b = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-			i = 0
-			for x in b:
-				if version == str(x):
-					version = a[i]
-				i += 1
-			try:
-				version = version.replace(".x", "")
-				changelog = open("changelog/{}.x.txt".format(version),"r", encoding='utf8').read()
-				msg = discord.Embed(title = "Changelog {}".format(version),color= 12745742, description = changelog)
-			except:
-				await ctx.channel.send("Changelog Erreur 404 | Version not found")
-				return 404
-		await ctx.channel.send(embed = msg, delete_after = 90)
+	# @commands.command(pass_context=True)
+	# async def changelog(self, ctx, version = None):
+	# 	"""
+	# 	Affiche le changelog
+	# 	"""
+	# 	if version == None:
+	# 		listfiles=os.listdir("changelog")
+	# 		i = 0
+	# 		for thisItem in listfiles:
+	# 			listfiles[i] = os.path.splitext(thisItem)[0]
+	# 			i=i+1
+	# 		sorted(listfiles, reverse=True)
+	# 		desc = ""
+	# 		taille = len(listfiles)
+	# 		i = 0
+	# 		while i < taille:
+	# 			desc += "\n• {}".format(listfiles[i])
+	# 			i += 1
+	# 		msg = discord.Embed(title = "Liste des versions",color= 12745742, description = desc)
+	# 	else:
+	# 		a = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09]
+	# 		b = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+	# 		i = 0
+	# 		for x in b:
+	# 			if version == str(x):
+	# 				version = a[i]
+	# 			i += 1
+	# 		try:
+	# 			version = version.replace(".x", "")
+	# 			changelog = open("changelog/{}.x.txt".format(version),"r", encoding='utf8').read()
+	# 			msg = discord.Embed(title = "Changelog {}".format(version),color= 12745742, description = changelog)
+	# 		except:
+	# 			await ctx.channel.send("Changelog Erreur 404 | Version not found")
+	# 			return 404
+	# 	await ctx.channel.send(embed = msg, delete_after = 90)
 
 
 class UtilsSecret(commands.Cog):
@@ -178,10 +178,6 @@ class UtilsSecret(commands.Cog):
 			elif fct == "taille":
 				msg = sql.taille(arg2)
 				await ctx.channel.send(msg)
-			# elif fct == "conv":
-			# 	# arg2 = bastion ou gems
-			# 	cdb.conversionBastion(arg2)
-			# 	await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 			else:
 				await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
 		else:

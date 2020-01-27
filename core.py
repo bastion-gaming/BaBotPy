@@ -164,8 +164,6 @@ client.load_extension('multimedia.notification')
 
 ####################### Commande gems.py #######################
 
-client.load_extension('gems.gemsFonctions')
-
 client.load_extension('gems.gemsBase')
 
 client.load_extension('gems.gemsPlay')
