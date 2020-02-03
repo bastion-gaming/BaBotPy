@@ -1,9 +1,9 @@
 import os
 import html
 import googleapiclient.discovery
-from core import welcome as wel
 
-token_youtube = open("multimedia/token_youtube.txt","r").read().replace("\n","")
+token_youtube = open("multimedia/token_youtube.txt", "r").read().replace("\n", "")
+
 
 def search_youtube(user_input, number):
     # Disable OAuthlib's HTTPS verification when running locally.
@@ -17,7 +17,7 @@ def search_youtube(user_input, number):
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
-    request = youtube.search().list(part="snippet",maxResults=number,q=user_input)
+    request = youtube.search().list(part="snippet", maxResults=number, q=user_input)
     response = request.execute()
 
     list = response["items"]
