@@ -87,7 +87,7 @@ class Roles(commands.Cog):
             user = get(ctx.guild.members, id=ID)
             if user:
                 setrole = get(user.guild.roles, name=role)
-                if ge.permission(ctx, ge.Inquisiteur, ctx.author) is False:
+                if ge.permission(ctx, ge.Inquisiteur) is False:
                     for i in range(0, len(rolelist)):
                         if role == rolelist[i]:
                             await ctx.channel.send("Tu ne peux pas exécuter cette commande avec ce role.")
