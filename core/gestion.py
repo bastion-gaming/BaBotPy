@@ -1,11 +1,18 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
-from discord.utils import get
 import time
 import asyncio
 from DB import SQLite as sql
 from core import welcome as wel
+import zmq
+import gg_lib as gg
+
+name_pl = "babot" # Nom de la plateforme
+
+REQUEST_TIMEOUT = 2500
+REQUEST_RETRIES = 3
+SERVER_ENDPOINT = "tcp://localhost:5555"
 
 PREFIX = open("core/prefix.txt", "r").read().replace("\n", "")
 client = Bot(command_prefix = "{0}".format(PREFIX))
@@ -27,6 +34,45 @@ def permission(ctx, grade):
     return False
 
 
+# Etablissement de la connexion avec le serveur Get Gems
+context = zmq.Context(1)
+
+#  Socket to talk to server
+socket = context.socket(zmq.REQ)
+socket.connect(SERVER_ENDPOINT)
+# TIMEOUT
+poll = zmq.Poller()
+poll.register(socket, zmq.POLLIN)
+
+
+def ZMQ():
+    context = zmq.Context(1)
+
+    #  Socket to talk to server
+    print("Connecting to Get Gems server…")
+    socket = context.socket(zmq.REQ)
+    socket.connect(SERVER_ENDPOINT)
+    # TIMEOUT
+    poll = zmq.Poller()
+    poll.register(socket, zmq.POLLIN)
+
+    socket.send_string(gg.std_send_command("connect", "__client", name_pl))
+    time.sleep(1)
+    socks = dict(poll.poll(REQUEST_TIMEOUT))
+    if socks.get(socket) == zmq.POLLIN:
+        msg = socket.recv()
+        if msg.decode() == "1":
+            print("Connected to Get Gems server")
+    else:
+        print("No reply from the server")
+        # Socket is confused. Close and remove it.
+        socket.setsockopt(zmq.LINGER, 0)
+        socket.close()
+        poll.unregister(socket)
+    return True
+
+
+# Commandes Gestion
 class Gestion(commands.Cog):
 
     def __init__(self, bot):

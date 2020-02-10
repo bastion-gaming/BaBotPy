@@ -1,89 +1,12 @@
-import random as r
-import datetime as dt
 from DB import SQLite as sql
 from core import roles
 from gems import gemsFonctions as GF
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.ext.commands import bot
-from discord.utils import get
 import discord
 from core import welcome as wel
 
 client = discord.Client()
-
-# niveau 1 -> 10 messages
-# niveau 2 -> 30 messages
-# niveau 3 -> 90 messages
-# niveau 4 -> 256 messages
-# niveau 5 -> 625 messages
-# niveau 6 -> 1210 messages
-# niveau 7 -> 2401 messages
-# niveau 8 -> 4096 messages
-# niveau 9 -> 6561 messages
-# niveau 10 -> 10930 messages
-# niveau 11 -> 16342 messages
-# niveau 12 -> 20000 messages
-# niveau 13 -> 25000 messages
-# niveau 14 -> 30000 messages
-# niveau 15 -> 35000 messages
-# niveau 16 -> 40000 messages
-# niveau 17 -> 45000 messages
-# niveau 18 -> 50000 messages
-# niveau 19 -> 55000 messages
-# niveau 20 -> 60000 messages
-
-lvlmax = 19
-
-
-class XP:
-
-    def __init__(self, level, somMsg):
-        self.level = level
-        self.somMsg = somMsg
-
-objetXP = [XP(0, 10)
-, XP(1, 30)
-, XP(2, 90)
-, XP(3, 256)
-, XP(4, 625)
-, XP(5, 1210)
-, XP(6, 2401)
-, XP(7, 4096)
-, XP(8, 6561)
-, XP(9, 10930)
-, XP(10, 16342)
-, XP(11, 20000)
-, XP(12, 27473)
-, XP(13, 34965)
-, XP(14, 42042)
-, XP(15, 55739)
-, XP(16, 66778)
-, XP(17, 78912)
-, XP(18, 86493)
-, XP(19, 95105)
-, XP(20, 10187)
-, XP(21, 111111)]
-
-objetXPgems = [XP(0, 100)
-, XP(1, 256)
-, XP(2, 625)
-, XP(3, 1210)
-, XP(4, 2401)
-, XP(5, 4096)
-, XP(6, 6561)
-, XP(7, 10930)
-, XP(8, 16342)
-, XP(9, 20000)
-, XP(10, 27473)
-, XP(11, 34965)
-, XP(12, 42042)
-, XP(13, 55739)
-, XP(14, 66778)
-, XP(15, 78912)
-, XP(16, 86493)
-, XP(17, 95105)
-, XP(18, 10187)
-, XP(19, 111111)]
 
 
 def addxp(ID, nb, nameDB = None):
@@ -96,46 +19,37 @@ def addxp(ID, nb, nameDB = None):
     sql.updateField(ID, "xp", ns, nameDB)
 
 
+def lvlPalier(lvl):
+    if lvl <= 0:
+        return 10
+    elif lvl == 1:
+        return 30
+    else:
+        return int(100 * (2.5)**(lvl-2))
+
+
 async def checklevel(message, nameDB = None):
     ID = message.author.id
     Nom = message.author.name
     member = message.guild.get_member(ID)
     if nameDB == None:
         nameDB = "bastion"
-        objet = objetXP
-    else:
-        objet = objetXPgems
     try:
         lvl = sql.valueAtNumber(ID, "lvl", nameDB)
         xp = sql.valueAtNumber(ID, "xp", nameDB)
-        check = True
-        for x in objet:
-            if lvl == x.level and check:
-                if xp >= x.somMsg:
-                    sql.updateField(ID, "lvl", lvl+1, nameDB)
-                    desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
-                    title = "Level UP"
-                    if nameDB == "gems":
-                        lvl3 = sql.valueAtNumber(ID, "lvl", nameDB)
-                        title += " | Get Gems"
-                        nbS = lvl3 // 5
-                        nbG = lvl3 % 5
-                        if nbS != 0:
-                            sql.addSpinelles(ID, nbS)
-                            desc += "\nTu gagne {} <:spinelle:{}>`spinelles`".format(nbS, GF.get_idmoji("spinelle"))
-                        if nbG != 0:
-                            nbG = nbG * 50000
-                            sql.addGems(ID, nbG)
-                            desc += "\nTu gagne {} :gem:`gems`".format(nbG)
-                    msg = discord.Embed(title = title, color= 6466585, description = desc)
-                    msg.set_thumbnail(url=message.author.avatar_url)
-                    await message.channel.send(embed = msg)
-                    check = False
-        if nameDB != "gems":
-            lvl2 = sql.valueAtNumber(ID, "lvl", nameDB)
-            if lvl == 0 and lvl2 == 1:
-                await roles.addrole(member, "Joueurs")
-                await roles.removerole(member, "Nouveau")
+        palier = lvlPalier(lvl)
+        if xp >= palier:
+            sql.updateField(ID, "lvl", lvl+1, "gems")
+            desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
+            title = "Level UP"
+            msg = discord.Embed(title = title, color= 6466585, description = desc)
+            msg.set_thumbnail(url=message.author.avatar_url)
+            await message.channel.send(embed = msg)
+
+        lvl2 = sql.valueAtNumber(ID, "lvl", nameDB)
+        if lvl == 0 and lvl2 == 1:
+            await roles.addrole(member, "Joueurs")
+            await roles.removerole(member, "Nouveau")
     except:
         return print("Le joueur n'existe pas.")
 
@@ -150,14 +64,14 @@ async def checklevelvocal(member):
         lvl = int(lvl)
         xp = sql.valueAtNumber(ID, "xp", nameDB)
         xp = int(xp)
-        check = True
-        for x in objetXP:
-            if lvl == x.level and check:
-                if xp >= x.somMsg:
-                    sql.updateField(ID, "lvl", lvl+1, "bastion")
-                    msg = ":tada: {1} a atteint le level **{0}**".format(lvl+1, Nom)
-                    await channel_vocal.send(msg)
-                    check = False
+        palier = lvlPalier(lvl)
+        if xp >= palier:
+            sql.updateField(ID, "lvl", lvl+1, "bastion")
+            desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
+            title = "Level UP"
+            msg = discord.Embed(title = title, color= 6466585, description = desc)
+            msg.set_thumbnail(url=member.avatar_url)
+            await channel_vocal.send(embed = msg)
         lvl2 = sql.valueAtNumber(ID, "lvl", nameDB)
         if lvl == 0 and lvl2 == 1:
             roles.addrole(member, "Joueurs")
@@ -198,33 +112,10 @@ class Level(commands.Cog):
                 if ctx.guild.id == wel.idBASTION:
                     # Niveaux part
                     msg = ""
-                    for x in objetXP:
-                        if lvl == x.level:
-                            msg += "XP: `{0}/{1}`".format(xp, x.somMsg)
-                    if lvl == lvlmax:
-                        msg += "Actuel **{0}** \nLevel max atteint".format(lvl)
+                    palier = lvlPalier(lvl)
+                    msg += "XP: `{0}/{1}`".format(xp, palier)
                     emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
 
-                try:
-                    # Gems
-                    msg = "{0} :gem:`gems`\n".format(sql.valueAtNumber(ID, "gems", "gems"))
-                    soldeSpinelles = sql.valueAtNumber(ID, "Spinelles", "gems")
-                    if soldeSpinelles > 0:
-                        msg += "{0} <:spinelle:{1}>`spinelles`".format(soldeSpinelles, GF.get_idmoji("spinelle"))
-                    emb.add_field(name="**_Balance_**", value=msg, inline=False)
-
-                    # Statistique de l'utilisateur pour le module Gems
-                    statgems = sql.valueAt(ID, "all", "statgems")
-                    msg = ""
-                    for x in statgems:
-                        if x[0] > 0:
-                            msg += "\n• {}: `x{}`".format(x[1], x[0])
-                    if msg != "":
-                        emb.add_field(name="**_Statistiques de Get Gems_**", value=msg, inline=False)
-                except:
-                    msg = ""
-
-                if ctx.guild.id == wel.idBASTION:
                     # Parrainage
                     P = sql.valueAt(ID, "parrain", "bastion")
                     F_li = sql.valueAt(ID, "all", "filleuls")
@@ -245,7 +136,9 @@ class Level(commands.Cog):
 
                     emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
 
-                await ctx.channel.send(embed = emb)
+                    await ctx.channel.send(embed = emb)
+                else:
+                    await ctx.channel.send("Commande utilisable uniquement sur le discord Bastion!")
 
 
 def setup(bot):

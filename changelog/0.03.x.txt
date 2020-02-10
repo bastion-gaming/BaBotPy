@@ -1,9 +1,0 @@
-**0.3.0**
-• Création du module `Help`
-
-• Mise à jour de la fonction "permission"
-
-• Mise à jour du module `Gems`
-- Passage de l'inventaire en embed
-- Création de la commande "market" pour voir tout ce que l'on peut acheter/vendre et à quel prix
-- Transformation de la commande "craft" en "forge"
