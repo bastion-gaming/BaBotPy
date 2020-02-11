@@ -2,7 +2,6 @@ import datetime as dt
 from DB import SQLite as sql
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
-from discord.utils import get
 import discord
 import json
 import matplotlib.pyplot as plt
@@ -99,7 +98,7 @@ class Stats(commands.Cog):
                                 "msg total jour" : msg_total,
                                 "msg local jour" : msg_jour,
                                 "msg total heures" : total_heure,
-                                "msg local heures" :local_heure,
+                                "msg local heures" : local_heure,
                                 "co local" : connexion["co local"],
                                 "co total" : connexion["co total"],
                                 "deco total" : connexion["deco total"],
@@ -125,7 +124,6 @@ class Stats(commands.Cog):
             hourCount()
             self.hour = dt.datetime.now().hour
 
-
     @commands.command(pass_context=True)
     async def totalMsg(self, ctx):
         """
@@ -146,12 +144,12 @@ class Stats(commands.Cog):
             elif len(Nom) == 22 :
                 ID = int(Nom[3:21])
             else :
-                msg="Le nom que vous m'avez donné n'existe pas !"
+                msg = "Le nom que vous m'avez donné n'existe pas !"
                 ID = -1
 
             if (ID != -1):
                 res = sql.valueAtNumber(ID, "nbmsg", "bastion")
-                msg=str(Nom)+" a posté "+ str(res) +" messages depuis le "+str(sql.valueAtNumber(ID, "arrival", "bastion")[:10])
+                msg = str(Nom)+" a posté " + str(res) + " messages depuis le " + str(sql.valueAtNumber(ID, "arrival", "bastion")[:10])
             await ctx.channel.send(msg)
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
@@ -162,22 +160,22 @@ class Stats(commands.Cog):
         **[heure de début] [heure de fin]** | Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.
         """
         if ctx.guild.id == wel.idBASTION:
-            d=dt.datetime.now().hour
-            if fileExist()==False:
+            d = dt.datetime.now().hour
+            if not fileExist():
                 nbMsg = totalMsg()
                 await ctx.channel.send("le fichier time.json est introuvable le résultat sera donc peut être faux.")
             else:
                 hourCount()
                 with open(file, "r") as f:
                     t = json.load(f)
-                if ha != None and hb !=None:
-                    ha=int(ha)
-                    hb=int(hb)
+                if ha != None and hb != None:
+                    ha = int(ha)
+                    hb = int(hb)
                     if ha >= 0 and hb >= 0 and ha < 24 and hb < 24:
                         nbMsg = t[str(hb)]-t[str(ha)]
-                        msg="Entre "+str(ha)+"h et "+str(hb)+"h il y a eu "+str(nbMsg)+" messages."
+                        msg = "Entre "+str(ha)+"h et "+str(hb)+"h il y a eu "+str(nbMsg)+" messages."
                     else :
-                        msg="Vous avez entré une heure impossible."
+                        msg = "Vous avez entré une heure impossible."
                 else :
                     if d != 0:
                         nbMsg = t[str(d)]-t[str(d-1)]
@@ -192,7 +190,7 @@ class Stats(commands.Cog):
     async def graphheure(self, ctx, statue = "local", jour = "yesterday"):
         """|local/total aaaa-mm-jj| affiche le graph des messages envoyés par heure"""
         if ctx.guild.id == wel.idBASTION:
-            if jour =="yesterday":
+            if jour == "yesterday":
                 jour = str(dt.date.today()-dt.timedelta(days = 1))
             try :
                 logs = json.load(open("logs/log-{}.json".format(jour[:7]), "r"))
@@ -212,7 +210,7 @@ class Stats(commands.Cog):
             if statue == "local":
                 plt.hist(x, bins = 24, weights = y)
             else :
-                plt.plot(x,y,label="graph test")
+                plt.plot(x, y, label="graph test")
                 plt.fill_between(x, y[0]-100, y, color='blue', alpha=0.5)
             plt.xlabel('heures')
             plt.ylabel('messages')
@@ -227,10 +225,10 @@ class Stats(commands.Cog):
     async def graphjour(self, ctx, statue = "local", mois = "now"):
         """|local/total aaaa-mm| affiche le graph des messages envoyés par jour"""
         if ctx.guild.id == wel.idBASTION:
-            if mois =="now":
+            if mois == "now":
                 mois = str(dt.date.today())[:7]
             aaaa , mm = mois.split("-")
-            nom_mois = dt.datetime(int(aaaa),int(mm),1).strftime("%B")
+            nom_mois = dt.datetime(int(aaaa), int(mm), 1).strftime("%B")
             try :
                 logs = json.load(open("logs/log-{}.json".format(mois), "r"))
             except ValueError :
@@ -242,23 +240,23 @@ class Stats(commands.Cog):
             msg = []
             jour = []
             text = "msg {} jour".format(statue)
-            for i in range (1,32):
+            for i in range(1, 32):
                 try :
-                    if i<10:
-                        msg.append(logs["{}-0{}".format(mois,i)][text])
+                    if i < 10:
+                        msg.append(logs["{}-0{}".format(mois, i)][text])
                     else:
-                        msg.append(logs["{}-{}".format(mois,i)][text])
+                        msg.append(logs["{}-{}".format(mois, i)][text])
                     jour.append(i)
                 except KeyError :
                     pass
             if statue == "local":
                 plt.hist(jour, bins = len((logs)), weights = msg)
             else :
-                plt.plot(jour,msg,label="graph test")
+                plt.plot(jour, msg, label="graph test")
                 plt.fill_between(jour, msg[0]-200, msg, color='blue', alpha=0.5)
             plt.xlabel('jour')
             plt.ylabel('messages')
-            plt.title("graphique du {} au {} {}".format(jour[0],jour[len(jour)-1],nom_mois))
+            plt.title("graphique du {} au {} {}".format(jour[0], jour[len(jour)-1], nom_mois))
             plt.savefig("cache/graphjour.png")
             await ctx.send(file=discord.File("cache/graphjour.png"))
             plt.clf()
@@ -278,16 +276,16 @@ class Stats(commands.Cog):
             while i <= taille:
                 IDi = sql.userID(i, "bastion")
                 nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
-                a.append([nbMsg,IDi])
+                a.append([nbMsg, IDi])
                 i += 1
             a.sort(reverse = True)
             richest = a[:r]
             sous_total = 0
-            for i in range (r):
+            for i in range(r):
                 sous_total += richest[i][0]
             labels = []
             sizes = []
-            for i in range (r):
+            for i in range(r):
                 try:
                     labels.append(ctx.guild.get_member(richest[i][1]).name)
                     sizes.append(richest[i][0])
@@ -304,7 +302,56 @@ class Stats(commands.Cog):
                 else:
                     explode = explode + (0.2,)
                 i += 1
-            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
+            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
+            plt.axis('equal')
+            plt.savefig('cache/piegraph.png')
+            await ctx.send(file=discord.File("cache/piegraph.png"))
+            plt.clf()
+            if os.path.isfile("cache/piegraph.png"):
+                os.remove('cache/piegraph.png')
+        else:
+            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+
+    @commands.command(pass_context=True)
+    async def graphxp(self, ctx, r = 6):
+        if ctx.guild.id == wel.idBASTION:
+            if os.path.isfile("cache/piegraph.png"):
+                os.remove('cache/piegraph.png')
+                print('removed old graphe file')
+            total = sql.countTotalXP()
+            a = []
+            taille = sql.taille("bastion")
+            i = 1
+            while i <= taille:
+                IDi = sql.userID(i, "bastion")
+                XP = sql.valueAtNumber(IDi, "xp", "bastion")
+                a.append([XP, IDi])
+                i += 1
+            a.sort(reverse = True)
+            richest = a[:r]
+            sous_total = 0
+            for i in range(r):
+                sous_total += richest[i][0]
+            labels = []
+            sizes = []
+            for i in range(r):
+                try:
+                    labels.append(ctx.guild.get_member(richest[i][1]).name)
+                    sizes.append(richest[i][0])
+                except:
+                    labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
+                    sizes.append(richest[i][0])
+            labels.append("autre")
+            sizes.append(total - sous_total)
+            explode = ()
+            i = 0
+            while i <= r:
+                if i < r:
+                    explode = explode + (0,)
+                else:
+                    explode = explode + (0.2,)
+                i += 1
+            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
             plt.axis('equal')
             plt.savefig('cache/piegraph.png')
             await ctx.send(file=discord.File("cache/piegraph.png"))

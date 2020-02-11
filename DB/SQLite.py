@@ -314,6 +314,16 @@ def countTotalMsg():
 
 
 # -------------------------------------------------------------------------------
+def countTotalXP():
+    # Donne le nombre total de messages écrit sur le discord de Bastion
+    script = "SELECT SUM(xp) FROM bastion"
+    cursor = conn.cursor()
+    cursor.execute(script)
+    for a in cursor.fetchall():
+        return a[0]
+
+
+# -------------------------------------------------------------------------------
 def countTotalGems():
     # Donne le nombre total de gems (somme des gems de tout les utilisateurs de Get Gems)
     script = "SELECT SUM(gems) FROM gems"
