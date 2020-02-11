@@ -688,7 +688,9 @@ def add(ID, nameElem, nbElem, nameDB = None):
             elif nameDB == "capability" or nameDB == "filleuls":
                 if nameDB == "filleuls":
                     data = "idbastion, ID_filleul"
-                values = "{1}, {0}".format(nameElem, PlayerID)
+                    values = "{1}, {0}".format(nbElem, PlayerID)
+                else:
+                    values = "{1}, {0}".format(nameElem, PlayerID)
         try:
             script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
             # print("==== add ====")
