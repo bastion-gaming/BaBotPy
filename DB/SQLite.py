@@ -686,6 +686,8 @@ def add(ID, nameElem, nbElem, nameDB = None):
                     data = "idgems, idPlantation, Time, Plante"
                 values = "'{3}', '{0}', '{1}', '{2}'".format(nameElem, nbElem[0], nbElem[1], PlayerID)
             elif nameDB == "capability" or nameDB == "filleuls":
+                if nameDB == "filleuls":
+                    data = "idbastion, ID_filleul"
                 values = "{1}, {0}".format(nameElem, PlayerID)
         try:
             script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
