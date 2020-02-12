@@ -314,6 +314,16 @@ def countTotalMsg():
 
 
 # -------------------------------------------------------------------------------
+def countTotalXP():
+    # Donne le nombre total de messages écrit sur le discord de Bastion
+    script = "SELECT SUM(xp) FROM bastion"
+    cursor = conn.cursor()
+    cursor.execute(script)
+    for a in cursor.fetchall():
+        return a[0]
+
+
+# -------------------------------------------------------------------------------
 def countTotalGems():
     # Donne le nombre total de gems (somme des gems de tout les utilisateurs de Get Gems)
     script = "SELECT SUM(gems) FROM gems"
@@ -676,7 +686,11 @@ def add(ID, nameElem, nbElem, nameDB = None):
                     data = "idgems, idPlantation, Time, Plante"
                 values = "'{3}', '{0}', '{1}', '{2}'".format(nameElem, nbElem[0], nbElem[1], PlayerID)
             elif nameDB == "capability" or nameDB == "filleuls":
-                values = "{1}, {0}".format(nameElem, PlayerID)
+                if nameDB == "filleuls":
+                    data = "idbastion, ID_filleul"
+                    values = "{1}, {0}".format(nbElem, PlayerID)
+                else:
+                    values = "{1}, {0}".format(nameElem, PlayerID)
         try:
             script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
             # print("==== add ====")
