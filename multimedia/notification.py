@@ -41,16 +41,16 @@ global first_startup
 first_startup = 1
 
 
-async def load():
+async def load(C):
     await asyncio.sleep(1)
-    await looped_task()
+    await looped_task(C)
 
 
 # ---------------------------------------------------------------
 # ---------------------------------------------------------------
 # Task runs all the time, important to keep the asyncio.sleep at the end to avoid
 # Function checks response from get_streams() and sends a message to joined discord channels accordingly.
-async def looped_task():
+async def looped_task(client):
     # await client.wait_until_ready()
     global api
     global first_startup
@@ -78,7 +78,7 @@ async def looped_task():
 
         await asyncio.sleep(2)  # Wait enough for login to print to console
         first_startup = 0
-        await load()
+        await load(client)
 
     else:
         try:
@@ -185,11 +185,17 @@ async def looped_task():
                                     msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:\n\nNous sommes en live sur BastionLiveTv !\nRegardez nous ici : https://www.twitch.tv/{0}".format(stream_index['login'])
 
                                 channel_to_send = client.get_channel(channel_id)
-                                await channel_to_send.send(msg)
+                                try:
+                                    await channel_to_send.send(msg)
+                                except:
+                                    False
 
                             elif status == 'vodcast' and stream_index['sent'] == 'false':
                                 msg = stream_index['login'] + ' VODCAST est en LIVE!\nhttps://www.twitch.tv/' + stream_index['login']
-                                await client.send_message(client.get_channel(channel_id), msg)
+                                try:
+                                    await client.send_message(client.get_channel(channel_id), msg)
+                                except:
+                                    False
 
                             # Loop through streams_sent[], if stream is not there, then add it
                             add_sent = 1
@@ -211,7 +217,7 @@ async def looped_task():
             print(stream)
 
         await asyncio.sleep(29)
-        await load()
+        await load(client)
 # ---------------------------------------------------------------
 # ---------------------------------------------------------------
 

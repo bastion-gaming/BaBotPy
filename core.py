@@ -47,7 +47,7 @@ async def on_ready():
     elif "type" in flag:
         print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
     print('------\n')
-    await notif.load()
+    await notif.load(client)
 
 ####################### Commande help.py #######################
 
