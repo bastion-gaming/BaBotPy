@@ -3,8 +3,6 @@ import sqlite3 as sql
 import datetime as dt
 import time as t
 import json
-from core import welcome as wel
-from gems import gemsFonctions as GF
 
 
 DB_NOM = 'bastionDB'

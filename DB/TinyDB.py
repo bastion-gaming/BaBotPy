@@ -4,7 +4,6 @@ from tinydb.operations import delete
 import time as t
 import json
 from core import welcome as wel
-from gems import gemsFonctions as GF
 
 
 DB_NOM = 'bastionDB'
@@ -384,10 +383,10 @@ def addGems(ID, nbGems):
     Si il n'y a pas assez d'argent sur le compte la fonction retourne un nombre
     strictement inférieur à 0.
     """
-    old_value = valueAt(ID, "gems", GF.dbGems)
+    old_value = valueAt(ID, "gems", "DB/bastionDB.json")
     new_value = int(old_value) + nbGems
     if new_value >= 0:
-        updateField(ID, "gems", new_value, GF.dbGems)
+        updateField(ID, "gems", new_value, "DB/bastionDB.json")
         print("DB >> Le compte de " + str(ID) + " est maintenant de: " + str(new_value))
     else:
         print("DB >> Il n'y a pas assez sur ce compte !")
@@ -397,7 +396,7 @@ def addGems(ID, nbGems):
 # -------------------------------------------------------------------------------
 def daily_data(ID, nameElem):
     """Retourne les info sur le Daily de ID"""
-    DailyData = valueAt(ID, "daily", GF.dbGems)
+    DailyData = valueAt(ID, "daily", "DB/bastionDB.json")
     if nameElem in DailyData:
         data = DailyData[nameElem]
     else:
@@ -410,12 +409,12 @@ def updateDaily(ID, nameElem, value):
     """
     Met à jour les info du daily
     """
-    DailyData = valueAt(ID, "daily", GF.dbGems)
+    DailyData = valueAt(ID, "daily", "DB/bastionDB.json")
     if nameElem == "dailymult":
         DailyData[nameElem] = value
     else:
         DailyData[nameElem] = str(value)
-    updateField(ID, "daily", DailyData, GF.dbGems)
+    updateField(ID, "daily", DailyData, "DB/bastionDB.json")
 
 
 # -------------------------------------------------------------------------------

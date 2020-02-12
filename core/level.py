@@ -1,6 +1,5 @@
 from DB import SQLite as sql
 from core import roles
-from gems import gemsFonctions as GF
 from discord.ext import commands
 from discord.ext.commands import bot
 import discord

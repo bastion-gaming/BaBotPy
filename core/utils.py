@@ -1,8 +1,7 @@
-from core import gestion as ge
 from discord.ext import commands
 from discord.ext.commands import bot
 import discord
-from core import welcome as wel
+from core import welcome as wel, gestion as ge
 from DB import SQLite as sql
 
 ServIDmoji = 634317171496976395
