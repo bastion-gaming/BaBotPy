@@ -7,6 +7,7 @@ import gg_lib as gg
 from DB import SQLite as sql
 from core import stats as stat, level as lvl, welcome as wel, gestion as ge, utils
 from gems import gemsFonctions as GF
+from multimedia import notification as notif
 import time
 
 # initialisation des variables.
@@ -33,6 +34,8 @@ async def on_ready():
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
     GF.setglobalguild(client.get_guild(utils.ServIDmoji))
+    activity = discord.Activity(type=discord.ActivityType.playing, name="◀ bastion-gaming.fr ▶")
+    await client.change_presence(status=discord.Status.online, activity=activity)
     print(sql.init())
     flag = sql.checkField()
     if flag == 0:
@@ -43,11 +46,8 @@ async def on_ready():
         print("SQL >> Un ou plusieurs champs ont été supprimés de la DB.")
     elif "type" in flag:
         print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
-    print('------')
-
-    GF.checkDB_Session()
-    GF.checkDB_Guilde()
     print('------\n')
+    await notif.load()
 
 ####################### Commande help.py #######################
 
