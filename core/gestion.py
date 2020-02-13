@@ -22,7 +22,8 @@ choix_G = [[':regional_indicator_a:', '🇦', 0], [':regional_indicator_b:', '�
 admin = 0
 Inquisiteur = 1
 Joueurs = 2
-rolesID = [[417451897729843223], [417451897729843223, 417451604141277185], [417451897729843223, 417451604141277185, 423606460908306433]]
+Vasseaux = 3
+rolesID = [[417451897729843223], [417451897729843223, 417451604141277185], [417451897729843223, 417451604141277185, 677534823694336001, 423606460908306433], [417451897729843223, 417451604141277185, 677534823694336001, 672040365607354370, 671465990931873792, 672397021298032686]]
 guildID = [634317171496976395, 417445502641111051, 640507787494948865, 478003352551030796, 129364058901053440] # Get Gems | Bastion | Bastion Twitch | Test | TopazDev
 
 
@@ -126,7 +127,7 @@ class Gestion(commands.Cog):
         """
         **[durée]//[thème du vote]//[choix 1]/[choix 2]/<etc> ** | Créé un vote pendant 1h !
         """
-        if permission(ctx, Inquisiteur):
+        if permission(ctx, Vasseaux):
             choix = choix_G[:]
             args = args.split("//")
             temps = float(args[0])*3600

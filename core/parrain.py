@@ -1,7 +1,6 @@
-from DB import TinyDB as DB, SQLite as sql
-from discord.ext import commands, tasks
+from DB import SQLite as sql
+from discord.ext import commands
 from discord.ext.commands import bot
-from discord.utils import get
 import discord
 from core import welcome as wel
 

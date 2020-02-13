@@ -32,7 +32,7 @@ class Roles(commands.Cog):
         guild = ctx.guild
         member = ctx.author
         rolesearch = discord.utils.get(member.guild.roles, name=game)
-        if ge.permission(ctx, ge.Ambassadeur):
+        if ge.permission(ctx, ge.Vasseaux):
             if rolesearch == None:
                 await guild.create_role(name=game)
                 desc = "Le jeu '"+game+"' a été créé"
@@ -74,7 +74,7 @@ class Roles(commands.Cog):
         """**[role]** | Permet de s'ajouter des roles (Pour les Inquisiteurs, mentionner l'utilisateur cible apres le role pour lui affecter)"""
         if ge.permission(ctx, ge.Joueurs):
             if nom != None:
-                if ge.permission(ctx, ge.Inquisiteur):
+                if ge.permission(ctx, ge.Vasseaux):
                     ID = sql.nom_ID(nom)
                     nom = ctx.guild.get_member(ID)
                     nom = nom.name
@@ -87,13 +87,13 @@ class Roles(commands.Cog):
             user = get(ctx.guild.members, id=ID)
             if user:
                 setrole = get(user.guild.roles, name=role)
-                if ge.permission(ctx, ge.Inquisiteur) is False:
+                if ge.permission(ctx, ge.Vasseaux) is False:
                     for i in range(0, len(rolelist)):
                         if role == rolelist[i]:
                             await ctx.channel.send("Tu ne peux pas exécuter cette commande avec ce role.")
                             return
                 await user.add_roles(setrole)
-                desc = "Le role `{}` a été ajouté à {}".format(role, nom)
+                desc = "Le role `{0}` a été ajouté à {1}".format(role, nom)
                 msg = discord.Embed(title = "Ajout de jeu", color= 13752280, description = desc)
                 await ctx.channel.send(embed = msg)
                 return
@@ -107,7 +107,7 @@ class Roles(commands.Cog):
         """**[role]** | Permet de s'enlever des roles (Pour les Inquisiteurs, mentionner l'utilisateur cible apres le role pour lui enlever)"""
         if ge.permission(ctx, ge.Joueurs):
             if nom != None:
-                if ge.permission(ctx, ge.Inquisiteur):
+                if ge.permission(ctx, ge.Vasseaux):
                     ID = sql.nom_ID(nom)
                     nom = ctx.guild.get_member(ID)
                     nom = nom.name
@@ -121,7 +121,7 @@ class Roles(commands.Cog):
             if user:
                 setrole = get(user.guild.roles, name=role)
                 await user.remove_roles(setrole)
-                desc = "Le role `{}` a été enlevé à {}".format(role, nom)
+                desc = "Le role `{0}` a été enlevé à {1}".format(role, nom)
                 msg = discord.Embed(title = "Retrait de jeu", color=9109504, description = desc)
                 await ctx.channel.send(embed = msg)
                 return

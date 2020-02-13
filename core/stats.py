@@ -361,7 +361,6 @@ class Stats(commands.Cog):
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
-
     @commands.command(pass_context=True)
     async def graphgems(self, ctx, r = 6):
         if os.path.isfile("cache/piegraph.png"):
@@ -374,16 +373,16 @@ class Stats(commands.Cog):
         while i <= taille:
             IDi = sql.userID(i, "gems")
             nbMsg = sql.valueAtNumber(IDi, "gems", "gems")
-            a.append([nbMsg,IDi])
+            a.append([nbMsg, IDi])
             i += 1
         a.sort(reverse = True)
         richest = a[:r]
         sous_total = 0
-        for i in range (r):
+        for i in range(r):
             sous_total += richest[i][0]
         labels = []
         sizes = []
-        for i in range (r):
+        for i in range(r):
             try:
                 nom = ctx.guild.get_member(richest[i][1])
                 labels.append(nom.name)
@@ -401,14 +400,13 @@ class Stats(commands.Cog):
             else:
                 explode = explode + (0.2,)
             i += 1
-        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
+        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
         plt.axis('equal')
         plt.savefig('cache/piegraph.png')
         await ctx.send(file=discord.File("cache/piegraph.png"))
         plt.clf()
         if os.path.isfile("cache/piegraph.png"):
             os.remove('cache/piegraph.png')
-
 
     @commands.command(pass_context=True)
     async def graphspinelles(self, ctx, r = 6):
@@ -422,16 +420,16 @@ class Stats(commands.Cog):
         while i <= taille:
             IDi = sql.userID(i, "gems")
             nbMsg = sql.valueAtNumber(IDi, "spinelles", "gems")
-            a.append([nbMsg,IDi])
+            a.append([nbMsg, IDi])
             i += 1
         a.sort(reverse = True)
         richest = a[:r]
         sous_total = 0
-        for i in range (r):
+        for i in range(r):
             sous_total += richest[i][0]
         labels = []
         sizes = []
-        for i in range (r):
+        for i in range(r):
             try:
                 nom = ctx.guild.get_member(richest[i][1])
                 labels.append(nom.name)
@@ -449,14 +447,13 @@ class Stats(commands.Cog):
             else:
                 explode = explode + (0.2,)
             i += 1
-        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
+        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
         plt.axis('equal')
         plt.savefig('cache/piegraph.png')
         await ctx.send(file=discord.File("cache/piegraph.png"))
         plt.clf()
         if os.path.isfile("cache/piegraph.png"):
             os.remove('cache/piegraph.png')
-
 
 
 def setup(bot):
