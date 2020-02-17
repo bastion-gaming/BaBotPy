@@ -2,7 +2,7 @@ from DB import SQLite as sql
 from discord.ext import commands
 from discord.ext.commands import bot
 import discord
-from core import welcome as wel
+from core import welcome as wel, level as lvl
 
 client = discord.Client()
 
@@ -28,15 +28,15 @@ class Parrain(commands.Cog):
                 print(sql.valueAt(ID, "parrain", "bastion"))
                 if sql.get_PlayerID(ID_p, "bastion") != "Error 404" and sql.valueAtNumber(ID, "parrain", "bastion") == 0 and ID_p != ID:
                     sql.updateField(ID, "parrain", ID_p, "bastion")
-                    print("Parrain ajouté")
+                    # print("Parrain ajouté")
                     sql.add(ID_p, ID, 1, "filleuls")
-                    sql.addGems(ID, 50)
+                    lvl.addxp(ID, 15)
                     fil_L = sql.valueAt(ID_p, "all", "filleuls")
                     gain_p = 100 * len(fil_L)
-                    sql.addGems(ID_p, gain_p)
-                    msg = "Votre parrain a bien été ajouté ! Vous empochez 50 :gem: et lui "+str(gain_p)+" :gem:."
+                    lvl.addxp(ID_p, gain_p)
+                    msg = "Votre parrain a bien été ajouté ! Vous empochez 15 XP et lui "+str(gain_p)+" XP."
                 else :
-                    print("Impossible d'ajouter ce joueur comme parrain")
+                    # print("Impossible d'ajouter ce joueur comme parrain")
                     msg = "Impossible d'ajouter ce joueur comme parrain"
 
             await ctx.channel.send(msg)

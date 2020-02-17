@@ -4,6 +4,10 @@ from discord.ext import commands
 from discord.ext.commands import bot
 import discord
 from core import welcome as wel
+from core import gestion as ge
+from gems import gemsFonctions as GF
+import gg_lib as gg
+
 
 client = discord.Client()
 
@@ -27,6 +31,22 @@ def lvlPalier(lvl):
         return int(100 * (2.5)**(lvl-2))
 
 
+# Get Gems | vérification du level
+async def GGchecklevel(message):
+    ID = message.author.id
+    nom = message.author.name
+    ge.socket.send_string(gg.std_send_command("level", ID, ge.name_pl))
+    desc = GF.msg_recv()
+    if desc[0] == "Level UP":
+        title = "Level UP | Get Gems"
+        lvl_desc = ":tada: {0} {1}".format(nom, desc[1])
+        msg = discord.Embed(title = title, color= 6466585, description = lvl_desc)
+        msg.set_thumbnail(url=message.author.avatar_url)
+        await message.channel.send(embed = msg)
+    return False
+
+
+# BaBot | vérification du level
 async def checklevel(message, nameDB = None):
     ID = message.author.id
     Nom = message.author.name
@@ -49,6 +69,7 @@ async def checklevel(message, nameDB = None):
         if lvl == 0 and lvl2 == 1:
             await roles.addrole(member, "Joueurs")
             await roles.removerole(member, "Nouveau")
+        return True
     except:
         return print("Le joueur n'existe pas.")
 
@@ -73,8 +94,9 @@ async def checklevelvocal(member):
             await channel_vocal.send(embed = msg)
         lvl2 = sql.valueAtNumber(ID, "lvl", nameDB)
         if lvl == 0 and lvl2 == 1:
-            roles.addrole(member, "Joueurs")
-            roles.removerole(member, "Nouveau")
+            await roles.addrole(member, "Joueurs")
+            await roles.removerole(member, "Nouveau")
+        return True
     except:
         return print("Le joueur n'existe pas.")
 

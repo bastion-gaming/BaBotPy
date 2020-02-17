@@ -30,6 +30,7 @@ client.remove_command("help")
 # Au démarrage du Bot.
 @client.event
 async def on_ready():
+    global GGconnect
     print('Connecté avec le nom : {0.user}'.format(client))
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
@@ -47,6 +48,7 @@ async def on_ready():
     elif "type" in flag:
         print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
     print('------\n')
+    GGconnect = ge.ZMQ()
     await notif.load(client)
 
 ####################### Commande help.py #######################
@@ -127,7 +129,8 @@ async def on_message(message):
         else:
             await client.process_commands(message)
     else:
-        await lvl.checklevel(message, "gems")
+        if GGconnect:
+            await lvl.GGchecklevel(message)
         await client.process_commands(message)
 
 ####################### Commande stats.py #######################
