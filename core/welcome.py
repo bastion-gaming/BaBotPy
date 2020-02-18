@@ -5,9 +5,6 @@ idBaBot = 604776153458278415
 idGetGems = 620558080551157770
 
 idBASTION = 417445502641111051
-idchannel_botplay = 533048015758426112
-idchannel_nsfw = 425391362737700894
-idcategory_admin = 417453424402235407
 
 
 async def memberjoin(member, channel):
@@ -16,16 +13,15 @@ async def memberjoin(member, channel):
         ID = member.id
         if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
             msg = ":blue_square: Bienvenue {0} sur Bastion! :blue_square: \nNous sommes ravis que tu aies rejoint notre communauté !".format(member.mention)
-            msg += "\n\nTu es attendu : \n\n:arrow_right: Sur {0}\nAjoute aussi ton parrain avec `!parrain <Nom>`\n▬▬▬▬▬▬▬▬▬▬▬▬".format(channel_regle.mention)
+            msg += "\n\nMerci de lire les règles et le fonctionnement du serveur dans le salon {0}".format(channel_regle.mention)
+            msg += "\nAjoute aussi ton parrain avec `!parrain <Nom>`\n▬▬▬▬▬▬▬▬▬▬▬▬"
             await roles.addrole(member, "Nouveau")
         else:
             msg = "▬▬▬▬▬▬ Bon retour parmis nous ! {0} ▬▬▬▬▬▬".format(member.mention)
             await roles.addrole(member, "Nouveau")
         stat.countCo()
-    else:
-        msg = "Bienvenue {} sur {}".format(member.mention, member.guild.name)
-    print("Welcome >> {} a rejoint le serveur {}".format(member.name, member.guild.name))
-    await channel.send(msg)
+        print("Welcome >> {0} a rejoint le serveur {1}".format(member.name, member.guild.name))
+        await channel.send(msg)
 
 
 def memberremove(member):
@@ -34,6 +30,6 @@ def memberremove(member):
         stat.countDeco()
         sql.updateField(ID, "lvl", 0, "bastion")
         sql.updateField(ID, "xp", 0, "bastion")
-    print("Welcome >> {} a quitté le serveur {}".format(member.name, member.guild.name))
+    print("Welcome >> {0} a quitté le serveur {1}".format(member.name, member.guild.name))
     msg = "**{0}** nous a quitté, pourtant si jeune...".format(member.name)
     return msg
