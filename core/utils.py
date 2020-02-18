@@ -20,7 +20,7 @@ class Utils(commands.Cog):
             """
             Permet d'avoir la version du bot.
             """
-            msg = "Je suis en version : **" + str(VERSION) + "**."
+            msg = "Je suis en version : **{0}**.".format(VERSION)
             await ctx.channel.send(msg)
 
     @commands.command(pass_context=True)
@@ -75,7 +75,7 @@ class Utils(commands.Cog):
             else:
                 await ctx.channel.send("{} utilisateur inscrit".format(len))
         else:
-            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+            await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
 
 class UtilsSecret(commands.Cog):
@@ -128,7 +128,7 @@ class UtilsSecret(commands.Cog):
             else:
                 await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
         else:
-            await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
+            await ctx.channel.send("Tu n'est pas autorisé a utilisé cette commande!")
 
     @commands.command(pass_context=True)
     async def revive(self, ctx):

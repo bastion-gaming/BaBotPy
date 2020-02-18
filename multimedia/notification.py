@@ -87,7 +87,7 @@ async def looped_task(client):
             counter = 1
         live_counter = 0
         live_streams = []
-        print('\n------\nCheck #' + str(counter) + '\nTime: ' + str(datetime.now()))
+        print("\n------\nCheck #{0}\nTime: {1}".format(counter, datetime.now()))
 
         streams_url = await make_streams_url()
         async with aiohttp.ClientSession() as session:

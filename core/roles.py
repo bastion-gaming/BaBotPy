@@ -5,7 +5,7 @@ from discord.utils import get
 from core import gestion as ge
 from DB import SQLite as sql
 
-rolelist = ["BastioBot", "Ingénieur du Bastion", "Responsable Twitch", "PEGI master", "Pollmaster", "Groovy", "Bastion RPG", "Ambassadeur", "Candidat Ambassade", "Twitcher", "Joueurs"]
+rolelist = ["Baron du Bastion", "Baronne du Bastion", "Inquisiteur du Bastion", "Vasseaux du Bastion", "BastioBot", "Ingénieur du Bastion", "Responsable Twitch", "PEGI master", "Pollmaster", "Groovy", "Bastion RPG", "Ambassadeur", "Candidat Ambassade", "Twitcher", "Joueurs"]
 
 
 async def addrole(member, role):
@@ -35,7 +35,7 @@ class Roles(commands.Cog):
         if ge.permission(ctx, ge.Vasseaux):
             if rolesearch == None:
                 await guild.create_role(name=game)
-                desc = "Le jeu '"+game+"' a été créé"
+                desc = "Le jeu '{0}' a été créé".format(game)
 
                 if categorie != None:
                     rolesearch = discord.utils.get(member.guild.roles, name=game)
@@ -65,7 +65,7 @@ class Roles(commands.Cog):
                 msg = discord.Embed(title = "Création de jeu", color= 13752280, description = desc)
                 await ctx.channel.send(embed = msg)
             else:
-                await ctx.channel.send("Le jeu "+game+" existe déjà")
+                await ctx.channel.send("Le jeu {0} existe déjà".format(game))
         else :
             await ctx.channel.send("Tu ne peux pas exécuter cette commande.")
 

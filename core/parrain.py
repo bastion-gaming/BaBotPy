@@ -34,7 +34,7 @@ class Parrain(commands.Cog):
                     fil_L = sql.valueAt(ID_p, "all", "filleuls")
                     gain_p = 100 * len(fil_L)
                     lvl.addxp(ID_p, gain_p)
-                    msg = "Votre parrain a bien été ajouté ! Vous empochez 15 XP et lui "+str(gain_p)+" XP."
+                    msg = "Votre parrain a bien été ajouté ! Vous empochez 15 XP et lui {0} XP.".format(gain_p)
                 else :
                     # print("Impossible d'ajouter ce joueur comme parrain")
                     msg = "Impossible d'ajouter ce joueur comme parrain"
