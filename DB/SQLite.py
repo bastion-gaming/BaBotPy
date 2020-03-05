@@ -7,12 +7,15 @@ import json
 
 DB_NOM = 'bastionDB'
 
+
 def nom_ID(nom):
     """Convertis un nom en ID discord """
     if len(nom) == 21 :
         ID = int(nom[2:20])
     elif len(nom) == 22 :
         ID = int(nom[3:21])
+    elif len(nom) == 18:
+        ID = int(nom)
     else :
         print("DB >> mauvais nom")
         ID = -1

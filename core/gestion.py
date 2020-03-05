@@ -35,6 +35,19 @@ def permission(ctx, grade):
     return False
 
 
+def nom_ID(nom):
+    """Convertis un nom en ID discord """
+    if len(nom) == 21:
+        ID = int(nom[2:20])
+    elif len(nom) == 22:
+        ID = int(nom[3:21])
+    elif len(nom) == 18:
+        ID = int(nom)
+    else:
+        ID = -1
+    return(ID)
+
+
 # Etablissement de la connexion avec le serveur Get Gems
 context = zmq.Context(1)
 
