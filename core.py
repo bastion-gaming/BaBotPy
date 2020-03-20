@@ -7,7 +7,7 @@ import gg_lib as gg
 from DB import SQLite as sql
 from core import stats as stat, level as lvl, welcome as wel, gestion as ge, utils
 from gems import gemsFonctions as GF
-from multimedia import notification as notif
+from multimedia import notification_loop as notifL
 import time
 
 # initialisation des variables.
@@ -49,7 +49,7 @@ async def on_ready():
         print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
     print('------\n')
     GGconnect = ge.ZMQ()
-    await notif.load(client)
+    await notifL.load(client)
 
 ####################### Commande help.py #######################
 
@@ -122,10 +122,9 @@ async def on_voice_state_update(member, before, after):
 async def on_message(message):
     if not (message.author.bot or message.content.startswith(PREFIX)) :
         if message.guild.id == wel.idBASTION:
-            if message.channel.id != wel.idchannel_botplay and message.channel.id != wel.idchannel_nsfw and message.channel.category_id != wel.idcategory_admin:
-                await stat.countMsg(message)
-                await lvl.checklevel(message)
-                await client.process_commands(message)
+            await stat.countMsg(message)
+            await lvl.checklevel(message)
+            await client.process_commands(message)
         else:
             await client.process_commands(message)
     else:

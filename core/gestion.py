@@ -70,7 +70,7 @@ def ZMQ():
     poll = zmq.Poller()
     poll.register(socket, zmq.POLLIN)
 
-    socket.send_string(gg.std_send_command("connect", "__client", name_pl))
+    socket.send_string(gg.std_send_command("GGconnect", "__client", name_pl))
     time.sleep(1)
     socks = dict(poll.poll(REQUEST_TIMEOUT))
     if socks.get(socket) == zmq.POLLIN:
