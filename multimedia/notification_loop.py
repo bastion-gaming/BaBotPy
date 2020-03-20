@@ -180,7 +180,7 @@ async def looped_task(client):
                             # If live, checks whether stream is live or vodcast, sets msg accordingly
                             # Sends message to channel, then saves sent status to json
                             if status == 'live' and stream_index['sent'] == 'false':
-                                msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:""
+                                msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:"
 
                                 e = discord.Embed(title = api_index['title'], color= 9633863, description = "", url="https://www.twitch.tv/{0}".format(api_index['user_name']))
                                 e.set_author(name=api_index['user_name'])# , icon_url=api_index['?'])
