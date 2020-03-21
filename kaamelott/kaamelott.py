@@ -36,7 +36,7 @@ class Kaamelott(commands.Cog):
             perso = personnage.upper()
             try :
                 quote = f[r.randint(self.autheur[perso][0], self.autheur[perso][1])].split('//')
-                await ctx.send(quote[0]+"\n\n*"+quote[1]+"*")
+                await ctx.send("{0}\n\n*{1}*".format(quote[0], quote[1]))
             except ValueError:
                 await ctx.send("Le nom du personnage est inconnue")
                 pass

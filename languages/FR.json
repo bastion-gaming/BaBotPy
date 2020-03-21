@@ -1,0 +1,125 @@
+{
+  "WarningMsg":
+    [
+      "Aucune données n'a été trouvée!"
+    ],
+  "bal":
+    "Compte principal de {0}",
+  "baltop":
+    [
+      "Classement des Joueurs | :gem:`gems`",
+      "Classement des Joueurs | <:spinelle:{0}>`spinelles`",
+      "Classement des Guildes"
+    ],
+  "categorie":
+    [
+      "Outils",
+      "Spéciaux",
+      "Items",
+      "Minerais",
+      "Poissons",
+      "Plantes",
+      "Événement",
+      "Loot Box"
+    ],
+  "inv":
+    [
+      "Inventaire de {0} | Poche principale",
+      "Liste des poches de l'inventaire"
+    ],
+  "market":
+    [
+      "Le marché",
+      "Le marché | {0}",
+      "Vente | Achat",
+      "Achat",
+      "Infos",
+      "Gain"
+    ],
+  "recette":
+    "Recettes",
+  "hothouse":
+    [
+      "Voici tes plantations.\nUtilise `hothouse seed` pour planter une <:gem_seed:{0}>`seed`",
+      "La serre",
+      "La serre | Partie {0}",
+      "Plantation n°{0}"
+    ],
+  "ferment":
+    [
+      "Voici tes barrils.\nUtilise `ferment grapes` pour obtenir des :wine_glass:`wine_glass`",
+      "La cave",
+      "La cave | Partie {0}",
+      "Barril n°{0}"
+    ],
+  "cooking":
+    [
+      "Voici tes fours.\nUtilise `cooking potato` pour obtenir des <:gem_fries:{0}>`fries`",
+      "La Cuisine",
+      "La Cuisine | Partie {0}",
+      "Four n°{0}"
+    ],
+  "graphbourse":
+    [
+      "Achat",
+      "Vente"
+    ],
+  "bank":
+    "Compte épargne de {0}",
+  "month":
+    ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+  "tuto":
+    [
+      "Tutoriel Get Gems!",
+      "Le but du jeu est de gagner le plus de :gem:`gems` possible.\n",
+      "Lien"
+    ],
+  "stats":
+    [
+      "Général",
+      "Achat",
+      "Vente",
+      "Dons",
+      "Forge",
+      "Banque",
+      "Minage",
+      "Pêche",
+      "Excavation",
+      "Machine à sous",
+      "Lootbox",
+      "Serre",
+      "Cuisine",
+      "Cave",
+      "Autres",
+      "Utilisation de la commande",
+      "Dépense",
+      "Gain",
+      "Perte",
+      "_{0}_ cassée",
+      "Ouverture lootbox",
+      "nombre",
+      "épargne",
+      "gagné",
+      "vol",
+      "collectée",
+      "plantée",
+      "cuisinée",
+      "fermentée",
+      "Gain unique maximum",
+      "Parties gagnées",
+      "Parties perdues"
+    ],
+  "success":
+    [
+      "Liste de vos succès"
+    ],
+  "titres":
+    [
+      "Récompense journalière",
+      "Voleur",
+      "Crime",
+      "Pari",
+      "Modification du compte épargne",
+      "Épargne"
+    ]
+}

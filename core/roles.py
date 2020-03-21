@@ -5,7 +5,7 @@ from discord.utils import get
 from core import gestion as ge
 from DB import SQLite as sql
 
-rolelist = ["BastioBot", "Ingénieur du Bastion", "Responsable Twitch", "PEGI master", "Pollmaster", "Groovy", "Bastion RPG", "Ambassadeur", "Candidat Ambassade", "Twitcher", "Joueurs"]
+rolelist = ["Baron du Bastion", "Baronne du Bastion", "Inquisiteur du Bastion", "Vasseaux du Bastion", "BastioBot", "Ingénieur du Bastion", "Responsable Twitch", "PEGI master", "Pollmaster", "Groovy", "Bastion RPG", "Ambassadeur", "Candidat Ambassade", "Twitcher", "Joueurs"]
 
 
 async def addrole(member, role):
@@ -32,10 +32,10 @@ class Roles(commands.Cog):
         guild = ctx.guild
         member = ctx.author
         rolesearch = discord.utils.get(member.guild.roles, name=game)
-        if ge.permission(ctx, ge.Ambassadeur):
+        if ge.permission(ctx, ge.Vasseaux):
             if rolesearch == None:
                 await guild.create_role(name=game)
-                desc = "Le jeu '"+game+"' a été créé"
+                desc = "Le jeu '{0}' a été créé".format(game)
 
                 if categorie != None:
                     rolesearch = discord.utils.get(member.guild.roles, name=game)
@@ -65,7 +65,7 @@ class Roles(commands.Cog):
                 msg = discord.Embed(title = "Création de jeu", color= 13752280, description = desc)
                 await ctx.channel.send(embed = msg)
             else:
-                await ctx.channel.send("Le jeu "+game+" existe déjà")
+                await ctx.channel.send("Le jeu {0} existe déjà".format(game))
         else :
             await ctx.channel.send("Tu ne peux pas exécuter cette commande.")
 
@@ -74,7 +74,7 @@ class Roles(commands.Cog):
         """**[role]** | Permet de s'ajouter des roles (Pour les Inquisiteurs, mentionner l'utilisateur cible apres le role pour lui affecter)"""
         if ge.permission(ctx, ge.Joueurs):
             if nom != None:
-                if ge.permission(ctx, ge.Inquisiteur):
+                if ge.permission(ctx, ge.Vasseaux):
                     ID = sql.nom_ID(nom)
                     nom = ctx.guild.get_member(ID)
                     nom = nom.name
@@ -87,13 +87,13 @@ class Roles(commands.Cog):
             user = get(ctx.guild.members, id=ID)
             if user:
                 setrole = get(user.guild.roles, name=role)
-                if ge.permission(ctx, ge.Inquisiteur) is False:
+                if ge.permission(ctx, ge.Vasseaux) is False:
                     for i in range(0, len(rolelist)):
                         if role == rolelist[i]:
                             await ctx.channel.send("Tu ne peux pas exécuter cette commande avec ce role.")
                             return
                 await user.add_roles(setrole)
-                desc = "Le role `{}` a été ajouté à {}".format(role, nom)
+                desc = "Le role `{0}` a été ajouté à {1}".format(role, nom)
                 msg = discord.Embed(title = "Ajout de jeu", color= 13752280, description = desc)
                 await ctx.channel.send(embed = msg)
                 return
@@ -107,7 +107,7 @@ class Roles(commands.Cog):
         """**[role]** | Permet de s'enlever des roles (Pour les Inquisiteurs, mentionner l'utilisateur cible apres le role pour lui enlever)"""
         if ge.permission(ctx, ge.Joueurs):
             if nom != None:
-                if ge.permission(ctx, ge.Inquisiteur):
+                if ge.permission(ctx, ge.Vasseaux):
                     ID = sql.nom_ID(nom)
                     nom = ctx.guild.get_member(ID)
                     nom = nom.name
@@ -121,7 +121,7 @@ class Roles(commands.Cog):
             if user:
                 setrole = get(user.guild.roles, name=role)
                 await user.remove_roles(setrole)
-                desc = "Le role `{}` a été enlevé à {}".format(role, nom)
+                desc = "Le role `{0}` a été enlevé à {1}".format(role, nom)
                 msg = discord.Embed(title = "Retrait de jeu", color=9109504, description = desc)
                 await ctx.channel.send(embed = msg)
                 return

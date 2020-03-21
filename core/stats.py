@@ -130,7 +130,7 @@ class Stats(commands.Cog):
         Permet de savoir combien i y'a eu de message posté depuis que le bot est sur le serveur
         """
         if ctx.guild.id == wel.idBASTION:
-            msg = "Depuis que je suis sur ce serveur il y'a eu : "+str(sql.countTotalMsg())+" messages."
+            msg = "Depuis que je suis sur ce serveur il y'a eu : {0} messages.".format(sql.countTotalMsg())
             await ctx.channel.send(msg)
 
     @commands.command(pass_context=True)
@@ -149,7 +149,7 @@ class Stats(commands.Cog):
 
             if (ID != -1):
                 res = sql.valueAtNumber(ID, "nbmsg", "bastion")
-                msg = str(Nom)+" a posté " + str(res) + " messages depuis le " + str(sql.valueAtNumber(ID, "arrival", "bastion")[:10])
+                msg = "{0} a posté {1} messages depuis le {2}".format(Nom, res, sql.valueAtNumber(ID, "arrival", "bastion")[:10])
             await ctx.channel.send(msg)
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
@@ -162,7 +162,8 @@ class Stats(commands.Cog):
         if ctx.guild.id == wel.idBASTION:
             d = dt.datetime.now().hour
             if not fileExist():
-                nbMsg = totalMsg()
+                msg = "Depuis que je suis sur ce serveur il y'a eu : {0} messages.".format(sql.countTotalMsg())
+                await ctx.channel.send(msg)
                 await ctx.channel.send("le fichier time.json est introuvable le résultat sera donc peut être faux.")
             else:
                 hourCount()
@@ -173,7 +174,7 @@ class Stats(commands.Cog):
                     hb = int(hb)
                     if ha >= 0 and hb >= 0 and ha < 24 and hb < 24:
                         nbMsg = t[str(hb)]-t[str(ha)]
-                        msg = "Entre "+str(ha)+"h et "+str(hb)+"h il y a eu "+str(nbMsg)+" messages."
+                        msg = "Entre {0}h et {1}h il y a eu {2} messages.".format(ha, hb, nbMsg)
                     else :
                         msg = "Vous avez entré une heure impossible."
                 else :
@@ -181,8 +182,8 @@ class Stats(commands.Cog):
                         nbMsg = t[str(d)]-t[str(d-1)]
                     else:
                         nbMsg = t["0"]-t["23"]
-                    msg = "Depuis "+str(d)+"h il y'a eu: "+str(nbMsg)+" messages postés."
-            await ctx.channel.send(msg)
+                    msg = "Depuis {0}h il y'a eu: {1} messages postés.".format(d, nbMsg)
+                await ctx.channel.send(msg)
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
@@ -265,6 +266,9 @@ class Stats(commands.Cog):
 
     @commands.command(pass_context=True)
     async def graphmembre(self, ctx, r = 6):
+        """
+        Graphique représentant le classement des membres en fonction du nombre de messages écrit
+        """
         if ctx.guild.id == wel.idBASTION:
             if os.path.isfile("cache/piegraph.png"):
                 os.remove('cache/piegraph.png')
@@ -314,6 +318,9 @@ class Stats(commands.Cog):
 
     @commands.command(pass_context=True)
     async def graphxp(self, ctx, r = 6):
+        """
+        Graphique représentant le classement des membres en fonction de leur XP
+        """
         if ctx.guild.id == wel.idBASTION:
             if os.path.isfile("cache/piegraph.png"):
                 os.remove('cache/piegraph.png')
@@ -339,7 +346,7 @@ class Stats(commands.Cog):
                     labels.append(ctx.guild.get_member(richest[i][1]).name)
                     sizes.append(richest[i][0])
                 except:
-                    labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
+                    labels.append(richest[i][1])
                     sizes.append(richest[i][0])
             labels.append("autre")
             sizes.append(total - sous_total)
@@ -360,103 +367,6 @@ class Stats(commands.Cog):
                 os.remove('cache/piegraph.png')
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
-
-
-    @commands.command(pass_context=True)
-    async def graphgems(self, ctx, r = 6):
-        if os.path.isfile("cache/piegraph.png"):
-            os.remove('cache/piegraph.png')
-            print('removed old graphe file')
-        total = sql.countTotalGems()
-        a = []
-        taille = sql.taille("gems")
-        i = 1
-        while i <= taille:
-            IDi = sql.userID(i, "gems")
-            nbMsg = sql.valueAtNumber(IDi, "gems", "gems")
-            a.append([nbMsg,IDi])
-            i += 1
-        a.sort(reverse = True)
-        richest = a[:r]
-        sous_total = 0
-        for i in range (r):
-            sous_total += richest[i][0]
-        labels = []
-        sizes = []
-        for i in range (r):
-            try:
-                nom = ctx.guild.get_member(richest[i][1])
-                labels.append(nom.name)
-                sizes.append(richest[i][0])
-            except:
-                labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
-                sizes.append(richest[i][0])
-        labels.append("autre")
-        sizes.append(total - sous_total)
-        explode = ()
-        i = 0
-        while i <= r:
-            if i < r:
-                explode = explode + (0,)
-            else:
-                explode = explode + (0.2,)
-            i += 1
-        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
-        plt.axis('equal')
-        plt.savefig('cache/piegraph.png')
-        await ctx.send(file=discord.File("cache/piegraph.png"))
-        plt.clf()
-        if os.path.isfile("cache/piegraph.png"):
-            os.remove('cache/piegraph.png')
-
-
-    @commands.command(pass_context=True)
-    async def graphspinelles(self, ctx, r = 6):
-        if os.path.isfile("cache/piegraph.png"):
-            os.remove('cache/piegraph.png')
-            print('removed old graphe file')
-        total = sql.countTotalSpinelles()
-        a = []
-        taille = sql.taille("gems")
-        i = 1
-        while i <= taille:
-            IDi = sql.userID(i, "gems")
-            nbMsg = sql.valueAtNumber(IDi, "spinelles", "gems")
-            a.append([nbMsg,IDi])
-            i += 1
-        a.sort(reverse = True)
-        richest = a[:r]
-        sous_total = 0
-        for i in range (r):
-            sous_total += richest[i][0]
-        labels = []
-        sizes = []
-        for i in range (r):
-            try:
-                nom = ctx.guild.get_member(richest[i][1])
-                labels.append(nom.name)
-                sizes.append(richest[i][0])
-            except:
-                labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
-                sizes.append(richest[i][0])
-        labels.append("autre")
-        sizes.append(total - sous_total)
-        explode = ()
-        i = 0
-        while i <= r:
-            if i < r:
-                explode = explode + (0,)
-            else:
-                explode = explode + (0.2,)
-            i += 1
-        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90,explode=explode)
-        plt.axis('equal')
-        plt.savefig('cache/piegraph.png')
-        await ctx.send(file=discord.File("cache/piegraph.png"))
-        plt.clf()
-        if os.path.isfile("cache/piegraph.png"):
-            os.remove('cache/piegraph.png')
-
 
 
 def setup(bot):

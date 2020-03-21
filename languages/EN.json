@@ -1,0 +1,125 @@
+{
+  "WarningMsg":
+    [
+      "No data has been found!"
+    ],
+  "bal":
+    "Main account of {0}",
+  "baltop":
+    [
+      "Player Ranking | :gem:`gems`",
+      "Player Ranking | <:spinelle:{0}>`spinelles`",
+      "Guild Rankings"
+    ],
+  "categorie":
+    [
+      "Tools",
+      "Specials",
+      "Items",
+      "Minerals",
+      "Fishes",
+      "Plants",
+      "Event",
+      "Loot Box"
+    ],
+  "inv":
+    [
+      "Inventory of {0} | Main pocket",
+      "Inventory pocket list"
+    ],
+  "market":
+    [
+      "Market",
+      "Market | {0}",
+      "Sale | Purchase",
+      "Purchase",
+      "Information",
+      "Gain"
+    ],
+  "recette":
+    "Recipes",
+  "hothouse":
+    [
+      "Here are your seedlings. \nUse `hothouse seed` to plant a <:gem_seed:{0}>`seed`",
+      "Greenhouse",
+      "Greenhouse | Part {0}",
+      "Planting n°{0}"
+    ],
+  "ferment":
+    [
+      "Here are your barrels. \nUse 'ferment grapes' to make :wine_glass:`wine_glass`",
+      "Winery",
+      "Winery | Part {0}",
+      "Barrel n°{0}"
+    ],
+  "cooking":
+    [
+      "Here's your ovens. \nUse the `cooking potato` to get some <:gem_fries:{0}>`fries`",
+      "Kitchen",
+      "Kitchen | Part {0}",
+      "Furnace n°{0}"
+    ],
+  "graphbourse":
+    [
+      "Purchase",
+      "Sale"
+    ],
+  "bank":
+    "Saving account of {0}",
+  "month":
+    ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  "tuto":
+    [
+      "Get Gems tutorial!",
+      "The aim of the game is to win as many :gem:`gems` as possible.\n\n",
+      "Link"
+    ],
+  "stats":
+    [
+      "General",
+      "Purchase",
+      "Sale",
+      "Donations",
+      "Forge",
+      "Bank",
+      "Mining",
+      "Fishing",
+      "Digging",
+      "Slot machine",
+      "Lootbox",
+      "Greenhouse",
+      "Kitchen",
+      "Winery",
+      "Others",
+      "How to use the control",
+      "Expenditure",
+      "Gain",
+      "Loss",
+      "Broken _{0}_",
+      "Open lootbox",
+      "number",
+      "saving",
+      "won",
+      "stealing",
+      "collected",
+      "planted",
+      "cooked",
+      "fermented",
+      "Maximum single gain",
+      "Won games",
+      "Lost games"
+    ],
+  "success":
+    [
+      "Your success list"
+    ],
+  "titres":
+    [
+      "Daily reward",
+      "Stealing",
+      "Crime",
+      "Gamble",
+      "Changing the savings account",
+      "Saving"
+    ]
+}

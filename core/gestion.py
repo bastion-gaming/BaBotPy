@@ -1,11 +1,18 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
-from discord.utils import get
 import time
 import asyncio
 from DB import SQLite as sql
 from core import welcome as wel
+import zmq
+import gg_lib as gg
+
+name_pl = "babot" # Nom de la plateforme
+
+REQUEST_TIMEOUT = 2500
+REQUEST_RETRIES = 3
+SERVER_ENDPOINT = "tcp://localhost:5555"
 
 PREFIX = open("core/prefix.txt", "r").read().replace("\n", "")
 client = Bot(command_prefix = "{0}".format(PREFIX))
@@ -15,7 +22,8 @@ choix_G = [[':regional_indicator_a:', '🇦', 0], [':regional_indicator_b:', '�
 admin = 0
 Inquisiteur = 1
 Joueurs = 2
-rolesID = [[417451897729843223], [417451897729843223, 417451604141277185], [417451897729843223, 417451604141277185, 423606460908306433]]
+Vasseaux = 3
+rolesID = [[417451897729843223], [417451897729843223, 417451604141277185], [417451897729843223, 417451604141277185, 677534823694336001, 423606460908306433], [417451897729843223, 417451604141277185, 677534823694336001, 672040365607354370, 671465990931873792, 672397021298032686]]
 guildID = [634317171496976395, 417445502641111051, 640507787494948865, 478003352551030796, 129364058901053440] # Get Gems | Bastion | Bastion Twitch | Test | TopazDev
 
 
@@ -27,6 +35,64 @@ def permission(ctx, grade):
     return False
 
 
+def nom_ID(nom):
+    """Convertis un nom en ID discord """
+    if len(nom) == 21:
+        ID = int(nom[2:20])
+    elif len(nom) == 22:
+        ID = int(nom[3:21])
+    elif len(nom) == 18:
+        ID = int(nom)
+    else:
+        ID = -1
+    return(ID)
+
+
+# Etablissement de la connexion avec le serveur Get Gems
+context = zmq.Context(1)
+
+#  Socket to talk to server
+socket = context.socket(zmq.REQ)
+socket.connect(SERVER_ENDPOINT)
+# TIMEOUT
+poll = zmq.Poller()
+poll.register(socket, zmq.POLLIN)
+
+
+def ZMQ():
+    context = zmq.Context(1)
+    nb_saison = -1
+
+    #  Socket to talk to server
+    print("Connecting to Get Gems server…")
+    socket = context.socket(zmq.REQ)
+    socket.connect(SERVER_ENDPOINT)
+    # TIMEOUT
+    poll = zmq.Poller()
+    poll.register(socket, zmq.POLLIN)
+
+    socket.send_string(gg.std_send_command("GGconnect", "__client", name_pl))
+    time.sleep(1)
+    socks = dict(poll.poll(REQUEST_TIMEOUT))
+    if socks.get(socket) == zmq.POLLIN:
+        msg = socket.recv()
+        msg_DEC = msg.decode().replace(']', '').replace('[', '').split(",")
+        print(msg_DEC)
+        if msg_DEC[0] == '1':
+            print("Connected to Get Gems server and we are in season {}".format(msg_DEC[1]))
+            nb_saison = msg_DEC[1]
+            date_saison = msg_DEC[2]
+    else:
+        print("No reply from the server")
+        # Socket is confused. Close and remove it.
+        socket.setsockopt(zmq.LINGER, 0)
+        socket.close()
+        poll.unregister(socket)
+        return False
+    return True, nb_saison, date_saison
+
+
+# Commandes Gestion
 class Gestion(commands.Cog):
 
     def __init__(self, bot):
@@ -80,7 +146,7 @@ class Gestion(commands.Cog):
         """
         **[durée]//[thème du vote]//[choix 1]/[choix 2]/<etc> ** | Créé un vote pendant 1h !
         """
-        if permission(ctx, Inquisiteur):
+        if permission(ctx, Vasseaux):
             choix = choix_G[:]
             args = args.split("//")
             temps = float(args[0])*3600

@@ -66,7 +66,7 @@ def images_url(k, nb):
     """
     Télécharge les images demandées dans le dossier downloads
     """
-    arguments = {"keywords":k, "limit":nb, "print_urls":True, "size":"medium", "silent_mode":True, "safe_search":True, "no_download":True}   #creating list of arguments
+    arguments = {"keywords": k, "limit": nb, "print_urls": True, "size": "medium", "silent_mode": True, "safe_search": True, "no_download": True}   # creating list of arguments
     paths = response.download(arguments)
     return paths
 
@@ -75,7 +75,7 @@ def images_url_nsfw(k, nb):
     """
     Télécharge les images demandées dans le dossier downloads
     """
-    arguments = {"keywords":k, "limit":nb, "print_urls":True, "size":"medium", "silent_mode":True, "no_download":True}   #creating list of arguments
+    arguments = {"keywords": k, "limit": nb, "print_urls": True, "size": "medium", "silent_mode": True, "no_download": True}   # creating list of arguments
     paths = response.download(arguments)
     return paths
 

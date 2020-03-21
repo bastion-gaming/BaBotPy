@@ -1,8 +1,0 @@
-{
-  "idgems":
-    "link_gems",
-  "Item":
-    "PRIMARYKEY_TEXT",
-  "Durability":
-    "INTEGER"
-}

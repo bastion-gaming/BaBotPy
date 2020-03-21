@@ -1,58 +1,31 @@
 import csv
 import datetime as dt
+from core import gestion as ge
 from gems import gemsFonctions as GF
 import matplotlib.pyplot as plt
+import gg_lib as gg
+from languages import lang as lang_P
 
 
-def csv_add(name):
-    temp = []
-    vente = 0
-    achat = 0
-    for x in GF.objetItem:
-        if x.nom == name:
-            vente = x.vente
-            achat = x.achat
-    for x in GF.objetOutil:
-        if x.nom == name:
-            if x.type == "bank":
-                return True
-            else:
-                vente = x.vente
-                achat = x.achat
+def create_graphbourse(ctx, item, yearStart, monthStart, yearEnd, monthEnd):
+    ID = ctx.author.id
     now = dt.datetime.now()
-    try:
-        with open('gems/bourse/{item}-{year}-{month}.csv'.format(item=name, year=now.year, month=now.month), 'r', newline='') as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-            for row in csvreader:
-                temp.append(row)
-        temp.append([now, vente, achat])
-        with open('gems/bourse/{item}-{year}-{month}.csv'.format(item=name, year=now.year, month=now.month), 'w', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            csvwriter.writerows(temp)
-    except:
-        with open('gems/bourse/{item}-{year}-{month}.csv'.format(item=name, year=now.year, month=now.month), 'w', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            csvwriter.writerow([now, vente, achat])
-    return True
+    param = dict()
+    param["ID"] = ID
+    param["item"] = item
+    param["yearStart"] = yearStart
+    param["monthStart"] = monthStart
+    param["yearEnd"] = yearEnd
+    param["monthEnd"] = monthEnd
 
+    ge.socket.send_string(gg.std_send_command("csv_read", ID, ge.name_pl, param))
+    msg = GF.msg_recv()
 
-def csv_read(item, year, month):
-    temp = []
-    try:
-        with open('gems/bourse/{item}-{year}-{month}.csv'.format(item=item, year=year, month=month), 'r', newline='') as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-            for row in csvreader:
-                temp.append(row)
-    except:
-        return []
-    return temp
-
-
-def create_graph(item, year, month):
-    now = dt.datetime.now()
-    dataitem = csv_read(item, year, month)
-    if dataitem == []:
-        return "404"
+    if msg[0] == "NOK":
+        return ["404", msg[2]]
+    else:
+        dataitem = msg[2]
+        lang = msg[1]
     axeX = []
     axeY1 = []
     axeY2 = []
@@ -64,14 +37,17 @@ def create_graph(item, year, month):
     namegraph = "bourse_{item} {year}-{month}-{day} {h}_{m}_{s}.png".format(item=item, year=now.year, month=now.month, day=now.day, h=now.hour, m=now.minute, s=now.second)
     plt.figure()
     plt.subplot(2, 1, 1)
-    plt.plot(axeX, axeY2, color='tab:blue', label='Achat', marker='8')
-    plt.title("{m}/{y} | {i}".format(i=item, m=month, y=year))
+    plt.plot(axeX, axeY2, color='tab:blue', label=lang_P.forge_msg(lang, "graphbourse", None, False, 0), marker='8')
+    if int(monthStart) == int(monthEnd) and int(yearStart) == int(yearEnd):
+        plt.title("{i}  ▌ {m} {y}".format(i=item, m=lang_P.forge_msg(lang, "month", None, False, int(monthStart)-1), y=yearStart))
+    else:
+        plt.title("{i}  ▌ {m} {y} ▶ {nowM} {nowY}".format(i=item, m=lang_P.forge_msg(lang, "month", None, False, int(monthStart)-1), y=yearStart, nowM=lang_P.forge_msg(lang, "month", None, False, int(monthEnd)-1), nowY=yearEnd))
     plt.margins(x=0.02, y=0.1)
     plt.legend()
     plt.subplot(2, 1, 2)
-    plt.plot(axeX, axeY1, color='tab:red', label='Vente', marker='8')
+    plt.plot(axeX, axeY1, color='tab:red', label=lang_P.forge_msg(lang, "graphbourse", None, False, 1), marker='8')
     plt.margins(x=0.02, y=0.1)
     plt.legend()
     plt.savefig("cache/{}".format(namegraph))
     plt.clf()
-    return namegraph
+    return [namegraph, lang]

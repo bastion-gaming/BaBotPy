@@ -3,11 +3,10 @@ import sqlite3 as sql
 import datetime as dt
 import time as t
 import json
-from core import welcome as wel
-from gems import gemsFonctions as GF
 
 
 DB_NOM = 'bastionDB'
+
 
 def nom_ID(nom):
     """Convertis un nom en ID discord """
@@ -15,6 +14,8 @@ def nom_ID(nom):
         ID = int(nom[2:20])
     elif len(nom) == 22 :
         ID = int(nom[3:21])
+    elif len(nom) == 18:
+        ID = int(nom)
     else :
         print("DB >> mauvais nom")
         ID = -1

@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
+import asyncio
 import aiohttp
 import json
 import re
+from datetime import datetime
 
 
 PREFIX = open("core/prefix.txt", "r").read().replace("\n", "")
@@ -11,7 +13,13 @@ client = Bot(command_prefix = "{0}".format(PREFIX))
 
 unresolved_ids = 0
 
-# Réinitialiser toutes les valeurs de clé envoyées sur false
+
+############# Notification variables ################
+TWITCH_CLIENT_ID = open("multimedia/twitch_client_id.txt", "r").read().replace("\n", "")
+TWITCH_SECRET_ID = open("multimedia/twitch_secret_id.txt", "r").read().replace("\n", "")
+unresolved_ids = 0
+
+# Reset all sent key values to false
 with open('multimedia/local.json', 'r') as fp:
     reset_values = json.load(fp)
 for streams_index in reset_values['streams']:
@@ -27,6 +35,10 @@ with open('multimedia/userlist.json', 'r') as fp:
     user_list = json.load(fp)
 
 api = {}
+
+global counter
+global first_startup
+first_startup = 1
 
 
 async def dump_json():
@@ -275,8 +287,8 @@ class Notification(commands.Cog):
             "status": ""
         }
 
-        # print('\n------\n\nTime: ' + str(datetime.now()))
-        # print('Ajouter une demande du channel ' + str(channel_id) + ' pour le flux ' + arg)
+        print('\n------\n\nTime: ' + str(datetime.now()))
+        print('Ajouter une demande du channel ' + str(channel_id) + ' pour le flux ' + arg)
 
         if not re.match('^[a-zA-Z0-9_]+$', arg):
             msg = 'Le nom ne doit pas contenir de caractères spéciaux.'
