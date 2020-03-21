@@ -3,9 +3,11 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 import datetime as dt
 from datetime import datetime
+from datetime import date
 import gg_lib as gg
 from DB import SQLite as sql
 from core import stats as stat, level as lvl, welcome as wel, gestion as ge, utils
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from gems import gemsFonctions as GF
 from multimedia import notification_loop as notifL
 import time
@@ -48,8 +50,34 @@ async def on_ready():
     elif "type" in flag:
         print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
     print('------\n')
-    GGconnect = ge.ZMQ()
+    GGconnect, utils.nb_saisons, utils.date_saison = ge.ZMQ()
+    print('------\n')
+    activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Season {1}".format(PREFIX, utils.nb_saisons))
+    await client.change_presence(status=discord.Status.online, activity=activity)
+
+    scheduler = AsyncIOScheduler()
+    tab_date_saison = utils.date_saison.split("-")
+    scheduler.add_job(request_date_end_season, 'date', run_date=date(int(tab_date_saison[2]), int(tab_date_saison[1]), int(tab_date_saison[0])), id="REQUEST_SEASON")
+    scheduler.start()
+    scheduler.print_jobs()
     await notifL.load(client)
+
+
+async def request_date_end_season():
+    ge.socket.send_string(gg.std_send_command('req_date', '__client', 'discord'))
+    socks = dict(ge.poll.poll(ge.REQUEST_TIMEOUT))
+    if socks.get(ge.socket) == ge.zmq.POLLIN:
+        msg = ge.socket.recv()
+        msg_DEC = msg.decode()
+        utils.nb_saisons = utils.nb_saisons + 1
+        utils.date_saison = msg_DEC
+        D = msg_DEC.split("-")
+        scheduler = AsyncIOScheduler()
+        scheduler.reschedule_job('REQUEST_SEASON', trigger='date', run_date=date(int(D[2]), int(D[1]), int(D[0])))
+        scheduler.start()
+        scheduler.print_jobs()
+        activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Season {1}".format(PREFIX, utils.nb_saisons))
+        await client.change_presence(status=discord.Status.online, activity=activity)
 
 ####################### Commande help.py #######################
 
@@ -183,4 +211,7 @@ client.load_extension('kaamelott.kaamelott')
 ####################### Lancemement du bot ######################
 
 
-client.run(TOKEN)
+try:
+    client.run(TOKEN)
+except (KeyboardInterrupt, SystemExit):
+    pass

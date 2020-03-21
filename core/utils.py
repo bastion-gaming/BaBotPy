@@ -5,7 +5,8 @@ from core import welcome as wel, gestion as ge
 from DB import SQLite as sql
 
 ServIDmoji = 634317171496976395
-
+nb_saisons = 0
+date_saison = ""
 client = discord.Client()
 VERSION = open("core/version.txt").read().replace("\n", "")
 
