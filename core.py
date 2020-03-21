@@ -182,15 +182,15 @@ client.load_extension('multimedia.notification')
 
 ####################### Commande gems.py #######################
 
-# client.load_extension('gems.gemsBase')
-#
-# client.load_extension('gems.gemsPlay')
-#
-# # client.load_extension('gems.gemsGuild')
-#
+client.load_extension('gems.gemsBase')
+
+client.load_extension('gems.gemsPlay')
+
+# client.load_extension('gems.gemsGuild')
+
 # client.load_extension('gems.gemsEvent')
-#
-# client.load_extension('gems.gemsAdmin')
+
+client.load_extension('gems.gemsAdmin')
 
 ###################### Commande vocal.py ########################
 
