@@ -155,7 +155,7 @@ async def on_message(message):
             await client.process_commands(message)
         else:
             await client.process_commands(message)
-    else:
+    elif message.content.startswith(PREFIX):
         if GGconnect:
             await lvl.GGchecklevel(message)
         await client.process_commands(message)
