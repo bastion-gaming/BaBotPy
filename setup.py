@@ -7,6 +7,7 @@ def install(package):
         subprocess.call([sys.executable, "-m", "pip", "install", "-U", package, "--user"])
     except:
         subprocess.call([sys.executable, "-m", "pip", "install", "-U", package])
+    # subprocess.call([sys.executable, "-m", "pip", "install", "-U", package])
 
 
 # Base
@@ -32,3 +33,6 @@ install("ffmpeg-python")
 install("youtube-dl")
 install("google-api-python-client")
 install("google_images_download")
+
+# Gestion des événements
+install("apscheduler")
