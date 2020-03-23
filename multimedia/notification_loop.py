@@ -6,6 +6,8 @@ import aiohttp
 import json
 import re
 from datetime import datetime
+from datetime import date
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from multimedia import notification as notif
 
 
@@ -40,11 +42,14 @@ api = {}
 global counter
 global first_startup
 first_startup = 1
+scheduler = AsyncIOScheduler()
 
 
 async def load(C):
+    tuple = [C]
     await asyncio.sleep(1)
-    await looped_task(C)
+    scheduler.add_job(looped_task, trigger='interval', args=tuple, id='NotifLoop', name='NotifLoop', seconds=3)
+    scheduler.start()
 
 
 # ---------------------------------------------------------------
@@ -79,7 +84,7 @@ async def looped_task(client):
 
         await asyncio.sleep(2)  # Wait enough for login to print to console
         first_startup = 0
-        await load(client)
+        scheduler.reschedule_job('NotifLoop', trigger='interval', seconds=3)
 
     else:
         try:
@@ -224,7 +229,6 @@ async def looped_task(client):
         for stream in live_streams:
             print(stream)
 
-        await asyncio.sleep(29)
-        await load(client)
+        scheduler.reschedule_job('NotifLoop', trigger='interval', seconds=30)
 # ---------------------------------------------------------------
 # ---------------------------------------------------------------
