@@ -64,6 +64,20 @@ async def get_streams(c_id, session, url, response_type):
             return await response.json()
 
 
+async def get_game(c_id, session, url, response_type):
+    # Param qui contient l'ID client
+    headers = {
+        'Client-ID': '{}'.format(c_id)
+    }
+
+    # Obtient et retourne la réponse de twitch api, en utilisant l'en-tête défini ci-dessus.
+    async with session.get(url, headers=headers, timeout=10) as response:
+        if response_type == 'text':
+            return await response.text()
+        elif response_type == 'json':
+            return await response.json()
+
+
 # Retourne la réponse de twitch api
 async def get_users(token, session, url, response_type):
 
