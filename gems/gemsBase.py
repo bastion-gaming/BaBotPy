@@ -141,7 +141,7 @@ class GemsBase(commands.Cog):
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
-        param["IDGuild"] = ctx.guild.id
+        # param["IDGuild"] = ctx.guild.id
         param["nb"] = nb
         param["item"] = item
 
@@ -161,7 +161,7 @@ class GemsBase(commands.Cog):
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
-        param["IDGuild"] = ctx.guild.id
+        # param["IDGuild"] = ctx.guild.id
         param["nb"] = nb
         param["item"] = item
 
@@ -182,7 +182,7 @@ class GemsBase(commands.Cog):
         nom = ctx.author.name
         param = dict()
         param["ID"] = ID
-        param["IDGuild"] = ctx.guild.id
+        # param["IDGuild"] = ctx.guild.id
         if fct is not None:
             fct = fct.lower()
         param["fct"] = fct
@@ -227,7 +227,7 @@ class GemsBase(commands.Cog):
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
-        param["IDGuild"] = ctx.guild.id
+        # param["IDGuild"] = ctx.guild.id
         if fct is not None:
             fct = fct.lower()
         param["fct"] = fct
@@ -310,7 +310,7 @@ class GemsBase(commands.Cog):
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
-        param["IDGuild"] = ctx.guild.id
+        # param["IDGuild"] = ctx.guild.id
         param["nom"] = ctx.author.name
         param["ID_recu"] = ge.nom_ID(nom)
         param["Nom_recu"] = ctx.guild.get_member(param["ID_recu"]).name
@@ -332,7 +332,7 @@ class GemsBase(commands.Cog):
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
-        param["IDGuild"] = ctx.guild.id
+        # param["IDGuild"] = ctx.guild.id
         param["nom"] = ctx.author.name
         param["ID_recu"] = ge.nom_ID(nom)
         param["Nom_recu"] = ctx.guild.get_member(param["ID_recu"]).name
@@ -355,7 +355,7 @@ class GemsBase(commands.Cog):
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
-        param["IDGuild"] = ctx.guild.id
+        # param["IDGuild"] = ctx.guild.id
         param["item"] = item
         param["nb"] = nb
 

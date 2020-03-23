@@ -70,7 +70,7 @@ async def checklevel(message, nameDB = None):
         xp = sql.valueAtNumber(ID, "xp", nameDB)
         palier = lvlPalier(lvl)
         if xp >= palier:
-            sql.updateField(ID, "lvl", lvl+1, "gems")
+            sql.updateField(ID, "lvl", lvl+1, nameDB)
             desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
             title = "Level UP"
             msg = discord.Embed(title = title, color= 6466585, description = desc)
@@ -98,7 +98,7 @@ async def checklevelvocal(member):
         xp = int(xp)
         palier = lvlPalier(lvl)
         if xp >= palier:
-            sql.updateField(ID, "lvl", lvl+1, "bastion")
+            sql.updateField(ID, "lvl", lvl+1, nameDB)
             desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
             title = "Level UP"
             msg = discord.Embed(title = title, color= 6466585, description = desc)

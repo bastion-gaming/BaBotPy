@@ -88,7 +88,9 @@ def ZMQ():
         socket.setsockopt(zmq.LINGER, 0)
         socket.close()
         poll.unregister(socket)
-        return False
+        nb_saison = -1
+        date_saison = "01-01-3000"
+        return False, nb_saison, date_saison
     return True, nb_saison, date_saison
 
 
