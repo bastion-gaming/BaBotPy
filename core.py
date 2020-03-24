@@ -52,7 +52,7 @@ async def on_ready():
     print('------\n')
     GGconnect, utils.nb_saisons, utils.date_saison = ge.ZMQ()
     print('------\n')
-    activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Season {1}".format(PREFIX, utils.nb_saisons))
+    activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Saison {1}".format(PREFIX, utils.nb_saisons))
     await client.change_presence(status=discord.Status.online, activity=activity)
 
     scheduler = AsyncIOScheduler()
@@ -76,7 +76,7 @@ async def request_date_end_season():
         scheduler.reschedule_job('REQUEST_SEASON', trigger='date', run_date=date(int(D[2]), int(D[1]), int(D[0])))
         scheduler.start()
         scheduler.print_jobs()
-        activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Season {1}".format(PREFIX, utils.nb_saisons))
+        activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Saison {1}".format(PREFIX, utils.nb_saisons))
         await client.change_presence(status=discord.Status.online, activity=activity)
 
 ####################### Commande help.py #######################

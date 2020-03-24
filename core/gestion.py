@@ -79,11 +79,11 @@ def ZMQ():
         msg_DEC = msg.decode().replace(']', '').replace('[', '').split(",")
         print(msg_DEC)
         if msg_DEC[0] == '1':
-            print("Connected to Get Gems server and we are in season {}".format(msg_DEC[1]))
+            print("Connexion au serveur de Get Gems et nous sommes en saison {}".format(msg_DEC[1]))
             nb_saison = msg_DEC[1]
             date_saison = msg_DEC[2]
     else:
-        print("No reply from the server")
+        print("Pas de réponse du serveur")
         # Socket is confused. Close and remove it.
         socket.setsockopt(zmq.LINGER, 0)
         socket.close()
