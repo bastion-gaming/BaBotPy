@@ -196,14 +196,16 @@ async def looped_task(client):
                                     game_response = await notif.get_game(c_id, session, game_url, 'json')
                                 for temp in game_response['data']:
                                     game = temp['name']
+                                    box_art_url = temp['box_art_url'].replace("{width}", "138")
+                                    box_art_url = box_art_url.replace("{height}", "190")
 
                                 msg = "======= LIVE =======\n:regional_indicator_s: :regional_indicator_t: :regional_indicator_r: :regional_indicator_e: :regional_indicator_a: :regional_indicator_m:"
 
-                                e = discord.Embed(title = api_index['title'], color= 9633863, description = "", url="https://www.twitch.tv/{0}".format(api_index['user_name']))
+                                e = discord.Embed(title = api_index['title'], color= 6824352, description = "", url="https://www.twitch.tv/{0}".format(api_index['user_name']))
                                 e.set_author(name=api_index['user_name'], icon_url=user_data['profile_image_url'])
                                 thumbnail_url = api_index['thumbnail_url'].replace("{width}", "480")
                                 thumbnail_url = thumbnail_url.replace("{height}", "320")
-                                e.set_thumbnail(url=user_data['profile_image_url'])
+                                e.set_thumbnail(url=box_art_url)
                                 e.set_image(url=thumbnail_url)
                                 e.add_field(name="Game", value=game, inline=True)
                                 e.add_field(name="Viewers", value=api_index['viewer_count'], inline=True)
@@ -213,14 +215,14 @@ async def looped_task(client):
                                     await channel_to_send.send(msg)
                                     await channel_to_send.send(embed = e)
                                 except:
-                                    False
+                                    pass
 
                             elif status == 'vodcast' and stream_index['sent'] == 'false':
                                 msg = stream_index['login'] + ' VODCAST est en LIVE!\nhttps://www.twitch.tv/' + stream_index['login']
                                 try:
                                     await client.send_message(client.get_channel(channel_id), msg)
                                 except:
-                                    False
+                                    pass
 
                             # Loop through streams_sent[], if stream is not there, then add it
                             add_sent = 1
