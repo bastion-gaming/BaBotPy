@@ -3,10 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 import asyncio
 import aiohttp
-import json
-import re
 from datetime import datetime
-from datetime import date
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from multimedia import notification as notif
 
@@ -21,21 +18,6 @@ unresolved_ids = 0
 TWITCH_CLIENT_ID = open("multimedia/twitch_client_id.txt", "r").read().replace("\n", "")
 TWITCH_SECRET_ID = open("multimedia/twitch_secret_id.txt", "r").read().replace("\n", "")
 unresolved_ids = 0
-
-# Reset all sent key values to false
-with open('multimedia/local.json', 'r') as fp:
-    reset_values = json.load(fp)
-for streams_index in reset_values['streams']:
-    streams_index['sent'] = 'false'
-with open('multimedia/local.json', 'w') as fp:
-    json.dump(reset_values, fp, indent=2)
-
-
-with open('multimedia/local.json', 'r') as fp:
-    local = json.load(fp)
-
-with open('multimedia/userlist.json', 'r') as fp:
-    user_list = json.load(fp)
 
 api = {}
 
@@ -102,22 +84,22 @@ async def looped_task(client):
 
         # Check for streams in local['streams'] that are not in any of the channels' subscriptions and remove those
         all_subscriptions = []
-        for channel_index in local['channels']:
+        for channel_index in notif.local['channels']:
             for subscribed in channel_index['subscribed']:
                 if subscribed not in all_subscriptions:
                     all_subscriptions.append(subscribed)
 
-        for i, stream in enumerate(local['streams']):
+        for i, stream in enumerate(notif.local['streams']):
             if stream['login'] not in all_subscriptions:
                 # print('\nTime: ' + str(datetime.now()) + '\nAucun channel souscrit pour diffuser:\nSUPPRESSION: ' +
                 #       stream['login'] + ' de local["streams"]\n')
-                stream_list = local['streams']
+                stream_list = notif.local['streams']
                 stream_list.pop(i)
 
                 await notif.dump_json()
 
         # Check for streams in channel subscriptions that are not in the user_response
-        for channel in local['channels']:
+        for channel in notif.local['channels']:
             channel_id = channel['id']
             for subscription in channel['subscribed']:
                 exists = 0
@@ -141,7 +123,7 @@ async def looped_task(client):
 
         # Loop through api response and set offline stream's 'sent' key value to false
         # If stream is offline, set 'sent' key value to false, then save and reload the local JSON file
-        for index in local['streams']:
+        for index in notif.local['streams']:
 
             # print('\nSTREAM NAME: ' + index['login'])
             # print('STREAM ID: ' + index['id'])
@@ -166,14 +148,15 @@ async def looped_task(client):
             # print('')
 
         streams_sent = []
+        game_sent = []
 
         # Loop through channels and send out messages
-        for channel in local['channels']:
+        for channel in notif.local['channels']:
             channel_id = channel['id']
             for subscribed_stream in channel['subscribed']:
 
                 # Get correct id from local JSON
-                for stream_index in local['streams']:
+                for stream_index in notif.local['streams']:
                     local_id = ''
                     if stream_index['login'] == subscribed_stream:
                         local_id = stream_index['id']
@@ -185,7 +168,7 @@ async def looped_task(client):
 
                             # If live, checks whether stream is live or vodcast, sets msg accordingly
                             # Sends message to channel, then saves sent status to json
-                            if status == 'live' and stream_index['sent'] == 'false':
+                            if status == 'live' and (stream_index['sent'] == 'false' or stream_index['game'] != api_index['game_id']):
                                 for user in users_response['data']:
                                     if user['display_name'] == api_index['user_name']:
                                         user_data = user
@@ -229,15 +212,23 @@ async def looped_task(client):
                             # Loop through streams_sent[], if stream is not there, then add it
                             add_sent = 1
                             for stream in streams_sent:
-                                if stream == stream_index['login']:
+                                if stream[0] == stream_index['login']:
                                     add_sent = 0
                             if add_sent:
-                                streams_sent.append(stream_index['login'])
+                                streams_sent.append([stream_index['login'], api_index['game_id']])
+                            elif stream_index['game'] == api_index['game_id']:
+                                streams_temp = streams_sent
+                                for stream in streams_temp:
+                                    if stream[0] == stream_index['login']:
+                                        streams_sent.append([stream_index['login'], api_index['game_id']])
+                                    else:
+                                        streams_sent.append(stream)
 
-        for login in local['streams']:
+        for login in notif.local['streams']:
             for stream in streams_sent:
-                if login['login'] == stream:
+                if login['login'] == stream[0]:
                     login['sent'] = 'true'
+                    login['game'] = stream[1]
 
         await notif.dump_json()
 

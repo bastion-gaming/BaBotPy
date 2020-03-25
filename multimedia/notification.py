@@ -298,7 +298,8 @@ class Notification(commands.Cog):
             "login": arg,
             "sent": "false",
             "id": "",
-            "status": ""
+            "status": "",
+            "game": ""
         }
 
         print('\n------\n\nTime: ' + str(datetime.now()))

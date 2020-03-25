@@ -19,31 +19,36 @@
       "login": "azerxim",
       "sent": "false",
       "id": "39666820",
-      "status": ""
+      "status": "offline",
+      "game": ""
     },
     {
       "login": "pimousse_",
       "sent": "false",
       "id": "137541781",
-      "status": ""
+      "status": "offline",
+      "game": ""
     },
     {
       "login": "luwyjitv",
       "sent": "false",
       "id": "222940676",
-      "status": ""
+      "status": "offline",
+      "game": ""
     },
     {
       "login": "bastionautes",
       "sent": "false",
       "id": "425113214",
-      "status": ""
+      "status": "offline",
+      "game": ""
     },
     {
       "login": "mechante_aubergine",
       "sent": "false",
       "id": "81691560",
-      "status": ""
+      "status": "offline",
+      "game": ""
     }
   ]
 }
