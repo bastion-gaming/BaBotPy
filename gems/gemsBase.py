@@ -41,7 +41,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def connect(self, ctx, PlayerID):
-        """**[PlayerID]** | Connecter un compte joueur d'une autre plateforme"""
+        """**[PlayerID]** | WIP | Connecter un compte joueur d'une autre plateforme"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -54,7 +54,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def bal(self, ctx, nom = None):
-        """Êtes vous riche ou pauvre ?"""
+        """**{name}** | Êtes vous riche ou pauvre ?"""
         ID = ctx.author.id
         param = dict()
         param["fct"] = "None"
@@ -89,7 +89,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def baltop(self, ctx, n = None, m = None):
-        """**_{filtre}_ [nombre]** | Classement des joueurs"""
+        """**{filtre} {nombre}** | Classement des joueurs"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -137,7 +137,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def buy(self, ctx, item, nb = 1):
-        """**[item] [nombre]** | Permet d'acheter les items vendus au marché"""
+        """**[item] {nombre}** | Permet d'acheter les items vendus au marché"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -157,7 +157,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def sell(self, ctx, item, nb = 1):
-        """**[item] [nombre]** | Permet de vendre vos items !"""
+        """**[item] {nombre}** | Permet de vendre vos items !"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -177,7 +177,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def inv(self, ctx, fct = None):
-        """**[nom de la poche]** | Permet de voir ce que vous avez dans le ventre !"""
+        """**{nom de la poche}** | Permet de voir ce que vous avez dans le ventre !"""
         ID = ctx.author.id
         nom = ctx.author.name
         param = dict()
@@ -223,7 +223,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def market(self, ctx, fct = None):
-        """**[stand]** | Permet de voir tout les objets que l'on peux acheter ou vendre !"""
+        """**{stand}** | Permet de voir tout les objets que l'on peux acheter ou vendre !"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -351,7 +351,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def forge(self, ctx, item = None, nb = 1):
-        """**[item] [nombre]** | Permet de concevoir des items spécifiques"""
+        """**{item} {nombre}** | Permet de concevoir des items spécifiques"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -432,9 +432,7 @@ class GemsBase(commands.Cog):
 
     @commands.command(pass_context=True)
     async def lang(self, ctx, langue = None):
-        """
-        Permet de changer la langue pour un joueur.
-        """
+        """**{langue}** | Permet de changer la langue pour un joueur."""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID

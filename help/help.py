@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot
 
-GGModule = ["gemsbase", "gemsplay", "gemsevent", "gemsguild"]
 GGnom = ["gem", "gems", "gg", "getgems", "get gems"]
 
 class Helpme(commands.Cog):
@@ -28,7 +27,7 @@ class Helpme(commands.Cog):
             if nameElem in GGnom:
                 for COG in COGS:
                     mCOG = COG.lower()
-                    if mCOG in GGModule:
+                    if "gems" in mCOG:
                         cog = self.bot.get_cog(COG)
                         coms = cog.get_commands()
                         for com in coms :
@@ -66,7 +65,7 @@ class Helpme(commands.Cog):
             GGdesc = ""
             msg.add_field(name="GitHub", value="https://github.com/bastion-gaming/bot-discord/blob/master/help/Help.md", inline=False)
             for COG in COGS:
-                if COG.lower() in GGModule:
+                if "gems" in COG.lower():
                     GGdesc += "\n• {0}".format(COG)
                 else:
                     cog = self.bot.get_cog(COG)

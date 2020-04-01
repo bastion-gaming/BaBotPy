@@ -34,7 +34,7 @@ class GemsPlay(commands.Cog):
 
     @commands.command(pass_context=True)
     async def bank(self, ctx, ARG = None, ARG2 = None):
-        """Compte épargne"""
+        """**[bal/add/saving] [nom/nombre]** | Compte épargne"""
         # =======================================================================
         # Initialistation des variables générales de la fonction
         # =======================================================================
@@ -83,7 +83,7 @@ class GemsPlay(commands.Cog):
 
     @commands.command(pass_context=True)
     async def stealing(self, ctx, name=None):
-        """**[nom]** | Vole des :gem:`gems` aux autres joueurs!"""
+        """*{nom}** | Vole des :gem:`gems` aux autres joueurs!"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -116,7 +116,7 @@ class GemsPlay(commands.Cog):
 
     @commands.command(pass_context=True)
     async def gamble(self, ctx, valeur):
-        """**[valeur]** | Avez vous l'ame d'un parieur ?"""
+        """**[mise]** | Avez vous l'ame d'un parieur ?"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
@@ -181,7 +181,7 @@ class GemsPlay(commands.Cog):
 
     @commands.command(pass_context=True)
     async def slots(self, ctx, imise = None):
-        """**[mise]** | La machine à sous, la mise minimum est de 10 :gem:`gems`"""
+        """**{mise}** | La machine à sous, la mise minimum est de 10 :gem:`gems`"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
