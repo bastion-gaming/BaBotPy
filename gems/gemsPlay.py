@@ -203,7 +203,7 @@ class GemsPlay(commands.Cog):
         param = dict()
         param["ID"] = ID
         param["name"] = name
-        ge.socket.send_string(gg.std_send_command("boxes", ID, ge.name_pl, param))
+        ge.socket.send_string(gg.std_send_command("open", ID, ge.name_pl, param))
         msg = GF.msg_recv()
 
         if msg[0] == "OK":
