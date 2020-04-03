@@ -121,5 +121,9 @@
       "Pari",
       "Modification du compte épargne",
       "Épargne"
-    ]
+    ],
+  "infos":
+    "Information sur {0}",
+  "godparent":
+    "Tu ne peux pas être ton propre parrain."
 }

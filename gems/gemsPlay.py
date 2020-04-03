@@ -197,12 +197,11 @@ class GemsPlay(commands.Cog):
             await ctx.channel.send(desc[2])
 
     @commands.command(pass_context=True)
-    async def boxes(self, ctx, fct = None, name = None):
-        """**open [nom]** | Ouverture de Loot Box"""
+    async def open(self, ctx, name = None):
+        """**[nom]** | Ouverture de Loot Box"""
         ID = ctx.author.id
         param = dict()
         param["ID"] = ID
-        param["fct"] = fct
         param["name"] = name
         ge.socket.send_string(gg.std_send_command("boxes", ID, ge.name_pl, param))
         msg = GF.msg_recv()

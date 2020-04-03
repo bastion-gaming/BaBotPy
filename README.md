@@ -1,7 +1,7 @@
 # BaBot
 Bot discord de bastion
 
-Suite au décès de mewna notre bot, aimée de tous sauf lorsqu'elle buggait, nous sommes dans
+Suite au décès de Mewna notre bot, aimée de tous sauf lorsqu'elle buggait, nous sommes dans
 l'obligation de créer notre propre bot pour retrouver les services dont nous avons besoin mais
 aussi des nouveaux.
 
@@ -40,9 +40,9 @@ utile et là au moins on est sûr qu'il nous lis pas en même temps.
 nouveaux membres mais aussi pour pouvoir en une commande créer un nouveau rôle
 correspondant à un jeu puis l'associer à un salon.
 
-**Level**: Gestion des niveaux, genre tous les x mots ou x minutes en vocal on monte d'un niveaux, ça permet de quantifier la participation de chacun aux discussions. On doit se mettre d'accord sur les modalités de leveling.
+**Levels**: Gestion des niveaux, genre tous les x mots ou x minutes en vocal on monte d'un niveaux, ça permet de quantifier la participation de chacun aux discussions. On doit se mettre d'accord sur les modalités de leveling.
 
-**Parrain**: Système de parrainnage offrant des gems au parrain.
+**Parrain**: Système de parrainage offrant des gems au parrain.
 
 **Welcome**: Gère l'affiche des messages de bienvenue au nouveaux arrivant et des messages d'aurevoir.
 
@@ -54,64 +54,15 @@ correspondant à un jeu puis l'associer à un salon.
 
 **Musique**: On propose que le bot puissent lancer des vidéos Youtube au format audio.
 
-**Images**: Fonction permettant de faire une recherche avec mots clés sur google images et de resortir une images aléatoire.
+**Images**: Fonction permettant de faire une recherche avec mots clés sur google images et de ressortir une images aléatoire.
 
-**Live Notification**: Averti dans le salon #partage du début d'un live sur la chaine Twitch Bastion et celle des partenaires/kopains
+**Twitch Live Notification**: Averti dans le salon #twitch du début d'un live sur la chaine Twitch Bastion et celle des partenaires/kopains
 
-### Module Gems
+### Module Get Gems
 
-**Gems Fonctions**: Partie regroupant toutes les fonctions et les items nécessaire au fonctionnement du module.
+Intégration du client discord du jeu Get Gems.
 
-**Gems Base**: Commandes de base du module. Il permet d'afficher par exemple le marché, l'inventaire ou le système d'achat/vente.
-
-Liste des commandes:
-- begin
-- tuto
-- bal
-- baltop
-- pay
-- give
-- buy
-- sell
-- market
-- inv
-- forge
-- trophylist
-- trophy
-
-**Gems Play**: Commandes permettant de jouer et de gagner des GEMS (l'argent du jeu).
-
-Liste des commandes:
-- daily
-- bank
-- gamble
-- crime
-- mine
-- fish
-- slots
-- hothouse
-- ferment
-- boxes open
-
-**Gems Guild**: Commandes permettant la gestion des guildes.
-
-Liste des commandes:
-- guildinfo
-- guildcreate
-- guildsupp
-- guildleave
-- guildrequest
-- guildadd
-- guildpromote
-- guilddisplacement
-- convert
-
-**Gems Event**: Commandes relative aux évènements (limité dans le temps).
-
-Liste des commandes:
-- event
-- happy new year
-- cooking
+Documentation disponible sur la page GitHub du [client](https://github.com/bastion-gaming/GG-Client-discord/tree/master/doc) et du [serveur](https://github.com/bastion-gaming/GG-Server/tree/master/doc).
 
 ### Module Help
 
@@ -140,8 +91,8 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 - Gestion
 - Vote
 - Stats
-- Roles
-- Level
+- Rôles
+- Levels
 - Parrain
 - Welcome
 
@@ -151,12 +102,7 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 - Images
 - Live Notification
 
-**_Gems_**
-- Gems Fonctions
-- Gems Base
-- Gems Play
-- Gems Guild
-- Gems Event
+**_Get Gems_**
 
 **_Help_**
 
@@ -166,9 +112,6 @@ parallèle du Bot Bastion créer un autre bot plus léger qui en se basant sur c
 
 **_Module Multimédia_**
 - Musique
-
-**_Gems_**
-- Gems Fight
 
 ## Non commencé
 

@@ -29,7 +29,7 @@ class GemsAdmin(commands.Cog):
         if ge.permission(ctx, ge.admin):
             ge.socket.send_string(gg.std_send_command("admin", ID, ge.name_pl, param))
             msg = GF.msg_recv()
-            await ctx.channel.send(msg[1])
+            await ctx.channel.send(msg[2])
         else:
             await ctx.channel.send("[Admin Command] Tu n'est pas autorisé à utiliser cette commande!")
 

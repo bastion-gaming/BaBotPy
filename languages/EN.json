@@ -121,5 +121,9 @@
       "Gamble",
       "Changing the savings account",
       "Saving"
-    ]
+    ],
+  "infos":
+    "Information about {0}",
+  "godparent":
+    "You can't be your own godparent."
 }

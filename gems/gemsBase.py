@@ -53,6 +53,39 @@ class GemsBase(commands.Cog):
         await ctx.channel.send(desc[2])
 
     @commands.command(pass_context=True)
+    async def infos(self, ctx, nom = None):
+        """**{name}** | Affiche les informations sur un joueur"""
+        ID = ctx.author.id
+        param = dict()
+        if nom is None:
+            nom = ctx.author.name
+            param["ID"] = ID
+            param["name"] = nom
+        else:
+            IDname = ge.nom_ID(nom)
+            param["ID"] = IDname
+            nom = ctx.guild.get_member(IDname)
+            nom = nom.name
+            param["name"] = nom
+        ge.socket.send_string(gg.std_send_command("infos", ID, ge.name_pl, param))
+        desc = GF.msg_recv()
+        if desc[0] == "OK":
+            lang = desc[1]
+            title = lang_P.forge_msg(lang, "infos", [nom])
+            msg = discord.Embed(title = title, color= 13752280, description = desc[2], timestamp=dt.datetime.now())
+            msg.add_field(name="**_Balance_**", value=desc[3], inline=False)
+
+            msg.add_field(name=desc[4], value=desc[5], inline=False)
+            msg.add_field(name=desc[6], value=desc[7], inline=False)
+            msg.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            await ctx.channel.send(embed = msg)
+            # Message de réussite dans la console
+            print("Gems >> Informations de {0} affichée par {1}".format(nom, ctx.author.name))
+            return
+        else:
+            await ctx.channel.send(desc[2])
+
+    @commands.command(pass_context=True)
     async def bal(self, ctx, nom = None):
         """**{name}** | Êtes vous riche ou pauvre ?"""
         ID = ctx.author.id
@@ -75,10 +108,9 @@ class GemsBase(commands.Cog):
         if desc[0] == "OK":
             lang = desc[1]
             title = lang_P.forge_msg(lang, "bal", [nom], False)
-            msg = discord.Embed(title = title, color= 13752280, description = desc[2], timestamp=dt.datetime.now())
-            msg.add_field(name="**_Balance_**", value=desc[3], inline=False)
+            msg = discord.Embed(title = title, color= 13752280, description = "", timestamp=dt.datetime.now())
+            msg.add_field(name="**_Balance_**", value=desc[2], inline=False)
 
-            msg.add_field(name=desc[4], value=desc[5], inline=False)
             msg.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             await ctx.channel.send(embed = msg)
             # Message de réussite dans la console
@@ -442,6 +474,21 @@ class GemsBase(commands.Cog):
         desc = GF.msg_recv()
 
         await ctx.channel.send(desc[1])
+
+    @commands.command(pass_context=True)
+    async def godparent(self, ctx, nom):
+        """**[name]** | Permet d'ajouter un joueur comme parrain."""
+        ID = ctx.author.id
+        param = dict()
+        param["ID"] = ID
+        param["GPID"] = ge.nom_ID(nom)
+        ge.socket.send_string(gg.std_send_command("godparent", ID, ge.name_pl, param))
+        desc = GF.msg_recv()
+        lang = desc[1]
+        if ID == ge.nom_ID(nom):
+            await ctx.channel.send(lang_P.forge_msg(lang, "godparent"))
+        else:
+            await ctx.channel.send(desc[2])
 
     # ==============================
     # ===== Commande désactivé =====
