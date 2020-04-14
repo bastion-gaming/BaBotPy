@@ -173,11 +173,11 @@ async def looped_task(client):
                                     if user['display_name'] == api_index['user_name']:
                                         user_data = user
 
-                                NewStreams_url = "https://api.twitch.tv/helix/streams?user_login=" + stream_index['login']
-                                async with aiohttp.ClientSession() as session:
-                                    NewAPI = await notif.get_streams(c_id, session, NewStreams_url, 'json')
-                                for NewAPI_index in NewAPI['data']:
-                                    NewIndex = NewAPI_index
+                                # NewStreams_url = "https://api.twitch.tv/helix/streams?user_login=" + stream_index['login']
+                                # async with aiohttp.ClientSession() as session:
+                                #     NewAPI = await notif.get_streams(c_id, session, NewStreams_url, 'json')
+                                # for NewAPI_index in NewAPI['data']:
+                                #     NewIndex = NewAPI_index
 
                                 game_url = "https://api.twitch.tv/helix/games?id={0}".format(api_index['game_id'])
                                 async with aiohttp.ClientSession() as session:
@@ -191,7 +191,7 @@ async def looped_task(client):
                                 e = discord.Embed(title = api_index['title'], color= 6824352, description = "", url="https://www.twitch.tv/{0}".format(api_index['user_name']))
                                 e.set_author(name=api_index['user_name'], icon_url=user_data['profile_image_url'])
                                 e.set_thumbnail(url=box_art_url)
-                                e.set_image(url=NewIndex['thumbnail_url'].replace("{width}", "320").replace("{height}", "180"))
+                                # e.set_image(url=NewIndex['thumbnail_url'].replace("{width}", "320").replace("{height}", "180"))
                                 e.add_field(name="Game", value=game, inline=True)
                                 e.add_field(name="Viewers", value=api_index['viewer_count'], inline=True)
 
