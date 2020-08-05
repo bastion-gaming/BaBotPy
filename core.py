@@ -32,7 +32,7 @@ client.remove_command("help")
 # Au démarrage du Bot.
 @client.event
 async def on_ready():
-    global GGconnect
+    #global GGconnect
     print('Connecté avec le nom : {0.user}'.format(client))
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
@@ -50,17 +50,17 @@ async def on_ready():
     elif "type" in flag:
         print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
     print('------\n')
-    GGconnect, utils.nb_saisons, utils.date_saison = ge.ZMQ()
+    #GGconnect, utils.nb_saisons, utils.date_saison = ge.ZMQ()
     print('------\n')
-    activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Saison {1}".format(PREFIX, utils.nb_saisons))
+    #activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | Saison {1}".format(PREFIX, utils.nb_saisons))
     await client.change_presence(status=discord.Status.online, activity=activity)
 
-    scheduler = AsyncIOScheduler()
-    tab_date_saison = utils.date_saison.split("-")
-    scheduler.add_job(request_date_end_season, 'date', run_date=date(int(tab_date_saison[2]), int(tab_date_saison[1]), int(tab_date_saison[0])), id="REQUEST_SEASON")
-    scheduler.start()
-    scheduler.print_jobs()
-    await notifL.load(client)
+    #scheduler = AsyncIOScheduler()
+    #tab_date_saison = utils.date_saison.split("-")
+    #scheduler.add_job(request_date_end_season, 'date', run_date=date(int(tab_date_saison[2]), int(tab_date_saison[1]), int(tab_date_saison[0])), id="REQUEST_SEASON")
+    #scheduler.start()
+    #scheduler.print_jobs()
+    #await notifL.load(client)
 
 
 async def request_date_end_season():
@@ -155,10 +155,10 @@ async def on_message(message):
             await client.process_commands(message)
         else:
             await client.process_commands(message)
-    elif message.content.startswith(PREFIX):
-        if GGconnect:
-            await lvl.GGchecklevel(message)
-        await client.process_commands(message)
+    #elif message.content.startswith(PREFIX):
+    #    if GGconnect:
+    #        await lvl.GGchecklevel(message)
+    #    await client.process_commands(message)
 
 ####################### Commande stats.py #######################
 
@@ -178,21 +178,21 @@ client.load_extension('core.gestion')
 
 ###################### Commande notification.py ################
 
-client.load_extension('multimedia.notification')
+#client.load_extension('multimedia.notification')
 
 ####################### Commande gems.py #######################
 
-client.load_extension('gems.gemsBase')
+#client.load_extension('gems.gemsBase')
 
-client.load_extension('gems.gemsPlay')
+#client.load_extension('gems.gemsPlay')
 
-client.load_extension('gems.gemsSuccess')
+#client.load_extension('gems.gemsSuccess')
 
 # client.load_extension('gems.gemsGuild')
 
 # client.load_extension('gems.gemsEvent')
 
-client.load_extension('gems.gemsAdmin')
+#client.load_extension('gems.gemsAdmin')
 
 ###################### Commande vocal.py ########################
 
