@@ -137,6 +137,7 @@ class Level(commands.Cog):
                 return
 
             if (ID != -1):
+                ge.checkInfo(ctx, ID)
                 lvl = sql.valueAtNumber(ID, "lvl", "bastion")
                 xp = sql.valueAtNumber(ID, "xp", "bastion")
                 msg = "**Utilisateur:** {}".format(Nom)

@@ -4,7 +4,7 @@ from discord.ext.commands import Bot
 import time
 import asyncio
 from DB import SQLite as sql
-from core import welcome as wel
+from core import welcome as wel, roles, stats
 import zmq
 import gg_lib as gg
 
@@ -32,6 +32,15 @@ def permission(ctx, grade):
     for role in roles :
         if role.id in rolesID[grade] or (ctx.guild.id in guildID and role.permissions.administrator):
             return True
+    return False
+
+
+def checkInfo(ctx, ID):
+    member = ctx.guild.get_member(ID)
+    if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
+        await roles.addrole(member, "Nouveau")
+        stats.countCo()
+        return True
     return False
 
 
