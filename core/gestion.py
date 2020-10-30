@@ -38,8 +38,8 @@ def permission(ctx, grade):
 def checkInfo(ID):
     if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
         stats.countCo()
-        return True
-    return False
+        return False
+    return True
 
 
 def nom_ID(nom):
