@@ -140,6 +140,7 @@ class Level(commands.Cog):
                 if not ge.checkInfo(ID):
                     # member = ctx.guild.get_member(int(ID))
                     # await roles.addrole(member, "Nouveau")
+                    pass
                 lvl = sql.valueAtNumber(ID, "lvl", "bastion")
                 xp = sql.valueAtNumber(ID, "xp", "bastion")
                 msg = "**Utilisateur:** {}".format(Nom)
