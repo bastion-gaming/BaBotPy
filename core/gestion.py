@@ -35,10 +35,8 @@ def permission(ctx, grade):
     return False
 
 
-def checkInfo(ctx, ID):
-    member = ctx.guild.get_member(ID)
+def checkInfo(ID):
     if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
-        await roles.addrole(member, "Nouveau")
         stats.countCo()
         return True
     return False

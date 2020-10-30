@@ -6,7 +6,7 @@ from datetime import datetime
 # from datetime import date
 # import gg_lib as gg
 from DB import SQLite as sql
-from core import stats as stat, level as lvl, welcome as wel, gestion as ge
+from core import stats as stat, level as lvl, welcome as wel, gestion as ge, roles
 # from core import gestion as ge, utils
 # from apscheduler.schedulers.asyncio import AsyncIOScheduler
 # from gems import gemsFonctions as GF
@@ -152,7 +152,9 @@ async def on_voice_state_update(member, before, after):
 async def on_message(message):
     if not (message.author.bot or message.content.startswith(PREFIX)) :
         if message.guild.id == wel.idBASTION:
-            ge.checkInfo(message, message.author.id)
+            if ge.checkInfo(message.author.id):
+                member = message.guild.get_member(message.author.id)
+                await roles.addrole(member, "Nouveau")
             await stat.countMsg(message)
             await lvl.checklevel(message)
             await client.process_commands(message)
