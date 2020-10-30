@@ -153,8 +153,8 @@ async def on_message(message):
     if not (message.author.bot or message.content.startswith(PREFIX)) :
         if message.guild.id == wel.idBASTION:
             if ge.checkInfo(message.author.id):
-                member = message.guild.get_member(message.author.id)
-                await roles.addrole(member, "Nouveau")
+                # member = message.guild.get_member(message.author.id)
+                # await roles.addrole(member, "Nouveau")
             await stat.countMsg(message)
             await lvl.checklevel(message)
             await client.process_commands(message)
