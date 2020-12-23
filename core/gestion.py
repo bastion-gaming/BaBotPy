@@ -4,15 +4,7 @@ from discord.ext.commands import Bot
 import time
 import asyncio
 from DB import SQLite as sql
-from core import welcome as wel, roles, stats
-import zmq
-import gg_lib as gg
-
-name_pl = "babot" # Nom de la plateforme
-
-REQUEST_TIMEOUT = 2500
-REQUEST_RETRIES = 3
-SERVER_ENDPOINT = "tcp://localhost:5555"
+from core import welcome as wel, stats
 
 PREFIX = open("core/prefix.txt", "r").read().replace("\n", "")
 client = Bot(command_prefix = "{0}".format(PREFIX))
@@ -53,52 +45,6 @@ def nom_ID(nom):
     else:
         ID = -1
     return(ID)
-
-
-# Etablissement de la connexion avec le serveur Get Gems
-context = zmq.Context(1)
-
-#  Socket to talk to server
-socket = context.socket(zmq.REQ)
-socket.connect(SERVER_ENDPOINT)
-# TIMEOUT
-poll = zmq.Poller()
-poll.register(socket, zmq.POLLIN)
-
-
-def ZMQ():
-    context = zmq.Context(1)
-    nb_saison = -1
-
-    #  Socket to talk to server
-    print("Connecting to Get Gems server…")
-    socket = context.socket(zmq.REQ)
-    socket.connect(SERVER_ENDPOINT)
-    # TIMEOUT
-    poll = zmq.Poller()
-    poll.register(socket, zmq.POLLIN)
-
-    socket.send_string(gg.std_send_command("GGconnect", "__client", name_pl))
-    time.sleep(1)
-    socks = dict(poll.poll(REQUEST_TIMEOUT))
-    if socks.get(socket) == zmq.POLLIN:
-        msg = socket.recv()
-        msg_DEC = msg.decode().replace(']', '').replace('[', '').split(",")
-        print(msg_DEC)
-        if msg_DEC[0] == '1':
-            print("Connexion au serveur de Get Gems et nous sommes en saison {}".format(msg_DEC[1]))
-            nb_saison = msg_DEC[1]
-            date_saison = msg_DEC[2]
-    else:
-        print("Pas de réponse du serveur")
-        # Socket is confused. Close and remove it.
-        socket.setsockopt(zmq.LINGER, 0)
-        socket.close()
-        poll.unregister(socket)
-        nb_saison = -1
-        date_saison = "01-01-3000"
-        return False, nb_saison, date_saison
-    return True, nb_saison, date_saison
 
 
 # Commandes Gestion

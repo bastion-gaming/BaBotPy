@@ -1,13 +1,14 @@
 from DB import SQLite as sql
 from core import roles, stats as stat
 
-idBaBot = 604776153458278415
+idBaBot = 790899501845053461
 idGetGems = 620558080551157770
 
-idBASTION = 417445502641111051
+idBASTION = 634317171496976395# 417445502641111051
 
 
 async def memberjoin(member, channel):
+    print(channel)
     if member.guild.id == idBASTION:
         channel_regle = member.guild.get_channel(417454223224209408)
         ID = member.id

@@ -4,7 +4,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import bot
 import discord
 import json
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import os
 from core import welcome as wel, level as lvl
 
@@ -187,186 +187,186 @@ class Stats(commands.Cog):
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
-    @commands.command(pass_context=True)
-    async def graphheure(self, ctx, statue = "local", jour = "yesterday"):
-        """|local/total aaaa-mm-jj| affiche le graph des messages envoyés par heure"""
-        if ctx.guild.id == wel.idBASTION:
-            if jour == "yesterday":
-                jour = str(dt.date.today()-dt.timedelta(days = 1))
-            try :
-                logs = json.load(open("logs/log-{}.json".format(jour[:7]), "r"))
-            except FileNotFoundError :
-                await ctx.send("la date n'est pas correcte !")
-                return
-            log = logs[jour]
-            heures = log["msg {} heures".format(statue)]
-            if os.path.isfile("cache/graphheure.png"):
-                os.remove('cache/graphheure.png')
-                print('removed old graphe file')
-            x = []
-            y = []
-            for i in range(24):
-                x.append(i)
-                y.append(heures[str(i)])
-            if statue == "local":
-                plt.hist(x, bins = 24, weights = y)
-            else :
-                plt.plot(x, y, label="graph test")
-                plt.fill_between(x, y[0]-100, y, color='blue', alpha=0.5)
-            plt.xlabel('heures')
-            plt.ylabel('messages')
-            plt.title("graphique du {}".format(jour))
-            plt.savefig("cache/graphheure.png")
-            await ctx.send(file=discord.File("cache/graphheure.png"))
-            plt.clf()
-        else:
-            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
-
-    @commands.command(pass_context=True)
-    async def graphjour(self, ctx, statue = "local", mois = "now"):
-        """|local/total aaaa-mm| affiche le graph des messages envoyés par jour"""
-        if ctx.guild.id == wel.idBASTION:
-            if mois == "now":
-                mois = str(dt.date.today())[:7]
-            aaaa , mm = mois.split("-")
-            nom_mois = dt.datetime(int(aaaa), int(mm), 1).strftime("%B")
-            try :
-                logs = json.load(open("logs/log-{}.json".format(mois), "r"))
-            except ValueError :
-                ctx.send("la date n'est pas correcte !")
-                pass
-            if os.path.isfile("cache/graphjour.png"):
-                os.remove('cache/graphjour.png')
-                print('removed old graphe file')
-            msg = []
-            jour = []
-            text = "msg {} jour".format(statue)
-            for i in range(1, 32):
-                try :
-                    if i < 10:
-                        msg.append(logs["{}-0{}".format(mois, i)][text])
-                    else:
-                        msg.append(logs["{}-{}".format(mois, i)][text])
-                    jour.append(i)
-                except KeyError :
-                    pass
-            if statue == "local":
-                plt.hist(jour, bins = len((logs)), weights = msg)
-            else :
-                plt.plot(jour, msg, label="graph test")
-                plt.fill_between(jour, msg[0]-200, msg, color='blue', alpha=0.5)
-            plt.xlabel('jour')
-            plt.ylabel('messages')
-            plt.title("graphique du {} au {} {}".format(jour[0], jour[len(jour)-1], nom_mois))
-            plt.savefig("cache/graphjour.png")
-            await ctx.send(file=discord.File("cache/graphjour.png"))
-            plt.clf()
-        else:
-            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
-
-    @commands.command(pass_context=True)
-    async def graphmembre(self, ctx, r = 6):
-        """
-        Graphique représentant le classement des membres en fonction du nombre de messages écrit
-        """
-        if ctx.guild.id == wel.idBASTION:
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
-                print('removed old graphe file')
-            total = sql.countTotalMsg()
-            a = []
-            taille = sql.taille("bastion")
-            i = 1
-            while i <= taille:
-                IDi = sql.userID(i, "bastion")
-                nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
-                a.append([nbMsg, IDi])
-                i += 1
-            a.sort(reverse = True)
-            richest = a[:r]
-            sous_total = 0
-            for i in range(r):
-                sous_total += richest[i][0]
-            labels = []
-            sizes = []
-            for i in range(r):
-                try:
-                    labels.append(ctx.guild.get_member(richest[i][1]).name)
-                    sizes.append(richest[i][0])
-                except:
-                    labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
-                    sizes.append(richest[i][0])
-            labels.append("autre")
-            sizes.append(total - sous_total)
-            explode = ()
-            i = 0
-            while i <= r:
-                if i < r:
-                    explode = explode + (0,)
-                else:
-                    explode = explode + (0.2,)
-                i += 1
-            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
-            plt.axis('equal')
-            plt.savefig('cache/piegraph.png')
-            await ctx.send(file=discord.File("cache/piegraph.png"))
-            plt.clf()
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
-        else:
-            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
-
-    @commands.command(pass_context=True)
-    async def graphxp(self, ctx, r = 6):
-        """
-        Graphique représentant le classement des membres en fonction de leur XP
-        """
-        if ctx.guild.id == wel.idBASTION:
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
-                print('removed old graphe file')
-            total = sql.countTotalXP()
-            a = []
-            taille = sql.taille("bastion")
-            i = 1
-            while i <= taille:
-                IDi = sql.userID(i, "bastion")
-                XP = sql.valueAtNumber(IDi, "xp", "bastion")
-                a.append([XP, IDi])
-                i += 1
-            a.sort(reverse = True)
-            richest = a[:r]
-            sous_total = 0
-            for i in range(r):
-                sous_total += richest[i][0]
-            labels = []
-            sizes = []
-            for i in range(r):
-                try:
-                    labels.append(ctx.guild.get_member(richest[i][1]).name)
-                    sizes.append(richest[i][0])
-                except:
-                    labels.append(richest[i][1])
-                    sizes.append(richest[i][0])
-            labels.append("autre")
-            sizes.append(total - sous_total)
-            explode = ()
-            i = 0
-            while i <= r:
-                if i < r:
-                    explode = explode + (0,)
-                else:
-                    explode = explode + (0.2,)
-                i += 1
-            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
-            plt.axis('equal')
-            plt.savefig('cache/piegraph.png')
-            await ctx.send(file=discord.File("cache/piegraph.png"))
-            plt.clf()
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
-        else:
-            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+    # @commands.command(pass_context=True)
+    # async def graphheure(self, ctx, statue = "local", jour = "yesterday"):
+    #     """|local/total aaaa-mm-jj| affiche le graph des messages envoyés par heure"""
+    #     if ctx.guild.id == wel.idBASTION:
+    #         if jour == "yesterday":
+    #             jour = str(dt.date.today()-dt.timedelta(days = 1))
+    #         try :
+    #             logs = json.load(open("logs/log-{}.json".format(jour[:7]), "r"))
+    #         except FileNotFoundError :
+    #             await ctx.send("la date n'est pas correcte !")
+    #             return
+    #         log = logs[jour]
+    #         heures = log["msg {} heures".format(statue)]
+    #         if os.path.isfile("cache/graphheure.png"):
+    #             os.remove('cache/graphheure.png')
+    #             print('removed old graphe file')
+    #         x = []
+    #         y = []
+    #         for i in range(24):
+    #             x.append(i)
+    #             y.append(heures[str(i)])
+    #         if statue == "local":
+    #             plt.hist(x, bins = 24, weights = y)
+    #         else :
+    #             plt.plot(x, y, label="graph test")
+    #             plt.fill_between(x, y[0]-100, y, color='blue', alpha=0.5)
+    #         plt.xlabel('heures')
+    #         plt.ylabel('messages')
+    #         plt.title("graphique du {}".format(jour))
+    #         plt.savefig("cache/graphheure.png")
+    #         await ctx.send(file=discord.File("cache/graphheure.png"))
+    #         plt.clf()
+    #     else:
+    #         await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+    #
+    # @commands.command(pass_context=True)
+    # async def graphjour(self, ctx, statue = "local", mois = "now"):
+    #     """|local/total aaaa-mm| affiche le graph des messages envoyés par jour"""
+    #     if ctx.guild.id == wel.idBASTION:
+    #         if mois == "now":
+    #             mois = str(dt.date.today())[:7]
+    #         aaaa , mm = mois.split("-")
+    #         nom_mois = dt.datetime(int(aaaa), int(mm), 1).strftime("%B")
+    #         try :
+    #             logs = json.load(open("logs/log-{}.json".format(mois), "r"))
+    #         except ValueError :
+    #             ctx.send("la date n'est pas correcte !")
+    #             pass
+    #         if os.path.isfile("cache/graphjour.png"):
+    #             os.remove('cache/graphjour.png')
+    #             print('removed old graphe file')
+    #         msg = []
+    #         jour = []
+    #         text = "msg {} jour".format(statue)
+    #         for i in range(1, 32):
+    #             try :
+    #                 if i < 10:
+    #                     msg.append(logs["{}-0{}".format(mois, i)][text])
+    #                 else:
+    #                     msg.append(logs["{}-{}".format(mois, i)][text])
+    #                 jour.append(i)
+    #             except KeyError :
+    #                 pass
+    #         if statue == "local":
+    #             plt.hist(jour, bins = len((logs)), weights = msg)
+    #         else :
+    #             plt.plot(jour, msg, label="graph test")
+    #             plt.fill_between(jour, msg[0]-200, msg, color='blue', alpha=0.5)
+    #         plt.xlabel('jour')
+    #         plt.ylabel('messages')
+    #         plt.title("graphique du {} au {} {}".format(jour[0], jour[len(jour)-1], nom_mois))
+    #         plt.savefig("cache/graphjour.png")
+    #         await ctx.send(file=discord.File("cache/graphjour.png"))
+    #         plt.clf()
+    #     else:
+    #         await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+    #
+    # @commands.command(pass_context=True)
+    # async def graphmembre(self, ctx, r = 6):
+    #     """
+    #     Graphique représentant le classement des membres en fonction du nombre de messages écrit
+    #     """
+    #     if ctx.guild.id == wel.idBASTION:
+    #         if os.path.isfile("cache/piegraph.png"):
+    #             os.remove('cache/piegraph.png')
+    #             print('removed old graphe file')
+    #         total = sql.countTotalMsg()
+    #         a = []
+    #         taille = sql.taille("bastion")
+    #         i = 1
+    #         while i <= taille:
+    #             IDi = sql.userID(i, "bastion")
+    #             nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
+    #             a.append([nbMsg, IDi])
+    #             i += 1
+    #         a.sort(reverse = True)
+    #         richest = a[:r]
+    #         sous_total = 0
+    #         for i in range(r):
+    #             sous_total += richest[i][0]
+    #         labels = []
+    #         sizes = []
+    #         for i in range(r):
+    #             try:
+    #                 labels.append(ctx.guild.get_member(richest[i][1]).name)
+    #                 sizes.append(richest[i][0])
+    #             except:
+    #                 labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
+    #                 sizes.append(richest[i][0])
+    #         labels.append("autre")
+    #         sizes.append(total - sous_total)
+    #         explode = ()
+    #         i = 0
+    #         while i <= r:
+    #             if i < r:
+    #                 explode = explode + (0,)
+    #             else:
+    #                 explode = explode + (0.2,)
+    #             i += 1
+    #         plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
+    #         plt.axis('equal')
+    #         plt.savefig('cache/piegraph.png')
+    #         await ctx.send(file=discord.File("cache/piegraph.png"))
+    #         plt.clf()
+    #         if os.path.isfile("cache/piegraph.png"):
+    #             os.remove('cache/piegraph.png')
+    #     else:
+    #         await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+    #
+    # @commands.command(pass_context=True)
+    # async def graphxp(self, ctx, r = 6):
+    #     """
+    #     Graphique représentant le classement des membres en fonction de leur XP
+    #     """
+    #     if ctx.guild.id == wel.idBASTION:
+    #         if os.path.isfile("cache/piegraph.png"):
+    #             os.remove('cache/piegraph.png')
+    #             print('removed old graphe file')
+    #         total = sql.countTotalXP()
+    #         a = []
+    #         taille = sql.taille("bastion")
+    #         i = 1
+    #         while i <= taille:
+    #             IDi = sql.userID(i, "bastion")
+    #             XP = sql.valueAtNumber(IDi, "xp", "bastion")
+    #             a.append([XP, IDi])
+    #             i += 1
+    #         a.sort(reverse = True)
+    #         richest = a[:r]
+    #         sous_total = 0
+    #         for i in range(r):
+    #             sous_total += richest[i][0]
+    #         labels = []
+    #         sizes = []
+    #         for i in range(r):
+    #             try:
+    #                 labels.append(ctx.guild.get_member(richest[i][1]).name)
+    #                 sizes.append(richest[i][0])
+    #             except:
+    #                 labels.append(richest[i][1])
+    #                 sizes.append(richest[i][0])
+    #         labels.append("autre")
+    #         sizes.append(total - sous_total)
+    #         explode = ()
+    #         i = 0
+    #         while i <= r:
+    #             if i < r:
+    #                 explode = explode + (0,)
+    #             else:
+    #                 explode = explode + (0.2,)
+    #             i += 1
+    #         plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
+    #         plt.axis('equal')
+    #         plt.savefig('cache/piegraph.png')
+    #         await ctx.send(file=discord.File("cache/piegraph.png"))
+    #         plt.clf()
+    #         if os.path.isfile("cache/piegraph.png"):
+    #             os.remove('cache/piegraph.png')
+    #     else:
+    #         await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
 
 def setup(bot):

@@ -10,19 +10,12 @@ def install(package):
 install("pip")
 install("discord.py")
 
-# Communication avec le serveur Get Gems
-install("pyzmq")
-install("PyYAML")
-
 # Création de graphiques
 install("matplotlib")
 
 # Base de données
 install("tinydb")
 install("pysqlite3")
-
-# Gestion des événements
-install("apscheduler")
 
 # Média
 install("ffmpeg-python")
