@@ -14,7 +14,21 @@ DEFAUT_PREFIX = "!"
 VERSION = open("core/version.txt").read().replace("\n", "")
 TOKEN = open("token/token.txt", "r").read().replace("\n", "")
 PREFIX = open("core/prefix.txt", "r").read().replace("\n", "")
-client = commands.Bot(command_prefix = "{0}".format(PREFIX))
+
+intents = discord.Intents(
+    messages=True,
+    guilds=True,
+    members=True,
+    emojis=True,
+    voice_states=True,
+    presences=True,
+    guild_messages=True,
+    dm_messages=True,
+    reactions=True,
+    guild_reactions=True,
+    dm_reactions=True
+)
+client = commands.Bot(command_prefix = "{0}".format(PREFIX), intents=intents)
 NONE = open("help/cogs.txt", "w")
 NONE = open("help/help.txt", "w")
 

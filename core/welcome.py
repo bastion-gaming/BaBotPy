@@ -4,11 +4,10 @@ from core import roles, stats as stat
 idBaBot = 790899501845053461
 idGetGems = 620558080551157770
 
-idBASTION = 634317171496976395# 417445502641111051
+idBASTION = 417445502641111051
 
 
 async def memberjoin(member, channel):
-    print(channel)
     if member.guild.id == idBASTION:
         channel_regle = member.guild.get_channel(417454223224209408)
         ID = member.id
@@ -22,6 +21,10 @@ async def memberjoin(member, channel):
             await roles.addrole(member, "Nouveau")
         stat.countCo()
         print("Welcome >> {0} a rejoint le serveur {1}".format(member.name, member.guild.name))
+        await channel.send(msg)
+    else:
+        msg = ":blue_square: Bienvenue {0} sur {1}! :blue_square:".format(member.mention, member.guild.name)
+        msg += "\nAjoute aussi ton parrain avec `!parrain <Nom>`\n▬▬▬▬▬▬▬▬▬▬▬▬"
         await channel.send(msg)
 
 

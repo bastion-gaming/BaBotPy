@@ -10,12 +10,18 @@ rolelist = ["Baron du Bastion", "Baronne du Bastion", "Inquisiteur du Bastion", 
 
 async def addrole(member, role):
     setrole = get(member.guild.roles, name=role)
-    await member.add_roles(setrole)
+    if setrole != None:
+        await member.add_roles(setrole)
+    else:
+        await print("Role introuvable")
 
 
 async def removerole(member, role):
     setrole = get(member.guild.roles, name=role)
-    await member.remove_roles(setrole)
+    if setrole != None:
+        await member.remove_roles(setrole)
+    else:
+        await print("Role introuvable")
 
 
 class Roles(commands.Cog):
