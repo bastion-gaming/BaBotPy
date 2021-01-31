@@ -4,7 +4,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import bot
 import discord
 import json
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import os
 from core import welcome as wel, level as lvl
 
@@ -263,110 +263,110 @@ class Stats(commands.Cog):
     #         plt.clf()
     #     else:
     #         await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
-    #
-    # @commands.command(pass_context=True)
-    # async def graphmembre(self, ctx, r = 6):
-    #     """
-    #     Graphique représentant le classement des membres en fonction du nombre de messages écrit
-    #     """
-    #     if ctx.guild.id == wel.idBASTION:
-    #         if os.path.isfile("cache/piegraph.png"):
-    #             os.remove('cache/piegraph.png')
-    #             print('removed old graphe file')
-    #         total = sql.countTotalMsg()
-    #         a = []
-    #         taille = sql.taille("bastion")
-    #         i = 1
-    #         while i <= taille:
-    #             IDi = sql.userID(i, "bastion")
-    #             nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
-    #             a.append([nbMsg, IDi])
-    #             i += 1
-    #         a.sort(reverse = True)
-    #         richest = a[:r]
-    #         sous_total = 0
-    #         for i in range(r):
-    #             sous_total += richest[i][0]
-    #         labels = []
-    #         sizes = []
-    #         for i in range(r):
-    #             try:
-    #                 labels.append(ctx.guild.get_member(richest[i][1]).name)
-    #                 sizes.append(richest[i][0])
-    #             except:
-    #                 labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
-    #                 sizes.append(richest[i][0])
-    #         labels.append("autre")
-    #         sizes.append(total - sous_total)
-    #         explode = ()
-    #         i = 0
-    #         while i <= r:
-    #             if i < r:
-    #                 explode = explode + (0,)
-    #             else:
-    #                 explode = explode + (0.2,)
-    #             i += 1
-    #         plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
-    #         plt.axis('equal')
-    #         plt.savefig('cache/piegraph.png')
-    #         await ctx.send(file=discord.File("cache/piegraph.png"))
-    #         plt.clf()
-    #         if os.path.isfile("cache/piegraph.png"):
-    #             os.remove('cache/piegraph.png')
-    #     else:
-    #         await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
-    #
-    # @commands.command(pass_context=True)
-    # async def graphxp(self, ctx, r = 6):
-    #     """
-    #     Graphique représentant le classement des membres en fonction de leur XP
-    #     """
-    #     if ctx.guild.id == wel.idBASTION:
-    #         if os.path.isfile("cache/piegraph.png"):
-    #             os.remove('cache/piegraph.png')
-    #             print('removed old graphe file')
-    #         total = sql.countTotalXP()
-    #         a = []
-    #         taille = sql.taille("bastion")
-    #         i = 1
-    #         while i <= taille:
-    #             IDi = sql.userID(i, "bastion")
-    #             XP = sql.valueAtNumber(IDi, "xp", "bastion")
-    #             a.append([XP, IDi])
-    #             i += 1
-    #         a.sort(reverse = True)
-    #         richest = a[:r]
-    #         sous_total = 0
-    #         for i in range(r):
-    #             sous_total += richest[i][0]
-    #         labels = []
-    #         sizes = []
-    #         for i in range(r):
-    #             try:
-    #                 labels.append(ctx.guild.get_member(richest[i][1]).name)
-    #                 sizes.append(richest[i][0])
-    #             except:
-    #                 labels.append(richest[i][1])
-    #                 sizes.append(richest[i][0])
-    #         labels.append("autre")
-    #         sizes.append(total - sous_total)
-    #         explode = ()
-    #         i = 0
-    #         while i <= r:
-    #             if i < r:
-    #                 explode = explode + (0,)
-    #             else:
-    #                 explode = explode + (0.2,)
-    #             i += 1
-    #         plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
-    #         plt.axis('equal')
-    #         plt.savefig('cache/piegraph.png')
-    #         await ctx.send(file=discord.File("cache/piegraph.png"))
-    #         plt.clf()
-    #         if os.path.isfile("cache/piegraph.png"):
-    #             os.remove('cache/piegraph.png')
-    #     else:
-    #         await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+
+    @commands.command(pass_context=True)
+    async def graphmembre(self, ctx, r = 6):
+        """
+        Graphique représentant le classement des membres en fonction du nombre de messages écrit
+        """
+        if ctx.guild.id == wel.idBASTION:
+            if os.path.isfile("cache/piegraph.png"):
+                os.remove('cache/piegraph.png')
+                print('removed old graphe file')
+            total = sql.countTotalMsg()
+            a = []
+            taille = sql.taille("bastion")
+            i = 1
+            while i <= taille:
+                IDi = sql.userID(i, "bastion")
+                nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
+                a.append([nbMsg, IDi])
+                i += 1
+            a.sort(reverse = True)
+            richest = a[:r]
+            sous_total = 0
+            for i in range(r):
+                sous_total += richest[i][0]
+            labels = []
+            sizes = []
+            for i in range(r):
+                try:
+                    labels.append(ctx.guild.get_member(richest[i][1]).name)
+                    sizes.append(richest[i][0])
+                except:
+                    labels.append("Utilisateur inconnu\n{}".format(richest[i][1]))
+                    sizes.append(richest[i][0])
+            labels.append("autre")
+            sizes.append(total - sous_total)
+            explode = ()
+            i = 0
+            while i <= r:
+                if i < r:
+                    explode = explode + (0,)
+                else:
+                    explode = explode + (0.2,)
+                i += 1
+            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
+            plt.axis('equal')
+            plt.savefig('cache/piegraph.png')
+            await ctx.send(file=discord.File("cache/piegraph.png"))
+            plt.clf()
+            if os.path.isfile("cache/piegraph.png"):
+                os.remove('cache/piegraph.png')
+        else:
+            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+
+    @commands.command(pass_context=True)
+    async def graphxp(self, ctx, r = 6):
+        """
+        Graphique représentant le classement des membres en fonction de leur XP
+        """
+        if ctx.guild.id == wel.idBASTION:
+            if os.path.isfile("cache/piegraph.png"):
+                os.remove('cache/piegraph.png')
+                print('removed old graphe file')
+            total = sql.countTotalXP()
+            a = []
+            taille = sql.taille("bastion")
+            i = 1
+            while i <= taille:
+                IDi = sql.userID(i, "bastion")
+                XP = sql.valueAtNumber(IDi, "xp", "bastion")
+                a.append([XP, IDi])
+                i += 1
+            a.sort(reverse = True)
+            richest = a[:r]
+            sous_total = 0
+            for i in range(r):
+                sous_total += richest[i][0]
+            labels = []
+            sizes = []
+            for i in range(r):
+                try:
+                    labels.append(ctx.guild.get_member(richest[i][1]).name)
+                    sizes.append(richest[i][0])
+                except:
+                    labels.append(richest[i][1])
+                    sizes.append(richest[i][0])
+            labels.append("autre")
+            sizes.append(total - sous_total)
+            explode = ()
+            i = 0
+            while i <= r:
+                if i < r:
+                    explode = explode + (0,)
+                else:
+                    explode = explode + (0.2,)
+                i += 1
+            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
+            plt.axis('equal')
+            plt.savefig('cache/piegraph.png')
+            await ctx.send(file=discord.File("cache/piegraph.png"))
+            plt.clf()
+            if os.path.isfile("cache/piegraph.png"):
+                os.remove('cache/piegraph.png')
+        else:
+            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
 
 def setup(bot):
