@@ -158,7 +158,7 @@ client.load_extension('core.gestion')
 
 ##################### Commande images.py #####################
 
-client.load_extension('multimedia.images')
+# client.load_extension('multimedia.images')
 
 ###################### Commande parrain.py ########################
 

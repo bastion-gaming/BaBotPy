@@ -133,7 +133,7 @@ class UtilsSecret(commands.Cog):
 
     @commands.command(pass_context=True)
     async def revive(self, ctx):
-        await ctx.channel.send("Comme un phénix, <@604776153458278415> renait de ses cendres")
+        await ctx.channel.send("Comme un phénix, <@790899501845053461> renait de ses cendres")
 
 
 def setup(bot):

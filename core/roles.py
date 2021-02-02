@@ -5,7 +5,7 @@ from discord.utils import get
 from core import gestion as ge
 from DB import SQLite as sql
 
-rolelist = ["Baron du Bastion", "Baronne du Bastion", "Inquisiteur du Bastion", "Vasseaux du Bastion", "BastioBot", "Ingénieur du Bastion", "Responsable Twitch", "PEGI master", "Pollmaster", "Groovy", "Bastion RPG", "Ambassadeur", "Candidat Ambassade", "Twitcher", "Joueurs"]
+rolelist = ["Baron du Bastion", "Inquisiteur du Bastion", "BastioBot", "PEGI master", "Groovy", "Joueurs", "Archive", "Nouveau"]
 
 
 async def addrole(member, role):
@@ -29,16 +29,16 @@ class Roles(commands.Cog):
     def __init__(self, ctx):
         return(None)
 
-    @commands.command(pass_context=True)
-    async def gamecreate(self, ctx, game, categorie = None):
-        """**[jeu] [grand salon]** | Permet de créer un nouveau role pour un jeu et d'ajouter ce jeu dans un grand salon"""
+    @commands.command(pass_context=True, aliases=['gamecreate'])
+    async def rolecreate(self, ctx, game, categorie = None):
+        """**[role]** | Permet de créer un nouveau role pour un jeu"""
         # Paramètres:
         # - game: Nom du jeu/role
         # - categorie: Nom du grand salon (combat/societe/tirs/voiture/rpg/sandbox/strategie/divers)
         guild = ctx.guild
         member = ctx.author
         rolesearch = discord.utils.get(member.guild.roles, name=game)
-        if ge.permission(ctx, ge.Vasseaux):
+        if ge.permission(ctx, ge.Inquisiteur):
             if rolesearch == None:
                 await guild.create_role(name=game)
                 desc = "Le jeu '{0}' a été créé".format(game)
@@ -75,12 +75,12 @@ class Roles(commands.Cog):
         else :
             await ctx.channel.send("Tu ne peux pas exécuter cette commande.")
 
-    @commands.command(pass_context=True)
-    async def gameadd(self, ctx, role, nom = None):
+    @commands.command(pass_context=True, aliases=['gameadd'])
+    async def roleadd(self, ctx, role, nom = None):
         """**[role]** | Permet de s'ajouter des roles (Pour les Inquisiteurs, mentionner l'utilisateur cible apres le role pour lui affecter)"""
         if ge.permission(ctx, ge.Joueurs):
             if nom != None:
-                if ge.permission(ctx, ge.Vasseaux):
+                if ge.permission(ctx, ge.Inquisiteur):
                     ID = sql.nom_ID(nom)
                     nom = ctx.guild.get_member(ID)
                     nom = nom.name
@@ -93,7 +93,7 @@ class Roles(commands.Cog):
             user = get(ctx.guild.members, id=ID)
             if user:
                 setrole = get(user.guild.roles, name=role)
-                if ge.permission(ctx, ge.Vasseaux) is False:
+                if ge.permission(ctx, ge.Inquisiteur) is False:
                     for i in range(0, len(rolelist)):
                         if role == rolelist[i]:
                             await ctx.channel.send("Tu ne peux pas exécuter cette commande avec ce role.")
@@ -108,12 +108,12 @@ class Roles(commands.Cog):
         else:
             await ctx.channel.send("Tu ne peux pas exécuter cette commande.")
 
-    @commands.command(pass_context=True)
-    async def gameremove(self, ctx, role, nom = None):
+    @commands.command(pass_context=True, aliases=['gameremove'])
+    async def roleremove(self, ctx, role, nom = None):
         """**[role]** | Permet de s'enlever des roles (Pour les Inquisiteurs, mentionner l'utilisateur cible apres le role pour lui enlever)"""
         if ge.permission(ctx, ge.Joueurs):
             if nom != None:
-                if ge.permission(ctx, ge.Vasseaux):
+                if ge.permission(ctx, ge.Inquisiteur):
                     ID = sql.nom_ID(nom)
                     nom = ctx.guild.get_member(ID)
                     nom = nom.name
@@ -136,9 +136,9 @@ class Roles(commands.Cog):
         else:
             await ctx.channel.send("Tu ne peux pas exécuter cette commande.")
 
-    @commands.command(pass_context=True)
-    async def gamelist(self, ctx):
-        """Affiche la liste des jeux"""
+    @commands.command(pass_context=True, aliases=['gamelist'])
+    async def rolelist(self, ctx):
+        """Affiche la liste des rôles disponible"""
         desc = ""
         jsonlist = ctx.guild.roles
         rolelist = []
@@ -157,7 +157,7 @@ class Roles(commands.Cog):
         gamelist.sort()
         for i in range(0, len(gamelist)):
             desc += "{}\n".format(gamelist[i])
-        msg = discord.Embed(title = "Liste des jeux", color=35723, description = desc)
+        msg = discord.Embed(title = "Liste des rôles disponible", color=35723, description = desc)
         await ctx.channel.send(embed = msg)
 
 

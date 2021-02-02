@@ -90,7 +90,7 @@ class Level(commands.Cog):
     def __init__(self, ctx):
         return(None)
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, aliases=['infos', 'inf'])
     async def info(self, ctx, Nom = None):
             """
             Permet d'avoir le level d'un utilisateur
