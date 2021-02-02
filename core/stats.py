@@ -281,8 +281,12 @@ class Stats(commands.Cog):
             while i <= taille:
                 IDi = sql.userID(i, "bastion")
                 nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
-                a.append([nbMsg, IDi])
-                i += 1
+                try:
+                    Name = ctx.guild.get_member(IDi).name
+                    a.append([nbMsg, IDi])
+                    i += 1
+                except:
+                    i += 1
             a.sort(reverse = True)
             richest = a[:r]
             sous_total = 0
@@ -333,8 +337,12 @@ class Stats(commands.Cog):
             while i <= taille:
                 IDi = sql.userID(i, "bastion")
                 XP = sql.valueAtNumber(IDi, "xp", "bastion")
-                a.append([XP, IDi])
-                i += 1
+                try:
+                    Name = ctx.guild.get_member(IDi).name
+                    a.append([XP, IDi])
+                    i += 1
+                except:
+                    i += 1
             a.sort(reverse = True)
             richest = a[:r]
             sous_total = 0
