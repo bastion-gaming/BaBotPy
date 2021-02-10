@@ -122,9 +122,9 @@ async def on_voice_state_update(member, before, after):
             del on_vocal[member.name]
 
         # Cam XP
-        if after.self_video and not (member.name in on_vocal_cam) and after.channel.id != afkchannel:
+        if after.self_video and not (member.name in on_vocal_cam):
             on_vocal_cam[member.name] = time.time()
-        elif ((not after.self_video) or after.channel.id == afkchannel) and member.name in on_vocal_cam :
+        elif (not after.self_video) and member.name in on_vocal_cam :
             time_on_vocal_cam = round((time.time() - on_vocal_cam[member.name])/60)
             print('{} as passé {} minutes avec la caméra allumée !'.format(member.name, time_on_vocal_cam))
             balXP = sql.valueAt(ID, "xp", "bastion")
@@ -136,9 +136,9 @@ async def on_voice_state_update(member, before, after):
             del on_vocal_cam[member.name]
 
         # Stream XP
-        if after.self_stream and not (member.name in on_vocal_stream) and after.channel.id != afkchannel:
+        if after.self_stream and not (member.name in on_vocal_stream):
             on_vocal_stream[member.name] = time.time()
-        elif ((not after.self_stream) or after.channel.id == afkchannel) and member.name in on_vocal_stream :
+        elif (not after.self_stream) and member.name in on_vocal_stream :
             time_on_vocal_stream = round((time.time() - on_vocal_stream[member.name])/60)
             print('{} as passé {} minutes en stream !'.format(member.name, time_on_vocal_stream))
             balXP = sql.valueAt(ID, "xp", "bastion")
@@ -164,28 +164,6 @@ async def on_message(message):
             await client.process_commands(message)
     else:
         await client.process_commands(message)
-
-
-# @client.event
-# async def on_reaction_add(message, user):
-#     if not (message.author.bot or message.content.startswith(PREFIX)) :
-#         if message.guild.id == wel.idBASTION:
-#             await client.process_commands(message)
-#         else:
-#             await client.process_commands(message)
-#     else:
-#         await client.process_commands(message)
-#
-#
-# @client.event
-# async def on_reaction_remove(message, user):
-#     if not (message.author.bot or message.content.startswith(PREFIX)) :
-#         if message.guild.id == wel.idBASTION:
-#             await client.process_commands(message)
-#         else:
-#             await client.process_commands(message)
-#     else:
-#         await client.process_commands(message)
 
 ####################### Commande stats.py #######################
 
