@@ -136,9 +136,9 @@ async def on_voice_state_update(member, before, after):
             del on_vocal_cam[member.name]
 
         # Stream XP
-        if after.self_video and not (member.name in on_vocal_stream) and after.channel.id != afkchannel:
+        if after.self_stream and not (member.name in on_vocal_stream) and after.channel.id != afkchannel:
             on_vocal_stream[member.name] = time.time()
-        elif ((not after.self_video) or after.channel.id == afkchannel) and member.name in on_vocal_stream :
+        elif ((not after.self_stream) or after.channel.id == afkchannel) and member.name in on_vocal_stream :
             time_on_vocal_stream = round((time.time() - on_vocal_stream[member.name])/60)
             print('{} as passé {} minutes en stream !'.format(member.name, time_on_vocal_stream))
             balXP = sql.valueAt(ID, "xp", "bastion")
