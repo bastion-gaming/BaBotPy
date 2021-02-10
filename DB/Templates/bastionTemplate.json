@@ -12,5 +12,7 @@
   "xp":
     "INTEGER",
   "parrain":
+    "INTEGER",
+  "nbreaction":
     "INTEGER"
 }

@@ -33,6 +33,8 @@ NONE = open("help/cogs.txt", "w")
 NONE = open("help/help.txt", "w")
 
 on_vocal = {}
+on_vocal_cam = {}
+on_vocal_stream = {}
 jour = dt.date.today()
 
 #####################################################
@@ -92,6 +94,9 @@ async def on_member_remove(member):
     await systemchannel.send(wel.memberremove(member))
 
 
+####################### Stat ####################################
+
+
 @client.event
 async def on_voice_state_update(member, before, after):
     ID = member.id
@@ -101,6 +106,8 @@ async def on_voice_state_update(member, before, after):
             afkchannel = guild.afk_channel.id
         else:
             afkchannel = 0
+
+        # Voice XP
         if after.channel != None and not (member.name in on_vocal) and after.channel.id != afkchannel:
             on_vocal[member.name] = time.time()
         elif (after.channel == None or after.channel.id == afkchannel) and member.name in on_vocal :
@@ -114,8 +121,34 @@ async def on_voice_state_update(member, before, after):
             await lvl.checklevelvocal(member)
             del on_vocal[member.name]
 
+        # Cam XP
+        if after.self_video and not (member.name in on_vocal_cam) and after.channel.id != afkchannel:
+            on_vocal_cam[member.name] = time.time()
+        elif ((not after.self_video) or after.channel.id == afkchannel) and member.name in on_vocal_cam :
+            time_on_vocal_cam = round((time.time() - on_vocal_cam[member.name])/60)
+            print('{} as passé {} minutes avec la caméra allumée !'.format(member.name, time_on_vocal_cam))
+            balXP = sql.valueAt(ID, "xp", "bastion")
+            if balXP != 0:
+                balXP = int(balXP[0])
+            XP = balXP + int(time_on_vocal_cam)
+            sql.updateField(ID, "xp", XP, "bastion")
+            await lvl.checklevelvocal(member)
+            del on_vocal_cam[member.name]
 
-####################### Stat ####################################
+        # Stream XP
+        if after.self_video and not (member.name in on_vocal_stream) and after.channel.id != afkchannel:
+            on_vocal_stream[member.name] = time.time()
+        elif ((not after.self_video) or after.channel.id == afkchannel) and member.name in on_vocal_stream :
+            time_on_vocal_stream = round((time.time() - on_vocal_stream[member.name])/60)
+            print('{} as passé {} minutes en stream !'.format(member.name, time_on_vocal_stream))
+            balXP = sql.valueAt(ID, "xp", "bastion")
+            if balXP != 0:
+                balXP = int(balXP[0])
+            XP = balXP + int(time_on_vocal_stream)
+            sql.updateField(ID, "xp", XP, "bastion")
+            await lvl.checklevelvocal(member)
+            del on_vocal_stream[member.name]
+
 
 @client.event
 async def on_message(message):
@@ -131,6 +164,28 @@ async def on_message(message):
             await client.process_commands(message)
     else:
         await client.process_commands(message)
+
+
+# @client.event
+# async def on_reaction_add(message, user):
+#     if not (message.author.bot or message.content.startswith(PREFIX)) :
+#         if message.guild.id == wel.idBASTION:
+#             await client.process_commands(message)
+#         else:
+#             await client.process_commands(message)
+#     else:
+#         await client.process_commands(message)
+#
+#
+# @client.event
+# async def on_reaction_remove(message, user):
+#     if not (message.author.bot or message.content.startswith(PREFIX)) :
+#         if message.guild.id == wel.idBASTION:
+#             await client.process_commands(message)
+#         else:
+#             await client.process_commands(message)
+#     else:
+#         await client.process_commands(message)
 
 ####################### Commande stats.py #######################
 
