@@ -398,15 +398,22 @@ class Stats(commands.Cog):
                 except:
                     i += 1
             UserList = sorted(UserList, key=itemgetter(1), reverse=True)
+            Titre = "Classement des membres en fonction de l'XP"
             j = 1
             desc = ""
             for one in UserList: # affichage des données trié
                 if j <= n:
                     desc += "{number} |`{name}`: **{XP}** XP • _{msg}_ messages postés depuis le {arrival}\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3])
+                    if j % 20 == 0 and j != 0:
+                        MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                        desc = ""
+                        await ctx.channel.send(embed = MsgEmbed)
                 j += 1
-            Titre = "Classement des membres en fonction de l'XP"
-            msg = discord.Embed(title = Titre, color= 13752280, description = desc)
-            await ctx.channel.send(embed = msg)
+            if desc != "":
+                MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                await ctx.channel.send(embed = MsgEmbed)
+            else:
+                await True
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
@@ -431,15 +438,22 @@ class Stats(commands.Cog):
                 except:
                     i += 1
             UserList = sorted(UserList, key=itemgetter(2), reverse=True)
+            Titre = "Classement des membres en fonction du nombre de messages postés"
             j = 1
             desc = ""
             for one in UserList: # affichage des données trié
                 if j <= n:
                     desc += "{number} |`{name}`: **{msg}** messages postés depuis le {arrival} • _{XP}_ XP\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3])
+                    if j % 20 == 0 and j != 0:
+                        MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                        desc = ""
+                        await ctx.channel.send(embed = MsgEmbed)
                 j += 1
-            Titre = "Classement des membres en fonction du nombre de messages postés"
-            msg = discord.Embed(title = Titre, color= 13752280, description = desc)
-            await ctx.channel.send(embed = msg)
+            if desc != "":
+                MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                await ctx.channel.send(embed = MsgEmbed)
+            else:
+                await True
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
