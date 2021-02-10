@@ -412,8 +412,6 @@ class Stats(commands.Cog):
             if desc != "":
                 MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                 await ctx.channel.send(embed = MsgEmbed)
-            else:
-                await True
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
