@@ -117,7 +117,7 @@ class Level(commands.Cog):
                 msg = "**Utilisateur:** {}".format(Nom)
                 emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
 
-                if ctx.guild.id == wel.idBASTION:
+                if ctx.guild.id == wel.idBASTION or True:
                     # Niveaux part
                     msg = ""
                     palier = lvlPalier(lvl)

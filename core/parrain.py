@@ -76,6 +76,35 @@ class Parrain(commands.Cog):
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
+    @commands.command(pass_context=True)
+    async def filleul_supp(self, ctx, nom):
+        """
+        Affiche la liste des filleuls d'un joueur
+        """
+        if ctx.guild.id == wel.idBASTION or True:
+            ID_p = ctx.author.id
+            ID_f = sql.nom_ID(nom)
+            if ID_f == -1:
+                msg = "Ce joueur n'existe pas !"
+                await ctx.channel.send(msg)
+                return
+
+            parrain = sql.valueAt(ID_f, "parrain", "bastion")
+            if parrain == 0:
+                return await ctx.channel.send("Ce joueur n'a pas de parrain")
+            if parrain[0] == ID_p:
+                sql.updateField(ID_f, "parrain", "", "bastion")
+                lvl.addxp(ID_f, -15)
+                fil_count = sql.countFilleul(ID_p)
+                gain_p = -100 * int(fil_count)
+                lvl.addxp(ID_p, gain_p)
+                msg = "Votre filleul <@{filleul}> a bien été retiré ! Vous perdez {xp_p} XP et lui 15 XP.".format(filleul=ID_f, xp_p=gain_p)
+            else:
+                msg = "Vous n'etes pas son parrain !"
+            await ctx.channel.send(msg)
+        else:
+            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
+
 
 def setup(bot):
     bot.add_cog(Parrain(bot))
