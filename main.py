@@ -168,7 +168,7 @@ async def on_message(message):
 
 @client.event
 async def on_raw_reaction_add(payload):
-    if payload.guild_id == wel.idBASTION or True:
+    if payload.guild_id == wel.idBASTION:
         ID = payload.user_id
         lvl.addxp(ID, 1)
         bal = sql.valueAtNumber(ID, "nbreaction", "bastion")
@@ -181,7 +181,7 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    if payload.guild_id == wel.idBASTION or True:
+    if payload.guild_id == wel.idBASTION:
         ID = payload.user_id
         lvl.addxp(ID, -1)
         bal = sql.valueAtNumber(ID, "nbreaction", "bastion")
