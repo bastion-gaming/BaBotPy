@@ -114,6 +114,7 @@ class Level(commands.Cog):
                     await roles.addrole(member, "Nouveau")
                 lvl = sql.valueAtNumber(ID, "lvl", "bastion")
                 xp = sql.valueAtNumber(ID, "xp", "bastion")
+                reaction = sql.valueAtNumber(ID, "nbreaction", "bastion")
                 msg = "**Utilisateur:** {}".format(Nom)
                 emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
 
@@ -121,7 +122,8 @@ class Level(commands.Cog):
                     # Niveaux part
                     msg = ""
                     palier = lvlPalier(lvl)
-                    msg += "XP: `{0}/{1}`".format(xp, palier)
+                    msg += "XP: `{0}/{1}`\n".format(xp, palier)
+                    msg += "Réactions: `{0}`\n".format(reaction)
                     emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
 
                     # Parrainage

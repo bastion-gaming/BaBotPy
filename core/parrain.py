@@ -48,7 +48,7 @@ class Parrain(commands.Cog):
         """
         Affiche la liste des filleuls d'un joueur
         """
-        if ctx.guild.id == wel.idBASTION or True:
+        if ctx.guild.id == wel.idBASTION:
             if nom == None:
                 ID = ctx.author.id
                 nom = ctx.author.name
@@ -81,7 +81,7 @@ class Parrain(commands.Cog):
         """
         Affiche la liste des filleuls d'un joueur
         """
-        if ctx.guild.id == wel.idBASTION or True:
+        if ctx.guild.id == wel.idBASTION:
             ID_p = ctx.author.id
             ID_f = sql.nom_ID(nom)
             if ID_f == -1:

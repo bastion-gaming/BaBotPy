@@ -165,6 +165,32 @@ async def on_message(message):
     else:
         await client.process_commands(message)
 
+
+@client.event
+async def on_raw_reaction_add(payload):
+    if payload.guild_id == wel.idBASTION or True:
+        ID = payload.user_id
+        lvl.addxp(ID, 1)
+        bal = sql.valueAtNumber(ID, "nbreaction", "bastion")
+        if bal is None:
+            bal = 0
+        ns = int(bal) + 1
+        sql.updateField(ID, "nbreaction", ns, "bastion")
+    print("{0} • Reaction + 1 • {1}".format(payload.member.name, payload.emoji.name))
+
+
+@client.event
+async def on_raw_reaction_remove(payload):
+    if payload.guild_id == wel.idBASTION or True:
+        ID = payload.user_id
+        lvl.addxp(ID, -1)
+        bal = sql.valueAtNumber(ID, "nbreaction", "bastion")
+        ns = int(bal) - 1
+        if ns <= 0:
+            ns = 0
+        sql.updateField(ID, "nbreaction", ns, "bastion")
+    print("{0} • Reaction - 1 • {1}".format(payload.user_id, payload.emoji.name))
+
 ####################### Commande stats.py #######################
 
 client.load_extension('core.stats')
