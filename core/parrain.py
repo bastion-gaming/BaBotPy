@@ -48,7 +48,7 @@ class Parrain(commands.Cog):
         """
         Affiche la liste des filleuls d'un joueur
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id == wel.idBASTION or True:
             if nom == None:
                 ID = ctx.author.id
                 nom = ctx.author.name
@@ -61,11 +61,11 @@ class Parrain(commands.Cog):
 
             F_li = sql.listFilleul(ID)
             if F_li != 0:
-                if len(F_li) > 1:
+                if int(sql.countFilleul(ID)) > 1:
                     sV = "s"
                 else:
                     sV = ""
-                msg = "Filleul{1} `x{0}`:".format(len(F_li), sV)
+                msg = "Filleul{1} `x{0}`:".format(sql.countFilleul(ID), sV)
                 for one in F_li:
                     msg += "\n<@{}>".format(one[0])
                 emb = discord.Embed(title = "Informations :", color= 13752280, description = msg)

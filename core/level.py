@@ -134,11 +134,11 @@ class Level(commands.Cog):
                         msg += "\nParain: `None`"
 
                     if F_li != 0:
-                        if len(F_li) > 1:
+                        if int(sql.countFilleul(ID)) > 1:
                             sV = "s"
                         else:
                             sV = ""
-                        msg += "\nFilleul{1} `x{0}`:".format(len(F_li), sV)
+                        msg += "\nFilleul{1} `x{0}`:".format(sql.countFilleul(ID), sV)
                         for one in F_li:
                             msg += "\n<@{}>".format(one[0])
 

@@ -312,8 +312,7 @@ def listFilleul(ID):
     if value == []:
         return 0
     else:
-        for a in value:
-            return a[0]
+        return value
 
 
 # -------------------------------------------------------------------------------
