@@ -93,11 +93,11 @@ class Parrain(commands.Cog):
             if parrain == 0:
                 return await ctx.channel.send("Ce joueur n'a pas de parrain")
             if parrain[0] == ID_p:
-                sql.updateField(ID_f, "parrain", "", "bastion")
                 lvl.addxp(ID_f, -15)
                 fil_count = sql.countFilleul(ID_p)
                 gain_p = -100 * int(fil_count)
                 lvl.addxp(ID_p, gain_p)
+                sql.updateField(ID_f, "parrain", "", "bastion")
                 msg = "Votre filleul <@{filleul}> a bien été retiré ! Vous perdez {xp_p} XP et lui 15 XP.".format(filleul=ID_f, xp_p=-gain_p)
             else:
                 msg = "Vous n'etes pas son parrain !"
