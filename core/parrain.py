@@ -31,8 +31,8 @@ class Parrain(commands.Cog):
                     # print("Parrain ajouté")
                     sql.add(ID_p, ID, 1, "filleuls")
                     lvl.addxp(ID, 15)
-                    fil_L = sql.valueAt(ID_p, "all", "filleuls")
-                    gain_p = 100 * len(fil_L)
+                    fil_L = sql.countFilleul(ID_p)
+                    gain_p = 100 * int(fil_L)
                     lvl.addxp(ID_p, gain_p)
                     msg = "Votre parrain a bien été ajouté ! Vous empochez 15 XP et lui {0} XP.".format(gain_p)
                 else :
@@ -59,7 +59,7 @@ class Parrain(commands.Cog):
                     await ctx.channel.send(msg)
                     return
 
-            F_li = sql.valueAt(ID, "all", "filleuls")
+            F_li = sql.listFilleul(ID)
             if F_li != 0:
                 if len(F_li) > 1:
                     sV = "s"

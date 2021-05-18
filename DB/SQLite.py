@@ -292,6 +292,31 @@ def countTotalXP():
 
 
 # -------------------------------------------------------------------------------
+def countFilleul(ID):
+    # Donne le nombre total de messages écrit sur le discord de Bastion
+    script = "SELECT count(idbastion) FROM bastion WHERE parrain = {0}".format(int(ID))
+    cursor = conn.cursor()
+    cursor.execute(script)
+    for a in cursor.fetchall():
+        return a[0]
+
+
+# -------------------------------------------------------------------------------
+def listFilleul(ID):
+    # Donne le nombre total de messages écrit sur le discord de Bastion
+    script = "SELECT ID_discord FROM bastion JOIN IDs USING(ID) WHERE parrain = {0}".format(int(ID))
+    cursor = conn.cursor()
+    cursor.execute(script)
+    value = cursor.fetchall()
+
+    if value == []:
+        return 0
+    else:
+        for a in value:
+            return a[0]
+
+
+# -------------------------------------------------------------------------------
 def taille(nameDB = None):
     """Retourne la taille de la table selectionner"""
     if nameDB == None:

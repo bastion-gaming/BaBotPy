@@ -126,7 +126,7 @@ class Level(commands.Cog):
 
                     # Parrainage
                     P = sql.valueAt(ID, "parrain", "bastion")
-                    F_li = sql.valueAt(ID, "all", "filleuls")
+                    F_li = sql.listFilleul(ID)
                     msg = ""
                     if P[0] != 0:
                         msg += "\nParrain: <@{0}>".format(P[0])
