@@ -98,7 +98,7 @@ class Parrain(commands.Cog):
                 fil_count = sql.countFilleul(ID_p)
                 gain_p = -100 * int(fil_count)
                 lvl.addxp(ID_p, gain_p)
-                msg = "Votre filleul <@{filleul}> a bien été retiré ! Vous perdez {xp_p} XP et lui 15 XP.".format(filleul=ID_f, xp_p=gain_p)
+                msg = "Votre filleul <@{filleul}> a bien été retiré ! Vous perdez {xp_p} XP et lui 15 XP.".format(filleul=ID_f, xp_p=-gain_p)
             else:
                 msg = "Vous n'etes pas son parrain !"
             await ctx.channel.send(msg)
