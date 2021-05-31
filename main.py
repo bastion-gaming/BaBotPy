@@ -124,7 +124,7 @@ async def on_voice_state_update(member, before, after):
         # Cam XP
         if after.self_video and not (member.name in on_vocal_cam):
             on_vocal_cam[member.name] = time.time()
-        elif (not after.self_video) and member.name in on_vocal_cam :
+        elif (after.channel == None or not after.self_video) and member.name in on_vocal_cam :
             time_on_vocal_cam = round((time.time() - on_vocal_cam[member.name])/60)
             print('{} as passé {} minutes avec la caméra allumée !'.format(member.name, time_on_vocal_cam))
             balXP = sql.valueAt(ID, "xp", "bastion")
@@ -138,7 +138,7 @@ async def on_voice_state_update(member, before, after):
         # Stream XP
         if after.self_stream and not (member.name in on_vocal_stream):
             on_vocal_stream[member.name] = time.time()
-        elif (not after.self_stream) and member.name in on_vocal_stream :
+        elif (after.channel == None or not after.self_stream) and member.name in on_vocal_stream :
             time_on_vocal_stream = round((time.time() - on_vocal_stream[member.name])/60)
             print('{} as passé {} minutes en stream !'.format(member.name, time_on_vocal_stream))
             balXP = sql.valueAt(ID, "xp", "bastion")
