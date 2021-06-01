@@ -81,7 +81,9 @@ class Gestion(commands.Cog):
                 members = ctx.guild.members
                 for member in members:
                     sql.newPlayer(member.id)
-                await ctx.channel.send("la bdd est remplis !")
+                desc = "la bdd est remplis !"
+                msg = discord.Embed(title = "Message de Babot", color= 9576994, description = desc)
+                await ctx.send(embed = msg, delete_after = 20)
             else:
                 ctx.send("tu n'as pas les droits")
         else:
@@ -95,15 +97,16 @@ class Gestion(commands.Cog):
             try :
                 nb = int(nb)
                 if nb <= suppMax :
-                    await ctx.channel.purge(limit =nb)
-                    msg = '{0} messages on été éffacé !'.format(nb)
+                    await ctx.channel.purge(limit = nb+1)
+                    desc = '{0} messages on été éffacé !'.format(nb+1)
                 else:
-                    msg = "On ne peut pas supprimer plus de {} messages à la fois".format(suppMax)
+                    desc = "On ne peut pas supprimer plus de {} messages à la fois".format(suppMax)
             except ValueError:
-                msg = "Commande mal remplis"
+                desc = "Commande mal remplie TOCARD"
         else :
-            msg = "Tu ne remplis pas les conditions"
-        await ctx.channel.send(msg)
+            desc = "Tu ne remplis pas les conditions, tu fais partie de la plèbe !"
+        msg = discord.Embed(title = "Message de Babot", color= 9576994, description = desc)
+        await ctx.send(embed = msg, delete_after = 20)
 
     @client.command(pass_context=True)
     async def vote(self, ctx, *, args):

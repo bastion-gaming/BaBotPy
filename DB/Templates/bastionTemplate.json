@@ -14,5 +14,11 @@
   "parrain":
     "INTEGER",
   "nbreaction":
+    "INTEGER",
+  "top_0621":
+    "INTEGER",
+  "lvl_0621":
+    "INTEGER",
+  "xp_0621":
     "INTEGER"
 }

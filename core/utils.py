@@ -85,18 +85,6 @@ class UtilsSecret(commands.Cog):
         return(None)
 
     @commands.command(pass_context=True)
-    async def test(self, ctx, ID = None, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
-        if ID == "check":
-            await ctx.channel.send("Check!")
-        # elif ID == "stat":
-        #     if arg1 == "write":
-        #         await ctx.channel.send(GS.csv_add(arg2))
-        #     elif arg1 == "read":
-        #         await ctx.channel.send(GS.csv_read(arg2, dt.datetime.now()))
-        else:
-            await ctx.channel.send(":regional_indicator_t::regional_indicator_e::regional_indicator_s::regional_indicator_t:")
-
-    @commands.command(pass_context=True)
     async def sql(self, ctx, fct = None, ID = None, arg2 = None, arg3 = None, arg4 = None):
         if ID == None:
             ID = ctx.author.id
@@ -127,9 +115,12 @@ class UtilsSecret(commands.Cog):
                 msg = sql.taille(arg2)
                 await ctx.channel.send(msg)
             else:
-                await ctx.channel.send(":regional_indicator_s::regional_indicator_q::regional_indicator_l:")
+                msg = discord.Embed(title = "Message de Babot", color= 9576994, description = "Action sur la DB effectué avec succès")
+                await ctx.send(embed = msg, delete_after = 20)
         else:
-            await ctx.channel.send("Tu n'est pas autorisé a utilisé cette commande!")
+            desc = "Tu n'est pas autorisé a utilisé cette commande!"
+            msg = discord.Embed(title = "Message de Babot", color= 9576994, description = desc)
+            await ctx.send(embed = msg, delete_after = 20)
 
     @commands.command(pass_context=True)
     async def revive(self, ctx):

@@ -29,7 +29,6 @@ class Parrain(commands.Cog):
                 if sql.get_PlayerID(ID_p, "bastion") != "Error 404" and sql.valueAtNumber(ID, "parrain", "bastion") == 0 and ID_p != ID:
                     sql.updateField(ID, "parrain", ID_p, "bastion")
                     # print("Parrain ajouté")
-                    sql.add(ID_p, ID, 1, "filleuls")
                     lvl.addxp(ID, 15)
                     fil_L = sql.countFilleul(ID_p)
                     gain_p = 100 * int(fil_L)

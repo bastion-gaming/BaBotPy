@@ -126,6 +126,17 @@ class Level(commands.Cog):
                     msg += "Réactions: `{0}`\n".format(reaction)
                     emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
 
+                    # Prestige 06/2021
+                    msg = ""
+                    top_0621 = sql.valueAtNumber(ID, "top_0621", "bastion")
+                    lvl_0621 = sql.valueAtNumber(ID, "lvl_0621", "bastion")
+                    xp_0621 = sql.valueAtNumber(ID, "xp_0621", "bastion")
+                    if top_0621 != 0 or top_0621 != None:
+                        msg += "Rang: `{v}`\n".format(v=top_0621)
+                        msg += "Niveau: `{v}`\n".format(v=lvl_0621)
+                        msg += "XP: `{v}`\n".format(v=xp_0621)
+                        emb.add_field(name="**_Prestige_ {0}**".format("Juin 2021"), value=msg, inline=False)
+
                     # Parrainage
                     P = sql.valueAt(ID, "parrain", "bastion")
                     F_li = sql.listFilleul(ID)

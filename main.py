@@ -48,7 +48,7 @@ async def on_ready():
     print('Connecté avec le nom : {0.user}'.format(client))
     print('PREFIX = '+str(PREFIX))
     print('\nBastionBot '+VERSION)
-    activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help ◀ bastion-gaming.fr ▶".format(PREFIX))
+    activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help | bastion-gaming.fr".format(PREFIX))
     await client.change_presence(status=discord.Status.online, activity=activity)
     print(sql.init())
     flag = sql.checkField()
@@ -176,7 +176,6 @@ async def on_raw_reaction_add(payload):
             bal = 0
         ns = int(bal) + 1
         sql.updateField(ID, "nbreaction", ns, "bastion")
-    # print("{0} • Reaction + 1 • {1}".format(payload.member.name, payload.emoji.name))
 
 
 @client.event
@@ -189,7 +188,6 @@ async def on_raw_reaction_remove(payload):
         if ns <= 0:
             ns = 0
         sql.updateField(ID, "nbreaction", ns, "bastion")
-    # print("{0} • Reaction - 1 • {1}".format(payload.user_id, payload.emoji.name))
 
 ####################### Commande stats.py #######################
 
@@ -217,7 +215,7 @@ client.load_extension('core.gestion')
 
 ##################### Commande images.py #####################
 
-client.load_extension('multimedia.images')
+# client.load_extension('multimedia.images')
 
 ###################### Commande parrain.py ########################
 
