@@ -176,7 +176,7 @@ async def on_raw_reaction_add(payload):
             bal = 0
         ns = int(bal) + 1
         sql.updateField(ID, "nbreaction", ns, "bastion")
-    print("{0} • Reaction + 1 • {1}".format(payload.member.name, payload.emoji.name))
+    # print("{0} • Reaction + 1 • {1}".format(payload.member.name, payload.emoji.name))
 
 
 @client.event
@@ -189,7 +189,7 @@ async def on_raw_reaction_remove(payload):
         if ns <= 0:
             ns = 0
         sql.updateField(ID, "nbreaction", ns, "bastion")
-    print("{0} • Reaction - 1 • {1}".format(payload.user_id, payload.emoji.name))
+    # print("{0} • Reaction - 1 • {1}".format(payload.user_id, payload.emoji.name))
 
 ####################### Commande stats.py #######################
 
