@@ -107,26 +107,8 @@ venv.bak/
 
 
 # other
-downloads/*
+cache/*
 logs/*
-time*.json
-gems/dbGems.json
-gems/dbSession.json
-gems/bourse.json
-gems/dbHotHouse.json
-help/cogs.txt
-help/help.txt
-multimedia/token_youtube.txt
-multimedia/twitch_client_id.txt
-multimedia/twitch_secret_id.txt
 token/token.txt
-token/token_getgems.txt
-icons/gem_ Template upgrade.psd
-icons/spinelle.psd
-gems/guildes.json
 *.db
 *.bak
-*DB.json
-core/co.json
-gems/bourse/*
-multimedia/local.json
