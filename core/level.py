@@ -19,6 +19,23 @@ def addreaction(ID, nb):
     requests.put('http://{ip}/users/reaction/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=nb))
 
 
+def xpmsg(message):
+    ID = message.author.id
+    checkInfo(ID)
+    if message.mention_everyone is False:
+        lw = message.content.split()
+        nb = int(lw/15)
+        if nb <= 0:
+            nb = 1
+        elif nb > 5:
+            nb = 5
+        addxp(ID, nb)
+    else:
+        addxp(ID, 1)
+    addmsg(ID, 1)
+    return True
+
+
 def addxp_voc(ID, time):
     PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
     time = int(time)

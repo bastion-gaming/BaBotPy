@@ -88,18 +88,12 @@ async def on_member_remove(member):
 
 @client.event
 async def on_message(message):
-    ID = message.author.id
     if not (message.author.bot or message.content.startswith(PREFIX)) :
         if message.guild.id == wel.idBASTION:
-            lvl.checkInfo(ID)
-            lvl.addmsg(ID, 1)
-            lvl.addxp(ID, 1)
-            await lvl.checklevel(message)
-            await client.process_commands(message)
-        else:
-            await client.process_commands(message)
-    else:
-        await client.process_commands(message)
+            if message.content.split()[0] not in ge.PREFIX_LIST:
+                lvl.xpmsg(message)
+                await lvl.checklevel(message)
+    await client.process_commands(message)
 
 
 @client.event

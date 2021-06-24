@@ -18,6 +18,7 @@ guildID = [
     129364058901053440  # TopazDev
 ]
 
+PREFIX_LIST = ["!", "/", "*", "-", "§", "?"]
 
 def permission(ctx, grade):
     roles = ctx.author.roles
