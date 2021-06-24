@@ -15,7 +15,7 @@ async def memberjoin(member, channel):
             requests.post('http://{ip}/users/create/?discord_id={discord_id}'.format(ip=ge.API_IP, discord_id=ID))
             msg = ":blue_square: Bienvenue {0} sur Bastion! :blue_square: \nNous sommes ravis que tu aies rejoint notre communauté !".format(member.mention)
             msg += "\n\nMerci de lire les règles et le fonctionnement du serveur dans le salon {0}".format(channel_regle.mention)
-            msg += "\nAjoute aussi ton parrain avec `!parrain <Nom>`\n▬▬▬▬▬▬▬▬▬▬▬▬"
+            msg += "\nAjoute aussi ton parrain avec `!parrain @pseudo`\n▬▬▬▬▬▬▬▬▬▬▬▬"
             await ge.addrole(member, "Nouveau")
         else:
             msg = "▬▬▬▬▬▬ Bon retour parmis nous ! {0} ▬▬▬▬▬▬".format(member.mention)
@@ -23,7 +23,7 @@ async def memberjoin(member, channel):
         await channel.send(msg)
     else:
         msg = ":blue_square: Bienvenue {0} sur {1}! :blue_square:".format(member.mention, member.guild.name)
-        msg += "\nAjoute aussi ton parrain avec `!parrain <Nom>`\n▬▬▬▬▬▬▬▬▬▬▬▬"
+        msg += "\nAjoute aussi ton parrain avec `!parrain @pseudo`\n▬▬▬▬▬▬▬▬▬▬▬▬"
         await channel.send(msg)
 
 
