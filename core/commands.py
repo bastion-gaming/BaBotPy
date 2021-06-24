@@ -94,7 +94,7 @@ class Commandes(commands.Cog):
                         sV = ""
                     msg += "\nFilleul{1} `x{0}`:".format(nbF, sV)
                     for one in F_li:
-                        msg += "\n<@{}>".format(one[0])
+                        msg += "\n<@{0}>".format(one['discord_id'])
 
                 emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
 

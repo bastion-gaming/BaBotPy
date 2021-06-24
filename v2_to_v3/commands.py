@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import bot
 import discord
 from core import gestion as ge, level, welcome as we
-from core import SQLite as sql
+from v2_to_v3 import SQLite as sql
 import datetime as dt
 
 
