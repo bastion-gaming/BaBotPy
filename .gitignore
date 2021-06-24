@@ -87,6 +87,7 @@ celerybeat-schedule
 env/
 venv/
 env_babot/
+env_api/
 env_client/
 ENV/
 env.bak/
@@ -107,8 +108,8 @@ venv.bak/
 
 
 # other
-cache/*
-logs/*
-token/token.txt
+core/cache/*
+core/logs/*
+core/token.txt
 *.db
 *.bak
