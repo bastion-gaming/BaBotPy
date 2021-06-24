@@ -25,3 +25,12 @@ install("SQLAlchemy", "1.4.3")
 
 # Création de graphiques
 install("matplotlib", "3.4.2")
+
+# Média
+# install("ffmpeg-python")
+# install("youtube-dl")
+# install("google-api-python-client")
+# install("google_images_download")
+
+# Gestion des événements
+# install("apscheduler")
