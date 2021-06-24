@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="FR">
+<!--=======================-->
+<!--====== HTML HEAD ======-->
+<!--=======================-->
+<head>
+	<meta name="author" content="Azerxim">
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+	<meta name="description" content="Accueil du site TopazDev.fr"/>
+	<meta name="keywords" content="topazdev, topaz, minecraft, dev, developpeur, developer"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>API</title>
+
+	<link rel="shortcut icon" href="https://www.topazdev.fr/images/favicon.ico"/>
+
+<!--====== Style CSS ======-->
+  <link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/main.css">
+  <link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/display.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/menu.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/menu_bordure.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/background.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/color.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/button.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/tableau.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/filtres.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/form.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/msgbox.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/markdown.css">
+	<link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/responsive.css">
+  <link rel="stylesheet" type="text/css" href="https://css.topazdev.fr/6.6x/bulma.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
+
+</head>
+
+<!--=======================-->
+<!--====== HTML BODY ======-->
+<!--=======================-->
+
+<body>
+  <section>
+    <!--====== TopazDev Menu | Desktop 2.2 ======-->
+    <nav class="navbar is-TD_ultradarkblue" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="https://www.topazdev.fr/">
+          <img src="https://www.topazdev.fr/images/logo_topazdev.png">
+        </a>
+        <a class="navbar-item" href="https://www.bastion-gaming.fr/">
+          <img src="https://www.bastion-gaming.fr/images/logo/Bastion%20White.png">
+        </a>
+
+        <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-start">
+          <!-- <a class="navbar-item" href="https://github.com/bastion-gaming/Solar-API">
+            <span>Solar API</span>
+          </a>
+          <a class="navbar-item" href="https://github.com/bastion-gaming/bot-discord/blob/master/README.md">
+            <span>BaBot</span>
+          </a>
+          <a class="navbar-item" href="http://get-gems.topazdev.fr">
+            <span>Get Gems</span>
+          </a>
+          <a class="navbar-item" href="https://github.com/Azerxim/Apero-Games">
+            <span>Apero Games</span>
+          </a> -->
+        </div>
+
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <a class="button is-TD_ultradarkblue" href="https://www.topazdev.fr/?page=Contact&lang=fr-FR" target="_blank">
+                Contact
+              </a>
+              <a class="button is-TD_ultradarkblue" href="https://github.com/Azerxim" target="_blank">
+                GitHub
+              </a>
+              <a class="button is-TD_ultrapurple" href="https://twitch.tv/bastionautes" target="_blank">
+                <img src="https://www.topazdev.fr/images/menu/Menu-Twitch.png" style="width: 20px; margin-right: 5px;">
+                Twitch
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Get all "navbar-burger" elements
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+        // Check if there are any navbar burgers
+        if ($navbarBurgers.length > 0) {
+
+          // Add a click event on each of them
+          $navbarBurgers.forEach( el => {
+            el.addEventListener('click', () => {
+
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle('is-active');
+              $target.classList.toggle('is-active');
+
+            });
+          });
+        }
+      });
+    </script>
+  </section>
+
+<!--====== Corps ======-->
+  <section style="padding: 30px 0 100px 0;">
+	  <!-- <h1 style="font-size: 40px;">DB API</h1> -->
+    <div style="margin: 30px 20px;">
+      <a class="button is-TD_blue" style="width: 100%; height: 60px; font-size: 20px; margin: 7px;" href="/docs">Docs</a>
+      <a class="button is-TD_ultradarkblue" style="width: 100%; height: 60px; font-size: 20px; margin: 7px;" href="/version">Version</a>
+    </div>
+  </section>
+
+<!--====== Bas de page ======-->
+	<div class="topaz_footer" style="margin-top: 50px; height: 200px;">
+    <div class="topaz_footer-link" style="margin-bottom: 20px;">
+      <a class="icon" href="https://github.com/Azerxim" target="_blank" style="color: #FFF; margin: 0 10px;">
+        <i class="fab fa-github"></i>
+      </a>
+      <a class="icon" href="https://discord.gg/nUFwE9S" target="_blank" style="color: #FFF; margin: 0 10px;">
+        <i class="fab fa-discord"></i>
+      </a>
+      <a class="icon" href="https://twitch.tv/bastionautes" target="_blank" style="color: #FFF; margin: 0 10px;">
+        <i class="fab fa-twitch"></i>
+      </a>
+      <a class="icon" href="https://twitter.com/Azerxim" target="_blank" style="color: #FFF; margin: 0 10px;">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a class="icon" href="https://www.youtube.com/channel/UC3BfRqB0yM1iCxmNv3ig_Nw" target="_blank" style="color: #FFF; margin: 0 10px;">
+        <i class="fab fa-youtube"></i>
+      </a>
+    </div>
+  	<div class="topaz_footer-text">
+      <p><strong>TopazDev</strong>&nbsp;2015 - 2021<br>All rights reserved.</p>
+    </div>
+    <!-- <div class="topaz_footer-text" style="margin: 10px 0 20px 0;">
+      <p>Version&nbsp;<strong class="topaz_footer-text">6.6.1</strong></p>
+    </div> -->
+
+  </div>
+
+</body>
+</html>
