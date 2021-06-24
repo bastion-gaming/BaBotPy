@@ -55,67 +55,6 @@ class CommandesOld(commands.Cog):
         msg = discord.Embed(title = "Message de Babot", color= 9576994, description = desc)
         await ctx.send(embed = msg, delete_after = 20)
 
-    @commands.command(pass_context=True)
-    async def infox(self, ctx, Nom = None):
-        """
-        Permet d'avoir les informations d'un utilisateur
-        """
-        if Nom == None:
-            ID = ctx.author.id
-            Nom = ctx.author.name
-        else:
-            ID = ge.nom_ID(Nom)
-
-        if ID != -1:
-            if not level.checkInfo(ID):
-                member = ctx.guild.get_member(int(ID))
-                await ge.addrole(member, "Nouveau")
-            PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
-            user = requests.get('http://{ip}/users/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()
-            lvl = int(user['level'])
-            xp = int(user['xp'])
-            nbmsg = int(user['nbmsg'])
-            reaction = int(user['nbreaction'])
-            msg = "**Utilisateur:** {}".format(Nom)
-            emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
-
-            if ctx.guild.id == wel.idBASTION:
-                # Niveaux part
-                msg = ""
-                palier = level.lvlPalier(lvl)
-                msg += "XP: `{0}/{1}`\n".format(xp, palier)
-                msg += "Messages: `{0}`\n".format(nbmsg)
-                msg += "Réactions: `{0}`\n".format(reaction)
-                emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
-
-                # Parrainage
-                P = user['godparent']
-                F_li = requests.get('http://{ip}/users/godchilds/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()
-                nbF = int(requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
-                msg = ""
-                if P != 0:
-                    msg += "\nParrain: <@{0}>".format(requests.get('http://{ip}/users/{player_id}'.format(ip=ge.API_IP, player_id=P)).json()['discord_id'])
-                else :
-                    msg += "\nParain: `None`"
-
-                if nbF != 0:
-                    if nbF > 1:
-                        sV = "s"
-                    else:
-                        sV = ""
-                    msg += "\nFilleul{1} `x{0}`:".format(nbF, sV)
-                    for one in F_li:
-                        msg += "\n<@{}>".format(one[0])
-
-                emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
-
-                await ctx.channel.send(embed = emb)
-            else:
-                await ctx.channel.send("Commande utilisable uniquement sur le discord Bastion!")
-        else:
-            msg = "Le nom que vous m'avez donné n'existe pas !"
-            await ctx.channel.send(msg)
-
 
 def setup(bot):
     bot.add_cog(CommandesOld(bot))
