@@ -22,3 +22,17 @@ critiques constructives.
 
 On propose une architecture "modulaire" avec un core qui se charge de lancer les différentes
 parties du bot.
+
+# Lancement
+
+## API
+
+```bash
+uvicorn api.main:app --host 127.0.0.1 --port 5195
+```
+
+## Bot
+
+```bash
+python main.py
+```
