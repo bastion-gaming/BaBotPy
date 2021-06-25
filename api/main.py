@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
-from core import gestion as ge, welcome as wel
+from core import gestion as ge, welcome as wel, level
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -228,6 +228,14 @@ def user_level(PlayerID: int, db: Session = Depends(get_db)):
     if val is None:
         raise HTTPException(status_code=404, detail="User not found")
     return JSONResponse(content=jsonable_encoder(val))
+
+
+@app.get("/users/level/{PlayerID}/palier", tags=["Users"])
+def user_xp(PlayerID: int, db: Session = Depends(get_db)):
+    val = crud.value(db, PlayerID, "core", "level")
+    if val is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return JSONResponse(content=jsonable_encoder(level.lvlPalier(val)))
 
 
 @app.put("/users/level/{PlayerID}/{nb}", tags=["Users"])
