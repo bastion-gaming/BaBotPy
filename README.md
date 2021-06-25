@@ -28,7 +28,7 @@ parties du bot.
 ## API
 
 ```bash
-uvicorn api.main:app --host 127.0.0.1 --port 5195
+uvicorn api.main:app --host 127.0.0.1 --port 20216
 ```
 
 ## Bot
