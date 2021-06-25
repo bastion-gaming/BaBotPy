@@ -20,11 +20,6 @@ class Commandes(commands.Cog):
         await ctx.channel.send(embed = emb)
 
 
-    @commands.command(pass_context=True)
-    async def revive(self, ctx):
-        await ctx.channel.send(f"Comme un phénix, <@{wel.idBaBot}> renait de ses cendres")
-
-
     @commands.command(pass_context=True, aliases=['supprimer', 'effacer', 'eff'])
     async def supp(self, ctx, nb):
         """**[nombre]** | Supprime [nombre] de message dans le channel """
@@ -106,6 +101,17 @@ class Commandes(commands.Cog):
             await ctx.channel.send(msg)
 
 
+class SecretCommandes(commands.Cog):
+
+    def __init__(self, ctx):
+        return(None)
+
+    @commands.command(pass_context=True)
+    async def revive(self, ctx):
+        await ctx.channel.send(f"Comme un phénix, <@{wel.idBaBot}> renait de ses cendres")
+
+
 def setup(bot):
     bot.add_cog(Commandes(bot))
+    bot.add_cog(SecretCommandes(bot))
     open("core/cache/cogs.txt", "a").write("Commandes\n")
