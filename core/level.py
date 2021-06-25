@@ -24,7 +24,7 @@ def xpmsg(message):
     checkInfo(ID)
     if message.mention_everyone is False:
         lw = message.content.split()
-        nb = int(lw/15)
+        nb = int(len(lw)/15)
         if nb <= 0:
             nb = 1
         elif nb > 5:
