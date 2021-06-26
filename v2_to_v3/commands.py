@@ -22,9 +22,9 @@ class CommandesOld(commands.Cog):
                 req = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=did)).json()
                 if req['error'] == 404:
                     r = requests.post('http://{ip}/users/create/?discord_id={discord_id}'.format(ip=ge.API_IP, discord_id=did))
-                print(f"{i} OK")
+                print(f"{i}/{taille}: Created")
 
-            for i in range(165, taille+1):
+            for i in range(1, taille+1):
                 did = sql.userID(i)
                 arr = sql.valueAtNumber(did, "arrival")
                 if arr == "0":
@@ -37,7 +37,7 @@ class CommandesOld(commands.Cog):
                 lvl = sql.valueAtNumber(did, "lvl")
                 xp = sql.valueAtNumber(did, "xp")
                 par = sql.valueAtNumber(did, "parrain")
-                print(f"{did}, {arr}, {nbm}, {nbr}, {lvl}, {xp}, {par}")
+                print(f"{i}/{taille}: {did}, {arr}, {nbm}, {nbr}, {lvl}, {xp}, {par}")
                 req = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=did)).json()
                 r = requests.put('http://{ip}/old/{PlayerID}/{arrival}/{niv}/{xp}/{nbmsg}/{nbreaction}/{parrain}'.format(
                     ip=ge.API_IP,
