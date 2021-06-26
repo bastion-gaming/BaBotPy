@@ -15,6 +15,7 @@ install("pip")
 
 # Discord
 install("discord.py", "1.7.3")
+# install("discord.py[voice]", "1.7.3")
 
 # API
 install("fastapi[all]", "0.65.2")
@@ -27,8 +28,8 @@ install("SQLAlchemy", "1.4.3")
 install("matplotlib", "3.4.2")
 
 # Média
-# install("ffmpeg-python")
-# install("youtube-dl")
+# install("ffmpeg-python", "0.2.0")
+# install("youtube_dl", "2021.6.6")
 # install("google-api-python-client")
 # install("google_images_download")
 

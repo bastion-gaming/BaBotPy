@@ -111,5 +111,6 @@ venv.bak/
 core/cache/*
 core/logs/*
 core/token.txt
+media/tokenYT.txt
 *.db
 *.bak

@@ -60,6 +60,10 @@ client.load_extension('core.stats')
 
 client.load_extension('core.help')
 
+################### Media ######################
+
+# client.load_extension('media.vocal')
+
 ################### Welcome ####################
 
 
