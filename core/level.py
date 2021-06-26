@@ -54,10 +54,8 @@ def addxp_voc(ID, time):
 def lvlPalier(lvl):
     if lvl <= 0:
         return 10
-    elif lvl == 1:
-        return 30
     else:
-        return int(100 * (2.5)**(lvl-2))
+        return int(30 * (lvl)**(2.5))
 
 
 # BaBot | vérification du level
