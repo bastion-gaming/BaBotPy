@@ -6,11 +6,6 @@ from . import models, schemas
 
 
 # -------------------------------------------------------------------------------
-def get_user(db: Session, PlayerID: int):
-    return db.query(models.TableCore).filter(models.TableCore.playerid == PlayerID).first()
-
-
-# -------------------------------------------------------------------------------
 def get_user_discord_id(db: Session, discord_id: str):
     return db.query(models.TableCore).filter(models.TableCore.discord_id == discord_id).first()
 
@@ -21,8 +16,23 @@ def get_user_by_name(db: Session, name: str):
 
 
 # -------------------------------------------------------------------------------
+def get_user(db: Session, PlayerID: int):
+    return db.query(models.TableCore).filter(models.TableCore.playerid == PlayerID).first()
+
+
+# -------------------------------------------------------------------------------
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.TableCore).offset(skip).limit(limit).all()
+
+
+# -------------------------------------------------------------------------------
+def get_user_old(db: Session, PlayerID: int):
+    return db.query(models.TableCoreOld).filter(models.TableCoreOld.playerid == PlayerID).first()
+
+
+# -------------------------------------------------------------------------------
+def get_users_old(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.TableCoreOld).offset(skip).limit(limit).all()
 
 
 # -------------------------------------------------------------------------------

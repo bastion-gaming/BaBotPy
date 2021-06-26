@@ -8,7 +8,7 @@ from operator import itemgetter
 import matplotlib.pyplot as plt
 import datetime as dt
 
-from core import welcome as wel, gestion as ge
+from core import welcome as wel, gestion as ge, level
 
 file = "core/cache/time.json"
 co = "core/cache/co.json"
@@ -385,19 +385,23 @@ class Stats(commands.Cog):
                 taille = int(taille['taille'])
             users = requests.get('http://{ip}/users/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
             for user in users:
-                IDi = user['discord_id']
+                IDi = int(user['discord_id'])
                 nbMsg = user['nbmsg']
                 XP = user['xp']
+                mylvl = user['level']
                 Arrival = user['arrival'][:10]
-                Name = ctx.guild.get_member(IDi).name
-                UserList.append([IDi, XP, nbMsg, Arrival, Name])
+                try:
+                    Name = ctx.guild.get_member(IDi).name
+                    UserList.append([IDi, XP, nbMsg, Arrival, Name, mylvl])
+                except:
+                    pass
             UserList = sorted(UserList, key=itemgetter(1), reverse=True)
             Titre = "Classement des membres en fonction de l'XP"
             j = 1
             desc = ""
             for one in UserList: # affichage des données trié
                 if j <= n:
-                    desc += "{number} |`{name}`: **{XP}** XP • _{msg}_ messages postés depuis le {arrival}\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3])
+                    desc += "{number} |`{name}`: **{XP}** XP • Niveau **{niv}** • _{msg}_ messages postés depuis le {arrival}\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3], niv=one[5])
                     if j % 20 == 0 and j != 0:
                         MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                         desc = ""
@@ -423,19 +427,23 @@ class Stats(commands.Cog):
                 taille = int(taille['taille'])
             users = requests.get('http://{ip}/users/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
             for user in users:
-                IDi = user['discord_id']
+                IDi = int(user['discord_id'])
                 nbMsg = user['nbmsg']
                 XP = user['xp']
+                mylvl = user['level']
                 Arrival = user['arrival'][:10]
-                Name = ctx.guild.get_member(IDi).name
-                UserList.append([IDi, XP, nbMsg, Arrival, Name])
+                try:
+                    Name = ctx.guild.get_member(IDi).name
+                    UserList.append([IDi, XP, nbMsg, Arrival, Name, mylvl])
+                except:
+                    pass
             UserList = sorted(UserList, key=itemgetter(2), reverse=True)
             Titre = "Classement des membres en fonction du nombre de messages postés"
             j = 1
             desc = ""
             for one in UserList: # affichage des données trié
                 if j <= n:
-                    desc += "{number} |`{name}`: **{msg}** messages postés depuis le {arrival} • _{XP}_ XP\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3])
+                    desc += "{number} |`{name}`: **{msg}** messages postés depuis le {arrival} • _{XP}_ XP • Niveau **{niv}**\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3], niv=one[5])
                     if j % 20 == 0 and j != 0:
                         MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                         desc = ""
@@ -444,12 +452,94 @@ class Stats(commands.Cog):
             if desc != "":
                 MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                 await ctx.channel.send(embed = MsgEmbed)
-            else:
-                await True
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
 
+# ===============================================================
+class StatsOld(commands.Cog):
+
+    def __init__(self, bot):
+        return(None)
+
+    @commands.command(pass_context=True, aliases=['oldtopxp', 'oldop'])
+    async def oldtop(self, ctx, n = 6):
+        """
+        Ancien classement textuel des membres du Bastion en fonction de l'XP.
+        """
+        if ctx.guild.id == wel.idBASTION:
+            UserList = []
+            taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
+            if taille == {}:
+                taille = 0
+            else:
+                taille = int(taille['taille'])
+            users = requests.get('http://{ip}/users/old/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
+            for user in users:
+                IDi = int(user['discord_id'])
+                XP = user['xp']
+                mylvl = user['level']
+                try:
+                    Name = ctx.guild.get_member(IDi).name
+                    UserList.append([IDi, XP, Name, mylvl])
+                except:
+                    pass
+            UserList = sorted(UserList, key=itemgetter(1), reverse=True)
+            Titre = "Classement des membres en fonction de l'XP"
+            j = 1
+            desc = ""
+            for one in UserList: # affichage des données trié
+                if j <= n:
+                    desc += "{number} |`{name}`: **{XP}** XP | Niveau **{niv}**\n".format(number=j, name=one[2], XP=one[1], niv=one[3])
+                    if j % 20 == 0 and j != 0:
+                        MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                        desc = ""
+                        await ctx.channel.send(embed = MsgEmbed)
+                j += 1
+            if desc != "":
+                MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                await ctx.channel.send(embed = MsgEmbed)
+        else:
+            await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
+
+
+    @commands.command(pass_context=True, aliases=['infox', 'infx'])
+    async def oldinfo(self, ctx, Nom = None):
+        """
+        Permet d'avoir les anciennes informations d'un utilisateur
+        """
+        if Nom == None:
+            ID = ctx.author.id
+            Nom = ctx.author.name
+        else:
+            ID = ge.nom_ID(Nom)
+
+        if ID != -1:
+            if not level.checkInfo(ID):
+                member = ctx.guild.get_member(int(ID))
+                await ge.addrole(member, "Nouveau")
+            PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
+            user = requests.get('http://{ip}/users/old/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()
+            lvl = int(user['level'])
+            xp = int(user['xp'])
+            msg = "**Utilisateur:** {}".format(Nom)
+            emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
+
+            if ctx.guild.id == wel.idBASTION:
+                # Niveaux part
+                msg = ""
+                palier = level.lvlPalier(lvl)
+                msg += "XP: `{0}/{1}`\n".format(xp, palier)
+                emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
+                await ctx.channel.send(embed = emb)
+            else:
+                await ctx.channel.send("Commande utilisable uniquement sur le discord Bastion!")
+        else:
+            msg = "Le nom que vous m'avez donné n'existe pas !"
+            await ctx.channel.send(msg)
+
+
 def setup(bot):
     bot.add_cog(Stats(bot))
+    bot.add_cog(StatsOld(bot))
     open("core/cache/cogs.txt", "a").write("Stats\n")

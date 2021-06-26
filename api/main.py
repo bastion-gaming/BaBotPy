@@ -177,6 +177,20 @@ def read_user(PlayerID: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
+
+@app.get("/users/old/", response_model=List[schemas.TableCoreOld], tags=["Users"])
+def old_read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users_old(db=db, skip=skip, limit=limit)
+    return users
+
+
+@app.get("/users/old/{PlayerID}", response_model=schemas.TableCoreOld, tags=["Users"])
+def old_read_user(PlayerID: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user_old(db=db, PlayerID=PlayerID)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
 # ----- Devise -----
 @app.get("/users/devise/{PlayerID}", tags=["Users"])
 def user_devise(PlayerID: int, db: Session = Depends(get_db)):

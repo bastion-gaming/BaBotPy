@@ -98,7 +98,6 @@ class Commandes(commands.Cog):
                         msg += "\n<@{0}>".format(one['discord_id'])
 
                 emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
-
                 await ctx.channel.send(embed = emb)
             else:
                 await ctx.channel.send("Commande utilisable uniquement sur le discord Bastion!")
