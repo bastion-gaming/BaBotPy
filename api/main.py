@@ -56,7 +56,9 @@ client.remove_command("help")
 async def startup_event():
     asyncio.create_task(client.start(TOKEN))
     await asyncio.sleep(2)
-    print('Connecté avec le nom : {c.user} \nPrefix : {p} \nVersion : {v}'.format(c=client, v=VERSION, p=PREFIX))
+    print(f'{ge.bcolors.OK}DISCORD{ge.bcolors.RESET}:  Connecté avec le nom : {client.user}')
+    print(f'{ge.bcolors.OK}DISCORD{ge.bcolors.RESET}:  Prefix : {PREFIX}')
+    print(f'{ge.bcolors.OK}DISCORD{ge.bcolors.RESET}:  Version : {VERSION}')
 
 
 @app.get("/", response_class=HTMLResponse)
