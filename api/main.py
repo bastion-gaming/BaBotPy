@@ -387,25 +387,63 @@ def update_command_time(PlayerID: int, Command: str, db: Session = Depends(get_d
 # ========= Interface Web <> Discord =========
 @app.put("/discord/{DiscordID}/roles/add/{Role}", tags=["Discord"])
 async def discord_roles_add(DiscordID: int, Role: str):
-    guild = client.get_guild(wel.idBASTION)
-    member = get(client.get_all_members(), id=DiscordID)
-    res = await ge.addrole(member, Role)
-    if res == "Role introuvable":
-        func = {'error': 1, 'etat': 'NOK', 'msg': 'Role {0} introuvable'.format(Role)}
+    RolesList = [
+        'Baron du Bastion',
+        'Inquisiteur du Bastion',
+        'BastioBot',
+        'Groovy',
+        'En direct',
+        'Reine du babot 👑',
+        'Bibliothécaire',
+        'Maréchal président à vie',
+        'Bouilleur de cru',
+        'Twitch Subscriber: Tier 1',
+        'Twitch Subscriber: Tier 2',
+        'Twitch Subscriber: Tier 3',
+        'Bastionaute',
+        'Weekend Astro 27-29/08'
+    ]
+    if Role in RolesList:
+        func = {'error': 2, 'etat': 'NOK', 'msg': 'Role {0} interdit'.format(Role)}
     else:
-        func = {'error': 0, 'etat': 'OK', 'msg': 'Role {0} ajouté'.format(Role)}
+        guild = client.get_guild(wel.idBASTION)
+        member = get(client.get_all_members(), id=DiscordID)
+        res = await ge.addrole(member, Role)
+        if res == "Role introuvable":
+            func = {'error': 1, 'etat': 'NOK', 'msg': 'Role {0} introuvable'.format(Role)}
+        else:
+            func = {'error': 0, 'etat': 'OK', 'msg': 'Role {0} ajouté'.format(Role)}
     return func
 
 
 @app.put("/discord/{DiscordID}/roles/remove/{Role}", tags=["Discord"])
 async def discord_roles_remove(DiscordID: int, Role: str):
-    guild = client.get_guild(wel.idBASTION)
-    member = get(client.get_all_members(), id=DiscordID)
-    res = await ge.removerole(member, Role)
-    if res == "Role introuvable":
-        func = {'error': 1, 'etat': 'NOK', 'msg': 'Role {0} introuvable'.format(Role)}
+    RolesList = [
+        'Baron du Bastion',
+        'Inquisiteur du Bastion',
+        'BastioBot',
+        'Groovy',
+        'En direct',
+        'Reine du babot 👑',
+        'Bibliothécaire',
+        'Maréchal président à vie',
+        'Bouilleur de cru',
+        'Twitch Subscriber: Tier 1',
+        'Twitch Subscriber: Tier 2',
+        'Twitch Subscriber: Tier 3',
+        'Bastionaute',
+        'Weekend Astro 27-29/08'
+    ]
+    if Role in RolesList:
+        func = {'error': 2, 'etat': 'NOK', 'msg': 'Role {0} interdit'.format(Role)}
     else:
-        func = {'error': 0, 'etat': 'OK', 'msg': 'Role {0} retiré'.format(Role)}
+        guild = client.get_guild(wel.idBASTION)
+        member = get(client.get_all_members(), id=DiscordID)
+        res = await ge.removerole(member, Role)
+        if res == "Role introuvable":
+            func = {'error': 1, 'etat': 'NOK', 'msg': 'Role {0} introuvable'.format(Role)}
+        else:
+            func = {'error': 0, 'etat': 'OK', 'msg': 'Role {0} retiré'.format(Role)}
     return func
 
 
@@ -425,13 +463,14 @@ def add_xp(PlayerID: int, niv: int, xp: int, arrival: str, nbmsg: int, nbreactio
         crud.update(db, PlayerID, "core", "arrival", arrival)
         crud.update(db, PlayerID, "core", "nbmsg", nbmsg)
         crud.update(db, PlayerID, "core", "nbreaction", nbreaction)
+        ns = int(nbmsg) + int(nbreaction)
+        crud.update(db, PlayerID, "core", "xp", ns)
         GPID = crud.get_PlayerID(db, parrain, "discord")
         if GPID is None:
             GPID = 0
-        GPID = int(GPID.playerid)
+        else:
+            GPID = int(GPID.playerid)
         crud.update(db, PlayerID, "core", "godparent", GPID)
-        ns = int(nbmsg) + int(nbreaction)
-        crud.update(db, PlayerID, "core", "xp", ns)
         func = {'error': 0, 'etat': 'OK'}
     except:
         func = {'error': 1, 'etat': 'NOK'}

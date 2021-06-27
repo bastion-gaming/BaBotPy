@@ -4,7 +4,7 @@ from discord.ext.commands import bot
 import discord
 from core import gestion as ge, level, welcome as we
 from v2_to_v3 import SQLite as sql
-import datetime as dt
+import datetime as dt, time
 
 
 class CommandesOld(commands.Cog):
@@ -22,7 +22,7 @@ class CommandesOld(commands.Cog):
                 req = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=did)).json()
                 if req['error'] == 404:
                     r = requests.post('http://{ip}/users/create/?discord_id={discord_id}'.format(ip=ge.API_IP, discord_id=did))
-                print(f"{i}/{taille}: Created")
+                    print(f"{i}/{taille}: Created")
 
             for i in range(1, taille+1):
                 did = sql.userID(i)
@@ -39,6 +39,7 @@ class CommandesOld(commands.Cog):
                 par = sql.valueAtNumber(did, "parrain")
                 print(f"{i}/{taille}: {did}, {arr}, {nbm}, {nbr}, {lvl}, {xp}, {par}")
                 req = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=did)).json()
+                time.sleep(2)
                 r = requests.put('http://{ip}/old/{PlayerID}/{arrival}/{niv}/{xp}/{nbmsg}/{nbreaction}/{parrain}'.format(
                     ip=ge.API_IP,
                     PlayerID=req['ID'],
@@ -49,6 +50,7 @@ class CommandesOld(commands.Cog):
                     nbreaction=nbr,
                     parrain=par
                 ))
+                print(r.json())
             desc = "Transfert terminé"
         else :
             desc = "Tu ne remplis pas les conditions, tu fais partie de la plèbe !"
