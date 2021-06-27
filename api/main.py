@@ -1,4 +1,3 @@
-import os
 from typing import List
 
 import asyncio
@@ -7,11 +6,11 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Security
+from fastapi.security.api_key import APIKeyHeader, APIKey
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, HTMLResponse
-from pydantic import BaseModel
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
@@ -37,6 +36,8 @@ intents = discord.Intents(
     guild_reactions=True,
     dm_reactions=True
 )
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+SECRET_KEY_NAME = "access_token"
 client = commands.Bot(command_prefix = "{p}".format(p=PREFIX), intents=intents)
 
 app = FastAPI()
@@ -48,6 +49,18 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+################# Security #####################
+
+api_key_header = APIKeyHeader(name=SECRET_KEY_NAME)
+
+async def get_api_key(api_key_header: str = Security(api_key_header)):
+    if api_key_header == SECRET_KEY:
+        return api_key_header
+    else:
+        raise HTTPException(status_code=403, detail="Could not validate credentials")
+
 
 ################### API ########################
 client.remove_command("help")
@@ -157,7 +170,7 @@ def get_playerID(discord_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/users/create/", tags=["Users"])
-def create_user(discord_id: str, db: Session = Depends(get_db)):
+def create_user(discord_id: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     db_user = crud.get_user_discord_id(db, discord_id=discord_id)
     if db_user:
         raise HTTPException(status_code=400, detail="Discord ID already registered")
@@ -201,7 +214,7 @@ def user_devise(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.put("/users/devise/{PlayerID}/{nb}", tags=["Users"])
-def add_devise(PlayerID: int, nb: int, db: Session = Depends(get_db)):
+def add_devise(PlayerID: int, nb: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     try:
         bal = crud.value(db, PlayerID, "core", "devise")
         ns = bal + int(nb)
@@ -224,7 +237,7 @@ def user_super_devise(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.put("/users/super_devise/{PlayerID}/{nb}", tags=["Users"])
-def add_super_devise(PlayerID: int, nb: int, db: Session = Depends(get_db)):
+def add_super_devise(PlayerID: int, nb: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     try:
         bal = crud.value(db, PlayerID, "core", "super_devise")
         ns = bal + int(nb)
@@ -247,7 +260,7 @@ def user_level(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.get("/users/level/{PlayerID}/palier", tags=["Users"])
-def user_xp(PlayerID: int, db: Session = Depends(get_db)):
+def user_level_palier(PlayerID: int, db: Session = Depends(get_db)):
     val = crud.value(db, PlayerID, "core", "level")
     if val is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -255,7 +268,7 @@ def user_xp(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.put("/users/level/{PlayerID}/{nb}", tags=["Users"])
-def add_level(PlayerID: int, nb: int, db: Session = Depends(get_db)):
+def add_level(PlayerID: int, nb: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     try:
         bal = crud.value(db, PlayerID, "core", "level")
         ns = bal + int(nb)
@@ -278,7 +291,7 @@ def user_xp(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.put("/users/xp/{PlayerID}/{nb}", tags=["Users"])
-def add_xp(PlayerID: int, nb: int, db: Session = Depends(get_db)):
+def add_xp(PlayerID: int, nb: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     try:
         bal = crud.value(db, PlayerID, "core", "xp")
         ns = bal + int(nb)
@@ -293,7 +306,7 @@ def add_xp(PlayerID: int, nb: int, db: Session = Depends(get_db)):
 
 # ----- Messages -----
 @app.get("/users/msg/{PlayerID}", tags=["Users"])
-def user_xp(PlayerID: int, db: Session = Depends(get_db)):
+def user_msg(PlayerID: int, db: Session = Depends(get_db)):
     val = crud.value(db, PlayerID, "core", "nbmsg")
     if val is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -301,7 +314,7 @@ def user_xp(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.put("/users/msg/{PlayerID}/{nb}", tags=["Users"])
-def add_xp(PlayerID: int, nb: int, db: Session = Depends(get_db)):
+def add_msg(PlayerID: int, nb: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     try:
         bal = crud.value(db, PlayerID, "core", "nbmsg")
         ns = bal + int(nb)
@@ -316,7 +329,7 @@ def add_xp(PlayerID: int, nb: int, db: Session = Depends(get_db)):
 
 # ----- Reactions -----
 @app.get("/users/reaction/{PlayerID}", tags=["Users"])
-def user_xp(PlayerID: int, db: Session = Depends(get_db)):
+def user_reaction(PlayerID: int, db: Session = Depends(get_db)):
     val = crud.value(db, PlayerID, "core", "nbreaction")
     if val is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -324,7 +337,7 @@ def user_xp(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.put("/users/reaction/{PlayerID}/{nb}", tags=["Users"])
-def add_xp(PlayerID: int, nb: int, db: Session = Depends(get_db)):
+def add_reaction(PlayerID: int, nb: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     try:
         bal = crud.value(db, PlayerID, "core", "nbreaction")
         ns = bal + int(nb)
@@ -353,7 +366,7 @@ def get_count_godchilds(PlayerID: int, db: Session = Depends(get_db)):
 
 
 @app.put("/users/{PlayerID}/godparent/{godparentID}", response_model=schemas.TableCore, tags=["Users"])
-def add_godparent(PlayerID: int, godparentID: int, db: Session = Depends(get_db)):
+def add_godparent(PlayerID: int, godparentID: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     GPID = crud.get_PlayerID(db, godparentID, "discord")
     if GPID is None:
         func = {'error': 2, 'etat': 'NOK'}
@@ -377,7 +390,7 @@ def get_command_time(PlayerID: int, Command: str, couldown: int, db: Session = D
     return JSONResponse(content=jsonable_encoder(res))
 
 @app.put("/comtime/update/{PlayerID}/{Command}", tags=["Command Time"])
-def update_command_time(PlayerID: int, Command: str, db: Session = Depends(get_db)):
+def update_command_time(PlayerID: int, Command: str, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     res = crud.updateComTime(db, PlayerID, Command)
     if res is None:
         res = {}
@@ -386,7 +399,7 @@ def update_command_time(PlayerID: int, Command: str, db: Session = Depends(get_d
 
 # ========= Interface Web <> Discord =========
 @app.put("/discord/{DiscordID}/roles/add/{Role}", tags=["Discord"])
-async def discord_roles_add(DiscordID: int, Role: str):
+async def discord_roles_add(DiscordID: int, Role: str, api_key: APIKey = Depends(get_api_key)):
     RolesList = [
         'Baron du Bastion',
         'Inquisiteur du Bastion',
@@ -417,7 +430,7 @@ async def discord_roles_add(DiscordID: int, Role: str):
 
 
 @app.put("/discord/{DiscordID}/roles/remove/{Role}", tags=["Discord"])
-async def discord_roles_remove(DiscordID: int, Role: str):
+async def discord_roles_remove(DiscordID: int, Role: str, api_key: APIKey = Depends(get_api_key)):
     RolesList = [
         'Baron du Bastion',
         'Inquisiteur du Bastion',
@@ -449,14 +462,14 @@ async def discord_roles_remove(DiscordID: int, Role: str):
 
 # ========= Test =========
 # @app.post("/test/{PlayerID}", tags=["Test"])
-# def test(PlayerID: int, db: Session = Depends(get_db)):
+# def test(PlayerID: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
 #     res = {}
 #     if res is None:
 #         res = {}
 #     return JSONResponse(content=jsonable_encoder(res))
 
 @app.put("/old/{PlayerID}/{arrival}/{niv}/{xp}/{nbmsg}/{nbreaction}/{parrain}", tags=["Old"])
-def add_xp(PlayerID: int, niv: int, xp: int, arrival: str, nbmsg: int, nbreaction: int, parrain: int, db: Session = Depends(get_db)):
+def old_info(PlayerID: int, niv: int, xp: int, arrival: str, nbmsg: int, nbreaction: int, parrain: int, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     try:
         crud.update(db, PlayerID, "core_old", "level", niv)
         crud.update(db, PlayerID, "core_old", "xp", xp)

@@ -1,23 +1,19 @@
-import os
 import time
-import requests
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
-import datetime as dt
 
 from core import level as lvl, welcome as wel, gestion as ge
 
 
 # initialisation des variables.
-PREFIX = "*"
-on_vocal = {}
-on_vocal_cam = {}
-on_vocal_stream = {}
-jour = dt.date.today()
-
+try:
+    PREFIX = open("core/prefix.txt").read().replace("\n", "")
+except:
+    PREFIX = "*"
 VERSION = open("core/version.txt").read().replace("\n", "")
 TOKEN = open("core/token.txt", "r").read().replace("\n", "")
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
 NONE = open("core/cache/cogs.txt", "w")
 intents = discord.Intents(
     messages=True,
@@ -33,6 +29,9 @@ intents = discord.Intents(
     dm_reactions=True
 )
 client = commands.Bot(command_prefix = "{p}".format(p=PREFIX), intents=intents)
+on_vocal = {}
+on_vocal_cam = {}
+on_vocal_stream = {}
 
 ################################################
 
@@ -159,7 +158,6 @@ async def on_raw_reaction_remove(payload):
 ##################### Commande kaamelott.py #####################
 
 client.load_extension('kaamelott.kaamelott')
-
 
 ############## Lancemement du bot ##############
 

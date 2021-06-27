@@ -2,10 +2,11 @@ import requests
 from discord.ext import commands
 from discord.ext.commands import bot
 import discord
-from core import gestion as ge, level, welcome as wel
-
+from core import gestion as ge, welcome as wel, level
 
 VERSION = open("core/version.txt").read().replace("\n", "")
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+headers = {'access_token': SECRET_KEY}
 
 
 class Commandes(commands.Cog):

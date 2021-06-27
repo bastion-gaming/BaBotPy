@@ -4,6 +4,8 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from core import welcome as wel, level as lvl, gestion as ge
 
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+headers = {'access_token': SECRET_KEY}
 
 # ===============================================================
 class Parrain(commands.Cog):
@@ -25,7 +27,7 @@ class Parrain(commands.Cog):
                 user = requests.get('http://{ip}/users/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()
                 PlayerID_p = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID_p)).json()['ID']
                 if PlayerID_p != 0 and user['godparent'] == 0 and ID_p != ID:
-                    requests.put('http://{ip}/users/{player_id}/godparent/{godparentID}'.format(ip=ge.API_IP, player_id=PlayerID, godparentID=PlayerID_p))
+                    requests.put('http://{ip}/users/{player_id}/godparent/{godparentID}'.format(ip=ge.API_IP, player_id=PlayerID, godparentID=PlayerID_p), headers=headers)
                     # print("Parrain ajouté")
                     lvl.addxp(PlayerID, 15)
                     fil_L = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text
@@ -98,7 +100,7 @@ class Parrain(commands.Cog):
                 fil_count = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID_p)).text
                 gain_p = -100 * int(fil_count)
                 lvl.addxp(PlayerID_p, gain_p)
-                requests.put('http://{ip}/users/{player_id}/godparent/{godparentID}'.format(ip=ge.API_IP, player_id=PlayerID_f, godparentID=0))
+                requests.put('http://{ip}/users/{player_id}/godparent/{godparentID}'.format(ip=ge.API_IP, player_id=PlayerID_f, godparentID=0), headers=headers)
                 msg = "Votre filleul <@{filleul}> a bien été retiré ! Vous perdez {xp_p} XP et lui 15 XP.".format(filleul=ID_f, xp_p=-gain_p)
             else:
                 msg = "Vous n'etes pas son parrain !"

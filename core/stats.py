@@ -10,6 +10,9 @@ import datetime as dt
 
 from core import welcome as wel, gestion as ge, level
 
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+headers = {'access_token': SECRET_KEY}
+
 file = "core/cache/time.json"
 co = "core/cache/co.json"
 

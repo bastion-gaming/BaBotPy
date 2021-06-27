@@ -1,4 +1,3 @@
-import discord
 import sqlite3 as sql
 import datetime as dt
 import time as t

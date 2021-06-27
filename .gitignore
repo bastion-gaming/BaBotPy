@@ -114,3 +114,4 @@ core/token.txt
 media/tokenYT.txt
 *.db
 *.bak
+api/key.txt

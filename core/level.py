@@ -1,22 +1,23 @@
 import discord
 import requests
-import datetime as dt
 from core import gestion as ge
 
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+headers = {'access_token': SECRET_KEY}
 
 def addxp(ID, nb):
     PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
-    requests.put('http://{ip}/users/xp/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=nb))
+    requests.put('http://{ip}/users/xp/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=nb), headers=headers)
 
 
 def addmsg(ID, nb):
     PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
-    requests.put('http://{ip}/users/msg/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=nb))
+    requests.put('http://{ip}/users/msg/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=nb), headers=headers)
 
 
 def addreaction(ID, nb):
     PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
-    requests.put('http://{ip}/users/reaction/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=nb))
+    requests.put('http://{ip}/users/reaction/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=nb), headers=headers)
 
 
 def xpmsg(message):
@@ -48,7 +49,7 @@ def addxp_voc(ID, time):
         else:
             retime = int((retime - 30)/4)
             XP = 270 + retime
-    requests.put('http://{ip}/users/xp/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=XP))
+    requests.put('http://{ip}/users/xp/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=XP), headers=headers)
 
 
 def lvlPalier(lvl):
@@ -69,7 +70,7 @@ async def checklevel(message):
         xp = int(requests.get('http://{ip}/users/xp/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
         palier = lvlPalier(lvl)
         if xp >= palier:
-            requests.put('http://{ip}/users/level/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=1))
+            requests.put('http://{ip}/users/level/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=1), headers=headers)
             desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
             title = "Level UP"
             msg = discord.Embed(title = title, color= 6466585, description = desc)
@@ -95,7 +96,7 @@ async def checklevelvocal(member):
         xp = int(requests.get('http://{ip}/users/xp/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
         palier = lvlPalier(lvl)
         if xp >= palier:
-            requests.put('http://{ip}/users/level/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=1))
+            requests.put('http://{ip}/users/level/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=1), headers=headers)
             desc = ":tada: {1} a atteint le niveau **{0}**".format(lvl+1, Nom)
             title = "Level UP"
             msg = discord.Embed(title = title, color= 6466585, description = desc)
@@ -114,6 +115,6 @@ async def checklevelvocal(member):
 def checkInfo(ID):
     req = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()
     if req['error'] == 404:
-        r = requests.post('http://{ip}/users/create/?discord_id={discord_id}'.format(ip=ge.API_IP, discord_id=ID))
+        r = requests.post('http://{ip}/users/create/?discord_id={discord_id}'.format(ip=ge.API_IP, discord_id=ID), headers=headers)
         return False
     return True
