@@ -19,11 +19,12 @@ class Commandes(commands.Cog):
         """Permet d'avoir la version du bot."""
         emb = discord.Embed(title = "Version de Babot", color= 9576994, description = VERSION)
         await bot.delete_message(ctx.message)
-        await ctx.channel.send(embed = emb)
+        await ctx.channel.send(embed = emb, delete_after = 20)
 
     @commands.command(pass_context=True, aliases=['web', 'website'])
     async def site(self, ctx):
         """Affiche le lien vers le site web."""
+        await bot.delete_message(ctx.message)
         await ctx.channel.send("https://www.bastion-gaming.fr")
 
 
@@ -99,6 +100,7 @@ class Commandes(commands.Cog):
                         msg += "\n<@{0}>".format(one['discord_id'])
 
                 emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
+                await bot.delete_message(ctx.message)
                 await ctx.channel.send(embed = emb)
             else:
                 await ctx.channel.send("Commande utilisable uniquement sur le discord Bastion!")
@@ -114,6 +116,7 @@ class SecretCommandes(commands.Cog):
 
     @commands.command(pass_context=True)
     async def revive(self, ctx):
+        await bot.delete_message(ctx.message)
         await ctx.channel.send(f"Comme un phénix, <@{wel.idBaBot}> renait de ses cendres")
 
 

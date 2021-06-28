@@ -20,8 +20,6 @@ install("discord.py", "1.7.3")
 # API
 install("fastapi[all]", "0.65.2")
 install("requests", "2.25.1")
-# install("python-jose[cryptography]", "3.3.0")
-# install("passlib[bcrypt]", "1.7.4")
 
 # Base de données
 install("SQLAlchemy", "1.4.3")

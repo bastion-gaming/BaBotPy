@@ -137,6 +137,7 @@ class Stats(commands.Cog):
             else:
                 nbmsg = int(nbmsg['total_message'])
             msg = "Depuis que je suis sur ce serveur il y'a eu : {0} messages.".format(nbmsg)
+            await bot.delete_message(ctx.message)
             await ctx.channel.send(msg)
 
     @commands.command(pass_context=True)
@@ -173,6 +174,7 @@ class Stats(commands.Cog):
                     else:
                         nbMsg = t["0"]-t["23"]
                     msg = "Depuis {0}h il y'a eu: {1} messages postés.".format(d, nbMsg)
+                await bot.delete_message(ctx.message)
                 await ctx.channel.send(msg)
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
@@ -207,6 +209,7 @@ class Stats(commands.Cog):
             plt.ylabel('messages')
             plt.title("graphique du {}".format(jour))
             plt.savefig("core/cache/graphheure.png")
+            await bot.delete_message(ctx.message)
             await ctx.send(file=discord.File("core/cache/graphheure.png"))
             plt.clf()
         else:
@@ -249,6 +252,7 @@ class Stats(commands.Cog):
             plt.ylabel('messages')
             plt.title("graphique du {} au {} {}".format(jour[0], jour[len(jour)-1], nom_mois))
             plt.savefig("core/cache/graphjour.png")
+            await bot.delete_message(ctx.message)
             await ctx.send(file=discord.File("core/cache/graphjour.png"))
             plt.clf()
         else:
@@ -307,6 +311,7 @@ class Stats(commands.Cog):
             plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
             plt.axis('equal')
             plt.savefig('core/cache/msggrapf.png')
+            await bot.delete_message(ctx.message)
             await ctx.send(file=discord.File("core/cache/msggrapf.png"))
             plt.clf()
             if os.path.isfile("core/cache/msggrapf.png"):
@@ -367,6 +372,7 @@ class Stats(commands.Cog):
             plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
             plt.axis('equal')
             plt.savefig('core/cache/xpgrapf.png')
+            await bot.delete_message(ctx.message)
             await ctx.send(file=discord.File("core/cache/xpgrapf.png"))
             plt.clf()
             if os.path.isfile("core/cache/xpgrapf.png"):
@@ -413,6 +419,7 @@ class Stats(commands.Cog):
             if desc != "":
                 MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                 await ctx.channel.send(embed = MsgEmbed)
+            await bot.delete_message(ctx.message)
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
@@ -455,6 +462,7 @@ class Stats(commands.Cog):
             if desc != "":
                 MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                 await ctx.channel.send(embed = MsgEmbed)
+            await bot.delete_message(ctx.message)
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
@@ -502,6 +510,7 @@ class StatsOld(commands.Cog):
             if desc != "":
                 MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                 await ctx.channel.send(embed = MsgEmbed)
+            await bot.delete_message(ctx.message)
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
@@ -534,6 +543,7 @@ class StatsOld(commands.Cog):
                 palier = level.lvlPalier(lvl)
                 msg += "XP: `{0}/{1}`\n".format(xp, palier)
                 emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
+                await bot.delete_message(ctx.message)
                 await ctx.channel.send(embed = emb)
             else:
                 await ctx.channel.send("Commande utilisable uniquement sur le discord Bastion!")
