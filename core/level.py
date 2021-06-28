@@ -28,8 +28,8 @@ def xpmsg(message):
         nb = int(len(lw)/15)
         if nb <= 0:
             nb = 1
-        elif nb > 5:
-            nb = 5
+        elif nb > 6:
+            nb = 6
         addxp(ID, nb)
     else:
         addxp(ID, 1)
