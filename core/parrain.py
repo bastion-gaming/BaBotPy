@@ -69,7 +69,7 @@ class Parrain(commands.Cog):
                 for one in F_li:
                     msg += "\n<@{}>".format(one['discord_id'])
                 emb = discord.Embed(title = "Informations :", color= 13752280, description = msg)
-                await bot.delete_message(ctx.message)
+                # await bot.delete_message(ctx.message)
                 await ctx.channel.send(embed = emb)
             else:
                 msg = "Vous n'avez pas de filleul, invitez de nouveaux joueurs !"
