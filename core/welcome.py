@@ -1,39 +1,42 @@
-from DB import SQLite as sql
-from core import roles, stats as stat
+import requests
+from core import gestion as ge
 
 idBaBot = 790899501845053461
-idGetGems = 620558080551157770
-
 idBASTION = 417445502641111051
+
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+headers = {'access_token': SECRET_KEY}
 
 
 async def memberjoin(member, channel):
     if member.guild.id == idBASTION:
         channel_regle = member.guild.get_channel(417454223224209408)
         ID = member.id
-        if sql.newPlayer(ID, "bastion") == "Le joueur a été ajouté !":
+        req = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()
+        if req['error'] == 404:
+            requests.post('http://{ip}/users/create/?discord_id={discord_id}'.format(ip=ge.API_IP, discord_id=ID), headers=headers)
             msg = ":blue_square: Bienvenue {0} sur Bastion! :blue_square: \nNous sommes ravis que tu aies rejoint notre communauté !".format(member.mention)
             msg += "\n\nMerci de lire les règles et le fonctionnement du serveur dans le salon {0}".format(channel_regle.mention)
-            msg += "\nAjoute aussi ton parrain avec `!parrain <Nom>`\n▬▬▬▬▬▬▬▬▬▬▬▬"
-            await roles.addrole(member, "Nouveau")
+            msg += "\nAjoute aussi ton parrain avec `!parrain @pseudo`\n▬▬▬▬▬▬▬▬▬▬▬▬"
+            await ge.addrole(member, "Nouveau")
         else:
             msg = "▬▬▬▬▬▬ Bon retour parmis nous ! {0} ▬▬▬▬▬▬".format(member.mention)
-            await roles.addrole(member, "Nouveau")
-        stat.countCo()
-        print("Welcome >> {0} a rejoint le serveur {1}".format(member.name, member.guild.name))
+            await ge.addrole(member, "Nouveau")
         await channel.send(msg)
     else:
         msg = ":blue_square: Bienvenue {0} sur {1}! :blue_square:".format(member.mention, member.guild.name)
-        msg += "\nAjoute aussi ton parrain avec `!parrain <Nom>`\n▬▬▬▬▬▬▬▬▬▬▬▬"
+        msg += "\nAjoute aussi ton parrain avec `!parrain @pseudo`\n▬▬▬▬▬▬▬▬▬▬▬▬"
         await channel.send(msg)
 
 
-def memberremove(member):
+async def memberremove(member, channel):
     ID = member.id
     if member.guild.id == idBASTION:
-        stat.countDeco()
-        sql.updateField(ID, "lvl", 0, "bastion")
-        sql.updateField(ID, "xp", 0, "bastion")
-    print("Welcome >> {0} a quitté le serveur {1}".format(member.name, member.guild.name))
+        PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
+        balXP = int(requests.get('http://{ip}/users/xp/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
+        balLvl = int(requests.get('http://{ip}/users/level/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
+
+        requests.put('http://{ip}/users/xp/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=-balXP), headers=headers)
+        requests.put('http://{ip}/users/level/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=-balLvl), headers=headers)
     msg = "**{0}** nous a quitté, pourtant si jeune...".format(member.name)
-    return msg
+    await channel.send(msg)

@@ -2,7 +2,7 @@ import os
 import html
 import googleapiclient.discovery
 
-token_youtube = open("multimedia/token_youtube.txt", "r").read().replace("\n", "")
+token_youtube = open("media/tokenYT.txt", "r").read().replace("\n", "")
 
 
 def search_youtube(user_input, number):

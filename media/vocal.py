@@ -1,22 +1,11 @@
 import discord
 from discord.ext import commands
+from discord.utils import get
 import youtube_dl
 import os
 import asyncio
-from multimedia.youtube import search_youtube, get_youtube_url
-
-admin = 0
-Inquisiteur = 1
-Ambassadeur = 2
-perm = [["Baron du Bastion"], ["Baron du Bastion", "Inquisiteur du Bastion"], ["Inquisiteur du Bastion", "Baron du Bastion", "Ambassadeur"]]
-
-
-def permission(ctx, grade):
-    roles = ctx.author.roles
-    for role in roles :
-        if role.name in perm[grade]:
-            return(True)
-    return(False)
+from media.youtube import search_youtube, get_youtube_url
+from core import gestion as ge
 
 
 class Info():
@@ -68,17 +57,17 @@ class Queue(commands.Cog):
         if not ctx.voice_client.is_playing():
             await ctx.send("downloading file")
             self.dl(url)
-            song = discord.FFmpegPCMAudio("cache/song.mp3")
+            song = discord.FFmpegPCMAudio("core/cache/song.mp3")
             ctx.voice_client.play(song, after =lambda e: self.next(ctx))
             await ctx.send("{} se lance".format(self.info.title[0]))
         else:
             await ctx.send("{} ajouté à la queue".format(self.info.last_title()))
-            print("Multimedia >> ajouté à la queue")
+            print("Media >> ajouté à la queue")
 
     def dl(self, url):
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': 'cache/song.mp3',
+            'outtmpl': 'core/cache/song.mp3',
             'postprocessors':
                 [{
                     'key': 'FFmpegExtractAudio',
@@ -87,32 +76,32 @@ class Queue(commands.Cog):
                 }]
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            print('Multimedia >> Downloading song now;\n')
+            print('Media >> Downloading song now;\n')
             ydl.download([url])
 
     def next(self, ctx):
         try :
             self.info.sup()
         except ValueError:
-            print("Multimedia >> liste vide")
+            print("Media >> liste vide")
             pass
         if not self.info.url:
             msg = 'la queue est vide'
-            print('Multimedia >> la queue est vide')
+            print('Media >> la queue est vide')
         else:
-            song_there = os.path.isfile("cache/song.mp3")
+            song_there = os.path.isfile("core/cache/song.mp3")
             try :
                 if song_there:
-                    os.remove('cache/song.mp3')
-                    print('Multimedia >> removed old song file')
+                    os.remove('core/cache/song.mp3')
+                    print('Media >> removed old song file')
             except PermissionError:
-                print('Multimedia >> trying to delete the song file')
+                print('Media >> trying to delete the song file')
                 ctx.send("ERROR music playing")
                 pass
 
             msg = 'lecture de {}'.format(self.info.title[0])
             self.dl(self.info.url[0])
-            ctx.voice_client.play(discord.FFmpegPCMAudio("cache/song.mp3"), after =lambda e: self.next(ctx))
+            ctx.voice_client.play(discord.FFmpegPCMAudio("core/cache/song.mp3"), after =lambda e: self.next(ctx))
         envoie = ctx.send(msg)
         fut = asyncio.run_coroutine_threadsafe(envoie, self.bot.loop)
         try:
@@ -126,16 +115,24 @@ class Music(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.client = bot
         self.skip = []
         self.music = Queue(self.bot)
 
     @commands.command(pass_context=True)
     async def join(self, ctx):
         """Le bot rejoint le channel vocal """
-        try :
-            vocal = ctx.author.voice.channel
-            print([y.name for y in vocal.members])
-            await vocal.connect(timeout=60.0, reconnect=True)
+        try:
+            channel = ctx.author.voice.channel
+            # print([y.name for y in vocal.members])
+            vocal = discord.utils.get(ctx.guild.voice_channels, name=channel.name)
+            vocal_client = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+            if vocal_client == None:
+                await channel.guild.change_voice_state(channel=channel, self_deaf=True)
+                await vocal.connect(timeout=60.0, reconnect=True)
+            else:
+                await vocal_client.move_to(channel)
         except:
             await ctx.channel.send("Il faut d'abord se connecter dans un channel vocal !")
             pass
@@ -147,11 +144,11 @@ class Music(commands.Cog):
         song_there = os.path.isfile("cache/song.mp3")
         try :
             if song_there:
-                os.remove('cache/song.mp3')
-                print('Multimedia >> removed old song file')
+                os.remove('core/cache/song.mp3')
+                print('Media >> removed old song file')
 
         except PermissionError:
-            print('Multimedia >> trying to delete the song file')
+            print('Media >> trying to delete the song file')
             ctx.send("ERROR music playing")
             return
         self.music.info.purge()
@@ -161,17 +158,30 @@ class Music(commands.Cog):
     @commands.command(pass_context=True)
     async def play(self, ctx, url):
         """**[url]** | Le bot joue la vidéo youtube (url uniquement)"""
-        song_there = os.path.isfile("cache/song.mp3")
+        song_there = os.path.isfile("core/cache/song.mp3")
         try :
             if song_there:
-                os.remove('cache/song.mp3')
-                print('Multimedia >> removed old song file')
+                os.remove('core/cache/song.mp3')
+                print('Media >> removed old song file')
 
         except PermissionError:
-            print('Multimedia >> trying to delete the song file')
+            print('Media >> trying to delete the song file')
             ctx.send("ERROR music playing")
             return
 
+        try:
+            channel = ctx.author.voice.channel
+            # print([y.name for y in vocal.members])
+            vocal = discord.utils.get(ctx.guild.voice_channels, name=channel.name)
+            vocal_client = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+            if vocal_client == None:
+                await channel.guild.change_voice_state(channel=channel, self_deaf=True)
+                await vocal.connect(timeout=60.0, reconnect=True)
+            else:
+                await vocal_client.move_to(channel)
+        except:
+            await ctx.channel.send("Il faut d'abord se connecter dans un channel vocal !")
         await self.music.add_to_queue(ctx, url)
 
     @commands.command(pass_context=True)
@@ -179,7 +189,7 @@ class Music(commands.Cog):
         """Permet de passer la chanson en cours"""
         voice = ctx.voice_client
         if voice.is_connected():
-            if permission(ctx, Ambassadeur):
+            if ge.permission(ctx, ge.Inquisiteur):
                 voice.stop()
                 await ctx.send("music skipped")
             else:
@@ -189,7 +199,7 @@ class Music(commands.Cog):
                     self.skip.append(ctx.author.id)
                     n = len(self.skip)
                     m = len(ctx.author.voice.channel.members)-1
-                    print(n, m)
+                    # print(n, m)
                     if n >= m/2:
                         voice.stop()
                         await ctx.send("music skipped")
@@ -253,4 +263,4 @@ class Music(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Music(bot))
-    open("help/cogs.txt", "a").write("Music\n")
+    open("core/cache/cogs.txt", "a").write("Music\n")

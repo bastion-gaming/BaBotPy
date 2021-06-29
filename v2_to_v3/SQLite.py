@@ -1,6 +1,3 @@
-# Module SQLite
-# Version 1.0
-import discord
 import sqlite3 as sql
 import datetime as dt
 import time as t
@@ -27,7 +24,7 @@ def nom_ID(nom):
 # ===============================================================================
 # Ouverture du fichier DB
 # ===============================================================================
-conn = sql.connect('DB/{}.db'.format(DB_NOM))
+conn = sql.connect('{}.db'.format(DB_NOM))
 
 
 # ===============================================================================
@@ -333,7 +330,7 @@ def taille(nameDB = None):
 # Fonctions
 # ===============================================================================
 # Liste des tables dont l'enregistrement des données est spécifique
-nameDBexcept = ["filleuls", "bastion_com_time"]
+nameDBexcept = ["bastion_com_time"]
 
 
 # -------------------------------------------------------------------------------
@@ -416,10 +413,6 @@ def valueAt(ID, fieldName, nameDB = None):
                     if x == "bastion_com_time":
                         fieldName2 = "Commande"
                         fieldName3 = "Com_time, Commande"
-                        link = "bastion"
-                    elif x == "filleuls":
-                        fieldName2 = "ID_filleul"
-                        fieldName3 = "ID_filleul"
                         link = "bastion"
             try:
                 # Paramètre spécial (à mettre a la place du fieldName) permettant de retourner toutes les valeurs liées à un PlayerID dans la table nameDB
@@ -548,9 +541,6 @@ def add(ID, nameElem, nbElem, nameDB = None):
             if nameDB == "bastion_com_time":
                 data = "idbastion, Commande, Com_time"
                 values = "'{2}', '{0}', '{1}'".format(nameElem, nbElem, PlayerID)
-            elif nameDB == "filleuls":
-                data = "idbastion, ID_filleul"
-                values = "{1}, {0}".format(nbElem, PlayerID)
         try:
             script = "INSERT INTO {0} ({1}) VALUES ({2})".format(nameDB, data, values)
             # print("==== add ====")

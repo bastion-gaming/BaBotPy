@@ -1,17 +1,20 @@
-import datetime as dt
-from DB import SQLite as sql
+import os
+import requests
+import json
+import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import bot
 from operator import itemgetter
-import discord
-import json
 import matplotlib.pyplot as plt
-import os
-from core import welcome as wel, level as lvl
+import datetime as dt
 
-client = discord.Client()
-file = "core/time.json"
-co = "core/co.json"
+from core import welcome as wel, gestion as ge, level
+
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+headers = {'access_token': SECRET_KEY}
+
+file = "core/cache/time.json"
+co = "core/cache/co.json"
 
 
 def fileExist():
@@ -38,29 +41,23 @@ def countDeco():
     with open(co, 'w') as f:
         f.write(json.dumps(t, indent=4))
 
-
-async def countMsg(message):
-    ID = message.author.id
-    try:
-        value = sql.valueAtNumber(ID, "nbmsg", "bastion")
-        sql.updateField(ID, "nbmsg", value+1, "bastion")
-        lvl.addxp(ID, 1, "bastion")
-    except:
-        return print("Le joueur n'existe pas.")
-
-
 def hourCount():
     d = dt.datetime.now().hour
     if fileExist() is False:
         t = {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0}
-        t[str(d)] = int(sql.countTotalMsg())
+        nbmsg = requests.get('http://{ip}/infos/msg/'.format(ip=ge.API_IP)).json()
+        if nbmsg == {}:
+            nbmsg = 0
+        else:
+            nbmsg = int(nbmsg['total_message'])
+        t[str(d)] = nbmsg
         with open(file, 'w') as f:
             f.write(json.dumps(t, indent=4))
         return d
     else:
         with open(file, "r") as f:
             t = json.load(f)
-            t[str(d)] = int(sql.countTotalMsg())
+            t[str(d)] = nbmsg
         with open(file, 'w') as f:
             f.write(json.dumps(t, indent=4))
     print("time.json modifié")
@@ -86,7 +83,11 @@ class Stats(commands.Cog):
         """
         if self.hour != dt.datetime.now().hour :
             if self.day != dt.date.today():
-                msg_total = sql.countTotalMsg()
+                msg_total = requests.get('http://{ip}/infos/msg/'.format(ip=ge.API_IP)).json()
+                if msg_total == {}:
+                    msg_total = 0
+                else:
+                    msg_total = int(msg_total['total_message'])
                 local_heure = {}
                 f = open(file, "r")
                 connexion = json.load(open(co, "r"))
@@ -96,29 +97,28 @@ class Stats(commands.Cog):
                 local_heure["23"] = msg_total - total_heure[str("23")]
                 msg_jour = msg_total - total_heure["0"]
                 nouveau_jour = {
-                                "msg total jour" : msg_total,
-                                "msg local jour" : msg_jour,
-                                "msg total heures" : total_heure,
-                                "msg local heures" : local_heure,
-                                "co local" : connexion["co local"],
-                                "co total" : connexion["co total"],
-                                "deco total" : connexion["deco total"],
-                                "deco local" : connexion["deco local"],
-                                "nombre de joueurs" : 185+int(connexion["co total"])-int(connexion["deco total"])
-                                }
+                    "msg total jour" : msg_total,
+                    "msg local jour" : msg_jour,
+                    "msg total heures" : total_heure,
+                    "msg local heures" : local_heure,
+                    "co local" : connexion["co local"],
+                    "co total" : connexion["co total"],
+                    "deco total" : connexion["deco total"],
+                    "deco local" : connexion["deco local"]
+                }
                 connexion["co local"] = 0
                 connexion["deco local"] = 0
                 with open(co, 'w') as f:
                     f.write(json.dumps(connexion, indent=4))
                 try:
-                    with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'r') as f:
+                    with open("core/logs/log-{}.json".format(str(dt.date.today())[:7]), 'r') as f:
                         t = json.load(f)
                         t[str(dt.date.today()-dt.timedelta(days = 1))] = nouveau_jour
                         f.close()
                 except:
                     t = {}
                     t[str(dt.date.today()-dt.timedelta(days = 1))] = nouveau_jour
-                with open("logs/log-{}.json".format(str(dt.date.today())[:7]), 'w') as f:
+                with open("core/logs/log-{}.json".format(str(dt.date.today())[:7]), 'w') as f:
                     f.write(json.dumps(t, indent=4))
                 self.day = dt.date.today()
 
@@ -128,42 +128,32 @@ class Stats(commands.Cog):
     @commands.command(pass_context=True)
     async def totalMsg(self, ctx):
         """
-        Permet de savoir combien i y'a eu de message posté depuis que le bot est sur le serveur
+        Donne le nombre de message posté depuis le début du bot.
         """
         if ctx.guild.id == wel.idBASTION:
-            msg = "Depuis que je suis sur ce serveur il y'a eu : {0} messages.".format(sql.countTotalMsg())
+            nbmsg = requests.get('http://{ip}/infos/msg/'.format(ip=ge.API_IP)).json()
+            if nbmsg == {}:
+                nbmsg = 0
+            else:
+                nbmsg = int(nbmsg['total_message'])
+            msg = "Depuis que je suis sur ce serveur il y'a eu : {0} messages.".format(nbmsg)
+            await bot.delete_message(ctx.message)
             await ctx.channel.send(msg)
-
-    @commands.command(pass_context=True)
-    async def msgBy(self, ctx, Nom=None):
-        """
-        **[nom]** | Permet de savoir combien de message à envoie [nom]
-        """
-        if ctx.guild.id == wel.idBASTION:
-            if len(Nom) == 21 :
-                ID = int(Nom[2:20])
-            elif len(Nom) == 22 :
-                ID = int(Nom[3:21])
-            else :
-                msg = "Le nom que vous m'avez donné n'existe pas !"
-                ID = -1
-
-            if (ID != -1):
-                res = sql.valueAtNumber(ID, "nbmsg", "bastion")
-                msg = "{0} a posté {1} messages depuis le {2}".format(Nom, res, sql.valueAtNumber(ID, "arrival", "bastion")[:10])
-            await ctx.channel.send(msg)
-        else:
-            await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
     @commands.command(pass_context=True)
     async def hourMsg(self, ctx, ha=None, hb=None):
         """
-        **[heure de début] [heure de fin]** | Permet de savoir combien i y'a eu de message posté dans l'heure ou entre deux heures.
+        **[heure de début] [heure de fin]** | Donne le nombre de message posté dans l'heure ou entre deux heures.
         """
         if ctx.guild.id == wel.idBASTION:
             d = dt.datetime.now().hour
             if not fileExist():
-                msg = "Depuis que je suis sur ce serveur il y'a eu : {0} messages.".format(sql.countTotalMsg())
+                nbmsg = requests.get('http://{ip}/infos/msg/'.format(ip=ge.API_IP)).json()
+                if nbmsg == {}:
+                    nbmsg = 0
+                else:
+                    nbmsg = int(nbmsg['total_message'])
+                msg = "Depuis que je suis sur ce serveur il y'a eu : {0} messages.".format(nbmsg)
                 await ctx.channel.send(msg)
                 await ctx.channel.send("le fichier time.json est introuvable le résultat sera donc peut être faux.")
             else:
@@ -184,25 +174,26 @@ class Stats(commands.Cog):
                     else:
                         nbMsg = t["0"]-t["23"]
                     msg = "Depuis {0}h il y'a eu: {1} messages postés.".format(d, nbMsg)
+                await bot.delete_message(ctx.message)
                 await ctx.channel.send(msg)
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
     @commands.command(pass_context=True)
     async def graphheure(self, ctx, statue = "local", jour = "yesterday"):
-        """|local/total aaaa-mm-jj| affiche le graph des messages envoyés par heure"""
+        """|local/total aaaa-mm-jj| Affiche le graph des messages envoyés par heure."""
         if ctx.guild.id == wel.idBASTION:
             if jour == "yesterday":
                 jour = str(dt.date.today()-dt.timedelta(days = 1))
             try :
-                logs = json.load(open("logs/log-{}.json".format(jour[:7]), "r"))
+                logs = json.load(open("core/logs/log-{}.json".format(jour[:7]), "r"))
             except FileNotFoundError :
                 await ctx.send("la date n'est pas correcte !")
                 return
             log = logs[jour]
             heures = log["msg {} heures".format(statue)]
-            if os.path.isfile("cache/graphheure.png"):
-                os.remove('cache/graphheure.png')
+            if os.path.isfile("core/cache/graphheure.png"):
+                os.remove('core/cache/graphheure.png')
                 print('removed old graphe file')
             x = []
             y = []
@@ -217,27 +208,28 @@ class Stats(commands.Cog):
             plt.xlabel('heures')
             plt.ylabel('messages')
             plt.title("graphique du {}".format(jour))
-            plt.savefig("cache/graphheure.png")
-            await ctx.send(file=discord.File("cache/graphheure.png"))
+            plt.savefig("core/cache/graphheure.png")
+            await bot.delete_message(ctx.message)
+            await ctx.send(file=discord.File("core/cache/graphheure.png"))
             plt.clf()
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
     @commands.command(pass_context=True)
     async def graphjour(self, ctx, statue = "local", mois = "now"):
-        """|local/total aaaa-mm| affiche le graph des messages envoyés par jour"""
+        """|local/total aaaa-mm| Affiche le graph des messages envoyés par jour."""
         if ctx.guild.id == wel.idBASTION:
             if mois == "now":
                 mois = str(dt.date.today())[:7]
             aaaa , mm = mois.split("-")
             nom_mois = dt.datetime(int(aaaa), int(mm), 1).strftime("%B")
             try :
-                logs = json.load(open("logs/log-{}.json".format(mois), "r"))
+                logs = json.load(open("core/logs/log-{}.json".format(mois), "r"))
             except ValueError :
                 ctx.send("la date n'est pas correcte !")
                 pass
-            if os.path.isfile("cache/graphjour.png"):
-                os.remove('cache/graphjour.png')
+            if os.path.isfile("core/cache/graphjour.png"):
+                os.remove('core/cache/graphjour.png')
                 print('removed old graphe file')
             msg = []
             jour = []
@@ -259,8 +251,9 @@ class Stats(commands.Cog):
             plt.xlabel('jour')
             plt.ylabel('messages')
             plt.title("graphique du {} au {} {}".format(jour[0], jour[len(jour)-1], nom_mois))
-            plt.savefig("cache/graphjour.png")
-            await ctx.send(file=discord.File("cache/graphjour.png"))
+            plt.savefig("core/cache/graphjour.png")
+            await bot.delete_message(ctx.message)
+            await ctx.send(file=discord.File("core/cache/graphjour.png"))
             plt.clf()
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
@@ -268,25 +261,29 @@ class Stats(commands.Cog):
     @commands.command(pass_context=True, aliases=['graphmembre'])
     async def graphmsg(self, ctx, r = 6):
         """
-        Graphique représentant le classement des membres en fonction du nombre de messages écrit
+        Graphique représentant le classement des membres en fonction du nombre de messages écrit.
         """
         if ctx.guild.id == wel.idBASTION:
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
+            if os.path.isfile("core/cache/msggrapf.png"):
+                os.remove('core/cache/msggrapf.png')
                 print('removed old graphe file')
-            total = sql.countTotalMsg()
+            total = requests.get('http://{ip}/infos/msg/'.format(ip=ge.API_IP)).json()
+            if total == {}:
+                total = 0
+            else:
+                total = int(total['total_message'])
             a = []
-            taille = sql.taille("bastion")
-            i = 1
-            while i <= taille:
-                IDi = sql.userID(i, "bastion")
-                nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
-                try:
-                    Name = ctx.guild.get_member(IDi).name
-                    a.append([nbMsg, IDi])
-                    i += 1
-                except:
-                    i += 1
+            taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
+            if taille == {}:
+                taille = 0
+            else:
+                taille = int(taille['taille'])
+            users = requests.get('http://{ip}/users/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
+            for user in users:
+                IDi = user['discord_id']
+                nbMsg = user['nbmsg']
+                Name = ctx.guild.get_member(IDi).name
+                a.append([nbMsg, IDi, Name])
             a.sort(reverse = True)
             richest = a[:r]
             sous_total = 0
@@ -313,36 +310,41 @@ class Stats(commands.Cog):
                 i += 1
             plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
             plt.axis('equal')
-            plt.savefig('cache/piegraph.png')
-            await ctx.send(file=discord.File("cache/piegraph.png"))
+            plt.savefig('core/cache/msggrapf.png')
+            await bot.delete_message(ctx.message)
+            await ctx.send(file=discord.File("core/cache/msggrapf.png"))
             plt.clf()
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
+            if os.path.isfile("core/cache/msggrapf.png"):
+                os.remove('core/cache/msggrapf.png')
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
     @commands.command(pass_context=True)
     async def graphxp(self, ctx, r = 6):
         """
-        Graphique représentant le classement des membres en fonction de leur XP
+        Graphique représentant le classement des membres en fonction de leur XP.
         """
         if ctx.guild.id == wel.idBASTION:
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
+            if os.path.isfile("core/cache/xpgrapf.png"):
+                os.remove('core/cache/xpgrapf.png')
                 print('removed old graphe file')
-            total = sql.countTotalXP()
+            total = requests.get('http://{ip}/infos/xp/'.format(ip=ge.API_IP)).json()
+            if total == {}:
+                total = 0
+            else:
+                total = int(total['total_xp'])
             a = []
-            taille = sql.taille("bastion")
-            i = 1
-            while i <= taille:
-                IDi = sql.userID(i, "bastion")
-                XP = sql.valueAtNumber(IDi, "xp", "bastion")
-                try:
-                    Name = ctx.guild.get_member(IDi).name
-                    a.append([XP, IDi])
-                    i += 1
-                except:
-                    i += 1
+            taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
+            if taille == {}:
+                taille = 0
+            else:
+                taille = int(taille['taille'])
+            users = requests.get('http://{ip}/users/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
+            for user in users:
+                IDi = user['discord_id']
+                nbMsg = user['nbmsg']
+                Name = ctx.guild.get_member(IDi).name
+                a.append([nbMsg, IDi, Name])
             a.sort(reverse = True)
             richest = a[:r]
             sous_total = 0
@@ -369,41 +371,46 @@ class Stats(commands.Cog):
                 i += 1
             plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, explode=explode)
             plt.axis('equal')
-            plt.savefig('cache/piegraph.png')
-            await ctx.send(file=discord.File("cache/piegraph.png"))
+            plt.savefig('core/cache/xpgrapf.png')
+            await bot.delete_message(ctx.message)
+            await ctx.send(file=discord.File("core/cache/xpgrapf.png"))
             plt.clf()
-            if os.path.isfile("cache/piegraph.png"):
-                os.remove('cache/piegraph.png')
+            if os.path.isfile("core/cache/xpgrapf.png"):
+                os.remove('core/cache/xpgrapf.png')
         else:
             await ctx.channel.send("commande utilisable uniquement sur le discord `Bastion`")
 
     @commands.command(pass_context=True)
     async def topxp(self, ctx, n = 6):
         """
-        Classement textuel des membre du Bastion en fonction de l'XP
+        Classement textuel des membres du Bastion en fonction de l'XP.
         """
         if ctx.guild.id == wel.idBASTION:
             UserList = []
-            taille = sql.taille("bastion")
-            i = 1
-            while i <= taille:
-                IDi = sql.userID(i, "bastion")
-                nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
-                XP = sql.valueAtNumber(IDi, "xp", "bastion")
-                Arrival = sql.valueAtNumber(IDi, "arrival", "bastion")[:10]
+            taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
+            if taille == {}:
+                taille = 0
+            else:
+                taille = int(taille['taille'])
+            users = requests.get('http://{ip}/users/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
+            for user in users:
+                IDi = int(user['discord_id'])
+                nbMsg = user['nbmsg']
+                XP = user['xp']
+                mylvl = user['level']
+                Arrival = user['arrival'][:10]
                 try:
                     Name = ctx.guild.get_member(IDi).name
-                    UserList.append([IDi, XP, nbMsg, Arrival, Name])
-                    i += 1
+                    UserList.append([IDi, XP, nbMsg, Arrival, Name, mylvl])
                 except:
-                    i += 1
+                    pass
             UserList = sorted(UserList, key=itemgetter(1), reverse=True)
             Titre = "Classement des membres en fonction de l'XP"
             j = 1
             desc = ""
             for one in UserList: # affichage des données trié
                 if j <= n:
-                    desc += "{number} |`{name}`: **{XP}** XP • _{msg}_ messages postés depuis le {arrival}\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3])
+                    desc += "{number} |`{name}`: **{XP}** XP • Niveau **{niv}** • _{msg}_ messages postés depuis le {arrival}\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3], niv=one[5])
                     if j % 20 == 0 and j != 0:
                         MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                         desc = ""
@@ -412,36 +419,41 @@ class Stats(commands.Cog):
             if desc != "":
                 MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                 await ctx.channel.send(embed = MsgEmbed)
+            await bot.delete_message(ctx.message)
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
     @commands.command(pass_context=True)
     async def topmsg(self, ctx, n = 6):
         """
-        Classement textuel des membres du Bastion en fonction des messages postés
+        Classement textuel des membres du Bastion en fonction des messages postés.
         """
         if ctx.guild.id == wel.idBASTION:
             UserList = []
-            taille = sql.taille("bastion")
-            i = 1
-            while i <= taille:
-                IDi = sql.userID(i, "bastion")
-                nbMsg = sql.valueAtNumber(IDi, "nbmsg", "bastion")
-                XP = sql.valueAtNumber(IDi, "xp", "bastion")
-                Arrival = sql.valueAtNumber(IDi, "arrival", "bastion")[:10]
+            taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
+            if taille == {}:
+                taille = 0
+            else:
+                taille = int(taille['taille'])
+            users = requests.get('http://{ip}/users/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
+            for user in users:
+                IDi = int(user['discord_id'])
+                nbMsg = user['nbmsg']
+                XP = user['xp']
+                mylvl = user['level']
+                Arrival = user['arrival'][:10]
                 try:
                     Name = ctx.guild.get_member(IDi).name
-                    UserList.append([IDi, XP, nbMsg, Arrival, Name])
-                    i += 1
+                    UserList.append([IDi, XP, nbMsg, Arrival, Name, mylvl])
                 except:
-                    i += 1
+                    pass
             UserList = sorted(UserList, key=itemgetter(2), reverse=True)
             Titre = "Classement des membres en fonction du nombre de messages postés"
             j = 1
             desc = ""
             for one in UserList: # affichage des données trié
                 if j <= n:
-                    desc += "{number} |`{name}`: **{msg}** messages postés depuis le {arrival} • _{XP}_ XP\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3])
+                    desc += "{number} |`{name}`: **{msg}** messages postés depuis le {arrival} • _{XP}_ XP • Niveau **{niv}**\n".format(number=j, name=one[4], XP=one[1], msg=one[2], arrival=one[3], niv=one[5])
                     if j % 20 == 0 and j != 0:
                         MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                         desc = ""
@@ -450,12 +462,97 @@ class Stats(commands.Cog):
             if desc != "":
                 MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
                 await ctx.channel.send(embed = MsgEmbed)
-            else:
-                await True
+            await bot.delete_message(ctx.message)
         else:
             await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
 
 
+# ===============================================================
+class StatsOld(commands.Cog):
+
+    def __init__(self, bot):
+        return(None)
+
+    @commands.command(pass_context=True, aliases=['oldtopxp', 'oldop'])
+    async def oldtop(self, ctx, n = 6):
+        """
+        Ancien classement textuel des membres du Bastion en fonction de l'XP.
+        """
+        if ctx.guild.id == wel.idBASTION:
+            UserList = []
+            taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
+            if taille == {}:
+                taille = 0
+            else:
+                taille = int(taille['taille'])
+            users = requests.get('http://{ip}/users/old/?skip=0&limit={max}'.format(ip=ge.API_IP, max=taille)).json()
+            for user in users:
+                IDi = int(user['discord_id'])
+                XP = user['xp']
+                mylvl = user['level']
+                try:
+                    Name = ctx.guild.get_member(IDi).name
+                    UserList.append([IDi, XP, Name, mylvl])
+                except:
+                    pass
+            UserList = sorted(UserList, key=itemgetter(1), reverse=True)
+            Titre = "Classement des membres en fonction de l'XP"
+            j = 1
+            desc = ""
+            for one in UserList: # affichage des données trié
+                if j <= n:
+                    desc += "{number} |`{name}`: **{XP}** XP | Niveau **{niv}**\n".format(number=j, name=one[2], XP=one[1], niv=one[3])
+                    if j % 20 == 0 and j != 0:
+                        MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                        desc = ""
+                        await ctx.channel.send(embed = MsgEmbed)
+                j += 1
+            if desc != "":
+                MsgEmbed = discord.Embed(title = Titre, color= 13752280, description = desc)
+                await ctx.channel.send(embed = MsgEmbed)
+            await bot.delete_message(ctx.message)
+        else:
+            await ctx.channel.send("Commande utilisable uniquement sur le discord `Bastion`")
+
+
+    @commands.command(pass_context=True, aliases=['infox', 'infx'])
+    async def oldinfo(self, ctx, Nom = None):
+        """
+        Permet d'avoir les anciennes informations d'un utilisateur
+        """
+        if Nom == None:
+            ID = ctx.author.id
+            Nom = ctx.author.name
+        else:
+            ID = ge.nom_ID(Nom)
+
+        if ID != -1:
+            if not level.checkInfo(ID):
+                member = ctx.guild.get_member(int(ID))
+                await ge.addrole(member, "Nouveau")
+            PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
+            user = requests.get('http://{ip}/users/old/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()
+            lvl = int(user['level'])
+            xp = int(user['xp'])
+            msg = "**Utilisateur:** {}".format(Nom)
+            emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
+
+            if ctx.guild.id == wel.idBASTION:
+                # Niveaux part
+                msg = ""
+                palier = level.lvlPalier(lvl)
+                msg += "XP: `{0}/{1}`\n".format(xp, palier)
+                emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
+                await bot.delete_message(ctx.message)
+                await ctx.channel.send(embed = emb)
+            else:
+                await ctx.channel.send("Commande utilisable uniquement sur le discord Bastion!")
+        else:
+            msg = "Le nom que vous m'avez donné n'existe pas !"
+            await ctx.channel.send(msg)
+
+
 def setup(bot):
     bot.add_cog(Stats(bot))
-    open("help/cogs.txt", "a").write("Stats\n")
+    bot.add_cog(StatsOld(bot))
+    open("core/cache/cogs.txt", "a").write("Stats\n")

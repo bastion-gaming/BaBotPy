@@ -44,4 +44,4 @@ class Kaamelott(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Kaamelott(bot))
-    open("help/cogs.txt", "a").write("Kaamelott\n")
+    open("core/cache/cogs.txt", "a").write("Kaamelott\n")

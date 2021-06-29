@@ -1,20 +1,20 @@
+import time
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
-import datetime as dt
-from datetime import datetime
-from DB import SQLite as sql
-from core import stats as stat, level as lvl, welcome as wel, gestion as ge, roles
-# from multimedia import notification_loop as notifL
-import time
+
+from core import level as lvl, welcome as wel, gestion as ge
+
 
 # initialisation des variables.
-DEFAUT_PREFIX = "!"
-
+try:
+    PREFIX = open("core/prefix.txt").read().replace("\n", "")
+except:
+    PREFIX = "*"
 VERSION = open("core/version.txt").read().replace("\n", "")
-TOKEN = open("token/token.txt", "r").read().replace("\n", "")
-PREFIX = open("core/prefix.txt", "r").read().replace("\n", "")
-
+TOKEN = open("core/token.txt", "r").read().replace("\n", "")
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+NONE = open("core/cache/cogs.txt", "w")
 intents = discord.Intents(
     messages=True,
     guilds=True,
@@ -28,50 +28,42 @@ intents = discord.Intents(
     guild_reactions=True,
     dm_reactions=True
 )
-client = commands.Bot(command_prefix = "{0}".format(PREFIX), intents=intents)
-NONE = open("help/cogs.txt", "w")
-NONE = open("help/help.txt", "w")
-
+client = commands.Bot(command_prefix = "{p}".format(p=PREFIX), intents=intents)
 on_vocal = {}
 on_vocal_cam = {}
 on_vocal_stream = {}
-jour = dt.date.today()
 
-#####################################################
+################################################
 
 client.remove_command("help")
 
+################################################
 
 # Au démarrage du Bot.
 @client.event
 async def on_ready():
-    print('Connecté avec le nom : {0.user}'.format(client))
-    print('PREFIX = '+str(PREFIX))
-    print('\nBastionBot '+VERSION)
-    activity = discord.Activity(type=discord.ActivityType.playing, name="{0}help ◀ bastion-gaming.fr ▶".format(PREFIX))
+    print('Connecté avec le nom : {c.user} \nPrefix : {p} \nVersion : {v}'.format(c=client, v=VERSION, p=PREFIX))
+    activity = discord.Activity(type=discord.ActivityType.playing, name="bastion-gaming.fr")
     await client.change_presence(status=discord.Status.online, activity=activity)
-    print(sql.init())
-    flag = sql.checkField()
-    if flag == 0:
-        print("SQL >> Aucun champ n'a été ajouté, supprimé ou modifié.")
-    elif "add" in flag:
-        print("SQL >> Un ou plusieurs champs ont été ajoutés à la DB.")
-    elif "sup" in flag:
-        print("SQL >> Un ou plusieurs champs ont été supprimés de la DB.")
-    elif "type" in flag:
-        print("SQL >> Un ou plusieurs type ont été modifié sur la DB.")
     print('------\n')
 
+################### Core #######################
 
-####################### Commande help.py #######################
+client.load_extension('core.commands')
 
-client.load_extension('help.help')
+client.load_extension('v2_to_v3.commands')
 
-################### Core ############################
+client.load_extension('core.parrain')
 
-client.load_extension('core.utils')
+client.load_extension('core.stats')
 
-################### Welcome #################################
+client.load_extension('core.help')
+
+################### Media ######################
+
+# client.load_extension('media.vocal')
+
+################### Welcome ####################
 
 
 @client.event
@@ -91,10 +83,20 @@ async def on_member_remove(member):
         systemchannel = guild.system_channel
     else:
         systemchannel = 0
-    await systemchannel.send(wel.memberremove(member))
+    await wel.memberremove(member, systemchannel)
 
 
-####################### Stat ####################################
+################### XP #########################
+
+
+@client.event
+async def on_message(message):
+    if not (message.author.bot or message.content.startswith(PREFIX)) :
+        if message.guild.id == wel.idBASTION:
+            if message.content.split()[0] not in ge.PREFIX_LIST:
+                lvl.xpmsg(message)
+                await lvl.checklevel(message)
+    await client.process_commands(message)
 
 
 @client.event
@@ -113,11 +115,7 @@ async def on_voice_state_update(member, before, after):
         elif (after.channel == None or after.channel.id == afkchannel) and member.name in on_vocal :
             time_on_vocal = round((time.time() - on_vocal[member.name])/60)
             print('{} as passé {} minutes en vocal !'.format(member.name, time_on_vocal))
-            balXP = sql.valueAt(ID, "xp", "bastion")
-            if balXP != 0:
-                balXP = int(balXP[0])
-            XP = balXP + int(time_on_vocal)
-            sql.updateField(ID, "xp", XP, "bastion")
+            lvl.addxp_voc(ID, time_on_vocal)
             await lvl.checklevelvocal(member)
             del on_vocal[member.name]
 
@@ -127,11 +125,7 @@ async def on_voice_state_update(member, before, after):
         elif (after.channel == None or not after.self_video) and member.name in on_vocal_cam :
             time_on_vocal_cam = round((time.time() - on_vocal_cam[member.name])/60)
             print('{} as passé {} minutes avec la caméra allumée !'.format(member.name, time_on_vocal_cam))
-            balXP = sql.valueAt(ID, "xp", "bastion")
-            if balXP != 0:
-                balXP = int(balXP[0])
-            XP = balXP + int(time_on_vocal_cam)
-            sql.updateField(ID, "xp", XP, "bastion")
+            lvl.addxp_voc(ID, time_on_vocal_cam)
             await lvl.checklevelvocal(member)
             del on_vocal_cam[member.name]
 
@@ -141,29 +135,9 @@ async def on_voice_state_update(member, before, after):
         elif (after.channel == None or not after.self_stream) and member.name in on_vocal_stream :
             time_on_vocal_stream = round((time.time() - on_vocal_stream[member.name])/60)
             print('{} as passé {} minutes en stream !'.format(member.name, time_on_vocal_stream))
-            balXP = sql.valueAt(ID, "xp", "bastion")
-            if balXP != 0:
-                balXP = int(balXP[0])
-            XP = balXP + int(time_on_vocal_stream)
-            sql.updateField(ID, "xp", XP, "bastion")
+            lvl.addxp_voc(ID, time_on_vocal_stream)
             await lvl.checklevelvocal(member)
             del on_vocal_stream[member.name]
-
-
-@client.event
-async def on_message(message):
-    if not (message.author.bot or message.content.startswith(PREFIX)) :
-        if message.guild.id == wel.idBASTION:
-            if not ge.checkInfo(message.author.id):
-                member = message.guild.get_member(message.author.id)
-                await roles.addrole(member, "Nouveau")
-            await stat.countMsg(message)
-            await lvl.checklevel(message)
-            await client.process_commands(message)
-        else:
-            await client.process_commands(message)
-    else:
-        await client.process_commands(message)
 
 
 @client.event
@@ -171,12 +145,7 @@ async def on_raw_reaction_add(payload):
     if payload.guild_id == wel.idBASTION:
         ID = payload.user_id
         lvl.addxp(ID, 1)
-        bal = sql.valueAtNumber(ID, "nbreaction", "bastion")
-        if bal is None:
-            bal = 0
-        ns = int(bal) + 1
-        sql.updateField(ID, "nbreaction", ns, "bastion")
-    # print("{0} • Reaction + 1 • {1}".format(payload.member.name, payload.emoji.name))
+        lvl.addreaction(ID, 1)
 
 
 @client.event
@@ -184,51 +153,13 @@ async def on_raw_reaction_remove(payload):
     if payload.guild_id == wel.idBASTION:
         ID = payload.user_id
         lvl.addxp(ID, -1)
-        bal = sql.valueAtNumber(ID, "nbreaction", "bastion")
-        ns = int(bal) - 1
-        if ns <= 0:
-            ns = 0
-        sql.updateField(ID, "nbreaction", ns, "bastion")
-    # print("{0} • Reaction - 1 • {1}".format(payload.user_id, payload.emoji.name))
-
-####################### Commande stats.py #######################
-
-client.load_extension('core.stats')
-
-####################### Commande roles.py #######################
-
-client.load_extension('core.roles')
-
-####################### Commande level.py #######################
-
-client.load_extension('core.level')
-
-###################### Commande gestion.py #####################
-
-client.load_extension('core.gestion')
-
-###################### Commande notification.py ################
-
-# client.load_extension('multimedia.notification')
-
-###################### Commande vocal.py ########################
-
-# client.load_extension('multimedia.vocal')
-
-##################### Commande images.py #####################
-
-client.load_extension('multimedia.images')
-
-###################### Commande parrain.py ########################
-
-client.load_extension('core.parrain')
+        lvl.addreaction(ID, -1)
 
 ##################### Commande kaamelott.py #####################
 
 client.load_extension('kaamelott.kaamelott')
 
-####################### Lancemement du bot ######################
-
+############## Lancemement du bot ##############
 
 try:
     client.run(TOKEN)

@@ -1,11 +1,11 @@
-from DB import SQLite as sql
+import requests
+import discord
 from discord.ext import commands
 from discord.ext.commands import bot
-import discord
-from core import welcome as wel, level as lvl
+from core import welcome as wel, level as lvl, gestion as ge
 
-client = discord.Client()
-
+SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
+headers = {'access_token': SECRET_KEY}
 
 # ===============================================================
 class Parrain(commands.Cog):
@@ -22,21 +22,19 @@ class Parrain(commands.Cog):
         if ctx.guild.id == wel.idBASTION:
             ID = ctx.author.id
             if nom != None :
-                ID_p = sql.nom_ID(nom)
-                print(ID_p)
-                print(sql.get_PlayerID(ID_p, "bastion"))
-                print(sql.valueAt(ID, "parrain", "bastion"))
-                if sql.get_PlayerID(ID_p, "bastion") != "Error 404" and sql.valueAtNumber(ID, "parrain", "bastion") == 0 and ID_p != ID:
-                    sql.updateField(ID, "parrain", ID_p, "bastion")
+                ID_p = ge.nom_ID(nom)
+                PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
+                user = requests.get('http://{ip}/users/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()
+                PlayerID_p = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID_p)).json()['ID']
+                if PlayerID_p != 0 and user['godparent'] == 0 and ID_p != ID:
+                    requests.put('http://{ip}/users/{player_id}/godparent/{godparentID}'.format(ip=ge.API_IP, player_id=PlayerID, godparentID=PlayerID_p), headers=headers)
                     # print("Parrain ajouté")
-                    sql.add(ID_p, ID, 1, "filleuls")
-                    lvl.addxp(ID, 15)
-                    fil_L = sql.countFilleul(ID_p)
+                    lvl.addxp(PlayerID, 15)
+                    fil_L = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text
                     gain_p = 100 * int(fil_L)
-                    lvl.addxp(ID_p, gain_p)
+                    lvl.addxp(PlayerID_p, gain_p)
                     msg = "Votre parrain a bien été ajouté ! Vous empochez 15 XP et lui {0} XP.".format(gain_p)
                 else :
-                    # print("Impossible d'ajouter ce joueur comme parrain")
                     msg = "Impossible d'ajouter ce joueur comme parrain"
 
             await ctx.channel.send(msg)
@@ -53,22 +51,25 @@ class Parrain(commands.Cog):
                 ID = ctx.author.id
                 nom = ctx.author.name
             else :
-                ID = sql.nom_ID(nom)
+                ID = ge.nom_ID(nom)
                 if ID == -1:
                     msg = "Ce joueur n'existe pas !"
                     await ctx.channel.send(msg)
                     return
 
-            F_li = sql.listFilleul(ID)
+            PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
+            F_li = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text
+            countF = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text
             if F_li != 0:
-                if int(sql.countFilleul(ID)) > 1:
+                if int(countF) > 1:
                     sV = "s"
                 else:
                     sV = ""
-                msg = "Filleul{1} `x{0}`:".format(sql.countFilleul(ID), sV)
+                msg = "Filleul{1} `x{0}`:".format(countF, sV)
                 for one in F_li:
-                    msg += "\n<@{}>".format(one[0])
+                    msg += "\n<@{}>".format(one['discord_id'])
                 emb = discord.Embed(title = "Informations :", color= 13752280, description = msg)
+                await bot.delete_message(ctx.message)
                 await ctx.channel.send(embed = emb)
             else:
                 msg = "Vous n'avez pas de filleul, invitez de nouveaux joueurs !"
@@ -83,21 +84,24 @@ class Parrain(commands.Cog):
         """
         if ctx.guild.id == wel.idBASTION:
             ID_p = ctx.author.id
-            ID_f = sql.nom_ID(nom)
+            ID_f = ge.nom_ID(nom)
             if ID_f == -1:
                 msg = "Ce joueur n'existe pas !"
                 await ctx.channel.send(msg)
                 return
 
-            parrain = sql.valueAt(ID_f, "parrain", "bastion")
+            PlayerID_p = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
+            PlayerID_f = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID_f)).json()['ID']
+            user_f = requests.get('http://{ip}/users/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID_f)).json()
+            parrain = user_f['godparent']
             if parrain == 0:
                 return await ctx.channel.send("Ce joueur n'a pas de parrain")
-            if parrain[0] == ID_p:
-                lvl.addxp(ID_f, -15)
-                fil_count = sql.countFilleul(ID_p)
+            if parrain == PlayerID_p:
+                lvl.addxp(PlayerID_f, -15)
+                fil_count = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID_p)).text
                 gain_p = -100 * int(fil_count)
-                lvl.addxp(ID_p, gain_p)
-                sql.updateField(ID_f, "parrain", NULL, "bastion")
+                lvl.addxp(PlayerID_p, gain_p)
+                requests.put('http://{ip}/users/{player_id}/godparent/{godparentID}'.format(ip=ge.API_IP, player_id=PlayerID_f, godparentID=0), headers=headers)
                 msg = "Votre filleul <@{filleul}> a bien été retiré ! Vous perdez {xp_p} XP et lui 15 XP.".format(filleul=ID_f, xp_p=-gain_p)
             else:
                 msg = "Vous n'etes pas son parrain !"
@@ -108,4 +112,4 @@ class Parrain(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Parrain(bot))
-    open("help/cogs.txt", "a").write("Parrain\n")
+    open("core/cache/cogs.txt", "a").write("Parrain\n")
