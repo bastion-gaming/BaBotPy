@@ -540,8 +540,7 @@ class StatsOld(commands.Cog):
             if ctx.guild.id == wel.idBASTION:
                 # Niveaux part
                 msg = ""
-                palier = level.lvlPalier(lvl)
-                msg += "XP: `{0}/{1}`\n".format(xp, palier)
+                msg += "XP: `{0}`\n".format(xp)
                 emb.add_field(name="**_Niveau_ : {0}**".format(lvl), value=msg, inline=False)
                 # await bot.delete_message(ctx.message)
                 await ctx.channel.send(embed = emb)
