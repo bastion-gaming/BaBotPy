@@ -51,7 +51,7 @@ async def on_ready():
 
 client.load_extension('core.commands')
 
-client.load_extension('v2_to_v3.commands')
+# client.load_extension('v2_to_v3.commands')
 
 client.load_extension('core.parrain')
 
@@ -93,7 +93,11 @@ async def on_member_remove(member):
 async def on_message(message):
     if not (message.author.bot or message.content.startswith(PREFIX)) :
         if message.guild.id == wel.idBASTION:
-            if message.content.split()[0] not in ge.PREFIX_LIST:
+            try:
+                if message.content.split()[0] not in ge.PREFIX_LIST:
+                    lvl.xpmsg(message)
+                    await lvl.checklevel(message)
+            except:
                 lvl.xpmsg(message)
                 await lvl.checklevel(message)
     await client.process_commands(message)
