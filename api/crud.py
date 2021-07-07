@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from sqlalchemy import text
 import time as t, datetime as dt
+from operator import itemgetter
 from . import models, schemas
 
 
@@ -134,6 +135,120 @@ def countFilleul(db: Session, PlayerID: int):
         return nbg
     else:
         return 0
+
+
+# ===============================================================================
+# Classement
+# ===============================================================================
+def topxp(db: Session, min = 0, max = 10):
+    UserList = []
+    res = []
+    DBtaille = taille(db=db)
+    if DBtaille == {}:
+        DBtaille = 0
+    else:
+        DBtaille = int(DBtaille['taille'])
+    users = get_users(db=db, skip=0, limit=DBtaille)
+    for user in users:
+        IDi = int(user.discord_id)
+        nbMsg = user.nbmsg
+        nbReac = user.nbreaction
+        XP = user.xp
+        mylvl = user.level
+        Arrival = user.arrival
+        UserList.append([IDi, XP, nbMsg, Arrival, mylvl, nbReac])
+    UserList = sorted(UserList, key=itemgetter(1), reverse=True)
+    i=1
+    for one in UserList:
+        res.append({"discord_id": one[0], "nbmsg": one[2], "nbreaction": one[5], "xp": one[1], "level": one[4], "arrival": one[3]})
+        if i >= max:
+            return res
+        i+=1
+    return res
+
+
+# -------------------------------------------------------------------------------
+def toplevel(db: Session, min = 0, max = 10):
+    UserList = []
+    res = []
+    DBtaille = taille(db=db)
+    if DBtaille == {}:
+        DBtaille = 0
+    else:
+        DBtaille = int(DBtaille['taille'])
+    users = get_users(db=db, skip=0, limit=DBtaille)
+    for user in users:
+        IDi = int(user.discord_id)
+        nbMsg = user.nbmsg
+        nbReac = user.nbreaction
+        XP = user.xp
+        mylvl = user.level
+        Arrival = user.arrival
+        UserList.append([IDi, XP, nbMsg, Arrival, mylvl, nbReac])
+    UserList = sorted(UserList, key=itemgetter(4), reverse=True)
+    i=1
+    for one in UserList:
+        res.append({"discord_id": one[0], "nbmsg": one[2], "nbreaction": one[5], "xp": one[1], "level": one[4], "arrival": one[3]})
+        if i >= max:
+            return res
+        i+=1
+    return res
+
+
+# -------------------------------------------------------------------------------
+def topmsg(db: Session, min = 0, max = 10):
+    UserList = []
+    res = []
+    DBtaille = taille(db=db)
+    if DBtaille == {}:
+        DBtaille = 0
+    else:
+        DBtaille = int(DBtaille['taille'])
+    users = get_users(db=db, skip=0, limit=DBtaille)
+    for user in users:
+        IDi = int(user.discord_id)
+        nbMsg = user.nbmsg
+        nbReac = user.nbreaction
+        XP = user.xp
+        mylvl = user.level
+        Arrival = user.arrival
+        UserList.append([IDi, XP, nbMsg, Arrival, mylvl, nbReac])
+    UserList = sorted(UserList, key=itemgetter(2), reverse=True)
+    i=1
+    for one in UserList:
+        res.append({"discord_id": one[0], "nbmsg": one[2], "nbreaction": one[5], "xp": one[1], "level": one[4], "arrival": one[3]})
+        if i >= max:
+            return res
+        i+=1
+    return res
+
+
+# -------------------------------------------------------------------------------
+def topreaction(db: Session, min = 0, max = 10):
+    UserList = []
+    res = []
+    DBtaille = taille(db=db)
+    if DBtaille == {}:
+        DBtaille = 0
+    else:
+        DBtaille = int(DBtaille['taille'])
+    users = get_users(db=db, skip=0, limit=DBtaille)
+    for user in users:
+        IDi = int(user.discord_id)
+        nbMsg = user.nbmsg
+        nbReac = user.nbreaction
+        XP = user.xp
+        mylvl = user.level
+        Arrival = user.arrival
+        UserList.append([IDi, XP, nbMsg, Arrival, mylvl, nbReac])
+    UserList = sorted(UserList, key=itemgetter(5), reverse=True)
+    i=1
+    for one in UserList:
+        res.append({"discord_id": one[0], "nbmsg": one[2], "nbreaction": one[5], "xp": one[1], "level": one[4], "arrival": one[3]})
+        if i >= max:
+            return res
+        i+=1
+    return res
 
 
 # ===============================================================================

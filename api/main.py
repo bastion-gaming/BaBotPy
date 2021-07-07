@@ -143,7 +143,7 @@ def read_global_message(db: Session = Depends(get_db)):
 
 
 @app.get("/infos/xp/", tags=["Infos"])
-def read_global_message(db: Session = Depends(get_db)):
+def read_global_xp(db: Session = Depends(get_db)):
     res = crud.countTotalXP(db=db)
     if res is None:
         res = {}
@@ -156,6 +156,39 @@ def get_nb_player(db: Session = Depends(get_db)):
     if res is None:
         raise HTTPException(status_code=400, detail="Database not found")
     return res
+
+
+# ========= Classement =========
+@app.get("/infos/top/xp/", tags=["Classement"])
+def read_global_top_xp(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    res = crud.topxp(db=db, min=skip, max=limit)
+    if res is None:
+        res = {}
+    return JSONResponse(content=jsonable_encoder(res))
+
+
+@app.get("/infos/top/level/", tags=["Classement"])
+def read_global_top_level(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    res = crud.toplevel(db=db, min=skip, max=limit)
+    if res is None:
+        res = {}
+    return JSONResponse(content=jsonable_encoder(res))
+
+
+@app.get("/infos/top/msg/", tags=["Classement"])
+def read_global_top_messages(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    res = crud.topmsg(db=db, min=skip, max=limit)
+    if res is None:
+        res = {}
+    return JSONResponse(content=jsonable_encoder(res))
+
+
+@app.get("/infos/top/reaction/", tags=["Classement"])
+def read_global_top_reaction(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    res = crud.topreaction(db=db, min=skip, max=limit)
+    if res is None:
+        res = {}
+    return JSONResponse(content=jsonable_encoder(res))
 
 
 # ========= Users =========
