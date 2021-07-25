@@ -32,7 +32,7 @@ class Commandes(commands.Cog):
     async def supp(self, ctx, nb):
         """**[nombre]** | Supprime [nombre] de message dans le channel """
         suppMax = 40
-        if ge.permission(ctx, Inquisiteur):
+        if ge.permission(ctx, ge.Inquisiteur):
             try :
                 nb = int(nb)
                 if nb <= suppMax :
