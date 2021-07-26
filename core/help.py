@@ -32,7 +32,7 @@ class Helpme(commands.Cog):
                     desctemp = "`{0}` {1}\n".format(com.name, com.help)
                     desc = "`{0}` {1}\n".format(com.name, com.help)
             msg.add_field(name=COG, value=desc, inline=False)
-        # await bot.delete_message(ctx.message)
+        await ctx.message.delete()
         await ctx.send(embed = msg, delete_after = 120)
 
 

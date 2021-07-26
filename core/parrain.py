@@ -69,7 +69,7 @@ class Parrain(commands.Cog):
                 for one in F_li:
                     msg += "\n<@{}>".format(one['discord_id'])
                 emb = discord.Embed(title = "Informations :", color= 13752280, description = msg)
-                # await bot.delete_message(ctx.message)
+                await ctx.message.delete()
                 await ctx.channel.send(embed = emb)
             else:
                 msg = "Vous n'avez pas de filleul, invitez de nouveaux joueurs !"
@@ -103,6 +103,7 @@ class Parrain(commands.Cog):
                 lvl.addxp(PlayerID_p, gain_p)
                 requests.put('http://{ip}/users/{player_id}/godparent/{godparentID}'.format(ip=ge.API_IP, player_id=PlayerID_f, godparentID=0), headers=headers)
                 msg = "Votre filleul <@{filleul}> a bien été retiré ! Vous perdez {xp_p} XP et lui 15 XP.".format(filleul=ID_f, xp_p=-gain_p)
+                await ctx.message.delete()
             else:
                 msg = "Vous n'etes pas son parrain !"
             await ctx.channel.send(msg)
