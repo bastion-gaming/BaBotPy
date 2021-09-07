@@ -1,15 +1,12 @@
 import requests
 from core import gestion as ge
 
-idBaBot = 790899501845053461
-idBASTION = 417445502641111051
-
 SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
 headers = {'access_token': SECRET_KEY}
 
 
 async def memberjoin(member, channel):
-    if member.guild.id == idBASTION:
+    if member.guild.id == ge.guildID[0]:
         channel_regle = member.guild.get_channel(417454223224209408)
         ID = member.id
         req = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()
@@ -31,7 +28,7 @@ async def memberjoin(member, channel):
 
 async def memberremove(member, channel):
     ID = member.id
-    if member.guild.id == idBASTION:
+    if member.guild.id == ge.guildID[0]:
         PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
         balXP = int(requests.get('http://{ip}/users/xp/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
         balLvl = int(requests.get('http://{ip}/users/level/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)

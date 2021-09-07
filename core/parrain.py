@@ -2,7 +2,7 @@ import requests
 import discord
 from discord.ext import commands
 from discord.ext.commands import bot
-from core import welcome as wel, level as lvl, gestion as ge
+from core import level as lvl, gestion as ge
 
 SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
 headers = {'access_token': SECRET_KEY}
@@ -19,7 +19,7 @@ class Parrain(commands.Cog):
         Permet d'ajouter un joueur comme parrain.
         En le faisant vous touchez un bonus et lui aussi
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             ID = ctx.author.id
             if nom != None :
                 ID_p = ge.nom_ID(nom)
@@ -46,7 +46,7 @@ class Parrain(commands.Cog):
         """
         Affiche la liste des filleuls d'un joueur
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             if nom == None:
                 ID = ctx.author.id
                 nom = ctx.author.name
@@ -82,7 +82,7 @@ class Parrain(commands.Cog):
         """
         Affiche la liste des filleuls d'un joueur
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             ID_p = ctx.author.id
             ID_f = ge.nom_ID(nom)
             if ID_f == -1:

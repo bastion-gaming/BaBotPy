@@ -72,7 +72,7 @@ class Commandes(commands.Cog):
             msg = "**Utilisateur:** {}".format(Nom)
             emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
 
-            if ctx.guild.id == wel.idBASTION:
+            if ctx.guild.id in ge.guildID:
                 # Niveaux part
                 msg = ""
                 palier = level.lvlPalier(lvl)
@@ -118,7 +118,7 @@ class SecretCommandes(commands.Cog):
     @commands.command(pass_context=True)
     async def revive(self, ctx):
         await ctx.message.delete()
-        await ctx.channel.send(f"Comme un phénix, <@{wel.idBaBot}> renait de ses cendres")
+        await ctx.channel.send(f"Comme un phénix, <@{ge.idBaBot}> renait de ses cendres")
 
 
 def setup(bot):

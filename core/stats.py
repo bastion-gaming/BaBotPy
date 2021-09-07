@@ -8,7 +8,7 @@ from operator import itemgetter
 import matplotlib.pyplot as plt
 import datetime as dt
 
-from core import welcome as wel, gestion as ge, level
+from core import gestion as ge, level
 
 SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
 headers = {'access_token': SECRET_KEY}
@@ -131,7 +131,7 @@ class Stats(commands.Cog):
         """
         Donne le nombre de message posté depuis le début du bot.
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             nbmsg = requests.get('http://{ip}/infos/msg/'.format(ip=ge.API_IP)).json()
             if nbmsg == {}:
                 nbmsg = 0
@@ -146,7 +146,7 @@ class Stats(commands.Cog):
         """
         **[heure de début] [heure de fin]** | Donne le nombre de message posté dans l'heure ou entre deux heures.
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             d = dt.datetime.now().hour
             if not fileExist():
                 nbmsg = requests.get('http://{ip}/infos/msg/'.format(ip=ge.API_IP)).json()
@@ -183,7 +183,7 @@ class Stats(commands.Cog):
     @commands.command(pass_context=True)
     async def graphheure(self, ctx, statue = "local", jour = "yesterday"):
         """|local/total aaaa-mm-jj| Affiche le graph des messages envoyés par heure."""
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             if jour == "yesterday":
                 jour = str(dt.date.today()-dt.timedelta(days = 1))
             try :
@@ -219,7 +219,7 @@ class Stats(commands.Cog):
     @commands.command(pass_context=True)
     async def graphjour(self, ctx, statue = "local", mois = "now"):
         """|local/total aaaa-mm| Affiche le graph des messages envoyés par jour."""
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             if mois == "now":
                 mois = str(dt.date.today())[:7]
             aaaa , mm = mois.split("-")
@@ -264,7 +264,7 @@ class Stats(commands.Cog):
         """
         Graphique représentant le classement des membres en fonction du nombre de messages écrit.
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             if os.path.isfile("core/cache/msggrapf.png"):
                 os.remove('core/cache/msggrapf.png')
                 print('removed old graphe file')
@@ -325,7 +325,7 @@ class Stats(commands.Cog):
         """
         Graphique représentant le classement des membres en fonction de leur XP.
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             if os.path.isfile("core/cache/xpgrapf.png"):
                 os.remove('core/cache/xpgrapf.png')
                 print('removed old graphe file')
@@ -386,7 +386,7 @@ class Stats(commands.Cog):
         """
         Classement textuel des membres du Bastion en fonction de l'XP.
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             UserList = []
             taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
             if taille == {}:
@@ -429,7 +429,7 @@ class Stats(commands.Cog):
         """
         Classement textuel des membres du Bastion en fonction des messages postés.
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             UserList = []
             taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
             if taille == {}:
@@ -479,7 +479,7 @@ class StatsOld(commands.Cog):
         """
         Ancien classement textuel des membres du Bastion en fonction de l'XP.
         """
-        if ctx.guild.id == wel.idBASTION:
+        if ctx.guild.id in ge.guildID:
             UserList = []
             taille = requests.get('http://{ip}/infos/nb_player/'.format(ip=ge.API_IP)).json()
             if taille == {}:
@@ -538,7 +538,7 @@ class StatsOld(commands.Cog):
             msg = "**Utilisateur:** {}".format(Nom)
             emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
 
-            if ctx.guild.id == wel.idBASTION:
+            if ctx.guild.id in ge.guildID:
                 # Niveaux part
                 msg = ""
                 msg += "XP: `{0}`\n".format(xp)

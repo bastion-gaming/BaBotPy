@@ -91,15 +91,17 @@ async def on_member_remove(member):
 
 @client.event
 async def on_message(message):
-    if not (message.author.bot or message.content.startswith(PREFIX)) :
-        if message.guild.id == wel.idBASTION:
-            try:
-                if message.content.split()[0] not in ge.PREFIX_LIST:
-                    lvl.xpmsg(message)
-                    await lvl.checklevel(message)
-            except:
+    PREFIX_CHECK = False
+    for prefixstart in ge.PREFIX_LIST:
+        if message.content.startswith(prefixstart):
+            PREFIX_CHECK = True
+    if not PREFIX_CHECK:
+        try:
+            if message.guild.id in ge.guildID:
                 lvl.xpmsg(message)
                 await lvl.checklevel(message)
+        except:
+            pass
     await client.process_commands(message)
 
 
@@ -107,7 +109,7 @@ async def on_message(message):
 async def on_voice_state_update(member, before, after):
     ID = member.id
     guild = client.get_guild(member.guild.id)
-    if guild.id == wel.idBASTION:
+    if guild.id in ge.guildID:
         if guild.afk_channel != None:
             afkchannel = guild.afk_channel.id
         else:
@@ -146,7 +148,7 @@ async def on_voice_state_update(member, before, after):
 
 @client.event
 async def on_raw_reaction_add(payload):
-    if payload.guild_id == wel.idBASTION:
+    if payload.guild_id in ge.guildID:
         ID = payload.user_id
         lvl.addxp(ID, 1)
         lvl.addreaction(ID, 1)
@@ -154,7 +156,7 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    if payload.guild_id == wel.idBASTION:
+    if payload.guild_id in ge.guildID:
         ID = payload.user_id
         lvl.addxp(ID, -1)
         lvl.addreaction(ID, -1)
