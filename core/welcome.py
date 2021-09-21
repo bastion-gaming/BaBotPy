@@ -29,11 +29,14 @@ async def memberjoin(member, channel):
 async def memberremove(member, channel):
     ID = member.id
     if member.guild.id == ge.guildID[0]:
-        PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
-        balXP = int(requests.get('http://{ip}/users/xp/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
-        balLvl = int(requests.get('http://{ip}/users/level/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
+        try:
+            PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
+            balXP = int(requests.get('http://{ip}/users/xp/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
+            balLvl = int(requests.get('http://{ip}/users/level/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
 
-        requests.put('http://{ip}/users/xp/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=-balXP), headers=headers)
-        requests.put('http://{ip}/users/level/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=-balLvl), headers=headers)
+            requests.put('http://{ip}/users/xp/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=-balXP), headers=headers)
+            requests.put('http://{ip}/users/level/{player_id}/{nb}'.format(ip=ge.API_IP, player_id=PlayerID, nb=-balLvl), headers=headers)
+        except:
+            pass
     msg = "**{0}** nous a quitté, pourtant si jeune...".format(member.name)
     await channel.send(msg)
