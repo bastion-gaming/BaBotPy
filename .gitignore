@@ -109,7 +109,7 @@ venv.bak/
 
 # other
 cache/*
-logs/*
+logs/*.log
 *.db
 *.bak
 config.json

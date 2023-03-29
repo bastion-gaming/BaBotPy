@@ -1,13 +1,20 @@
 {
+	"version": "VERSION",
 	"token": "DISCORD TOKEN",
+	"prefix": "!",
+	"sync_commands_globally": false,
 	"id": {
 		"client": "0123456789",
 		"guild": "9876543210"
 	},
 	"api": {
 		"name": "NAME API",
-		"version": "1.0.0",
+		"version": "VERSION",
 		"ip": "0.0.0.0",
 		"key": "API SECURITY KEY"
-	}
+	},
+	"owners": [
+		123456789,
+		987654321
+  	]
 }
