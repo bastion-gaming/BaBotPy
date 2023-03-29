@@ -3,7 +3,7 @@ from discord.utils import get
 from core import file
 
 # CONFIGURATION
-if file.exist(f"{os.path.realpath(os.path.dirname(__file__))}/config.json"):
+if file.exist(f"{os.path.realpath(os.path.dirname(__file__))}/../config.json"):
     CONFIG = file.json_read('config.json')
     SECRET_KEY = CONFIG['api']['key']
     API_IP = CONFIG['api']['ip']
