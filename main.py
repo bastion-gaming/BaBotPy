@@ -2,7 +2,7 @@ import os, sys, platform
 import asyncio
 import logging
 import random
-import time
+import time, datetime
 
 import discord
 from discord.ext import commands, tasks
@@ -79,7 +79,17 @@ logger.setLevel(logging.INFO)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(LoggingFormatter())
 # File handler
-file_handler = logging.FileHandler(filename="logs/discord.log", encoding="utf-8", mode="w")
+LOG_PATH = "logs/"
+LOG_FILE = "discord.log"
+if file.exist(f"{LOG_PATH}{LOG_FILE}"):
+    data = file.read(f"{LOG_PATH}{LOG_FILE}")
+    now = datetime.date.today()
+    nowtime = datetime.datetime.now().strftime("%H-%M-%S")
+    LOG_NEW = f"{LOG_PATH}discord-{now}_{nowtime}.log"
+    file.create(LOG_NEW)
+    file.write(LOG_NEW, data)
+
+file_handler = logging.FileHandler(filename=f"{LOG_PATH}{LOG_FILE}", encoding="utf-8", mode="w")
 file_handler_formatter = logging.Formatter(
     "[{asctime}] [{levelname:<8}] {name}: {message}", "%Y-%m-%d %H:%M:%S", style="{"
 )

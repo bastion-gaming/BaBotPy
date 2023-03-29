@@ -11,10 +11,20 @@ def exist(path):
 
 
 # •••••••••••••••••••••••••••••••••••••••
-def read(path):
+def open_read(path):
 	if exist(path):
 		file = open(path, 'r', encoding='utf-8')
 		return file
+	else:
+		print("Le fichier n'existe pas")
+		return False
+
+
+# •••••••••••••••••••••••••••••••••••••••
+def read(path):
+	if exist(path):
+		file = open(path, 'r', encoding='utf-8')
+		return file.read()
 	else:
 		print("Le fichier n'existe pas")
 		return False
@@ -45,6 +55,13 @@ def add(path, data):
 
 
 # •••••••••••••••••••••••••••••••••••••••
+def create(path):
+	file = open(path, 'w', encoding='utf-8')
+	file.close()
+	return True
+
+
+# •••••••••••••••••••••••••••••••••••••••
 def delete(path):
 	if exist(path):
 		os.remove(path)
@@ -60,7 +77,7 @@ def delete(path):
 
 def json_read(path):
 	if exist(path):
-		file = read(path)
+		file = open_read(path)
 		data = json.load(file)
 		file.close()
 		return data
