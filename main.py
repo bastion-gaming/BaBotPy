@@ -315,11 +315,11 @@ async def load_cogs() -> None:
     """
     Le code de cette fonction est exécuté chaque fois que le bot démarre.
     """
-    for file in os.listdir(f"{os.path.realpath(os.path.dirname(__file__))}/cogs"):
+    for file in os.listdir(f"{os.path.realpath(os.path.dirname(__file__))}/extensions"):
         if file.endswith(".py"):
             extension = file[:-3]
             try:
-                await bot.load_extension(f"cogs.{extension}")
+                await bot.load_extension(f"{extension}")
                 bot.logger.info(f"Extension '{extension}' chargée")
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
