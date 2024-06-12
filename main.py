@@ -310,8 +310,8 @@ async def on_command_error(context: Context, error) -> None:
 
 
 ################################################
-# Cogs
-async def load_cogs() -> None:
+# Extensions
+async def load_extensions() -> None:
     """
     Le code de cette fonction est exécuté chaque fois que le bot démarre.
     """
@@ -319,12 +319,12 @@ async def load_cogs() -> None:
         if file.endswith(".py"):
             extension = file[:-3]
             try:
-                await bot.load_extension(f"{extension}")
+                await bot.load_extension(f"extensions.{extension}")
                 bot.logger.info(f"Extension '{extension}' chargée")
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
                 bot.logger.error(f"Échec du chargement de l'extension {extension}\n{exception}")
 
 ################################################
-asyncio.run(load_cogs())
+asyncio.run(load_extensions())
 bot.run(CONFIG['token'])

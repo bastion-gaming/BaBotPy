@@ -12,26 +12,26 @@ class General(commands.Cog, name="general"):
         self.bot = bot
 
     ################################################
-    # @commands.hybrid_command(
-    #     name="help", description="Répertorie toutes les commandes que le bot a chargées."
-    # )
-    # async def help(self, ctx: Context) -> None:
-    #     prefix = self.bot.config["prefix"]
-    #     embed = discord.Embed(
-    #         title="Help", description="Liste des commandes disponibles:", color=0x9C84EF
-    #     )
-    #     for i in self.bot.cogs:
-    #         cog = self.bot.get_cog(i.lower())
-    #         commands = cog.get_commands()
-    #         data = []
-    #         for command in commands:
-    #             description = command.description.partition("\n")[0]
-    #             data.append(f"{prefix}{command.name} - {description}")
-    #         help_text = "\n".join(data)
-    #         embed.add_field(
-    #             name=i.capitalize(), value=f"```{help_text}```", inline=False
-    #         )
-    #     await ctx.send(embed=embed)
+    @commands.hybrid_command(
+        name="help", description="Répertorie toutes les commandes que le bot a chargées."
+    )
+    async def help(self, ctx: Context) -> None:
+        prefix = self.bot.config["prefix"]
+        embed = discord.Embed(
+            title="Help", description="Liste des commandes disponibles:", color=0x9C84EF
+        )
+        for i in self.bot.cogs:
+            cog = self.bot.get_cog(i.lower())
+            commands = cog.get_commands()
+            data = []
+            for command in commands:
+                description = command.description.partition("\n")[0]
+                data.append(f"{prefix}{command.name} - {description}")
+            help_text = "\n".join(data)
+            embed.add_field(
+                name=i.capitalize(), value=f"```{help_text}```", inline=False
+            )
+        await ctx.send(embed=embed)
 
     ################################################
     @commands.hybrid_command(
