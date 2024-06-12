@@ -14,7 +14,7 @@ def install(package, version = None):
 install("pip")
 
 # Discord
-install("discord.py", "2.2.2")
+install("discord.py", "2.3.2")
 # install("discord.py[voice]", "1.7.3")
 
 # API

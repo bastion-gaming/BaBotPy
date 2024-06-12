@@ -12,7 +12,6 @@ from core import file, exceptions, welcome as wel
 from core import gestion as ge, level as lvl
 
 ################################################
-# ========================
 # Définition des variables
 # ========================
 # CONFIGURATION
@@ -26,10 +25,13 @@ on_vocal = {}
 on_vocal_cam = {}
 on_vocal_stream = {}
 
-intents = discord.Intents.default()
-intents.members = True
-intents.message_content = True
-intents.presences = True
+intents = discord.Intents.all()
+# intents = discord.Intents.default()
+# intents.members = True
+# intents.messages = True
+# intents.message_content = True
+# intents.reactions = True
+# intents.presences = True
 
 bot = Bot(
     command_prefix=commands.when_mentioned_or(CONFIG['prefix']),
@@ -38,7 +40,6 @@ bot = Bot(
 )
 
 ################################################
-# ==============
 # Journalisation
 # ==============
 class LoggingFormatter(logging.Formatter):
@@ -74,6 +75,9 @@ class LoggingFormatter(logging.Formatter):
 
 logger = logging.getLogger("discord_bot")
 logger.setLevel(logging.INFO)
+handler_formatter = logging.Formatter(
+    "[{asctime}] {levelname:<8} {message}", "%Y-%m-%d %H:%M:%S", style="{"
+)
 
 # Console handler
 console_handler = logging.StreamHandler()
@@ -90,10 +94,7 @@ if file.exist(f"{LOG_PATH}{LOG_FILE}"):
     file.write(LOG_NEW, data)
 
 file_handler = logging.FileHandler(filename=f"{LOG_PATH}{LOG_FILE}", encoding="utf-8", mode="w")
-file_handler_formatter = logging.Formatter(
-    "[{asctime}] [{levelname:<8}] {name}: {message}", "%Y-%m-%d %H:%M:%S", style="{"
-)
-file_handler.setFormatter(file_handler_formatter)
+file_handler.setFormatter(handler_formatter)
 
 # Add the handlers
 logger.addHandler(console_handler)
@@ -102,8 +103,7 @@ bot.logger = logger
 
 
 ################################################
-# ===================
-# ======= Bot =======
+# Bot
 # ===================
 bot.config = CONFIG
 
@@ -125,7 +125,6 @@ async def on_ready() -> None:
         bot.logger.info("Synchroniser les commandes globalement...")
         await bot.tree.sync()
 
-
 ################################################
 @tasks.loop(minutes=1.0)
 async def status_task() -> None:
@@ -133,7 +132,7 @@ async def status_task() -> None:
     Configurez la tâche d'état du bot.
     """
     statuses = ["spinelle.eu", "", ""]
-    # await bot.change_presence(activity=discord.Game(random.choice(statuses)))
+    # await bot.change_presence(activity=discord.watching(random.choice(statuses)))
     activity = discord.Activity(type=discord.ActivityType.watching, name="spinelle.eu")
     await bot.change_presence(status=discord.Status.online, activity=activity)
 
@@ -325,7 +324,6 @@ async def load_cogs() -> None:
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
                 bot.logger.error(f"Échec du chargement de l'extension {extension}\n{exception}")
-
 
 ################################################
 asyncio.run(load_cogs())

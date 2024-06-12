@@ -35,6 +35,25 @@ class General(commands.Cog, name="general"):
 
     ################################################
     @commands.hybrid_command(
+        name="sync",
+        description="Permet de synchroniser les commandes du bot.",
+    )
+    async def sync(self, ctx: Context) -> None:
+        """
+        Permet de synchroniser les commandes du bot.
+        """
+        commandsync = await ctx.bot.tree.sync(guild=ctx.guild)
+        for command in commandsync:
+            desc += f"\n{command.name}"
+        emb = discord.Embed(
+            title = "Babot",
+            color= 9576994,
+            description = desc
+        )
+        await ctx.send(embed=emb, delete_after = 20)
+
+    ################################################
+    @commands.hybrid_command(
         name="version",
         description="Permet d'avoir la version du bot.",
     )
@@ -129,35 +148,29 @@ class General(commands.Cog, name="general"):
             await ctx.send(embed=emb, delete_after = 20)
 
     ################################################
-    # @commands.hybrid_command(
-    #     name="supp",
-    #     description="Supprime [nombre] de message dans le channel",
-    # )
-    # # @checks.is_owner()
-    # async def supp(self, ctx: Context, nombre: int) -> None:
-    #     """
-    #     **[nombre]** | Supprime [nombre] de message dans le channel
-    #     """
-    #     suppMax = 40
-    #     await ctx.message.delete()
-    #     if ge.permission(ctx, ge.Inquisiteur):
-    #         try :
-    #             nb = int(nb)
-    #             if nb <= suppMax :
-    #                 await ctx.channel.purge(limit = nb)
-    #                 desc = '{x} messages éffacé !'.format(x=nb)
-    #             else:
-    #                 desc = "On ne peut pas supprimer plus de {x} messages à la fois".format(x=suppMax)
-    #         except ValueError:
-    #             desc = "Commande mal remplie TOCARD"
-    #     else :
-    #         desc = "Tu ne remplis pas les conditions, tu fais partie de la plèbe !"
-    #     emb = discord.Embed(
-    #         title = "Babot",
-    #         color= 9576994,
-    #         description = desc
-    #     )
-    #     await ctx.send(embed = emb, delete_after = 20)
+    @commands.hybrid_command(
+        name="supp",
+        description="Supprime [nombre] de message dans le channel",
+    )
+    @checks.is_owner()
+    # @commands.check.has_permissions(administrator = True)
+    async def supp(self, ctx: Context, nombre: int) -> None:
+        """
+        **[nombre]** | Supprime [nombre] de message dans le channel
+        """
+        suppMax = 40
+        nb = int(nombre)
+        if nb <= suppMax :
+            await ctx.channel.purge(limit = nb)
+            desc = '{x} messages éffacé !'.format(x=nb)
+        else:
+            desc = "On ne peut pas supprimer plus de {x} messages à la fois".format(x=suppMax)
+        emb = discord.Embed(
+            title = "Babot",
+            color= 9576994,
+            description = desc
+        )
+        await ctx.send(embed = emb, delete_after = 20)
 
 
 ################################################
