@@ -57,7 +57,7 @@ class Kaamelott(commands.Cog, name="kaamelott"):
         """
         **[personnage]** | Donne une citation random ou d'un personnage en particulier.
         """
-        f = open("cache/kaamelott/citation.txt", "r").read().split('\n')
+        f = open("extensions/kaamelott/citation.txt", "r").read().split('\n')
         if personnage == None :
             quote = f[r.randint(0, len(f)-2)].split('//')
             msg=quote[0]+"\n\n*"+quote[1]+"*"
