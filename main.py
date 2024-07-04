@@ -14,13 +14,6 @@ from core import gestion as ge, level as lvl
 ################################################
 # Définition des variables
 # ========================
-# CONFIGURATION
-if not file.exist(f"{os.path.realpath(os.path.dirname(__file__))}/config.json"):
-    sys.exit("'config.json' n'a pas été trouvé! Veuillez l'ajouter et réessayer.")
-else:
-    CONFIG = file.json_read('config.json')
-
-# VARIABLES
 on_vocal = {}
 on_vocal_cam = {}
 on_vocal_stream = {}
@@ -34,7 +27,7 @@ intents = discord.Intents.all()
 # intents.presences = True
 
 bot = Bot(
-    command_prefix=commands.when_mentioned_or(CONFIG['prefix']),
+    command_prefix=commands.when_mentioned_or(ge.PREFIX),
     intents=intents,
     help_command=None,
 )
@@ -105,7 +98,7 @@ bot.logger = logger
 ################################################
 # Bot
 # ===================
-bot.config = CONFIG
+bot.config = ge.CONFIG
 
 @bot.event
 async def on_ready() -> None:
@@ -113,15 +106,15 @@ async def on_ready() -> None:
     Le code de cet événement est exécuté lorsque le bot est prêt.
     """
     bot.logger.info(f"Connecté avec le nom {bot.user.name}")
-    bot.logger.info(f"Bot version: {CONFIG['version']}")
-    bot.logger.info(f"{CONFIG['api']['name']} version: {CONFIG['api']['version']}")
+    bot.logger.info(f"Bot version: {ge.VERSION}")
+    bot.logger.info(f"{ge.CONFIG['api']['name']} version: {ge.CONFIG['api']['version']}")
     bot.logger.info("-------------------")
     bot.logger.info(f"discord.py version: {discord.__version__}")
     bot.logger.info(f"Python version: {platform.python_version()}")
     bot.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     bot.logger.info("-------------------")
     status_task.start()
-    if CONFIG["sync_commands_globally"]:
+    if ge.CONFIG["sync_commands_globally"]:
         bot.logger.info("Synchroniser les commandes globalement...")
         await bot.tree.sync()
 
@@ -327,4 +320,4 @@ async def load_extensions() -> None:
 
 ################################################
 asyncio.run(load_extensions())
-bot.run(CONFIG['token'])
+bot.run(ge.TOKEN)

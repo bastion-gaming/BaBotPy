@@ -1,5 +1,5 @@
 {
-	"version": "VERSION",
+	"version": "4.0.3",
 	"token": "DISCORD TOKEN",
 	"prefix": "!",
 	"sync_commands_globally": false,

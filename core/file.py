@@ -1,4 +1,4 @@
-# Version 1.0
+# Version 1.1
 import os
 import json
 
@@ -13,52 +13,60 @@ def exist(path):
 # •••••••••••••••••••••••••••••••••••••••
 def open_read(path):
 	if exist(path):
-		file = open(path, 'r', encoding='utf-8')
+		file = open(path, 'r', errors="ignore")
 		return file
 	else:
-		print("Le fichier n'existe pas")
+		print(f"Le fichier {path} n'existe pas")
 		return False
 
 
 # •••••••••••••••••••••••••••••••••••••••
 def read(path):
 	if exist(path):
-		file = open(path, 'r', encoding='utf-8')
+		file = open_read(path)
 		return file.read()
 	else:
-		print("Le fichier n'existe pas")
+		print(f"Le fichier {path} n'existe pas")
 		return False
 
 
 # •••••••••••••••••••••••••••••••••••••••
 def write(path, data):
 	if exist(path):
-		file = open(path, 'w', encoding='utf-8')
+		file = open(path, 'w')
 		file.write(data)
 		file.close()
 		return True
 	else:
-		print("Le fichier n'existe pas")
+		print(f"Le fichier {path} n'existe pas")
 		return False
 
 
 # •••••••••••••••••••••••••••••••••••••••
 def add(path, data):
 	if exist(path):
-		file = open(path, 'a', encoding='utf-8')
+		file = open(path, 'a')
 		file.write(data)
 		file.close()
 		return True
 	else:
-		print("Le fichier n'existe pas")
+		print(f"Le fichier {path} n'existe pas")
 		return False
 
 
 # •••••••••••••••••••••••••••••••••••••••
 def create(path):
-	file = open(path, 'w', encoding='utf-8')
+	file = open(path, 'w')
 	file.close()
 	return True
+
+
+# •••••••••••••••••••••••••••••••••••••••
+def createdir(path):
+	if not os.path.exists(path):
+		os.makedirs(path)
+		return True
+	return False
 
 
 # •••••••••••••••••••••••••••••••••••••••
@@ -67,7 +75,7 @@ def delete(path):
 		os.remove(path)
 		return True
 	else:
-		print("Impossible de supprimer le fichier car il n'existe pas")
+		print(f"Impossible de supprimer le fichier {path} car il n'existe pas")
 		return False
 
 
@@ -82,16 +90,20 @@ def json_read(path):
 		file.close()
 		return data
 	else:
-		print("Le fichier n'existe pas")
+		print(f"Le fichier {path} n'existe pas")
 		return False
 	
 # •••••••••••••••••••••••••••••••••••••••
 def json_write(path, data):
 	if exist(path):
-		file = open(path, 'w', encoding='utf-8')
+		file = open(path, 'w')
 		json.dump(data, file)
 		file.close()
 		return True
 	else:
-		print("Le fichier n'existe pas")
+		print(f"Le fichier {path} n'existe pas")
 		return False
+
+# •••••••••••••••••••••••••••••••••••••••
+def json_loads(data):
+	return json.loads(data)

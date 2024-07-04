@@ -17,6 +17,7 @@ install("requests", "2.25.1")
 
 # Création de graphiques
 # install("matplotlib", "3.4.2")
+install("matplotlib", "3.9.1")
 
 # Média
 # install("ffmpeg-python", "0.2.0")

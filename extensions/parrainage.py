@@ -51,28 +51,29 @@ class Parainnage(commands.Cog, name="parainnage"):
 
     ################################################
     @commands.hybrid_command(
-        name="filleul",
+        name="filleuls",
         description="Affiche la liste des filleuls d'un joueur",
     )
-    async def filleul(self, ctx: Context, utilisateur: discord.User = commands.Author) -> None:
+    async def filleuls(self, ctx: Context, utilisateur: discord.User = commands.Author) -> None:
         """
         Affiche la liste des filleuls d'un joueur
         """
         nom = utilisateur.name
 
         if ctx.guild.id in ge.guildID:
-            if nom == None:
-                ID = utilisateur.id
-            else :
-                ID = ge.nom_ID(nom)
-                if ID == -1:
-                    msg = "Ce joueur n'existe pas !"
-                    await ctx.channel.send(msg)
-                    return
+            ID = utilisateur.id
+            # if nom == None:
+            #     ID = utilisateur.id
+            # else :
+            #     ID = ge.nom_ID(nom)
+            #     if ID == -1:
+            #         msg = "Ce joueur n'existe pas !"
+            #         await ctx.channel.send(msg)
+            #         return
 
             PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']
             F_li = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text
-            countF = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text
+            countF = requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()['nbgodchilds']
             if F_li != 0:
                 if int(countF) > 1:
                     sV = "s"
@@ -101,8 +102,12 @@ class Parainnage(commands.Cog, name="parainnage"):
 
 
     ################################################
-    @commands.hybrid_command(
-        name="filleul_supp",
+    @commands.hybrid_group(name="filleul")
+    async def filleul(self, ctx: commands.Context):
+        pass
+
+    @filleul.command(
+        name="supp",
         description="Supprime un de tes filleuls",
     )
     async def filleul_supp(self, ctx: Context, utilisateur: discord.User) -> None:
