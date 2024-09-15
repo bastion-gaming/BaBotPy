@@ -105,7 +105,7 @@ class General(commands.Cog, name="general"):
         xp = int(user['xp'])
         nbmsg = int(user['nbmsg'])
         reaction = int(user['nbreaction'])
-        msg = "**Utilisateur:** {}".format(Nom)
+        msg = "**Utilisateur:** <@{0}>".format(ID)
         emb = discord.Embed(title = "Informations", color= 13752280, description = msg)
 
         if ctx.guild.id in ge.guildID:
@@ -119,8 +119,8 @@ class General(commands.Cog, name="general"):
 
             # Parrainage
             P = user['godparent']
-            F_li = requests.get('http://{ip}/users/godchilds/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()
-            nbF = int(requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).text)
+            F_li = requests.get('http://{ip}/users/godchilds/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()['godchilds']
+            nbF = int(requests.get('http://{ip}/users/godchilds/count/{player_id}'.format(ip=ge.API_IP, player_id=PlayerID)).json()['nbgodchilds'])
             msg = ""
             if P != 0:
                 msg += "\nParrain: <@{0}>".format(requests.get('http://{ip}/users/{player_id}'.format(ip=ge.API_IP, player_id=P)).json()['discord_id'])
@@ -137,8 +137,7 @@ class General(commands.Cog, name="general"):
                     msg += "\n<@{0}>".format(one['discord_id'])
 
             emb.add_field(name="**_Parrainage_**", value=msg, inline=False)
-            await ctx.message.delete()
-            await ctx.channel.send(embed = emb)
+            await ctx.send(embed = emb)
         else:
             emb = discord.Embed(
                 title = "Babot",
