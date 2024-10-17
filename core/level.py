@@ -2,8 +2,7 @@ import discord
 import requests
 from core import gestion as ge
 
-SECRET_KEY = open("api/key.txt", "r").read().replace("\n", "")
-headers = {'access_token': SECRET_KEY}
+headers = {'access_token': ge.SECRET_KEY}
 
 def addxp(ID, nb):
     PlayerID = requests.get('http://{ip}/users/playerid/{discord_id}'.format(ip=ge.API_IP, discord_id=ID)).json()['ID']

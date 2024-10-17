@@ -16,6 +16,7 @@ On pense qu'il est important qu'on soit transparent dans ce qu'on fait et tous l
 coder en python sont évidemment les bienvenus pour nous aider à coder ou émettre des
 critiques constructives.
 
+
 # Idées sur le fonctionnement général
 
 ## Organisation
@@ -23,13 +24,14 @@ critiques constructives.
 On propose une architecture "modulaire" avec un core qui se charge de lancer les différentes
 parties du bot.
 
+## Extensions
+
+- General
+- Parrainage
+- Kaamelott
+
+
 # Lancement
-
-## API
-
-```bash
-uvicorn api.main:app --host 0.0.0.0 --port 20216
-```
 
 ## Bot
 
