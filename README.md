@@ -27,6 +27,7 @@ parties du bot.
 ## Extensions
 
 - General
+- Statistiques
 - Parrainage
 - Kaamelott
 
